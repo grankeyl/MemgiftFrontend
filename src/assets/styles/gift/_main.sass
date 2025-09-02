@@ -1,0 +1,36 @@
+@use "./../_variables" as *
+
+._wrap._pageGift
+    width: 100%
+    background: $app-background
+    padding-top: calc($app-menu-height + 10px)
+
+    &.desktop
+        padding-top: 0px
+
+    ._view
+        padding: 0
+        display: flex
+        flex-direction: column
+        gap: 11px
+        padding-bottom: 36px
+
+        ._second
+            width: 100%
+            height: fit-content
+            padding: 14px 16px 0px 16px
+            border-radius: 20px 20px 20px 20px
+            background: $app-background
+            margin-bottom: 58px
+
+            ._title
+                width: fit-content
+                height: auto
+                
+                & h4
+                    width: fit-content
+                    height: auto
+                    font-size: 16px
+                    font-weight: 500
+                    color: $app-text-color-descr
+    

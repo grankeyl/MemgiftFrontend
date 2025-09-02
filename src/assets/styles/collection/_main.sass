@@ -1,0 +1,45 @@
+@use "./../_variables" as *
+
+._wrap._collection
+    background: $app-preview
+    padding-top: 0
+    padding-bottom: 137px
+
+    ._view
+        padding: 0
+        display: flex
+        flex-direction: column
+        gap: 15px
+
+        ._first
+            width: 100%
+            height: 100%
+            padding-top: calc($app-menu-height + $app-page-padding-left + 3px)
+            padding-left: $app-page-padding-left
+            padding-right: $app-page-padding-right
+            border-radius: 0px 0px 20px 20px
+            background: $app-background
+
+            &.desktop
+                padding-top: $app-page-padding-left
+        
+        ._second
+            width: 100%
+            height: fit-content
+            padding: 14px 16px 0px 16px
+            border-radius: 20px 20px 20px 20px
+            background: $app-background
+
+            &:last-child
+                margin-bottom: 58px
+
+            ._title
+                width: fit-content
+                height: auto
+                
+                & h4
+                    width: fit-content
+                    height: auto
+                    font-size: 16px
+                    font-weight: 500
+                    color: $app-text-color-descr

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#1C1C1C">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0">
+    <title>Memgift - Mini App</title>
+    <link rel="stylesheet" href="/src/assets/styles/fonts.css">
+    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+    <script src="https://cdn.jsdelivr.net/gh/TONSolutions/telemetree-pixel@main/telemetree-pixel.js"></script>
+    <script src="https://backsdk.trafficgram.io/static/sdk.js"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CJMFXZXVHZ');
+    </script>
+
+    <script>
+      // Set up a mutation observer to wait for WebApp to be available
+      const initWebApp = () => {
+        const FULLSCREEN_ALLOWED_PLATFORMS = ['ios', 'android']
+        const webApp = window?.Telegram?.WebApp
+
+        if (webApp) {
+          webApp.expand()
+
+          const withFullScreen =
+            Number(webApp.version) >= 8 &&
+            webApp.requestFullscreen &&
+            FULLSCREEN_ALLOWED_PLATFORMS.includes(webApp.platform)
+
+          if (withFullScreen) {
+            webApp.requestFullscreen()
+          }
+
+          webApp.disableVerticalSwipes()
+
+          return true
+        }
+        return false
+      }
+
+      // Try to initialize immediately
+      if (!initWebApp()) {
+        // If not available, set up an observer to check when it becomes available
+        const observer = new MutationObserver(() => {
+          if (initWebApp()) {
+            observer.disconnect()
+          }
+        })
+
+        // Start observing the document for changes
+        observer.observe(document, {
+          childList: true,
+          subtree: true
+        })
+
+        // Also try again after a short delay as a fallback
+        setTimeout(() => {
+          initWebApp()
+          observer.disconnect()
+        }, 1000)
+      }
+    </script>
+
+    <script>
+      try {
+        const originalStartViewTransition = document.startViewTransition
+        if (originalStartViewTransition) {
+          document.startViewTransition = function (callback) {
+            const transition = originalStartViewTransition.call(document, callback)
+            transition.finished.then(() => {
+              document.body.removeAttribute('data-transition')
+            })
+            return transition
+          }
+        }
+      } catch (error) {
+        console.error('View transitions setup failed:', error)
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      window.addEventListener('load', () => {
+          window.TrafficGramSDK = window.TrafficGramSDKInstance.initialize(
+              "KsFSPL9xavF4B16RmohkGNneCQV82pnUEMs8j8LSA5e0bW6qGUD1EwS6RE-d36kk",
+              10000
+          );
+
+          if (!window.TrafficGramSDK) {
+            return;
+          }
+      });
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+    <style>
+      html { background: #1C1C1C; }
+    </style>
+  </body>
+</html>

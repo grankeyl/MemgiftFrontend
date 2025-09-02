@@ -1,0 +1,434 @@
+@use "./_variables" as *
+@use "./_frames" as *
+
+@keyframes spin
+    0%
+        transform: rotate(0deg)
+    100%
+        transform: rotate(360deg)
+
+._pageLoad
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: 100
+    background: $app-background
+    opacity: 1
+    visibility: vissible
+    pointer-events: none
+    background-image: url('bg-load.jpg')
+    background-size: cover
+    background-position: center
+    background-repeat: no-repeat
+
+    & .centered
+        position: absolute
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -50%)
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: 10px
+
+    & .logotype
+        position: relative
+        margin: auto
+
+        & img
+            width: 100%
+            height: 28px
+        
+
+    &.notLoad
+        visibility: hidden !important
+        pointer-events: none !important
+        opacity: 0 !important
+        transition: 0.25s ease-out
+
+    & .kit-icon
+        width: 42px
+        height: 42px
+        opacity: 1
+        margin: auto
+
+        & svg
+            width: 100%
+            height: 100%
+            animation: spin 0.77s linear infinite
+
+._showMenu
+    padding-bottom: $app-menu-height
+
+._direction
+    display: -webkit-box
+    display: -webkit-flex
+    display: -moz-box
+    display: flex
+    -webkit-box-orient: horizontal
+    -webkit-box-direction: normal
+    -webkit-flex-direction: row
+    -moz-box-orient: horizontal
+    -moz-box-direction: normal
+    flex-direction: row
+
+._wrap
+    background: $app-background
+    max-width: $app-max-preview-width
+    height: 100vh
+    overflow-x: hidden
+    overflow-y: auto
+    margin: auto
+    padding-top: $app-menu-height
+    padding-bottom: $app-menu-height
+
+    &::-webkit-scrollbar
+        display: none
+    
+    &.desktop
+        padding-top: 0
+
+    ._view
+        display: -webkit-box
+        display: -webkit-flex
+        display: -moz-box
+        display: flex
+        -webkit-box-orient: vertical
+        -webkit-box-direction: normal
+        -webkit-flex-direction: column
+        -moz-box-orient: vertical
+        -moz-box-direction: normal
+        flex-direction: column
+        padding-left: $app-page-padding-left
+        padding-right: $app-page-padding-right
+
+
+.overlay
+    max-width: $app-max-preview-width
+    position: fixed
+    top: 0
+    left: 50%
+    transform: translateX(-50%)
+    width: 100%
+    height: 100%
+    z-index: 1000
+    background: $app-preview
+    opacity: 0.35
+    visibility: vissible
+    transition: 0.35s ease-in-out
+
+    &.darkned
+        background: rgba(#000000, 0.80)
+        opacity: 1
+        -webkit-backdrop-filter: blur(20px)
+        backdrop-filter: blur(20px)
+
+    &.hide
+        opacity: 0
+        vissibility: hidden
+        pointer-events: none
+        transition: 0.35s ease-in-out
+
+.loading
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: 100
+    background: $app-background
+    opacity: 0
+    visibility: vissible
+    pointer-events: none
+
+    &.load
+        visibility: visible
+        opacity: 1
+
+    &.notLoad
+        visibility: hidden !important
+        pointer-events: none !important
+        opacity: 0 !important
+        transition: 0.25s ease-out
+
+    &.skeleton
+        opacity: 0.5
+
+    .loading_inner
+        width: 100%
+        height: 100%
+        display: flex
+        justify-content: center
+        align-items: center
+        gap: 20px
+
+        & .lt
+            width: 80px
+            height: 80px
+            opacity: 0
+            position: relative            
+
+            & svg
+                width: 100%
+                height: 100%
+
+            &.loaded
+                opacity: 1
+
+.menu
+    max-width: $app-max-preview-width
+    width: 100%
+    height: $app-menu-height
+    position: fixed
+    bottom: 0
+    left: 50%
+    transform: translateX(-50%)
+    z-index: 30
+
+    .menu_inner
+        width: 100%
+        height: 100%
+        position: relative
+        background: $app-background
+
+        .menu_routes
+            display: flex
+            justify-content: space-around
+            align-items: center
+            width: 100%
+            padding-top: 0.5rem
+
+            & .menuRoute
+                opacity: 0.4
+            
+            & .menuRoute.active
+                opacity: 1
+            
+            & .menu_route
+                display: flex
+                flex-direction: column
+                justify-content: center
+                text-align: center
+                align-items: center
+                gap: 4px
+                align-items: center
+                width: 100%
+                cursor: pointer
+
+                transition: all .1.1s ease
+                transition-property: color
+                -webkit-user-select: none
+                -moz-user-select: none
+                user-select: none
+                will-change: color
+
+                & .kit-icon
+                    width: fit-content
+                    height: fit-content
+
+                    & svg
+                        width: 23px
+                        height: 23px
+
+                & p
+                    font-size: 10px
+                    font-weight: 700
+            
+
+@media screen and (max-width: 380px)
+    .menu
+        width: 100%
+        height: calc($app-menu-height - 15px)
+
+        .menu_inner
+            width: 100%
+            height: 100%
+
+            .menu_routes
+                display: flex
+                
+                & .menu_route
+                    gap: 4px
+
+                    & .kit-icon
+                        width: fit-content
+                        height: fit-content
+
+                        & svg
+                            width: 18px !important
+                            height: 18px !important
+
+                    & p
+                        font-size: 7px !important
+                        font-weight: 700
+
+
+.buy-button
+    width: 100%
+    height: fit-content
+    max-width: $app-max-preview-width
+    background: $app-background
+    padding: 12px 12px 30px 12px
+    position: fixed
+    bottom: 0
+    left: 0
+    z-index: 101
+    opacity: 1
+    transform: scale(1)
+    transition: $app-transition-page
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    gap: 12px
+
+    &.hide
+        opacity: 0
+        transform: scale(0.9)
+        transition: $app-transition-page
+        pointer-events: none
+
+    & button.buy-button_profile
+        width: 100%
+        height: 53px
+        display: flex
+        border-radius: 13px
+        background: $app-background-secondary
+        padding: 0 15px
+        align-items: center
+        justify-content: center
+        gap: 7px
+        cursor: pointer
+        transform: scale(1)
+        transition: transform 0.22s ease
+
+        &.clicked
+            transform: scale(0.94)
+
+        & p
+            font-size: 16px
+            font-weight: 700
+            color: $app-big-button-text-color
+
+        & img
+            width: 16px
+            height: 16px
+            margin-right: -3px
+            
+        & span
+            font-size: 16px
+            font-weight: 700
+            color: $app-big-button-text-color
+
+    & button.buy-button_action
+        width: 100%
+        height: 53px
+        display: flex
+        border-radius: 13px
+        background: $app-big-button-background
+        padding: 0 15px
+        align-items: center
+        justify-content: center
+        gap: 7px
+        cursor: pointer
+
+        &.disable
+            pointer-events: none
+            opacity: 0.4
+
+        &.loadingButton
+            & p
+                display: none
+            
+            & img
+                display: none
+            
+            & span
+                display: none
+            
+            & .lt
+                display: block
+                width: 35px
+                height: 35px
+                position: relative
+                opacity: 1
+
+                & svg
+                    width: 100%
+                    height: 100%
+
+        & p
+            font-size: 16px
+            font-weight: 700
+            color: $app-big-button-text-color
+
+        & img
+            width: 16px
+            height: 16px
+            margin-right: -3px
+            
+        & span
+            font-size: 16px
+            font-weight: 700
+            color: $app-big-button-text-color
+
+        & .lt
+            display: none
+
+
+._comp._item._description
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._text
+            width: 25%
+
+            & p
+                width: auto
+                height: 30px
+                background: $app-background-secondary
+                border-radius: 10px
+    
+    ._content
+        width: 100%
+        height: 30px
+        display: flex
+        align-items: center
+        gap: 10px
+        transition: all 0.22s forwards
+
+        ._text
+            width: fit-content
+
+            & p
+                width: auto
+                font-size: 15px
+                font-weight: 500
+                color: $app-text-color-descr
+
+.v-toast__item
+    border-radius: 24px !important
+    min-height: 45px !important
+    max-height: 45px !important
+    height: 45px !important
+    margin: 5px 12px !important
+
+    & .v-toast__icon
+        width: 24px !important
+        height: 24px !important
+        margin-left: 13px !important
+
+    p
+        margin-left: -7px !important
+        font-size: 14px !important
+        font-weight: 700 !important
+        color: $app-text-color !important

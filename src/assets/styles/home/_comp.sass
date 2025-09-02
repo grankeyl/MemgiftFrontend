@@ -1,0 +1,1240 @@
+@use "./../_variables" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.55s !important
+
+
+._comp._item._title
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px !important
+
+    &._default
+        margin-top: 30px
+
+    &._upcoming
+        margin-top: 10px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._text
+            width: 25%
+
+            & h4
+                width: auto
+                height: 30px
+                background: $app-background-secondary
+                border-radius: 10px
+
+        ._image
+            width: 30px
+            height: 30px
+            border-radius: 50%
+            background: $app-background-secondary
+            display: flex
+            justify-content: center
+            align-items: center
+            position: relative
+
+            & img
+                width: 100%
+                height: 100%
+                border-radius: 50%
+    
+    ._content
+        width: 100%
+        height: 30px
+        display: flex
+        align-items: center
+        gap: 10px
+        transition: all 0.22s forwards
+
+        ._text
+            width: fit-content
+
+            & h4
+                width: auto
+
+                font-size: 22px
+                font-weight: 600
+                color: $app-text-color
+
+        ._image
+            width: 45px
+            height: 45px
+            display: flex
+            justify-content: center
+            align-items: center
+            position: relative
+
+            & img
+                width: 100%
+                height: 100%
+                object-fit: cover
+                border-radius: 50%
+        
+        ._titleTickets
+            width: fit-content
+            height: fit-content
+            display: flex
+            align-items: center
+            gap: 7px
+            margin-left: auto
+
+            & img
+                width: 24px
+                height: 24px
+
+            & p
+                font-size: 19px
+                font-weight: 500
+                color: $app-text-color
+
+
+._comp._item._slider
+    min-width: calc(100%)
+    height: 100%
+    margin-bottom: 15px
+    -webkit-box-flex: 1
+    flex-grow: 1
+
+    ._skeleton
+        width: 100%
+        border-radius: 14px
+
+        ._wSlide
+            position: relative
+            width: 100%
+            height: 100%
+            z-index: 1
+            display: -webkit-box
+            display: -webkit-flex
+            display: -moz-box
+            display: flex
+            gap: 16px
+            -webkit-box-sizing: content-box
+            -moz-box-sizing: content-box
+            box-sizing: content-box
+            overflow-x: scroll
+            margin-left: $app-page-padding-left
+            pointer-events: none
+
+            ._slide
+                width: 334px
+                height: 155px
+                background: $app-background-secondary
+                border-radius: 14px
+                flex-shrink: 0
+
+    ._content
+        position: relative
+        overflow: hidden
+        list-style: none
+        z-index: 1
+        width: calc(100% + $app-page-padding-right)
+
+        .swiper
+            display: flex
+            height: 155px
+            white-space: nowrap
+            overflow: visible
+            padding: 0 $app-page-padding-left
+
+            .swiper-slide
+                width: calc(100% - 40px)
+                height: 155px
+                background: $app-background-secondary
+                background-repeat: no-repeat
+                background-size: cover
+                background-position: center
+                border-radius: 14px
+                overflow: hidden
+                flex-shrink: 0
+                position: relative
+                display: flex
+                align-items: center
+
+                .swiperSlide
+                    width: 400px !important
+                    height: 100%
+
+                & .slideBg
+                    width: 100%
+                    height: 100%
+                    flex-shrink: 0
+                    position: relative
+                    overflow: hidden
+                    display: flex
+                    align-items: center
+                    background-repeat: no-repeat
+                    background-size: cover
+                    background-position: center
+                    padding-left: 23px
+
+                    & .starsBg
+                        position: absolute
+                        top: 0
+                        right: 0
+                        width: 70%
+                        height: 100%
+                        z-index: 10
+
+                    ._left
+                        width: 100%
+                        display: flex
+                        flex-direction: column
+                        white-space: normal
+                        gap: 15px
+                        position: relative
+                        z-index: 11
+
+                        ._title
+                            width: 100px
+                            height: 100%
+                            
+                            & h1
+                                width: 155px
+                                height: auto
+                                font-size: 21px
+                                color: $app-text-color
+                                
+                        ._button
+                            width: 100%
+                            height: auto
+
+                            & button
+                                display: flex
+                                align-items: center
+                                height: 31px
+                                background: #26123232
+                                padding: 0 16px
+
+                                & img
+                                    width: 16px
+                                    height: 16px
+                                    margin-right: 2px
+                                    
+                                & p
+                                    font-size: 15px
+                                    font-weight: 500
+                                    color: $app-button-text-color
+
+                                &.author
+                                    display: flex
+                                    align-items: center
+                                    width: fit-content
+                                    background: #10081532
+                                    -webkit-backdrop-filter: blur(23px)
+                                    backdrop-filter: blur(23px)
+                                    
+
+                                    & p
+                                        font-size: 15px
+                                        font-weight: 500
+                                        white-space: nowrap
+                                        color: $app-text-color
+
+                                    & .kit-icon
+
+                                        svg
+                                            width: 9px
+                                            height: 10px
+                                
+                                &.reading
+                                    display: flex
+                                    align-items: center
+                                    width: 118px
+                                    background: #10081532
+                                    -webkit-backdrop-filter: blur(23px)
+                                    backdrop-filter: blur(23px)
+                                    
+
+                                    & p
+                                        font-size: 15px
+                                        font-weight: 500
+                                        white-space: nowrap
+                                        color: $app-text-color
+
+                                    & .kit-icon
+
+                                        svg
+                                            width: 9px
+                                            height: 10px
+                                        
+                    ._right
+                        width: fit-content
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: absolute
+                        right: 20px
+                        top: 50%
+                        transform: translateY(-50%) translateX(4%)
+                        z-index: 11
+
+                        & ._image
+                            width: 130px
+                            height: 100%
+                        
+                            & img
+                                width: 100%
+                                height: 100%
+                                object-fit: cover
+    
+._comp._item._funcs
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        .func
+            width: 100%
+            height: 58px
+            background: $app-background-secondary
+            border-radius: 14px
+    
+    ._content
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        .func
+            width: 100%
+            height: 58px
+            background: $app-mark-bg
+            border-radius: 14px
+            display: flex
+            align-items: center
+            padding: 0 18px 0px 14px
+
+            ._left
+                width: 100%
+                display: flex
+                align-items: center
+                gap: 12px
+
+                ._icon
+                    width: fit-content
+                    height: fit-content
+
+                    & .kit-icon
+                        width: 20px
+                        height: 20px
+
+                ._title
+                    width: fit-content
+                    height: auto
+                    
+                    & h4
+                        width: auto
+                        height: auto
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                        
+                ._mark._soon
+                    width: fit-content
+                    height: auto
+                    
+                    & span
+                        background: rgba($app-mark-background, 0.6)
+                        color: $app-text-color-descr-primary
+                        
+                ._mark._new
+                    width: fit-content
+                    height: auto
+                    
+                    & span
+                        background: $app-button-blue-background
+                        color: $app-button-blue-light-text-color
+                        
+                ._mark
+                    width: fit-content
+                    height: auto
+                    
+                    & span
+                        width: auto
+                        height: auto
+                        margin-right: auto
+                        padding: 3px 10px
+                        background: $app-button-blue-background
+                        border-radius: 50px
+                        font-size: 14px
+                        font-weight: 600
+                        color: $app-button-blue-text-color
+            
+            ._right
+                width: fit-content
+                display: flex
+                justify-content: center
+                align-items: center
+                opacity: .5
+
+                & .kit-icon
+                    width: fit-content
+                    height: fit-content
+                    margin-top: 2px
+
+    
+._comp._item._categories
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    z-index: 100
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._category
+            width: 80px
+            height: 30px
+            background: $app-background-secondary
+            border-radius: 50px
+    
+    ._content
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        overflow-x: scroll
+
+        ._category
+            width: fit-content
+            height: 30px
+            padding: 0 12px
+            border-radius: 50px
+            display: flex
+            justify-content: center
+            align-items: center
+            transition: background 0.06s ease
+
+            & h4
+                white-space: nowrap
+                font-size: 15px
+                font-weight: 400
+                color: $app-text-color
+                opacity: .55
+                transition: opacity 0.06s ease
+            
+            &._active
+                background: $app-background-secondary
+
+                & h4
+                    color: $app-text-color
+                    opacity: 1
+
+    
+    
+._comp._item._selects
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    z-index: 100
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._category
+            width: 80px
+            height: 30px
+            background: $app-background-secondary
+            border-radius: 50px
+    
+    ._content
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: 10px
+
+        ._select
+            width: 100%
+            height: 52px
+            padding: 0 18px
+            display: flex
+            align-items: center
+            justify-content: space-between
+            background: $app-background-secondary
+            border-radius: 16px
+            position: relative 
+
+            .dropdown
+                position: absolute
+                top: 100%
+                left: 0
+                width: 100%
+                height: 150px
+                overflow-y: scroll
+                background: $app-background-secondary
+                border-radius: 16px
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+                z-index: 10
+                opacity: 0
+                visibility: hidden
+                transform: translateY(-5px)
+                transition: all 0.2s ease
+                padding: 8px 0
+
+                & .dropdown-scroll
+                    width: 98%
+                    height: 100%
+                    overflow-y: auto
+                    padding-right: 4px
+                    border-radius: 16px
+
+                    &::-webkit-scrollbar
+                        width: 6px
+                        display: block
+
+                    &::-webkit-scrollbar-track
+                        background: transparent
+
+                    &::-webkit-scrollbar-thumb
+                        background-color: $app-background-gray-secondary
+                        border-radius: 4px
+
+                    &::-webkit-scrollbar-thumb:hover
+                        background-color: $app-background-gray-secondary
+
+                &.open
+                    opacity: 1
+                    visibility: visible
+                    transform: translateY(10px)
+                
+                & .dropdown-option
+                    width: 100%
+                    height: 40px
+                    display: flex
+                    align-items: center
+                    justify-content: space-between
+                    padding: 0 18px
+                    cursor: pointer
+                    transition: background 0.1s ease
+
+                    &.active
+                        & span
+                            color: $app-text-color-primary
+                            opacity: 1
+                        
+                        & .kit-icon
+                            width: 18px
+                            height: 18px
+                            transform: rotate(0deg)
+
+                            & svg
+                                width: 100%
+                                height: 100%
+
+                                & path
+                                    stroke: $app-text-color-primary
+
+                    & .kit-icon
+                        width: 18px
+                        height: 18px
+                        transform: rotate(0deg)
+
+            .selected
+                width: fit-content
+                height: fit-content
+                display: flex
+                align-items: center
+                gap: 10px
+                font-size: 15px
+                font-weight: 600
+                color: $app-text-color
+
+            .kit-icon
+                width: 18px
+                height: 18px
+                transform: rotate(180deg)
+
+                & svg
+                    width: 100%
+                    height: 100%
+
+        ._checkbox
+            width: 100%
+            height: 48px
+            border: 1.7px solid $app-background-secondary
+            border-radius: 14px
+            display: flex
+            align-items: center
+            gap: 10px
+            padding: 0 12px
+            cursor: pointer
+
+            &.active
+                display: flex
+
+                & .custom-checkbox-box
+                    background-color: $app-background-secondary
+
+                    &::after
+                        opacity: 1
+
+            .custom-checkbox-box
+                width: 24px
+                height: 24px
+                border: 2px solid $app-background-secondary
+                border-radius: 6px
+                position: relative
+                background-color: transparent
+                transition: background 0.2s ease, border 0.2s ease
+
+                &.checked
+                    border: 2px solid rgba($app-background-gold-secondary, 0)
+                    background-color: rgba($app-background-gold-secondary, 0.8)
+
+                    &::after
+                        opacity: 1
+
+                &::after
+                    content: ''
+                    position: absolute
+                    top: 3px
+                    left: 7px
+                    width: 6px
+                    height: 12px
+                    border-right: 2px solid white
+                    border-bottom: 2px solid white
+                    transform: rotate(45deg)
+                    opacity: 0
+                    transition: opacity 0.2s ease
+
+            .custom-checkbox-label
+                font-size: 15px
+                font-weight: 500
+                color: $app-text-color
+
+
+._comp._item._lastActivity
+    width: 100%
+    height: fit-content
+    margin-bottom: 5px
+    z-index: 100
+
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._block
+            width: 100%
+            height: 30px
+            background: $app-background-secondary
+            border-radius: 50px
+    
+    ._content
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._block
+            width: 100%
+            height: 60px
+            border-radius: 13px
+            display: flex
+            align-items: center
+            gap: 6px
+            position: relative
+            overflow: hidden
+            padding: 0px 5px
+
+            &.rare::before
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 135%
+                background: $app-rarity-background-rare
+                opacity: 0.25
+                z-index: 0
+                border-radius: 13px
+
+            &.veryrare::before
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 135%
+                background: $app-rarity-background-very-rare
+                opacity: 0.25
+                z-index: 0
+                border-radius: 13px
+
+            &.epic::before
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 135%
+                background: $app-rarity-background-epic
+                opacity: 0.25
+                z-index: 0
+                border-radius: 13px
+
+            &.legend::before
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 135%
+                background: $app-rarity-background-legendary
+                opacity: 0.25
+                z-index: 0
+                border-radius: 13px
+            
+            &.author::before
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 135%
+                background: $app-rarity-background-author
+                opacity: 0.25
+                z-index: 0
+                border-radius: 13px
+
+            *
+                position: relative
+                z-index: 1
+
+            ._image
+                width: 52px
+                height: 52px
+                
+                & img
+                    width: 100%
+                    height: 100%
+            
+            ._title
+                width: fit-content
+                height: fit-content
+                display: flex
+                flex-direction: column
+                align-items: start
+                gap: 5px
+
+                & h4
+                    width: auto
+                    height: auto
+                    font-size: 15px
+                    font-weight: 500
+                    color: $app-text-color
+                    max-width: 220px
+                    overflow: hidden
+                    text-overflow: ellipsis
+                    white-space: nowrap
+                    display: flex
+                    align-items: center
+                    gap: 5px
+
+                    & p
+                        font-size: 15px
+                        font-weight: 500
+                        color: $app-text-color
+                        opacity: 1
+
+                    & span
+                        color: $app-text-color-primary
+                    
+                & p
+                    width: auto
+                    height: auto
+                    font-size: 13px
+                    font-weight: 500
+                    color: $app-text-color
+                    opacity: .5
+            
+            ._button
+                width: 38px
+                height: 38px
+                margin-left: auto
+                margin-right: 5px
+
+                & button
+                    width: 38px
+                    height: 38px
+                    background: none
+                    border-radius: 50px
+                    
+                    .kit-icon
+                        width: 100%
+                        height: 100%
+                        opacity: .4
+
+                        & svg
+                            margin-top: 4px
+                            margin-left: -3px
+
+
+    
+._comp._item._gifts
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: grid
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+        gap: 14px
+
+        ._gift
+            width: 100%
+            height: 203px
+            background: $app-background-secondary
+            border-radius: 16px
+    
+    ._content
+        width: 100%
+        display: grid
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+        gap: 14px
+
+        ._gift
+            width: 100%
+            height: 203px
+            background: $app-background-secondary
+            border-radius: 16px
+            position: sticky
+            animation: bubbleNft 0.20s linear
+            will-change: transform opacity
+            transition: all 0.26s linear
+
+            ._rarityGradient
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 100%
+                z-index: 0
+                opacity: 0
+                border-radius: 16px
+                animation: fade-in-gradient 0.8s ease forwards
+                background: linear-gradient(
+                    180deg,
+                    var(--center-color) 0%,
+                    var(--around-color) 100%
+                )
+                pointer-events: none
+
+            &:active
+                transform: scale(0.97)
+
+            &.rare
+                background: $app-rarity-background-rare
+            
+            &.veryrare
+                background: $app-rarity-background-very-rare
+            
+            &.epic
+                background: $app-rarity-background-epic
+            
+            &.legend
+                background: $app-rarity-background-legendary
+            
+            &.author
+                background: $app-rarity-background-author
+
+            .nftNewMark
+                position: absolute
+                top: 7px
+                left: 8px
+                width: fit-content
+                height: 23px
+                background: #f4bf1e
+                border-radius: 50px
+                display: flex
+                justify-content: center
+                align-items: center
+                padding: 0 9px
+
+                & p
+                    font-size: 13px
+                    font-weight: 600
+                    color: $app-preview
+            
+            ._tickets
+                position: absolute
+                top: 7px
+                left: 8px
+                width: fit-content
+                height: 25px
+                z-index: 1
+                background: #ffffff14
+                -webkit-backdrop-filter: blur(10px)
+                backdrop-filter: blur(10px)
+                border-radius: 50px
+                display: flex
+                justify-content: center
+                align-items: center
+                padding: 0 9px
+                
+                & img
+                    width: 16px
+                    height: 16px
+                    margin-right: 3px
+
+                & p
+                    font-size: 13px
+                    font-weight: 600
+                    color: $app-text-color
+            
+            ._symbols
+                position: absolute
+                width: 100%
+                height: 100%
+                overflow: hidden
+                opacity: .25
+                z-index: 1
+
+                & img
+                    position: absolute
+                    left: 50%
+                    top: 50%
+                    width: 100%
+                    height: calc(100% - 30px)
+                    transform: translate(-50%, -59%)
+                    object-fit: cover
+                    z-index: -1
+
+            ._rarity
+                width: fit-content
+                height: fit-content
+                position: absolute
+                top: 28px
+                right: 27px
+                text-align: center
+                transform: rotate(45deg)
+                z-index: 10
+
+                ._image
+                    width: 100px
+                    height: 40px
+                    position: absolute
+                    z-index: 1
+                    top: 50%
+                    left: 50%
+                    transform: translate(-50%, -50%)
+                    
+                    & img
+                        width: 100%
+                        height: 100%
+                        z-index: 1
+                
+                ._text
+                    position: absolute
+                    z-index: 2
+                    white-space: nowrap
+                    transform: translate(-50%, -53%)
+                    max-width: 70px
+                    overflow: hidden
+                    white-space: nowrap
+                    text-overflow: ellipsis
+                    
+                    & span
+                        font-size: 14px
+                        font-weight: 500
+                        color: $app-text-color
+
+            ._number
+                width: fit-content
+                height: 25px
+                position: absolute
+                top: 10px
+                left: 11px
+                text-align: center
+                background: rgba($app-background-secondary, 0.2)
+                border-radius: 50px
+                padding: 0 9px
+                display: flex
+                align-items: center
+                justify-content: center
+                z-index: 5
+
+                & span
+                    font-size: 14px
+                    font-weight: 500
+                    color: $app-button-text-color
+            
+            ._nft
+                width: 100%
+                height: 100%
+                position: absolute
+                top: 50%
+                left: 50%
+                transform: translate(-50%, -44%)
+                text-align: center
+                z-index: 5
+
+                &._lottie
+                    width: 100%
+                    height: 100%
+                    position: absolute
+                    top: 50%
+                    left: 50%
+                    transform: translate(-50%, -42%)
+                    margin: 0
+                    text-align: center
+
+                & .lottie-gift
+                    width: 66%
+                    height: 66%
+                    margin: auto
+
+                & img
+                    width: 70%
+                    height: 70%
+                    object-fit: cover
+                
+                &.nftLoading
+                    & img
+                        display: none
+
+                    & .loader-icon
+                        width: 30px
+                        height: 30px
+                        margin: auto
+                        position: absolute
+                        top: 31%
+                        left: 43%
+                        border: 2px solid $app-text-color-descr-primary
+                        transform-origin: center
+                        border-top-color: $app-text-color
+                        border-radius: 50%
+                        animation: spinner 1s linear infinite
+            
+            ._buy
+                width: fit-content
+                height: fit-content
+                position: absolute
+                bottom: 20px
+                left: 50%
+                transform: translateX(-50%)
+                z-index: 10
+
+                & button
+                    height: 34px
+                    background: $app-button-background-blur
+                    padding: 0 21px
+                    white-space: nowrap
+                    width: fit-content
+
+                    & .starsSmall
+                        width: 17px
+                        height: 16px
+
+            ._sendNft
+                width: fit-content
+                height: fit-content
+                position: absolute
+                bottom: 20px
+                left: 50%
+                transform: translateX(-50%)
+                z-index: 10
+
+                & button
+                    height: 34px
+                    padding: 0 21px
+                    background: #00000027
+                    -webkit-backdrop-filter: blur(10px)
+                    backdrop-filter: blur(10px)
+                    border-radius: 50px
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+
+                    &._loading
+                        pointer-events: none
+
+                        & p
+                            display: none
+                        
+                        & .lt
+                            width: 22px
+                            height: 22px
+                            pointer-events: none
+                            display: block
+
+                            svg
+                                width: 100%
+                                height: 100%
+
+                    & img
+                        width: 16px
+                        height: 16px
+                        margin-right: 2px
+                        
+                    & p
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                    
+                    & .lt
+                        display: none
+        
+
+            ._null
+                width: 100%
+                height: 100%
+                display: flex
+                background: $app-background-secondary
+                flex-direction: column
+                align-items: center
+                justify-content: center
+
+                ._title
+                    width: 100%
+                    height: auto
+                    
+                    & h4
+                        width: 100%
+                        height: auto
+                        font-size: 24px
+                        font-weight: 600
+                        color: $app-text-color
+                        
+                ._descr
+                    width: 100%
+                    height: auto
+                    
+                    & p
+                        width: 100%
+                        height: auto
+                        font-size: 15px
+                        font-weight: 400
+                        color: $app-text-color-descr
+                
+                ._buy
+                    width: 100%
+                    height: auto
+                    
+                    & button
+                        width: 100%
+                        height: auto
+                        padding: 0 21px
+                        white-space: nowrap
+                        width: fit-content
+
+
+.fade-history-enter-active,
+.fade-history-leave-active
+  transition: opacity 0.25s ease
+
+.fade-history-enter-from,
+.fade-history-leave-to
+  opacity: 0
+
+.fade-history-enter-to,
+.fade-history-leave-from
+  opacity: 1
+
+
+._comp._item._nftNull
+    width: 100%
+    height: fit-content
+    margin-top: -15px
+    margin-bottom: 15px
+    z-index: 5
+    
+    ._null
+                width: 100%
+                height: 100%
+                display: flex
+                background: $app-background-secondary
+                border-radius: 16px
+                align-items: center
+                justify-content: space-between
+                padding: 15px 22px
+
+                ._left
+                    width: 100%
+                    height: 100%
+
+                    ._title
+                        width: 100%
+                        height: auto
+                        margin-bottom: 5px
+                        
+                        & h4
+                            width: 100%
+                            height: auto
+                            font-size: 16px
+                            font-weight: 600
+                            color: $app-text-color
+                            
+                    ._descr
+                        width: 100%
+                        height: auto
+                        
+                        & p
+                            height: auto
+                            font-size: 14px
+                            font-weight: 400
+                            max-width: 95%
+                            color: $app-text-color-descr
+                
+                ._right
+                    width: fit-content
+                    height: fit-content
+
+                    ._null_buy
+                        width: 100%
+                        position: relative
+                        height: fit-content
+                        
+                        & button
+                            width: fit-content
+                            padding: 10px 11px
+                            background: $app-big-button-background
+                            border-radius: 50px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            gap: 7px
+                            cursor: pointer
+
+                            & p
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-big-button-text-color
+                                white-space: nowrap
+                                max-width: 100px
+                                overflow: hidden
+                                text-overflow: ellipsis

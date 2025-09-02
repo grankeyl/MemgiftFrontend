@@ -1,0 +1,937 @@
+@use "./../_variables" as *
+@use "./../_frames" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes bubbleNft
+  0%
+    opacity: 0
+    transform: scale(0.65)
+  100%
+    opacity: 1
+    transform: scale(1)
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+._comp._item._ticketsContext
+    width: 100%
+    height: fit-content
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: 100%
+            border-radius: 10px
+            display: flex
+            flex-direction: column
+            align-items: center
+            justify-content: center
+
+            ._image
+                width: 150px
+                min-width: 150px
+                max-width: 150px
+                height: 150px
+                min-height: 150px
+                max-height: 150px
+                border-radius: 50%
+                background: $app-background-secondary
+                opacity: .7
+                display: flex
+                justify-content: center
+                align-items: center
+                position: relative
+                margin-bottom: 12px
+
+                & img
+                    width: 100%
+                    height: 100%
+                    border-radius: 50%
+            
+            ._title
+                width: 45%
+                height: 30px
+                background: $app-background-secondary
+                opacity: .7
+                border-radius: 10px
+                margin-bottom: 13px
+            
+            ._descr
+                width: 65%
+                height: 56px
+                background: $app-background-secondary
+                opacity: .7
+                border-radius: 10px
+                margin-bottom: 22px
+            
+            ._tickets
+                width: 75px
+                height: 34px
+                background: $app-background-secondary
+                opacity: .7
+                display: flex
+                align-items: center
+                gap: 7px
+                border-radius: 50px
+                position: absolute
+                top: 0px
+                right: 0px
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 6px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: 100%
+            border-radius: 14px
+            display: flex
+            flex-direction: column
+            align-items: center
+            justify-content: center
+
+            ._image
+                width: 180px
+                min-width: 180px
+                max-width: 180px
+                height: 151px
+                min-height: 151px
+                max-height: 151px
+                display: flex
+                justify-content: center
+                align-items: center
+                position: relative
+                margin-bottom: 12px
+
+                & img
+                    width: 100%
+                    height: 100%
+            
+            ._title
+                width: fit-content
+                border-radius: 10px
+                margin-bottom: 13px
+
+                & h4
+                    font-size: 24px
+                    font-weight: 700
+                    color: $app-text-color
+            
+            ._descr
+                width: 310px
+                text-align: center
+                border-radius: 10px
+                margin-bottom: 22px
+                font-size: 15px
+                font-weight: 500
+                color: $app-text-color-descr
+            
+                span
+                    font-size: 15px
+                    font-weight: 500
+                    color: $app-text-color-primary
+            
+            ._tickets
+                width: 75px
+                height: 34px
+                background: $app-background-secondary
+                display: flex
+                align-items: center
+                justify-content: center
+                gap: 7px
+                border-radius: 50px
+                position: absolute
+                top: 0px
+                right: 0px
+
+                & img
+                    width: 24px
+                    min-width: 24px
+                    max-width: 24px
+                    height: 24px
+                    min-height: 24px
+                    max-height: 24px
+
+                & p
+                    font-size: 15px
+                    font-weight: 600
+                    color: $app-text-color
+    
+
+._comp._item._ticketsRecents
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+
+    ._content
+        width: 100%
+        display: flex
+        flex-direction: column
+        gap: 16px
+
+        ._price
+            width: 100%
+            height: fit-content
+
+            ._amount
+                width: fit-content
+                height: auto
+
+                & span
+                    font-weight: 600 !important
+                    color: $app-text-color !important
+
+
+@media screen and (max-width: 400px)
+    ._comp._item._ticketsContext
+        margin-bottom: 15px
+
+        ._content
+            gap: 6px
+
+            ._block
+                width: 100%
+                height: 100%
+
+                ._image
+                    width: 150px
+                    min-width: 150px
+                    max-width: 150px
+                    height: 130px
+                    min-height: 130px
+                    max-height: 130px
+                    margin-bottom: 12px
+
+                    & img
+                        width: 100%
+                        height: 100%
+                
+                ._title
+                    width: fit-content
+                    margin-bottom: 13px
+
+                    & h4
+                        font-size: 20px
+                
+                ._descr
+                    width: 250px
+                    margin-bottom: 22px
+                    font-size: 13px
+
+                    span
+                        font-size: 13px
+                
+                ._tickets
+                    gap: 7px
+
+                    & img
+                        width: 20px
+                        min-width: 20px
+                        max-width: 20px
+                        height: 20px
+                        min-height: 20px
+                        max-height: 20px
+
+                    & p
+                        font-size: 13px
+
+    ._comp._item._ticketsRecents
+        width: 100%
+        height: fit-content
+        margin-top: 5px
+        margin-bottom: 15px
+
+        ._content
+            width: 100%
+            display: flex
+            flex-direction: column
+            gap: 16px
+
+            ._second ._title h4
+                font-size: 14px
+
+            ._items ._item ._context ._title h4
+                max-width: 150px
+                font-size: 14px
+
+            ._items ._item ._context ._descr p
+                max-width: 150px
+                font-size: 13px
+
+            ._price
+                width: 100%
+                height: fit-content
+                gap: 6px !important
+
+                ._amount
+                    width: fit-content
+                    height: auto
+
+                    & span
+                        font-size: 13px !important
+                        font-weight: 600 !important
+                        color: $app-text-color !important
+
+                & img
+                    width: 20px !important
+                    height: 20px !important
+
+
+._comp._item._tasksPinned
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: 100%
+            border-radius: 10px
+            display: flex
+            align-items: center
+            justify-content: center
+            gap: 11px
+
+            ._task
+                width: 100%
+                height: 104px
+                background: $app-background-secondary
+                opacity: .7
+                border-radius: 16px
+                display: flex
+                align-items: center
+                gap: 10px
+                position: relative
+
+    ._content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+        max-height: 104px
+
+        ._block
+            width: 100%
+            height: 100%
+            border-radius: 10px
+            display: flex
+            align-items: center
+            justify-content: center
+            gap: 11px
+
+            &.disabled
+                pointer-events: none
+                opacity: .5
+
+            ._task
+                width: 100%
+                height: 104px
+                background: $app-background-secondary
+                border-radius: 16px
+                gap: 10px
+                overflow: hidden
+                position: relative
+                padding: 13px 15px
+                animation: elementShow 0.24s linear
+
+                ._taskSpan
+                    width: 45px
+                    height: 45px
+                    border-radius: 50px
+                    background: $app-background-gray-secondary
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    position: relative
+
+                    &.done
+                        display: flex
+
+                        & .kit-icon
+                            display: flex !important
+                            width: 20px
+                            height: 20px
+                            opacity: 1
+
+                            & svg
+                                width: 20px
+                                height: 21px
+
+                                & path
+                                    stroke: $app-background-green-secondary
+
+                    & .kit-icon.done
+                        display: none
+
+                    & .kit-icon
+                        width: 20px
+                        height: 20px
+                        opacity: .55
+
+                        & svg
+                            width: 20px
+                            height: 21px
+                
+                ._taskTitle
+                    margin-top: 12px
+
+                    h4
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                        white-space: nowrap
+                        max-width: 170px
+                        overflow: hidden
+                        text-overflow: ellipsis
+                
+                ._taskTickets
+                    position: absolute
+                    top: 9px
+                    right: 9px
+                    width: fit-content
+                    height: 26px
+                    z-index: 1
+                    background: #ffffff14
+                    -webkit-backdrop-filter: blur(10px)
+                    backdrop-filter: blur(10px)
+                    border-radius: 50px
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    padding: 0 9px
+                    
+                    & img
+                        width: 17px
+                        height: 16px
+                        margin-right: 3px
+
+                    & p
+                        font-size: 15px
+                        font-weight: 600
+                        color: $app-text-color-phiolete
+                
+
+._comp._item._partnersTasks
+    width: 100%
+    height: fit-content
+    margin-bottom: 11px
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: 113px
+            background: $app-background-secondary
+            opacity: .7
+            border-radius: 16px
+            display: flex
+            align-items: center
+            gap: 10px
+            position: relative
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: fit-content
+            background: $app-background-secondary
+            border-radius: 16px
+            display: flex
+            flex-direction: column
+            align-items: center
+            gap: 20px
+            position: relative
+            padding: 14px 16px
+            animation: elementShow 0.24s linear
+
+            ._blockHead
+                width: 100%
+                height: 16px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 10px
+                position: relative
+
+                ._blockHeadTitle
+                    width: fit-content
+                    height: auto
+                    
+                    & h4
+                        width: fit-content
+                        height: auto
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                        
+                ._blockHeadSpan
+                    width: fit-content
+                    height: auto
+                    display: flex
+                    align-items: center
+                    gap: 5px
+                    
+                    & span
+                        width: fit-content
+                        height: auto
+                        font-size: 14px
+                        font-weight: 500
+                        color: $app-text-color-primary-secondary
+                        
+                    & .kit-icon
+                        width: 10px
+                        height: auto
+
+                        & svg
+                            width: 10px
+                            height: 10px
+
+                            & path
+                                stroke: $app-text-color-primary-secondary
+            
+            ._tasksBlocker
+                width: 100%
+
+                ._task
+                    width: 100%
+                    height: 41px
+                    border-radius: 16px
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    position: relative
+
+                    ._taskSpan
+                        width: 48px
+                        height: 48px
+                        min-width: 48px
+                        max-width: 48px
+                        min-height: 48px
+                        max-height: 48px
+                        border-radius: 50px
+                        background: $app-background-gray-secondary
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        
+                        & img
+                            width: 100%
+                            height: 100%
+                            object-fit: cover
+                            border-radius: 50%
+
+                    ._taskContext
+                        width: 100%
+                        height: auto
+                        display: flex
+                        flex-direction: column
+                        gap: 4px
+                        position: relative
+
+                        ._taskContextTitle
+                            width: fit-content
+                            height: auto
+                            
+                            & h4
+                                width: fit-content
+                                height: auto
+                                font-size: 16px
+                                font-weight: 600
+                                color: $app-text-color
+                                
+                        ._taskContextTickets
+                            width: fit-content
+                            height: auto
+                            display: flex
+                            align-items: center
+                            gap: 7px
+                            position: relative
+
+                            & img
+                                width: 24px
+                                height: 24px
+                                display: flex
+                                justify-content: center
+                                align-items: center
+                                position: relative
+
+                                & img
+                                    width: 100%
+                                    height: 100%
+                                    object-fit: cover
+
+                            & p
+                                font-size: 15px
+                                font-weight: 600
+                                color: $app-text-color-phiolete
+
+                            & b
+                                font-size: 15px
+                                font-weight: 600
+                                color: $app-text-color-phiolete
+                    
+                    ._taskButton
+                        width: fit-content
+                        height: auto
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        gap: 7px
+                        position: relative
+                        
+                        & button
+                            width: fit-content
+                            height: 34px
+                            padding: 0 16px
+                            background: $app-background-blue-secondary
+                            border-radius: 50px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            gap: 7px
+                            cursor: pointer
+                            transform: scale(1)
+                            transition: transform 0.22s ease
+
+                            &.start
+                                background: $app-background-blue-secondary
+
+                                & span
+                                    color: $app-text-color
+
+                            &.process
+                                pointer-events: none
+                                background: $app-background-blue-secondary
+
+                                & .lt
+                                    width: 22px
+                                    height: 22px
+                                    display: flex
+                                
+
+                            &.claim
+                                background: $app-button-blue-background
+
+                                & span
+                                    color: $app-button-blue-text-color-active
+
+                            &.done
+                                background: $app-background-gray-secondary
+
+                                & span
+                                    color: $app-background-green-secondary
+
+                            & span
+                                width: fit-content
+                                height: auto
+                                font-size: 15px
+                                font-weight: 600
+                                color: $app-text-color
+                                white-space: nowrap
+                                max-width: 100px
+                                overflow: hidden
+                                text-overflow: ellipsis
+
+
+._comp._item._othersTasks
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: 400px
+            background: $app-background-secondary
+            opacity: .7
+            border-radius: 16px
+            display: flex
+            align-items: center
+            gap: 10px
+            position: relative
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: fit-content
+            background: $app-background-secondary
+            border-radius: 16px
+            display: flex
+            flex-direction: column
+            align-items: center
+            gap: 20px
+            position: relative
+            padding: 14px 16px
+            animation: elementShow 0.24s linear
+
+            ._blockHead
+                width: 100%
+                height: 16px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 10px
+                position: relative
+
+                ._blockHeadTitle
+                    width: fit-content
+                    height: auto
+                    
+                    & h4
+                        width: fit-content
+                        height: auto
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                        
+                ._blockHeadSpan
+                    width: fit-content
+                    height: auto
+                    display: flex
+                    align-items: center
+                    gap: 5px
+                    
+                    & span
+                        width: fit-content
+                        height: auto
+                        font-size: 14px
+                        font-weight: 500
+                        color: $app-text-color-primary-secondary
+                        
+                    & .kit-icon
+                        width: 10px
+                        height: 10px
+                        margin-top: -7px
+
+                        & svg
+                            width: 10px
+                            height: 10px
+
+                            & path
+                                stroke: $app-text-color-primary-secondary
+                                
+            ._task
+                width: 100%
+                height: 41px
+                border-radius: 16px
+                display: flex
+                align-items: center
+                gap: 10px
+                position: relative
+
+                ._taskSpan
+                    width: 48px
+                    height: 48px
+                    min-width: 48px
+                    max-width: 48px
+                    min-height: 48px
+                    max-height: 48px
+                    border-radius: 50px
+                    background: $app-background-gray-secondary
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    
+                    & img
+                        width: 40px
+                        height: 40px
+                    
+                    & .kit-icon
+                        width: 23px
+                        height: 23px
+
+                        & svg
+                            width: 23px
+                            height: 23px
+
+                ._taskContext
+                    width: 100%
+                    height: auto
+                    display: flex
+                    flex-direction: column
+                    gap: 4px
+                    position: relative
+
+                    ._taskContextTitle
+                        width: fit-content
+                        height: auto
+                        
+                        & h4
+                            width: fit-content
+                            height: auto
+                            font-size: 16px
+                            font-weight: 600
+                            color: $app-text-color
+                            max-width: 180px
+                            white-space: nowrap
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            
+                    ._taskContextTickets
+                        width: fit-content
+                        height: auto
+                        display: flex
+                        align-items: center
+                        gap: 7px
+                        position: relative
+
+                        & img
+                            width: 24px
+                            height: 24px
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                            position: relative
+
+                            & img
+                                width: 100%
+                                height: 100%
+                                object-fit: cover
+
+                        & p
+                            font-size: 15px
+                            font-weight: 600
+                            color: $app-text-color-phiolete
+                
+                ._taskButton
+                    width: fit-content
+                    height: auto
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    gap: 7px
+                    position: relative
+                    
+                    & button
+                        width: fit-content
+                        height: 34px
+                        padding: 0 16px
+                        background: $app-background-blue-secondary
+                        border-radius: 50px
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        gap: 7px
+                        cursor: pointer
+                        transform: scale(1)
+                        transition: transform 0.22s ease
+
+                        &.start
+                            background: $app-background-blue-secondary
+
+                            & span
+                                color: $app-text-color
+
+                        &.count
+                            background: $app-span-gray-background
+
+                            & span
+                                color: $app-text-color
+                                opacity: 0.6
+
+                        &.process
+                            pointer-events: none
+                            background: $app-background-blue-secondary
+
+                            & .lt
+                                width: 22px
+                                height: 22px
+                                display: flex
+                            
+
+                        &.claim
+                            background: $app-button-blue-background
+
+                            & span
+                                color: $app-button-blue-text-color-active
+
+                        &.done
+                            background: $app-background-gray-secondary
+
+                            & span
+                                color: $app-background-green-secondary
+
+                        & span
+                            width: fit-content
+                            height: auto
+                            font-size: 15px
+                            font-weight: 600
+                            color: $app-text-color
+                            white-space: nowrap
+                            max-width: 100px
+                            overflow: hidden
+                            text-overflow: ellipsis

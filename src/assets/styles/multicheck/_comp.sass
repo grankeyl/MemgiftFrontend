@@ -1,0 +1,445 @@
+@use "./../_variables" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes bubbleNft
+  0%
+    opacity: 0
+    transform: scale(0.65)
+  100%
+    opacity: 1
+    transform: scale(1)
+
+
+@keyframes bumping
+  0%
+    transform: scale(1.0)
+  50%
+    transform: scale(0.94)
+  100%
+    transform: scale(1.0)
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+._comp._item._multicheckGifts
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._items
+            width: 100%
+            height: 100%
+            border-radius: 10px
+            display: flex
+            flex-direction: column
+            gap: 16px
+
+            ._item
+                width: 100%
+                height: 128px
+                border-radius: 16px
+                background: $app-background-secondary
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._items
+            width: 100%
+            height: 100%
+            border-radius: 10px
+            display: flex
+            flex-direction: column
+            gap: 16px
+
+            ._item
+                width: 100%
+                height: 128px
+                border-radius: 16px
+                background: $app-background-secondary
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 12px
+                padding: 14px
+                position: relative
+                pointer-events: all
+                // animation: bumping 0.25s linear
+                opacity: 1
+                transition: opacity 0.25s ease
+
+                @media screen and (max-width: 400px)
+                    height: fit-content
+
+                &.hide
+                    opacity: 0.35
+                    transition: opacity 0.25s ease
+                    pointer-events: none
+
+                ._itemLeft
+                    width: fit-content !important
+                    height: fit-content !important
+                    
+                    ._itemLeftImage
+                        width: 102px
+                        height: 102px
+                        background: $app-background-secondary
+                        gap: 12px
+
+                        @media screen and (max-width: 400px)
+                            width: 132px
+                            height: 132px
+                        
+                        & img
+                            width: 102px
+                            height: 102px
+                            border-radius: 13px
+
+                            @media screen and (max-width: 400px)
+                                width: 132px
+                                height: 132px
+
+                ._itemRight
+                    width: 100%
+                    height: 100%
+                    margin-right: auto
+                    position: relative
+                    
+                    ._itemRightContext
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        flex-direction: column
+                        gap: 6px
+                        
+                        ._itemRightTitle
+                            width: 100%
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            gap: 4px
+                            
+                            & h4
+                                font-size: 18px
+                                font-weight: 600
+                                color: $app-text-color
+
+                        ._itemRightCounts
+                            width: 100%
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            gap: 4px
+                            
+                            & p
+                                font-size: 16px
+                                font-weight: 500
+                                color: $app-text-color-descr-primary
+
+                            & b
+                                font-size: 16px
+                                font-weight: 500
+                                color: $app-text-color-red
+
+                    ._itemRightButtons
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        gap: 4px
+                        position: absolute
+                        bottom: 0
+
+                        @media screen and (max-width: 400px)
+                            flex-direction: column
+                            gap: 8px
+                            align-items: flex-start
+                            position: relative
+                            margin-top: 10px
+
+                        & button
+                            width: 100%
+                            height: 30px
+                            background: $app-background-gray-secondary
+                            border-radius: 50px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            gap: 7px
+                            cursor: pointer
+                            transform: scale(1)
+                            transition: transform 0.22s ease
+
+                            & h4
+                                max-width: 75px
+                                white-space: nowrap
+                                overflow: hidden
+                                text-overflow: ellipsis
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-text-color
+                                margin-right: 3px
+
+                                @media screen and (max-width: 400px)
+                                    max-width: 100%
+                            
+                        ._calc
+                            min-width: 100px
+                            height: 30px
+                            background: $app-background-gray-secondary
+                            border-radius: 50px
+                            display: flex
+                            align-items: center
+                            position: relative
+                            justify-content: space-between
+                            padding: 0 4px
+
+                            @media screen and (max-width: 400px)
+                                width: 100%
+
+                            & ._calc_minus
+                                width: 32px
+                                height: 32px
+                                border-radius: 50px
+                                display: flex
+                                justify-content: center
+                                align-items: center
+                                position: relative
+                                margin-right: auto
+
+                                .kit-icon
+                                    width: 100%
+                                    height: 100%
+                                    transform: scale(0.5)
+
+                                    & svg
+                                        width: 100%
+                                        height: 100%
+                            
+                            & ._calc_value
+                                width: fit-content
+                                height: fit-content
+
+                                p
+                                    font-size: 14px
+                                    font-weight: 600
+                                    color: $app-text-color
+
+                            & ._calc_plus
+                                width: 32px
+                                height: 32px
+                                border-radius: 50px
+                                display: flex
+                                justify-content: center
+                                align-items: center
+                                position: relative
+                                margin-left: auto
+
+                                .kit-icon
+                                    width: 100%
+                                    height: 100%
+                                    transform: scale(0.4)
+
+                                    & svg
+                                        width: 100%
+                                        height: 100%
+
+  
+._comp._item._multicheckButton
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    z-index: 10000
+    
+    ._skeleton
+        max-width: $app-max-preview-width
+        margin: auto
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        z-index: 100
+        animation: none !important
+
+        ._blockButton
+            width: 100%
+            height: fit-content
+            max-width: $app-max-preview-width
+            padding-top: 11px
+            padding-left: 13px
+            padding-right: 13px
+            padding-bottom: 20px
+            position: absolute
+            bottom: calc($app-menu-height)
+            background: $app-background
+            z-index: 100
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            & button
+                width: 100%
+                height: 53px
+                display: flex
+                align-items: center
+                justify-content: center
+                gap: 7px
+                background: $app-background-secondary
+                padding: 0 15px
+                border-radius: 13px
+                cursor: pointer
+                transform: scale(1)
+    
+    ._content
+        width: 100%
+        max-width: $app-max-preview-width
+        margin: auto
+        height: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        z-index: 100
+        animation: none !important
+
+        ._blockButton
+            width: 100%
+            height: fit-content
+            max-width: $app-max-preview-width
+            padding-top: 11px
+            padding-left: 13px
+            padding-right: 13px
+            padding-bottom: 20px
+            position: absolute
+            bottom: calc($app-menu-height)
+            background: $app-background
+            z-index: 100
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            & button
+                width: 100%
+                height: 53px
+                display: flex
+                align-items: center
+                justify-content: center
+                gap: 7px
+                background: $app-big-button-background
+                padding: 0 15px
+                border-radius: 13px
+                cursor: pointer
+                transform: scale(1)
+                transition: transform 0.22s ease
+
+                &._opacity
+                  opacity: 0.45
+
+                &._noprimary
+                  background: $app-background-secondary
+                
+                &._primary
+                  background: $app-big-button-background
+                  animation: bumping 0.25s linear
+
+                & h4
+                    font-size: 16px
+                    font-weight: 600
+                    color: $app-big-button-text-color
+                    margin-right: 3px
+                    line-height: 1.2
+                    max-height: 2.4em
+                    overflow: hidden
+                    text-overflow: ellipsis
+
+                    @supports (-webkit-line-clamp: 2)
+                        display: -webkit-box
+                        -webkit-line-clamp: 2
+                        -webkit-box-orient: vertical
+
+                    @media (max-width: 400px)
+                        font-size: 14px
+
+                & img
+                    width: 17px !important
+                    height: 16px
+
+                & p
+                    font-size: 16px
+                    font-weight: 700
+                    color: $app-big-button-text-color
+
+                & .lt
+                    display: none
+
+                &._loading
+                    pointer-events: none
+
+                    & h4
+                        display: none
+                    
+                    & img
+                        display: none
+                    
+                    & p
+                        display: none
+
+                    & .lt
+                        width: 30px
+                        height: 30px
+                        pointer-events: none
+                        display: block
+
+                        svg
+                            width: 100%
+                            height: 100%
+            
+
+._notfound
+    width: 100%
+    height: 85%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    position: absolute
+    inset: 0
+
+    img
+        width: 120px
+        height: 70px
+        // mix-blend-mode: luminosity
+        opacity: 0.2
+        margin-bottom: 8px
+
+    h4
+        font-size: 16px
+        font-weight: 600
+        color: $app-text-color-descr
+        opacity: 0.6

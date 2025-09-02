@@ -1,0 +1,353 @@
+@use "./../_variables" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes bubble
+  0%
+    opacity: 0
+    transform: scale(0.65)
+  100%
+    opacity: 1
+    transform: scale(1)
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+
+._deposit ._comp._item._title
+    width: 100%
+    height: fit-content
+    margin-bottom: 5px !important
+
+    &._default
+        margin-top: 30px
+
+    &._upcoming
+        margin-top: 10px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._text
+            width: 25%
+
+            & h4
+                width: auto
+                height: 30px
+                background: $app-background-secondary
+                border-radius: 10px
+
+        ._image
+            width: 30px
+            height: 30px
+            border-radius: 50%
+            background: $app-background-secondary
+            display: flex
+            justify-content: center
+            align-items: center
+            position: relative
+
+            & img
+                width: 100%
+                height: 100%
+                border-radius: 50%
+    
+    ._content
+        width: 100%
+        height: 30px
+        display: flex
+        align-items: center
+        gap: 10px
+        transition: all 0.22s forwards
+
+        ._text
+            width: fit-content
+
+            & h4
+                width: auto
+
+                font-size: 24px
+                font-weight: 600
+                color: $app-text-color
+
+        ._image
+            width: 45px
+            height: 45px
+            display: flex
+            justify-content: center
+            align-items: center
+            position: relative
+
+            & img
+                width: 100%
+                height: 100%
+                object-fit: cover
+                border-radius: 50%
+        
+        ._titleTickets
+            width: fit-content
+            height: fit-content
+            display: flex
+            align-items: center
+            gap: 7px
+            margin-left: auto
+
+            & img
+                width: 24px
+                height: 24px
+
+            & p
+                font-size: 19px
+                font-weight: 500
+                color: $app-text-color
+
+
+._comp._item._block
+    width: 100%
+    height: fit-content
+    margin-bottom: 5px
+    
+    ._skeleton
+        width: 100%
+        height: fit-content
+        display: flex
+        align-items: center
+        gap: 10px
+        position: relative
+
+        ._blocker
+            width: 100%
+            height: 180px
+            display: flex
+            flex-direction: column
+            justify-content: center
+            align-items: start
+            gap: 10px
+            position: relative
+            overflow: hidden
+            width: 100%
+            background: $app-background-secondary
+            border-radius: 18px
+            padding: 14px 18px 19px 18px
+
+            ._blockerLabel
+                width: fit-content
+                height: auto
+                margin-bottom: 2px
+                
+                & h4
+                    width: auto
+                    height: auto
+                    font-size: 13px
+                    font-weight: 600
+                    color: $app-text-color
+                    text-transform: uppercase
+                    opacity: 0.5
+
+                ._blockerLabelBalance
+                    width: fit-content
+                    height: auto
+                    margin-top: 2px
+                    
+                    & img
+                        width: 16px
+                        height: 16px
+                        margin-right: 2px
+                        
+                    & span
+                        width: auto
+                        height: auto
+                        font-size: 12px
+                        font-weight: 600
+                        opacity: 1
+                        color: $app-text-color
+                        text-transform: uppercase
+                    
+            ._blockerInput
+                width: 100%
+                height: 53px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 7px
+                position: relative
+                overflow: hidden
+                border: 1px solid $app-background-gray-secondary
+                border-radius: 13px
+                margin-bottom: 6px
+
+                & input
+                    width: 100%
+                    height: 53px
+                    border: none
+                    padding: 0 15px 0 20px
+                    font-size: 16px
+                    font-weight: 500
+                    color: $app-text-color
+                    background: transparent
+                    transition: all 0.07s ease
+
+                    &::placeholder
+                        color: $app-text-color-descr
+
+                & img
+                    width: 17px
+                    height: 17px
+                    position: absolute
+                    display: flex
+                    justify-content: center
+                    right: 17px
+                    
+                    & img
+                        width: 100%
+                        height: 100%
+
+            ._blockerButton
+                width: 100%
+                height: fit-content
+
+                & button
+                    width: 100%
+                    height: 43px
+                    background: $app-background-blue-secondary
+                    padding: 0 21px
+                    border-radius: 50px
+                    white-space: nowrap
+    
+    ._content
+        width: 100%
+        height: fit-content
+        display: flex
+        align-items: center
+        gap: 10px
+        position: relative
+
+        ._blocker
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            justify-content: center
+            align-items: start
+            gap: 10px
+            position: relative
+            overflow: hidden
+            width: 100%
+            background: $app-background-secondary
+            border-radius: 18px
+            padding: 14px 18px 19px 18px
+
+            ._blockerLabel
+                width: 100%
+                height: auto
+                margin-bottom: 2px
+                display: flex
+                justify-content: space-between
+                align-items: center
+                
+                & h4
+                    width: auto
+                    height: fit-content
+                    font-size: 12px
+                    font-weight: 600
+                    color: $app-text-color
+                    text-transform: uppercase
+                    opacity: 0.5
+
+                ._blockerLabelBalance
+                    width: fit-content
+                    height: fit-content
+                    margin-top: 2px
+                    display: flex
+                    align-items: center
+                    gap: 3px
+                    position: relative
+
+                    & p
+                        width: auto
+                        height: fit-content
+                        font-size: 13px
+                        font-weight: 600
+                        opacity: 1
+                        color: $app-text-color
+                        margin-right: 3px
+                    
+                    & img
+                        width: 11px
+                        height: 11px
+                        margin-right: 1px
+                        
+                    & span
+                        width: auto
+                        height: fit-content
+                        font-size: 13px
+                        font-weight: 600
+                        opacity: 1
+                        color: $app-text-color
+                        text-transform: uppercase
+                    
+            ._blockerInput
+                width: 100%
+                height: 53px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 7px
+                position: relative
+                overflow: hidden
+                border: 1px solid $app-background-gray-secondary
+                border-radius: 13px
+                margin-bottom: 6px
+
+                & input
+                    width: 100%
+                    height: 53px
+                    border: none
+                    padding: 0 15px 0 20px
+                    font-size: 16px
+                    font-weight: 500
+                    color: $app-text-color
+                    background: transparent
+                    transition: all 0.07s ease
+
+                    &::placeholder
+                        color: $app-text-color-descr
+
+                & img
+                    width: 17px
+                    height: 17px
+                    position: absolute
+                    display: flex
+                    justify-content: center
+                    right: 17px
+                    
+                    & img
+                        width: 100%
+                        height: 100%
+
+            ._blockerButton
+                width: 100%
+                height: fit-content
+
+                & button
+                    width: 100%
+                    height: 43px
+                    background: $app-background-blue-secondary
+                    padding: 0 21px
+                    border-radius: 50px
+                    white-space: nowrap
+                    font-size: 15px
+                    font-weight: 600

@@ -1,0 +1,1260 @@
+@use "./../_variables" as *
+
+@keyframes spinner
+  to
+    transform: rotate(360deg);
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+
+@keyframes showButton
+  0%
+    transform: scale(0.77)
+  100%
+    transform: scale(1.00)
+
+
+@keyframes bumpNft
+  0%
+    transform: scale(0.77)
+  65%
+    transform: scale(0.77)
+  73%
+    transform: scale(0.79)
+  85%
+    transform: scale(0.77)
+  100%
+    transform: scale(0.77)
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+._comp._item._button
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        max-width: $app-max-preview-width
+        margin: auto
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        z-index: 100
+        animation: none !important
+
+        ._button
+            width: 100%
+            height: fit-content
+            max-width: $app-max-preview-width
+            padding-bottom: 35px
+            background: $app-background
+            padding-left: 13px
+            padding-right: 13px
+            padding-top: 13px
+            position: absolute
+            bottom: 0
+            z-index: 100
+
+            & button
+                width: 100%
+                height: 53px
+                display: flex
+                align-items: center
+                justify-content: center
+                gap: 7px
+                background: $app-background-secondary
+                padding: 0 15px
+                border-radius: 13px
+                cursor: pointer
+                transform: scale(1)
+    
+    ._content
+        width: 100%
+        max-width: $app-max-preview-width
+        margin: auto
+        height: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        z-index: 100
+        animation: none !important
+        transition: height .3s ease-in-out
+
+        ._button
+            width: 100%
+            max-width: $app-max-preview-width
+            height: fit-content
+            padding-bottom: 35px
+            background: $app-background
+            padding-left: 13px
+            padding-right: 13px
+            padding-top: 13px
+            position: absolute
+            bottom: 0
+            z-index: 100
+            transition: height .3s ease-in-out
+
+            & button
+                width: 100%
+                height: 53px
+                display: flex
+                align-items: center
+                justify-content: center
+                gap: 7px
+                background: $app-big-button-background
+                padding: 0 15px
+                border-radius: 13px
+                cursor: pointer
+                transform: scale(1)
+                transition: transform 0.22s ease
+
+                &.uncofirmately
+                    background: $app-background-secondary
+
+                & h4
+                    font-size: 16px
+                    font-weight: 600
+                    color: $app-big-button-text-color
+                    margin-right: 1px
+
+                & img
+                    width: 17px !important
+                    height: 16px
+
+                & p
+                    font-size: 16px
+                    font-weight: 700
+                    color: $app-big-button-text-color
+
+                & .saleBlock
+                    margin-left: -2px
+                    opacity: .65
+
+                & .lt
+                    display: none
+
+                &._loading
+                    pointer-events: none
+
+                    & h4
+                        display: none
+                    
+                    & img
+                        display: none
+                    
+                    & p
+                        display: none
+
+                    & .lt
+                        width: 30px
+                        height: 30px
+                        pointer-events: none
+                        display: block
+
+                        svg
+                            width: 100%
+                            height: 100%
+        
+
+._comp._item._gift
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    z-index: 1
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._item
+            width: 100%
+            aspect-ratio: 1/1
+            background: $app-span-gray-background
+            border-radius: 16px
+            opacity: .4
+    
+    ._content
+        width: 100%
+        height: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        transition: all 0.22s forwards
+
+        ._item
+            width: 100%
+            aspect-ratio: 1/1
+            background: $app-span-gray-background
+            border-radius: 20px
+            position: relative
+
+            &.rare
+                background: $app-rarity-background-rare
+            
+            &.veryrare
+                background: $app-rarity-background-very-rare
+            
+            &.epic
+                background: $app-rarity-background-epic
+            
+            &.legend
+                background: $app-rarity-background-legendary
+
+            &.author
+                background: $app-rarity-background-author
+            
+            ._symbols
+                position: absolute
+                width: 100%
+                height: 100%
+                object-fit: cover
+                overflow: hidden
+                z-index: 0
+                opacity: .15
+
+                & img
+                    position: absolute
+                    left: 50%
+                    top: 50%
+                    width: 100%
+                    height: calc(100% - 30px)
+                    transform: translate(-50%, -50%)
+                    object-fit: cover
+            
+            ._tickets
+                position: absolute
+                top: 16px
+                right: 17px
+                z-index: 1
+                width: fit-content
+                height: 31px
+                display: flex
+                align-items: center
+                gap: 7px
+                background: #ffffff19
+                -webkit-backdrop-filter: blur(20px)
+                backdrop-filter: blur(20px)
+                border-radius: 12px
+                padding: 0 12px
+                transition: opacity 0.06s ease
+
+                & img
+                    width: 24px
+                    height: 24px
+
+                & p
+                    font-size: 16px
+                    font-weight: 600
+                    color: $app-text-color
+
+            ._mark
+                position: absolute
+                top: 16px
+                left: 17px
+                z-index: 1
+                width: fit-content
+                height: 31px
+                background: $app-button-background-blur
+                border-radius: 12px
+                padding: 0 12px
+                transition: opacity 0.06s ease
+                display: flex
+                text-align: center
+                align-items: center
+
+                & span
+                    font-size: 15px
+                    font-weight: 500
+                    color: $app-button-text-color
+            
+            ._nft
+                width: 100%
+                height: 100%
+                position: absolute
+                top: 50%
+                left: 50%
+                transform: translate(-50%, -50%)
+                text-align: center
+                z-index: 5
+
+                &._lottie
+                    width: 100%
+                    height: 100%
+                    position: absolute
+                    top: 50%
+                    left: 50%
+                    transform: translate(-50%, -30%)
+                    margin: 0
+                    text-align: center
+                    z-index: 0
+
+                & .lottie-gift
+                    width: 60%
+                    height: 60%
+                    margin: auto
+
+                & img
+                    width: 100%
+                    height: 100%
+                    transform: scale(0.77)
+                    animation: bumpNft 2.85s linear infinite
+                    object-fit: cover
+                
+
+._comp._item._context
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    z-index: 6
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 10px
+
+            ._item
+                width: 100%
+                height: 100%
+                display: flex
+                align-items: center
+                gap: 10px
+                opacity: .4
+
+                ._title
+                    width: 29%
+                    height: 30px
+                    background: $app-span-gray-background
+                    border-radius: 16px
+
+                ._supply
+                    width: 15%
+                    height: 30px
+                    background: $app-span-gray-background
+                    border-radius: 16px
+
+                ._rig
+                    width: fit-content
+                    margin-left: auto
+                    z-index: 6
+
+                    & .kit-icon
+                        width: fit-content
+                        height: fit-content
+
+                        & svg
+                            width: 30px
+                            height: 100%
+
+                            & path
+                                stroke: $app-text-color
+                
+                ._descr
+                    width: 69%
+                    height: 20px
+                    background: $app-background-secondary
+                    border-radius: 16px
+                    margin-top: auto
+                
+                ._price
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    align-items: center
+                    gap: 10px
+
+                    ._image
+                        width: 20px
+                        height: 20px
+                        background: $app-span-gray-background
+                        border-radius: 50%
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+
+                        & img
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                    
+                    ._amount
+                        width: 110px
+                        height: 20px
+                        background: $app-background-secondary
+                        border-radius: 50px
+                        
+                        & span
+                            font-size: 15px
+                            font-weight: 500
+            
+            & ._itemUseTickets
+                display: flex
+
+                .toggle-switch
+                    position: relative
+                    display: inline-block
+                    width: 60px
+                    height: 34px
+                    margin: 10px
+
+                    input
+                        opacity: 0
+                        width: 0
+                        height: 0
+
+                    & .toggle-switch-slider
+                        position: absolute
+                        cursor: pointer
+                        top: 0
+                        left: 0
+                        right: 0
+                        bottom: 0
+                        background-color: #ccc
+                        transition: 0.4s
+                        border-radius: 34px
+
+                        &:before
+                            position: absolute
+                            content: ""
+                            height: 26px
+                            width: 26px
+                            left: 4px
+                            bottom: 4px
+                            background-color: white
+                            transition: 0.4s
+                            border-radius: 50%
+
+                    input:checked + .toggle-switch-slider:before
+                        transform: translateX(26px)
+
+                    &.blue input:checked + slider
+                        background-color: #2196F3
+
+                    &.green input:checked + .toggle-switch-slider
+                        background-color: #4CAF50
+
+                    &.purple input:checked + .toggle-switch-slider
+                        background-color: #9C27B0
+
+                    &.red input:checked + .toggle-switch-slider
+                        background-color: #F44336
+
+                    &.gradient input:checked + .toggle-switch-slider
+                        background: linear-gradient(45deg, #FF416C, #FF4B2B)
+
+                    &.icon
+                        .slider:before
+                            content: "☀️"
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            font-size: 14px
+
+                        input:checked + .slider:before
+                            content: "🌙"
+
+                        input:checked + .slider
+                            background-color: #333
+
+            ._itemCalc
+                display: flex
+                gap: 10px
+                opacity: 1
+                
+                ._calc
+                    width: 100px
+                    height: 32px
+                    background: $app-background-secondary
+                    border-radius: 50px
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    position: relative
+                
+                ._calcUse
+                    width: 50px
+                    height: 32px
+                    background: $app-background-secondary
+                    border-radius: 50px
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    position: relative
+    
+    ._content
+        width: 100%
+        height: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        transition: all 0.22s forwards
+
+        ._items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 10px
+
+            .checker
+                width: 100%
+                height: 100%
+                display: flex
+                flex-direction: column
+                align-items: center
+                gap: 8px
+
+            ._item
+                width: 100%
+                height: 100%
+                display: flex
+                align-items: center
+                gap: 10px
+
+                ._title
+                    display: flex
+                    align-items: center
+                    position: relative
+                    font-size: 23px
+                    font-weight: 700
+                    color: $app-text-color
+
+                    @media screen and (max-width: 404px)
+                        font-size: 20px
+
+                ._supply
+                    width: fit-content
+                    height: 30px
+                    background: $app-button-blue-background
+                    border-radius: 16px
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    padding: 0 11px
+
+                    @media screen and (max-width: 404px)
+                        height: 28px
+                        padding: 0 10px
+
+                    p
+                        font-size: 15px
+                        font-weight: 500
+                        white-space: nowrap
+                        color: $app-button-blue-text-color
+
+                        @media screen and (max-width: 404px)
+                            font-size: 14px
+                    
+                    .load-icon
+                        display: none
+                    
+                    &._loading
+                        pointer-events: none
+                        background: $app-background-secondary
+
+                        & p
+                            display: none
+                        
+                        & .load-icon
+                            display: block
+                            width: 14px
+                            height: 14px
+                            border: 2px solid $app-span-gray-background
+                            border-top-color: $app-text-color
+                            border-radius: 50%
+                            animation: spinner 1s linear infinite
+                            margin: 50px auto
+
+                ._rig
+                    width: fit-content
+                    margin-left: auto
+                    gap: 6px
+                    display: flex
+
+                    & .kit-icon
+                        width: fit-content
+                        height: fit-content
+
+                        & svg
+                            width: 28px
+                            height: 100%
+
+                            & path
+                                fill: $app-text-color-descr-primary
+
+                ._descr
+                    width: fit-content
+                    border-radius: 16px
+                    margin-top: auto
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    font-size: 15px
+                    font-weight: 500
+                    color: $app-text-color-descr
+                    transition: opacity 0.06s ease
+
+                ._price
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    align-items: center
+                    gap: 8px
+
+                    ._image
+                        width: 21px
+                        height: 20px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+
+                        & img
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                    
+                    ._amount
+                        width: fit-content
+                        border-radius: 50px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+
+                        & span
+                            font-size: 17px
+                            font-weight: 700
+                            color: $app-button-text-color
+                            transition: opacity 0.06s ease
+            
+            & ._itemUseTickets
+                display: flex
+                margin-top: 2px
+                margin-bottom: 2px
+
+                & ._itemUseTicketsInner
+                    display: flex
+                    align-items: center
+                    height: 27px
+                    gap: 9px
+
+                    ._taskContextTickets
+                        width: fit-content
+                        height: auto
+                        display: flex
+                        align-items: center
+                        gap: 7px
+                        position: relative
+
+                        & img
+                            width: 24px
+                            height: 24px
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                            position: relative
+
+                            & img
+                                width: 100%
+                                height: 100%
+                                object-fit: cover
+
+                        & p
+                            font-size: 15px
+                            font-weight: 600
+                            color: $app-text-color-phiolete
+                        
+                    & .title
+                        display: flex
+
+                        h4
+                            font-size: 16px
+                            font-weight: 600
+
+                    & .switch
+                        width: 100%
+                        height: 100%
+                        pointer-events: none
+
+                        &.disabled
+                            pointer-events: none
+
+                        &.activated
+                            pointer-events: all
+                            opacity: 1
+
+                    & .toggle-switch
+                        position: relative
+                        display: inline-block
+                        width: 47px
+                        cursor: pointer
+                        height: 27px
+
+                        input
+                            opacity: 0
+                            width: 0
+                            height: 0
+
+                        & .toggle-switch-slider
+                            position: absolute
+                            cursor: pointer
+                            top: 0
+                            left: 0
+                            right: 0
+                            bottom: 0
+                            background-color: $app-background-secondary
+                            transition: 0.4s
+                            border-radius: 50px
+
+                            &:before
+                                position: absolute
+                                content: ""
+                                height: 23px
+                                width: 23px
+                                left: 3px
+                                bottom: 2px
+                                background-color: $app-span-gray-background
+                                transition: 0.4s
+                                border-radius: 50%
+
+                        input:checked + .toggle-switch-slider:before
+                            transform: translateX(19px)
+
+                        &.blue input:checked + .toggle-switch-slider
+                            background-color: $app-background-sireny-secondary
+
+                        &.blue input:checked + .toggle-switch-slider:before
+                            background-color: $app-text-color
+                
+            ._itemCalc
+                display: flex
+                gap: 10px
+                opacity: 1
+                
+                ._calc
+                    width: 100px
+                    height: 32px
+                    background: $app-background-secondary
+                    border-radius: 50px
+                    display: flex
+                    align-items: center
+                    position: relative
+                    justify-content: space-between
+                    padding: 0 4px
+
+                    & ._calc_minus
+                        width: 32px
+                        height: 32px
+                        border-radius: 50px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        margin-right: auto
+
+                        .kit-icon
+                            width: 100%
+                            height: 100%
+                            transform: scale(0.5)
+
+                            & svg
+                                width: 100%
+                                height: 100%
+                    
+                    & ._calc_value
+                        width: fit-content
+                        height: fit-content
+
+                        p
+                            font-size: 14px
+                            font-weight: 600
+                            color: $app-text-color
+
+                    & ._calc_plus
+                        width: 32px
+                        height: 32px
+                        border-radius: 50px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        margin-left: auto
+
+                        .kit-icon
+                            width: 100%
+                            height: 100%
+                            transform: scale(0.4)
+
+                            & svg
+                                width: 100%
+                                height: 100%
+
+                ._calcUse
+                    width: 50px
+                    height: 32px
+                    background: $app-background-secondary
+                    border-radius: 50px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    gap: 10px
+                    position: relative
+
+                    & p
+                        font-size: 15px
+                        font-weight: 500
+                        color: $app-text-color
+                        opacity: .8
+                        margin-left: -1px
+
+
+._comp._item._terms
+    width: 100%
+    height: fit-content
+    margin-top: 15px
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+    ._content
+        width: 100%
+        display: flex
+        flex-direction: column
+        gap: 11px
+
+        .items
+            width: 100%
+            height: fit-content
+            display: flex
+            flex-direction: column
+            gap: 18px
+            padding-right: 3px
+
+            .item
+                width: 100%
+                height: fit-content
+                display: flex
+                justify-content: space-between
+                align-items: center
+                gap: 13px
+                position: relative
+                border-radius: 13px
+                cursor: pointer
+
+                &:nth-child(1)
+                    .icon
+                        background: rgba($app-leaderboard-background-two, 0.8)
+
+                &:nth-child(2)
+                    .icon
+                        background: rgba($app-leaderboard-background-one, 0.8)
+
+                &:nth-child(3)
+                    .icon
+                        background: rgba($app-text-color-red, 0.8)
+
+                .icon
+                    width: 46px
+                    height: 46px
+                    min-width: 46px
+                    min-height: 46px
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    background: $app-span-gray-background
+                    border-radius: 50px
+
+                    & .kit-icon
+                        width: fit-content
+                        height: fit-content
+                        opacity: .8
+                        margin-top: 5px
+                        margin-left: -1px
+
+                        & svg
+                            width: 23px
+                            height: 23px
+
+                            & path
+                                fill: $app-text-color
+
+                .info
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    gap: 7px
+                    position: relative
+
+                    & h4
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                        max-width: 200px
+                        overflow: hidden
+                        text-overflow: ellipsis
+
+                    & p
+                        width: 100%
+                        height: fit-content
+                        font-size: 15px
+                        font-weight: 500
+                        color: $app-text-color-descr
+
+                .button
+                    width: fit-content
+                    height: 42px
+                    display: flex
+                    gap: 10px
+                    position: relative
+
+                    & button
+                        width: fit-content
+                        height: 42px
+                        display: flex
+                        flex-direction: column
+                        align-items: center
+                        justify-content: center
+                        background: rgba($app-input-background, 0.3)
+                        border-radius: 50px
+                        cursor: pointer
+                        padding: 0 15px
+                        transition: transform 0.22s ease
+
+                        &.done
+                            background: $app-big-button-background
+
+                            & .kit-icon
+                                margin-left: -1px
+                                & svg
+                                    width: 16px
+                                    height: 16px
+
+                                    & path
+                                        stroke: $app-text-color
+                        
+                        .load-icon
+                            display: block
+                            width: 14px
+                            height: 14px
+                            border: 2px solid $app-span-gray-background
+                            border-top-color: $app-text-color
+                            border-radius: 50%
+                            animation: spinner 1s linear infinite
+
+                        &:active
+                            transform: scale(0.95)
+
+                        & span
+                            font-size: 15px
+                            font-weight: 600
+                            color: $app-text-color
+                            white-space: nowrap
+
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+                            margin-top: 2px
+                            margin-left: 1px
+
+                            & svg
+                                width: 14px
+                                height: 14px
+
+._comp._item._recents
+    width: 100%
+    height: fit-content
+    margin-top: 15px
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            ._item
+                width: 100%
+                height: 60px
+                background: $app-span-gray-background
+                border-radius: 16px
+                opacity: .2
+    
+    ._content
+        width: 100%
+        height: 100%
+        display: flex
+        flex-direction: column
+        gap: 16px
+
+        ._items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+
+            ._item
+                width: 100%
+                height: 60px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 12px
+
+                ._avatar
+                    width: 40px
+                    height: 40px
+                    min-width: 40px
+                    min-height: 40px
+                    border-radius: 50%
+                    background: $app-span-gray-background
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    overflow: hidden
+
+                    img
+                        width: 100%
+                        height: 100%
+                        object-fit: cover
+                
+                ._context
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    gap: 6px
+                    margin-right: auto
+
+                    ._title
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        font-size: 16px
+
+                        h4
+                            font-weight: 600
+                            color: $app-text-color
+                            white-space: nowrap
+                            max-width: 220px
+                            overflow: hidden
+                            text-overflow: ellipsis
+
+                            span
+                                color: $app-text-color-primary
+                                margin-right: 4px
+                                font-weight: 600
+                    
+                    ._descr
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        gap: 4px
+
+                        p
+                            font-size: 15px
+                            color: $app-text-color-descr
+                
+                ._price
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    gap: 8px
+
+                    ._image
+                        width: 21px
+                        height: 20px
+                        border-radius: 50%
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+
+                        & img
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                    
+                    ._amount
+                        border-radius: 50px
+                        
+                        & span
+                            font-size: 17px
+                            font-weight: 500
+                            white-space: nowrap
+                            color: $app-button-text-color
+                            transition: opacity 0.06s ease
+            
+            ._item._nullRecents
+                width: 100%
+                height: 100%
+                display: flex
+
+                ._title
+                    width: 100%
+                    height: auto
+                    
+                    & h4
+                        width: 100%
+                        height: auto
+                        font-size: 24px
+                        font-weight: 600
+
+._comp._item._ads
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            ._item
+                width: 100%
+                height: 60px
+                background: $app-span-gray-background
+                border-radius: 16px
+                opacity: .2
+    
+    ._content
+        width: 100%
+        height: 100%
+        display: flex
+        flex-direction: column
+        gap: 16px
+
+        ._items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+
+            ._item
+                width: 100%
+                height: 60px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 12px
+
+                ._avatar
+                    width: 46px
+                    height: 46px
+                    min-width: 46px
+                    min-height: 46px
+                    border-radius: 50%
+                    background: $app-span-gray-background
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    overflow: hidden
+
+                    img
+                        width: 100%
+                        height: 100%
+                        object-fit: cover
+                
+                ._context
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    gap: 6px
+                    margin-right: auto
+
+                    ._title
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        font-size: 16px
+
+                        h4
+                            font-weight: 600
+                            color: $app-button-text-color
+                            white-space: nowrap
+                            max-width: 220px
+                            overflow: hidden
+                            text-overflow: ellipsis
+
+                            span
+                                color: $app-text-color-primary
+                                margin-right: 4px
+                                font-weight: 600
+                    
+                    ._descr
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        gap: 4px
+
+                        p
+                            font-size: 15px
+                            color: $app-text-color-descr
+                
+                ._button
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    gap: 8px
+
+                    & button
+                        display: block
+                        width: fit-content
+                        height: 40px
+                        padding: 0 23px

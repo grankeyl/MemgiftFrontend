@@ -1,0 +1,41 @@
+@use "./../_variables" as *
+
+._wrap._profile
+    padding-top: calc($app-menu-height + 30px)
+
+    &.desktop
+        padding-top: 30px
+
+    ._view
+        height: auto !important
+        padding-bottom: calc($app-menu-height + 37%)
+
+        .stylish
+            width: 100%
+            height: 279px
+            display: inline-flex
+            align-items: center
+            justify-content: center
+            margin-bottom: 15px
+            position: fixed
+            top: 0
+            left: 0
+            z-index: 0
+            padding: 54px 64px 86px 46px
+            background: radial-gradient(82.66% 82.66% at 50% 0%, #1E3AC6 0%, #2C2460 50%, #1C1C1E 100%);
+
+            .starsed
+                width: fit-content
+                height: fit-content
+                display: flex
+                justify-content: center
+                align-items: center
+                position: absolute
+                top: 10px
+
+                & img
+                    width: 100%
+                    height: fit-content
+        
+        .fixed
+            z-index: 1

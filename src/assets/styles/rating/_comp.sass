@@ -1,0 +1,918 @@
+@use "./../_variables" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+._comp._item._contextRating
+    width: 100%
+    height: fit-content
+    margin-bottom: 14px
+    padding: 0px 22px
+
+    ._skeleton
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+
+        ._block
+            width: 100%
+            display: flex
+            flex-direction: column
+            gap: 6px
+
+            ._title
+                width: 100%
+                height: 20px
+                border-radius: 10px
+
+                & h4
+                    font-size: 24px
+                    font-weight: 700
+                    color: $app-text-color
+
+            ._descr
+                width: 100%
+
+                & p
+                    font-size: 15px
+                    font-weight: 500
+                    color: $app-text-color
+                    opacity: .5
+                    max-width: 250px
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: 4px
+
+        ._block
+            width: 100%
+            display: flex
+            flex-direction: column
+            gap: 6px
+
+            ._title
+                width: 100%
+                margin-bottom: 3px
+
+                & h4
+                    font-size: 24px
+                    font-weight: 700
+                    color: $app-text-color
+
+            ._descr
+                width: 100%
+
+                & p
+                    font-size: 15px
+                    font-weight: 500
+                    color: $app-text-color
+                    opacity: .5
+                    max-width: 250px
+    
+
+._comp._item._yourTop
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+
+    ._skeleton
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        
+        ._block
+            width: 100%
+            height: 66px
+            background: $app-leaderboard-second-background
+            opacity: .3
+            border-radius: 13px
+            display: flex
+            flex-direction: column
+            justify-content: center
+            text-align: center
+            align-items: center
+            gap: 14px
+
+    ._content
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 6px
+
+        ._block
+            width: 100%
+            height: 66px
+            background: $app-leaderboard-second-background
+            border-radius: 13px
+            display: flex
+            align-items: center
+            padding: 0 16px
+            gap: 16px
+            
+            ._number
+                width: fit-content
+                height: auto
+
+                h4
+                    font-size: 16px
+                    font-weight: 700
+                    color: $app-text-color
+
+            ._user
+                width: 100%
+                height: 100%
+                display: flex
+                align-items: center
+                gap: 14px
+                
+                ._user_left
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    
+                    ._user_avatar
+                        width: 40px
+                        height: 40px
+                        border-radius: 50%
+                        background: $app-background-secondary
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        
+                        & img
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+
+                ._user_center
+                    width: 100%
+                    height: 100%
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    justify-content: center
+                    gap: 3px
+                    
+                    ._user_center_name
+                        width: 100%
+                        height: auto
+                        
+                        & h4
+                            max-width: 170px
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            font-size: 16px
+                            font-weight: 700
+                            color: $app-text-color
+                            
+                    ._user_center_gifts
+                        width: 100%
+                        height: auto
+                        display: flex
+                        align-items: center
+                        gap: 4px
+
+                        .kit-icon
+                            width: fit-content
+                            height: fit-content
+                            margin-top: 1px
+                            opacity: .45
+
+                            & svg
+                                width: 16px
+                                height: 16px
+
+                        & p
+                            font-size: 15px
+                            font-weight: 500
+                            color: $app-text-color
+                            opacity: .5
+
+
+._comp._item._otherTop
+    width: 100%
+    height: 100%
+    padding: 6px 6px
+    border-radius: 15px
+    margin-bottom: 15px
+    background: $app-leaderboard-background
+    -webkit-backdrop-filter: blur(23px)
+    backdrop-filter: blur(23px)
+    margin-bottom: 30px
+
+    ._skeleton
+        width: 100%
+        height: 80px
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: center
+        margin: auto
+        gap: 10px
+
+        & ._leadersLoading
+            width: 100%
+            display: flex
+            align-items: center
+            justify-content: center
+
+            & .loader-icon
+                width: 26px
+                height: 26px
+                border: 2px solid $app-span-gray-background
+                border-top-color: $app-text-color
+                border-radius: 50%
+                animation: spinner 1s linear infinite
+
+    ._content
+        width: 100%
+        height: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 6px
+
+        ._block
+            width: 100%
+            height: 66px
+            border-radius: 13px
+            display: flex
+            align-items: center
+            padding: 0 15px
+            gap: 16px
+
+            & ._leadersLoading
+                width: 100%
+                display: flex
+                align-items: center
+                justify-content: center
+
+                & .loader-icon
+                    width: 50px
+                    height: 50px
+                    border: 2px solid $app-span-gray-background
+                    border-top-color: $app-text-color
+                    border-radius: 50%
+                    animation: spinner 1s linear infinite
+            
+            ._number
+                width: 22px
+                height: auto
+
+                ._medal
+                    width: fit-content
+                    height: fit-content
+                    font-size: 22px
+                    font-weight: 700
+                    transform: translateX(-5px)
+                    margin-top: 1px
+
+                h4
+                    font-size: 16px
+                    font-weight: 700
+                    color: $app-text-color
+
+            ._user
+                width: 100%
+                height: 100%
+                display: flex
+                align-items: center
+                gap: 14px
+                
+                ._user_left
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    
+                    ._user_avatar
+                        width: 40px
+                        height: 40px
+                        border-radius: 50%
+                        background: $app-background-secondary
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        
+                        & img
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                            
+                        & .avatar_null
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                            background: $app-span-gray-background
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                                
+                            & h4
+                                font-size: 0.9em
+                                font-weight: 700
+                                color: $app-text-color
+
+                ._user_center
+                    width: 100%
+                    height: 100%
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    justify-content: center
+                    gap: 3px
+                    
+                    ._user_center_name
+                        width: 100%
+                        height: auto
+                        
+                        & h4
+                            max-width: 170px
+                            white-space: nowrap
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            font-size: 16px
+                            font-weight: 700
+                            color: $app-text-color-primary
+                            
+                    ._user_center_gifts
+                        width: 100%
+                        height: auto
+                        display: flex
+                        align-items: center
+                        gap: 4px
+
+                        .kit-icon
+                            width: fit-content
+                            height: fit-content
+                            margin-top: 1px
+                            opacity: .45
+
+                            & svg
+                                width: 16px
+                                height: 16px
+
+                        & p
+                            font-size: 15px
+                            font-weight: 500
+                            color: $app-text-color
+                            opacity: .5
+            
+            ._chevrone_left
+                width: fit-content
+                height: auto
+                display: flex
+                align-items: center
+                gap: 4px
+
+                .kit-icon
+                    width: fit-content
+                    height: fit-content
+                    margin-top: 1px
+                    opacity: .45
+
+
+._comp._item._leaderboard
+    width: 100%
+    height: 100%
+
+    ._skeleton
+        width: 100%
+        height: 100%
+            
+        .sections
+            width: 100%
+            height: fit-content
+            display: flex
+            align-items: center
+            overflow: hidden
+            gap: 8px
+            margin-bottom: 13px
+            padding: 0px 22px
+
+            .section
+                width: 100px
+                height: 40px
+                background: rgba($app-span-gray-background, 0.5)
+                -webkit-backdrop-filter: blur(30px)
+                backdrop-filter: blur(30px)
+                border-radius: 50px
+
+        .topFlexed
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: row
+
+        .top
+            min-width: 100%
+            height: 100%
+            transform: translateX(0%)
+            transition: transform 0.22s ease
+
+            &.holders
+                transform: translateX(0%)
+                height: 100%
+
+                &.hide
+                    transform: translateX(-100%)
+                    height: 0
+
+            .top-three
+                display: flex
+                justify-content: space-around
+                align-items: end
+                margin-top: 1.8rem
+                margin-bottom: 1.8rem
+                padding: 0px 14px
+                width: 100%
+                z-index: 5
+
+                @media screen and (max-width: 356px)
+                    justify-content: space-between
+
+                .top-user
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 6px
+
+                    &.place-1
+                        .avatar-wrapper 
+                            width: 80px
+                            height: 80px
+
+                            .avatar
+                                width: 80px
+                                height: 80px
+                                border: 2px solid $app-leaderboard-background-one
+                            
+                            .rank-badge
+                                background: $app-leaderboard-background-one
+                    
+                    &.place-2
+                        .avatar-wrapper 
+                            width: 60px
+                            height: 60px
+                            
+                            .avatar
+                                width: 60px
+                                height: 60px
+                                border: 2px solid rgba($app-leaderboard-background-two, 0.7)
+                            
+                            .rank-badge
+                                background: $app-leaderboard-background-two
+                    
+                    &.place-3
+                        .avatar-wrapper 
+                            width: 60px
+                            height: 60px
+                            
+                            .avatar
+                                width: 60px
+                                height: 60px
+                                border: 2px solid rgba($app-leaderboard-background-three, 0.6)
+                            
+                            .rank-badge
+                                background: $app-leaderboard-background-three
+
+                    .avatar-wrapper
+                        position: relative
+                        width: 70px
+                        height: 70px
+
+                        .avatar
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                            object-fit: cover
+                        
+                        & .avatar_null
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                            background: $app-span-gray-background
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                                
+                            & h4
+                                margin-top: -2px
+                                font-size: 1em
+                                font-weight: 700
+                                color: $app-text-color
+
+                        .rank-badge
+                            position: absolute
+                            top: -4px
+                            right: -4px
+                            background: $app-leaderboard-background-one
+                            color: black
+                            font-weight: 600
+                            border-radius: 50%
+                            width: 22px
+                            height: 22px
+                            font-size: 0.8rem
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                    
+                    .name
+                        margin-top: 0.5rem
+                        font-weight: 600
+                        max-width: 130px
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
+                    
+                        @media screen and (max-width: 356px)
+                            font-size: 13px
+
+                    .gifts
+                        font-size: 0.9rem
+                        color: $app-button-text-color
+                        background: $app-button-background-blur
+                        border-radius: 50px
+                        padding: 6px 12px
+                        margin-top: 0.3rem
+                        white-space: nowrap
+
+                        @media screen and (max-width: 356px)
+                            font-size: 0.7rem
+                            padding: 4px 8px
+            
+            .other-list
+                display: flex
+                flex-direction: column
+                padding: 0px 16px
+                background: $app-background-secondary
+                box-shadow: 0px 0px 35px rgba($app-preview, 0.2)
+                border-radius: 24px
+                z-index: 10
+
+                .other-user
+                    padding: 14px 6px
+                    display: flex
+                    align-items: center
+                    justify-content: space-between
+                    border-bottom: 1px solid rgba($app-input-background, 0.5)
+
+                    &:last-child
+                        border-bottom: none
+
+                    .rank
+                        width: 26px
+                        height: 30px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        font-size: 14px
+                        font-weight: 600
+                        color: $app-text-color
+                    
+                    .info
+                        flex: 1
+                        margin-left: 1rem
+                        display: flex
+                        flex-direction: column
+                        gap: 0.4rem
+                    
+                        .name
+                            font-weight: 600
+                            color: $app-text-color
+                        
+                        .gifts
+                            font-size: 0.9rem
+                            color: $app-text-color-phiolete
+                    
+                    .small-avatar
+                        width: 46px
+                        height: 46px
+                        border-radius: 50%
+                        object-fit: cover
+                        background: $app-span-gray-background
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        
+                        & h4
+                            font-size: 0.9em
+                            font-weight: 700
+                    
+                    .hold
+                        width: fit-content
+                        height: 100%
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        gap: 7px
+                        position: relative
+                        
+                        & p
+                            font-size: 1.05em
+                            font-weight: 700
+                            color: $app-text-color
+                            
+                        & img
+                            width: 42px
+                            height: 42px
+                            border-radius: 50%
+                            object-fit: cover
+
+    ._content
+        width: 100%
+        height: 100%
+            
+        .sections
+            width: 100%
+            height: fit-content
+            display: flex
+            align-items: center
+            overflow: hidden
+            gap: 8px
+            margin-bottom: 13px
+            padding: 0px 22px
+
+            .section
+                width: fit-content
+                height: 40px
+                background: rgba($app-span-gray-background, 0.5)
+                -webkit-backdrop-filter: blur(30px)
+                backdrop-filter: blur(30px)
+                display: flex
+                align-items: center
+                justify-content: center
+                gap: 10px
+                border-radius: 50px
+                padding: 0 16px
+                transition: background 0.22s ease
+                will-change: background
+                cursor: pointer
+
+                &.active
+                    background: $app-span-gray-background
+                    
+                & h4
+                    font-size: 16px
+                    font-weight: 600
+                    color: $app-text-color
+
+        .topFlexed
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: row
+            overflow: hidden
+
+        .top
+            min-width: 100%
+            height: 100%
+            transform: translateX(0%)
+            transition: transform 0.22s ease
+
+            &.holders
+                transform: translateX(0%)
+                height: 100%
+
+                &.hide
+                    transform: translateX(-100%)
+                    height: 0
+
+            &.gifts
+                transform: translateX(-100%)
+                margin-top: 12px
+
+                .other-list
+                    .small-avatar
+                        margin-left: 7px
+                        margin-right: -2px
+
+                &.hide
+                    transform: translateX(0%)
+
+            .top-three
+                display: flex
+                justify-content: space-around
+                align-items: end
+                margin-top: 1.8rem
+                margin-bottom: 1.8rem
+                padding: 0px 14px
+                width: 100%
+                z-index: 5
+
+                @media screen and (max-width: 356px)
+                    justify-content: space-between
+
+                .top-user
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 6px
+
+                    &.place-1
+                        .avatar-wrapper 
+                            width: 80px
+                            height: 80px
+
+                            .avatar
+                                width: 80px
+                                height: 80px
+                                border: 2px solid $app-leaderboard-background-one
+                            
+                            .rank-badge
+                                background: $app-leaderboard-background-one
+                    
+                    &.place-2
+                        .avatar-wrapper 
+                            width: 60px
+                            height: 60px
+                            
+                            .avatar
+                                width: 60px
+                                height: 60px
+                                border: 2px solid rgba($app-leaderboard-background-two, 0.7)
+                            
+                            .rank-badge
+                                background: $app-leaderboard-background-two
+                    
+                    &.place-3
+                        .avatar-wrapper 
+                            width: 60px
+                            height: 60px
+                            
+                            .avatar
+                                width: 60px
+                                height: 60px
+                                border: 2px solid rgba($app-leaderboard-background-three, 0.6)
+                            
+                            .rank-badge
+                                background: $app-leaderboard-background-three
+
+                    .avatar-wrapper
+                        position: relative
+                        width: 70px
+                        height: 70px
+
+                        .avatar
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                            object-fit: cover
+                        
+                        & .avatar_null
+                            width: 100%
+                            height: 100%
+                            border-radius: 50%
+                            background: $app-span-gray-background
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                                
+                            & h4
+                                margin-top: -2px
+                                font-size: 1em
+                                font-weight: 700
+                                color: $app-text-color
+
+                        .rank-badge
+                            position: absolute
+                            top: -4px
+                            right: -4px
+                            background: $app-leaderboard-background-one
+                            color: black
+                            font-weight: 600
+                            border-radius: 50%
+                            padding: 4px 8px
+                            font-size: 0.8rem
+                    
+                    .name
+                        margin-top: 0.5rem
+                        font-weight: 600
+                        max-width: 130px
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
+                    
+                        @media screen and (max-width: 356px)
+                            font-size: 13px
+
+                    .gifts
+                        font-size: 0.9rem
+                        color: $app-button-text-color
+                        background: $app-button-background-blur
+                        border-radius: 50px
+                        padding: 6px 12px
+                        margin-top: 0.3rem
+                        white-space: nowrap
+
+                        @media screen and (max-width: 356px)
+                            font-size: 0.7rem
+                            padding: 4px 8px
+            
+            .other-list
+                display: flex
+                height: 100%
+                flex-direction: column
+                padding: 0px 16px
+                background: $app-background-secondary
+                box-shadow: 0px 0px 35px rgba($app-preview, 0.2)
+                border-radius: 24px
+                z-index: 10
+
+                .other-user
+                    padding: 14px 6px
+                    display: flex
+                    align-items: center
+                    justify-content: space-between
+                    border-bottom: 1px solid rgba($app-input-background, 0.5)
+
+                    &:last-child
+                        border-bottom: none
+
+                    .rank
+                        width: 26px
+                        height: 30px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        font-size: 14px
+                        font-weight: 600
+                        color: $app-text-color
+                    
+                    .info
+                        flex: 1
+                        margin-left: 1rem
+                        display: flex
+                        flex-direction: column
+                        gap: 0.4rem
+                    
+                        .name
+                            font-weight: 600
+                            color: $app-text-color
+                        
+                        .gifts
+                            font-size: 0.9rem
+                            color: $app-text-color-phiolete
+                    
+                    .small-avatar
+                        width: 46px
+                        height: 46px
+                        border-radius: 50%
+                        object-fit: cover
+                        background: $app-span-gray-background
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        
+                        & h4
+                            font-size: 0.9em
+                            font-weight: 700
+                    
+                    .hold
+                        width: fit-content
+                        height: 100%
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        gap: 7px
+                        position: relative
+                        
+                        & p
+                            font-size: 1.05em
+                            font-weight: 700
+                            color: $app-text-color
+                            
+                        & img
+                            width: 42px
+                            height: 42px
+                            border-radius: 50%
+                            object-fit: cover

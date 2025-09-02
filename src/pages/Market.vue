@@ -1,0 +1,69 @@
+<template>
+    <div class="_wrap _market" :class="{ desktop: isDesktop() }">
+        <div class="_view">
+            <div class="bg"></div>
+
+        </div>
+    </div>
+</template>
+  
+<script lang="ts">
+import TelegramModule from '../hooks/useTelegram';
+
+import { useCacheStore } from '../stores/pinia/piniaStore';
+import { isDesktop } from '../utils/checkDevice';
+import { shootConfetti } from '../utils/useConfetti';
+import { Icon } from '../components/Icon';
+import { getConfig } from '../config';
+
+export default {
+    props: {
+        success: {
+            type: Boolean,
+            required: true,
+        },
+    },
+
+    components: {
+    },
+
+    data() {
+        return {
+            storeCache: useCacheStore() as any,
+            configApp: getConfig(),
+            handleLoads: 0,
+            propsSuccess: this.$props.success,
+            isPageLoading: true,
+
+            isDesktop,
+            Icon,
+        };
+    },
+
+    mounted() {
+        TelegramModule.useBackButton(
+            () => this.$router.push('/')
+        );
+    },
+
+    methods: {
+        handleLoadSuccess() {
+            this.handleLoads ++;
+
+            if (this.handleLoads >= 1) {
+                setTimeout(() => {
+                    this.isPageLoading = false;
+                    TelegramModule.useMediumHaptic();
+                    shootConfetti();
+                }, this.configApp.skeletonTime);
+            };
+        },
+    },
+};
+</script>
+  
+
+<style lang="sass">
+@use "@/assets/styles/market/_main.sass"
+@use "@/assets/styles/market/_comp.sass"
+</style>

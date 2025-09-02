@@ -1,0 +1,174 @@
+@use "./_variables" as *
+@use "./_frames" as *
+
+*,
+*::before,
+*::after
+    margin: 0
+    padding: 0
+    box-sizing: border-box
+
+
+.fade-in
+  opacity: 0
+  will-change: opacity
+  transition: opacity 0.27s ease-in-out
+
+
+.fade-in.visible
+  will-change: opacity
+  opacity: 1
+
+
+html
+    background: $app-background
+
+html, body
+    scroll-behavior: smooth
+
+    --tg-theme-subtitle-text-color: #b1c3d5
+    --tg-theme-hint-color: #b1c3d5 
+    --tg-theme-button-color: #2ea6ff 
+    --tg-theme-section-header-text-color: #b1c3d5
+    --tg-theme-destructive-text-color: #ef5b5b
+    --tg-color-scheme: dark
+    --tg-theme-bg-color: #18222d
+    --tg-theme-link-color: #62bcf9
+    --tg-theme-section-separator-color: #213040
+    --tg-theme-button-text-color: #ffffff
+    --tg-theme-bottom-bar-bg-color: #213040 
+    --tg-theme-section-bg-color: #18222d 
+    --tg-theme-secondary-bg-color: #131415 
+    --tg-theme-header-bg-color: #1c1c1c !important
+    --tg-theme-text-color: #ffffff 
+    --tg-theme-accent-text-color: #2ea6ff 
+    --tg-viewport-height: 100vh 
+    --tg-viewport-stable-height: 100vh 
+    --tg-content-safe-area-inset-top: 0px 
+    --tg-content-safe-area-inset-bottom: 0px 
+    --tg-content-safe-area-inset-left: 0px 
+    --tg-content-safe-area-inset-right: 0px
+    
+    --tg-safe-area-inset-top: env(safe-area-inset-top, 0px)
+    --tg-safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)
+    --tg-safe-area-inset-left: env(safe-area-inset-left, 0px)
+    --tg-safe-area-inset-right: env(safe-area-inset-right, 0px)
+
+    --tg-content-safe-area-inset-top: env(safe-area-inset-top, 0px)
+    --tg-content-safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)
+    --tg-content-safe-area-inset-left: env(safe-area-inset-left, 0px)
+    --tg-content-safe-area-inset-right: env(safe-area-inset-right, 0px)
+
+    &::-webkit-scrollbar
+        display: none
+
+::-webkit-scrollbar
+    display: none
+
+body
+  overflow: hidden
+  margin: 0
+  font-family: $app-fontface
+  color: $app-text-color
+  background: $app-background
+
+  -webkit-font-smoothing: antialiased
+  -webkit-tap-highlight-color: transparent
+  -webkit-user-select: none
+  -moz-user-select: none
+  user-select: none
+
+  display: flex
+  flex-direction: column
+
+  section
+    width: 100%
+    height: 100%
+    overflow-y: auto
+    max-width: $app-max-width
+    animation: page-in $app-transition-page
+    overflow: hidden
+
+
+@keyframes page-in
+    0%
+        opacity: 0
+        transform: scale(0.99)
+
+    to
+        opacity: 1
+        transform: scale(1.00)
+
+
+p, span, h1, h2, h3, h4, h5, h6, a, 
+button, input, textarea, select, option, img
+    color: $app-text-color
+
+
+a
+    text-decoration: none
+
+
+button
+    font-family: $app-fontface
+    width: fit-content
+    height: fit-content
+    border: none
+    background: $app-button-background
+    color: $app-button-text-color
+    font-size: 16px
+    font-weight: 600
+    cursor: pointer
+    padding: 8px 23px
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 5px
+    border-radius: 50px
+
+    & img
+        width: 16px
+        height: 16px
+
+    & p
+        color: $app-button-text-color
+
+button
+  transition: transform 0.22s ease
+
+button.clicked
+  transform: scale(0.94)
+
+.notiflix-confirm
+  z-index: 1000 !important
+
+.notiflix-confirm-content
+    background-color: $app-background !important
+    border-radius: 16px !important
+    padding: 17px 20px !important
+
+    .notiflix-confirm-head
+
+        h5
+            color: $app-text-color !important
+            font-size: 18px !important
+            font-weight: 600 !important
+            border: none !important
+            padding-bottom: 0 !important
+        
+        div
+            color: $app-text-color-descr !important
+            font-size: 15px !important
+            font-weight: 400 !important
+
+.nx-confirm-button-ok
+  background-color: $app-button-blue-light-background !important
+  color: $app-button-blue-light-text-color !important
+  font-weight: 600 !important
+  font-size: 16px !important
+
+.nx-confirm-button-cancel
+  background-color: $app-background-secondary !important
+  color: $app-text-color-descr !important
+  font-weight: 600 !important
+  font-size: 16px !important

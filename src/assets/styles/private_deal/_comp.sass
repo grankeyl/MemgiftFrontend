@@ -1,0 +1,432 @@
+@use "./../_variables" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes bubbleNft
+  0%
+    opacity: 0
+    transform: scale(0.65)
+  100%
+    opacity: 1
+    transform: scale(1)
+
+
+@keyframes bumping
+  0%
+    transform: scale(1.0)
+  50%
+    transform: scale(0.94)
+  100%
+    transform: scale(1.0)
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+._comp._item._pageContent
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._text
+            width: 25%
+
+            & p
+                width: auto
+                height: 30px
+                background: $app-background-secondary
+                border-radius: 10px
+
+    ._content
+        width: 100%
+        height: 30px
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: 10px
+        transition: all 0.22s forwards
+
+        ._inputBlock
+            width: 100%
+            height: auto
+            margin-top: 10px
+            margin-bottom: 5px
+
+            & label
+                height: auto
+                font-size: 18px
+                font-weight: 500
+                color: $app-text-color
+
+            ._flexed
+              display: flex
+              align-items: center
+              gap: 15px
+              width: 100%
+              justify-content: space-between
+
+              & label
+                  height: auto
+                  font-size: 18px
+                  font-weight: 500
+                  color: $app-text-color
+              
+              & span
+                  height: auto
+                  font-size: 16px
+                  font-weight: 500
+                  color: $app-text-color-primary-secondary
+
+            ._inputContent
+                width: 100%
+                height: auto
+                display: flex
+                align-items: center
+                gap: 10px
+                position: relative
+                margin-top: 10px
+
+                & img
+                    position: absolute
+                    z-index: 2
+                    width: 20px
+                    height: 20px
+                    left: 18px
+                    
+                    & img
+                        width: 100%
+                        height: 100%
+
+                & input
+                    width: 100%
+                    height: 53px
+                    background: $app-background-secondary
+                    border-radius: 13px
+                    border: none
+                    padding: 0 15px 0 48px
+                    font-size: 16px
+                    font-weight: 500
+                    color: $app-text-color
+                    transition: all 0.22s ease
+                    outline: none
+                    z-index: 1
+
+                    &::placeholder
+                        color: $app-text-color-descr
+
+            ._gifts
+              width: 100%
+              display: grid
+              grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+              gap: 14px
+              margin-top: 10px
+              padding-bottom: calc($app-menu-height + 25%)
+
+              ._gift
+                  width: 100%
+                  height: 197px
+                  background: $app-background-secondary
+                  border-radius: 16px
+                  position: sticky
+                  animation: bubbleNft 0.20s linear
+
+                  &:active
+                      transition: transform 0.11s linear
+                      will-change: transform
+                      transform: scale(0.98)
+
+                  &.rare
+                      background: $app-rarity-background-rare
+                  
+                  &.veryrare
+                      background: $app-rarity-background-very-rare
+                  
+                  &.epic
+                      background: $app-rarity-background-epic
+                  
+                  &.legend
+                      background: $app-rarity-background-legendary
+                    
+                  &.author                    
+                      background: $app-rarity-background-author
+
+                  ._checkbox
+                      position: absolute
+                      top: 13px
+                      right: 13px
+                      z-index: 2
+                      
+                      .kit-icon
+                        position: absolute
+                        top: 50%
+                        left: 50%
+                        transform: translate(-50%, -50%)
+                        width: fit-content
+                        height: fit-content
+                        opacity: 0
+                        transition: opacity 0.07s linear
+                        will-change: opacity
+                        visibility: hidden
+
+                        &.active
+                          opacity: 1
+                          visibility: visible
+
+                        & svg
+                          width: 13px
+                          height: 13px
+
+                      & input
+                        appearance: none
+                        width: 24px
+                        height: 24px
+                        background: $app-background
+                        transition: background 0.07s linear
+                        will-change: background
+                        border-radius: 6px
+                        cursor: pointer
+
+                        &:checked
+                          background: $app-background-gold-secondary
+
+                  ._symbols
+                      position: absolute
+                      width: 100%
+                      height: 100%
+                      overflow: hidden
+                      // mix-blend-mode: overlay
+                      z-index: 1
+
+                      & img
+                          position: absolute
+                          left: 50%
+                          top: 50%
+                          width: calc(100% + 25px)
+                          height: calc(100%)
+                          transform: translate(-50%, -50%)
+                          z-index: -1
+
+                  ._nft
+                      width: 100%
+                      height: 100%
+                      position: absolute
+                      top: 50%
+                      left: 50%
+                      transform: translate(-50%, -52%)
+                      text-align: center
+                      display: flex
+                      justify-content: center
+                      align-items: center
+                      z-index: 5
+
+                      & img
+                          width: 75%
+                          height: 75%
+                          object-fit: cover
+    
+
+._comp._item._sect
+    width: 100%
+    height: fit-content
+    margin-top: 5px
+    margin-bottom: 10px
+    padding-left: 16px
+    padding-right: 16px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._section
+            width: 100%
+            height: 38px
+            background: $app-background-secondary
+            border-radius: 50px
+    
+    ._content
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        overflow-x: scroll
+
+        ._section
+            width: fit-content
+            height: 38px
+            padding: 0 17px
+            border-radius: 50px
+            display: flex
+            justify-content: center
+            align-items: center
+            transition: background 0.06s ease
+            gap: 7px
+
+            &.numeric
+                padding: 0 10px 0 17px
+
+            & h4
+                white-space: nowrap
+                font-size: 15px
+                font-weight: 400
+                color: $app-text-color
+                opacity: .55
+                transition: opacity 0.06s ease
+            
+            & span
+                width: 24px
+                height: 24px
+                border-radius: 50px
+                background: $app-span-gray-background
+                display: flex
+                justify-content: center
+                align-items: center
+                position: relative
+                font-size: 15px
+                font-weight: 500
+                opacity: .45
+                transition: opacity 0.206s ease
+            
+            &._active
+                background: $app-background-secondary
+
+                & h4
+                    color: $app-text-color
+                    opacity: 1
+
+                & span
+                    width: 24px
+                    height: 24px
+                    border-radius: 50px
+                    background: $app-span-gray-background
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    font-size: 15px
+                    font-weight: 500
+                    opacity: 1
+    
+
+._comp._item._privateDeals
+    width: 100%
+    height: fit-content
+    margin-top: 5px
+    margin-bottom: 10px
+    padding-left: 16px
+    padding-right: 16px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+
+        ._section
+            width: 100%
+            height: 38px
+            background: $app-background-secondary
+            border-radius: 50px
+    
+    ._content
+        width: 100%
+        display: flex
+        align-items: center
+        gap: 10px
+        overflow-x: scroll
+
+        ._items
+            width: 100%
+            height: fit-content
+            display: flex
+            flex-direction: column
+            align-items: center
+            gap: 10px
+            overflow-x: scroll
+
+            ._item
+                width: 100%
+                height: 68px
+                background: $app-background-secondary
+                border-radius: 16px
+                display: flex
+                align-items: center
+                gap: 10px
+                padding: 0 15px
+                animation: bubbleNft 0.20s linear
+                
+                ._left
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    flex-direction: column
+                    align-items: start
+                    justify-content: center
+                    gap: 6px
+
+                    ._title
+                        width: 100%
+
+                        & h4
+                            font-size: 17px
+                            font-weight: 600
+                            color: $app-text-color
+
+                    ._stars
+                        width: 100%
+                        display: flex
+                        align-items: center
+                        gap: 5px
+
+                        & img
+                            width: 16px
+                            height: 16px
+                        
+                        & span
+                            font-size: 15px
+                            font-weight: 500
+                            color: $app-button-text-color
+                            margin-top: 2px
+
+                ._right
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    margin-left: auto
+                    gap: 10px
+
+                    ._delete
+                        width: 40px
+                        height: 40px
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        gap: 10px
+                        background: rgba($app-text-color-red, 0.1)
+                        border-radius: 11px
+
+                        & .kit-icon
+                            width: 18px
+                            height: 18px
+
+                            & svg
+                                width: 18px
+                                height: 18px

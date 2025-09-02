@@ -1,0 +1,225 @@
+@use "./../_variables" as *
+@use "./../_frames" as *
+
+
+@keyframes fadeIn
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+
+._skeleton
+    animation: fadeIn 0.72s
+
+._content
+    animation: fadeIn 0.32s
+    
+
+._comp._item._context
+    width: 100%
+    height: fit-content
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: start
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._title
+            width: 120px
+            height: 25px
+            display: flex
+            align-items: center
+            background: $app-text-color-descr
+            border-radius: 10px
+            opacity: .2
+            margin-bottom: 12px
+                
+        ._amount
+            width: 90px
+            height: 24px
+            display: flex
+            align-items: center
+            background: $app-text-color-descr
+            border-radius: 10px
+            opacity: .2
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: start
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._title
+            width: fit-content
+            height: auto
+            
+            & h4
+                width: auto
+                height: auto
+                font-size: 24px
+                font-weight: 600
+                color: $app-text-color
+                
+        ._amount
+            width: fit-content
+            height: auto
+            display: flex
+            align-items: center
+            
+            & img
+                width: 19px
+                height: 19px
+                margin-right: 7px
+            
+            & p
+                font-size: 18px
+                font-weight: 500
+                color: $app-button-text-color
+
+
+._comp._item._giftsBlock
+    width: 100%
+    height: fit-content
+
+    ._skeleton
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: start
+        gap: 10px
+        width: 100%
+        position: relative
+
+    ._content
+        width: fit-content
+        display: flex
+        flex-direction: column
+        align-items: start
+        gap: 10px
+        width: 100%
+        position: relative
+
+        ._block
+            width: 100%
+            height: 100%
+            padding: 0px 16px
+
+            ._gifts
+              width: 100%
+              display: grid
+              grid-template-columns: repeat(auto-fill, minmax(120px, 1fr))
+              gap: 14px
+              margin-top: 6px
+              padding-bottom: calc($app-menu-height + 25%)
+
+              ._gift
+                  width: 100%
+                  aspect-ratio: 1 / 1
+                  background: $app-background-secondary
+                  border-radius: 16px
+                  position: sticky
+                  animation: bubbleNft 0.20s linear
+                  margin: auto
+
+                  &:active
+                      transition: transform 0.11s linear
+                      will-change: transform
+                      transform: scale(0.98)
+
+                  &.rare
+                      background: $app-rarity-background-rare
+                  
+                  &.veryrare
+                      background: $app-rarity-background-very-rare
+                  
+                  &.epic
+                      background: $app-rarity-background-epic
+                  
+                  &.legend
+                      background: $app-rarity-background-legendary
+                    
+                  &.author
+                      background: $app-rarity-background-author
+
+                  ._checkbox
+                      position: absolute
+                      top: 13px
+                      right: 13px
+                      z-index: 2
+                      
+                      .kit-icon
+                        position: absolute
+                        top: 50%
+                        left: 50%
+                        transform: translate(-50%, -50%)
+                        width: fit-content
+                        height: fit-content
+                        opacity: 0
+                        transition: opacity 0.07s linear
+                        will-change: opacity
+                        visibility: hidden
+
+                        &.active
+                          opacity: 1
+                          visibility: visible
+
+                        & svg
+                          width: 13px
+                          height: 13px
+
+                      & input
+                        appearance: none
+                        width: 24px
+                        height: 24px
+                        background: $app-background
+                        transition: background 0.07s linear
+                        will-change: background
+                        border-radius: 6px
+                        cursor: pointer
+
+                        &:checked
+                          background: $app-background-gold-secondary
+
+                  ._symbols
+                      position: absolute
+                      width: 100%
+                      height: 100%
+                      overflow: hidden
+                      // mix-blend-mode: overlay
+                      z-index: 1
+
+                      & img
+                          position: absolute
+                          left: 50%
+                          top: 50%
+                          width: calc(100% + 25px)
+                          height: calc(100%)
+                          transform: translate(-50%, -50%)
+                          z-index: -1
+
+                  ._nft
+                      width: 100%
+                      height: 100%
+                      position: absolute
+                      top: 50%
+                      left: 50%
+                      transform: translate(-50%, -52%)
+                      text-align: center
+                      display: flex
+                      justify-content: center
+                      align-items: center
+                      z-index: 5
+
+                      & img
+                          width: 75%
+                          height: 75%
+                          object-fit: cover
+    
