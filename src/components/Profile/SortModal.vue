@@ -18,7 +18,7 @@
         <div class="head">
           <div class="centered">
             <div class="kit-icon" v-html="Icon.Sort"></div>
-            <h4>Sort</h4>
+            <h4>{{ $t('profile.profileFilterModal.title') }}</h4>
           </div>
           <div @click="closeModal" class="close">
             <div class="kit-icon" v-html="Icon.Close"></div>
@@ -32,7 +32,7 @@
             class="item"
           >
             <div class="left">
-              <h5>{{ item.Title }}</h5>
+              <h5>{{ $t(`profile.profileFilterModal.items.${item.id}`) }}</h5>
             </div>
             <div class="select" :class="{ active: localSelected === item.id }">
               <div class="circle"></div>
@@ -41,10 +41,10 @@
         </div>
         <div class="buttons">
           <button @click="cancel">
-            <h4>Cancel</h4>
+            <h4>{{ $t('profile.profileFilterModal.cancel') }}</h4>
           </button>
           <button @click="apply">
-            <h4>Apply</h4>
+            <h4>{{ $t('profile.profileFilterModal.apply') }}</h4>
           </button>
         </div>
       </div>

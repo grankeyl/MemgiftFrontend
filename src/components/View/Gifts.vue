@@ -71,7 +71,7 @@
         </div>
         <div v-if="!isEmptyFilter" class="cheaps">
           <div class="cheap clear" @click="clearAll">
-            <h4>Clear all</h4>
+            <h4>{{ $t('profile.clearAll') }}</h4>
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
           <div v-if="hasModels" class="cheap model" @click="clearModels">
@@ -238,10 +238,10 @@
         <img src="/profile/empty.svg" alt="empty" />
       </div>
       <div class="title">
-        <h4>You have no gifts(</h4>
+        <h4>{{ $t('profile.profileGiftsNull') }}</h4>
       </div>
       <div class="description">
-        <p>You can buy gifts from the store</p>
+        <p>{{ $t('profile.profileGiftsNullButtonAsking') }}</p>
       </div>
     </div>
   </div>
@@ -410,7 +410,11 @@ export default {
       return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort] 
     },
     sortTitle() {
-      return this.hasSort ? this.SortItems[this.SelectedSort].Title : ''
+      if (this.hasSort) {
+        return this.$t(`profile.profileFilterModal.items.${this.SelectedSort}`)
+      } else {
+        return ''
+      }
     },
     isEmptyFilter() {
       return !(this.hasModels || this.hasSort) 

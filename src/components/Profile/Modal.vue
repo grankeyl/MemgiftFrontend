@@ -123,7 +123,7 @@
             <button @click="copyGiftLink">
               <img src="/copy.svg" alt="market" />
               <span>
-                Link
+                {{ $t('profile.profileLink') }}
               </span>
             </button>
           </div>
@@ -815,14 +815,15 @@ export default {
           this.ActiveButton = false;
         };
 
+        this.ActiveButton = false;
+        this.storeCache.UserData.sent_user++;
+
         if (transfer.tickets_rewarded) {
           this.storeCache.UserData.user.Tickets += transfer.tickets_rewarded;
         }
 
-        this.ActiveButton = false;
-        this.storeCache.UserData.sent_user++;
+        this.$emit('useTransfered', nftsToTransfer[0]);
         this.closeTransferModal();
-        this.$emit('useTransfered', this.ModalComp.NftUuid);
       };
 
       if (this.ModalComp.NftStatus === 'received') {
@@ -839,8 +840,8 @@ export default {
           () => {
             this.ActiveButton = false;
             this.storeCache.UserData.sent_user++;
-            this.closeTransferModal();
             this.$emit('useTransfered', this.ModalComp.NftUuid);
+            this.closeTransferModal();
           }, 
           () => {
           }

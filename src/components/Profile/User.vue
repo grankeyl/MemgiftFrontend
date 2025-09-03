@@ -275,7 +275,7 @@ export default {
     return {
       configApp: getConfig(),
       storeCache: useCacheStore(),
-      isLoading: this.$props.Skeleton,
+      isLoading: false,
 
       LanguageSelect: 'en',
       LanguageList: [
@@ -296,7 +296,6 @@ export default {
   },
 
   mounted() {
-    this.loadResources();
     this.getTickets();
 
     this.LanguageSelect = this.storeCache.UserData.user.Language;

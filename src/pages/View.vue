@@ -337,8 +337,8 @@ export default defineComponent({
       ModalComp.value.NftUpgraded = nft.upgrade;
       ModalComp.value.NftUpgradeSupport = NftData.UpgradeSupport;
 
-      GiftTableList.value.OwnerName = storeCache.TelegramData.user.firstName;
-      GiftTableList.value.OwnerAvatar = storeCache.TelegramData.user.photoUrl;
+      GiftTableList.value.OwnerName = UserComp.value.Name as any;
+      GiftTableList.value.OwnerAvatar = UserComp.value.Image as any;
       GiftTableList.value.NftDate = unixToDefault(nft.timespan);
       GiftTableList.value.NftPrice = nft.purchase_price;
       GiftTableList.value.NftSupply = `${Math.max(NftData.Supply - NftData.SupplyUsers, 0)} of ${NftData.Supply}`;

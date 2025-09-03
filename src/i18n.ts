@@ -139,7 +139,7 @@ i18next.init({
                 profileGiftsCategory1: "Received",
                 profileGiftsCategory2: "Purchased",
 
-                profileGiftsNull: "No gifts",
+                profileGiftsNull: "You have no gifts(",
                 profileGiftsNullButtonAsking: "You can buy gifts in the store",
                 profileGiftsNullButtonBuy: "Buy",
                 profileGiftsGiftSended: "Sent",
@@ -218,7 +218,25 @@ i18next.init({
                     sort: "Sort",
                     gifts: "gifts",
                 },
-                filterGiftModel: {},
+                profileModelModal: {
+                    title: "Gift Model",
+                    cancel: "Cancel",
+                    apply: "Apply",
+                },
+                profileFilterModal: {
+                    title: "Sort",
+                    items: {
+                        latest: "Latest",
+                        oldest: "Oldest",
+                        price_high: "Price: High to Low",
+                        price_low: "Price: Low to High",
+                        upgraded: "Upgraded",
+                        not_upgraded: "Not Upgraded",
+                    },
+                    cancel: "Cancel",
+                    apply: "Apply",
+                },
+                clearAll: "Clear all",
             },
             receive: {
                 purchasedText: "Gift purchased",
@@ -468,7 +486,7 @@ i18next.init({
 
                 profileGiftSended: "Отправлено",
 
-                profileGiftsNull: "У вас нет подарков",
+                profileGiftsNull: "У вас нет подарков(",
                 profileGiftsNullButtonAsking: "Вы можете купить подарки в магазине",
                 profileGiftsNullButtonBuy: "Купить подарок",
                 profileGiftsGiftSended: "Отправлено",
@@ -547,7 +565,26 @@ i18next.init({
                     model: "Модель",
                     sort: "Фильтр",
                     gifts: "подарок",
-                }
+                },
+                profileModelModal: {
+                    title: "Модель подарка",
+                    cancel: "Отмена",
+                    apply: "Применить",
+                },
+                profileFilterModal: {
+                    title: "Сортировка",
+                    items: {
+                        latest: "Последние",
+                        oldest: "Старые",
+                        price_high: "Цена: Высокая к Низкой",
+                        price_low: "Цена: Низкая к Высокой",
+                        upgraded: "Улучшенные",
+                        not_upgraded: "Не улучшенные",
+                    },
+                    cancel: "Отмена",
+                    apply: "Применить",
+                },
+                clearAll: "Очистить",
             },
             receive: {
                 purchasedText: "Подарок куплен",

@@ -18,7 +18,7 @@
         <div class="head">
           <div class="centered">
             <div class="kit-icon" v-html="Icon.Gift"></div>
-            <h4>Gift Model</h4>
+            <h4>{{ $t('profile.profileModelModal.title') }}</h4>
           </div>
           <div @click="closeModal" class="close">
             <div class="kit-icon" v-html="Icon.Close"></div>
@@ -42,10 +42,10 @@
         </div>
         <div class="buttons">
           <button @click="cancel">
-            <h4>Cancel</h4>
+            <h4>{{ $t('profile.profileModelModal.cancel') }}</h4>
           </button>
           <button @click="apply">
-            <h4>Apply</h4>
+            <h4>{{ $t('profile.profileModelModal.apply') }}</h4>
           </button>
         </div>
       </div>

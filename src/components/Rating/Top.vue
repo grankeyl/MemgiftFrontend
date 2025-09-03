@@ -126,7 +126,7 @@
                 {{ leader?.countsReceived }} 
                 {{ pluralizeGift(
                   $t('rating.gifts'),
-                  leader.countsReceived,
+                  leader?.countsReceived,
                   storeCache.TelegramData.user.language
                 ) }}
               </div>
@@ -146,10 +146,10 @@
                 <div class="name" v-if="cleanString(leader.user_full_name) && cleanString(leader.user_full_name).trim()">{{ cleanString(leader.user_full_name) }}</div>
                 <div class="name" v-else>No Name</div>
                 <div class="gifts">
-                  {{ leader.countsReceived }} 
+                  {{ leader?.countsReceived }} 
                   {{ pluralizeGift(
                     $t('rating.gifts'),
-                    leader.countsReceived,
+                    leader?.countsReceived,
                     storeCache.TelegramData.user.language
                   ) }}
                 </div>
@@ -194,7 +194,7 @@
                 {{ leader?.refCount }}
                 {{ pluralizeGift(
                   $t('rating.referrals'),
-                  leader.refCount, 
+                  leader?.refCount, 
                   storeCache.TelegramData.user.language
                 ) }}
               </div>
@@ -214,10 +214,10 @@
                 <div class="name" v-if="cleanString(leader.name) && cleanString(leader.name).trim()">{{ cleanString(leader.name) }}</div>
                 <div class="name" v-else>No Name</div>
                 <div class="gifts">
-                  {{ leader.refCount }} 
+                  {{ leader?.refCount }} 
                   {{ pluralizeGift(
                     $t('rating.referrals'),
-                    leader.refCount, 
+                    leader?.refCount, 
                     storeCache.TelegramData.user.language
                   ) }}
                 </div>

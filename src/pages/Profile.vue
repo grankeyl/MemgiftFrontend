@@ -66,7 +66,6 @@
 
           :Skeleton="isPageLoading"
           :SkeletonTime="configApp.skeletonTime"
-          :CategoriesList="CategoriesList"
           :GiftsList="GiftsComp.List"
           :GiftsCount="GiftsComp.NFTsCount"
           :GiftsLoading="GiftsComp.Loading"
@@ -252,11 +251,6 @@ export default defineComponent({
       },
     });
 
-    const CategoriesList = ref([
-      { id: 1, Title: t('profile.profileGiftsCategory1'), Key: 'received' },
-      { id: 2, Title: t('profile.profileGiftsCategory2'), Key: 'purchased' },
-    ]);
-
     const GiftTableList = ref({
       OwnerAvatar: '',
       OwnerAvatarLoading: false,
@@ -284,7 +278,7 @@ export default defineComponent({
     const handleLoadSuccess = () => {
       handleLoads.value++;
 
-      if (handleLoads.value >= 2) {
+      if (handleLoads.value >= 1) {
         setTimeout(() => {
           isPageLoading.value = false;
           storeCache.LoadedData.push(pageApp.value);
@@ -385,7 +379,82 @@ export default defineComponent({
     };
 
     const useTransfered = (uuid: string) => {
-      GiftsComp.value.List = GiftsComp.value.List.filter(gift => gift.uuid !== uuid);
+      if (!uuid) return;
+
+      // 1) Удаляем из текущего видимого списка
+      const list: any[] = GiftsComp.value.List ?? [];
+
+      // Попытка как по плоскому списку
+      let idxFlat = list.findIndex((g: any) => g?.uuid === uuid);
+      if (idxFlat !== -1) {
+        list.splice(idxFlat, 1);
+      } else {
+        // Попытка удалить из стеков
+        for (let i = list.length - 1; i >= 0; i--) {
+          const stack = list[i];
+          if (stack?.stackGifts && Array.isArray(stack.stackGifts)) {
+            const gi = stack.stackGifts.findIndex((g: any) => g?.uuid === uuid);
+            if (gi !== -1) {
+              stack.stackGifts.splice(gi, 1);
+              // при желании поддерживаем счётчик в самом стаке
+              if (typeof stack.count === 'number' && stack.count > 0) {
+                stack.count -= 1;
+              }
+              // удаляем пустой стак полностью
+              if (stack.stackGifts.length === 0) {
+                list.splice(i, 1);
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      // Обновляем реактивность списка
+      GiftsComp.value.List = [...list];
+
+      // Глобальный счётчик на экране
+      if (typeof GiftsComp.value.NFTsCount === 'number' && GiftsComp.value.NFTsCount > 0) {
+        GiftsComp.value.NFTsCount -= 1;
+      }
+
+      // 2) Чистим во всех кэш-бакетах
+      const cache = storeCache.UserNFTs || {};
+      for (const key of Object.keys(cache)) {
+        const bucket = cache[key];
+        if (!bucket?.items || !Array.isArray(bucket.items)) continue;
+
+        let changed = false;
+
+        // Попытка как по плоскому списку
+        const bIdxFlat = bucket.items.findIndex((g: any) => g?.uuid === uuid);
+        if (bIdxFlat !== -1) {
+          bucket.items.splice(bIdxFlat, 1);
+          changed = true;
+        } else {
+          // Попытка по стекам
+          for (let i = bucket.items.length - 1; i >= 0; i--) {
+            const s = bucket.items[i];
+            if (s?.stackGifts && Array.isArray(s.stackGifts)) {
+              const gi = s.stackGifts.findIndex((g: any) => g?.uuid === uuid);
+              if (gi !== -1) {
+                s.stackGifts.splice(gi, 1);
+                if (typeof s.count === 'number' && s.count > 0) s.count -= 1;
+                if (s.stackGifts.length === 0) bucket.items.splice(i, 1);
+                changed = true;
+                break;
+              }
+            }
+          }
+        }
+
+        if (changed) {
+          if (typeof bucket.count === 'number' && bucket.count > 0) {
+            bucket.count -= 1;
+          }
+          // bucket.fullyLoaded оставляем как есть — это про исчерпанность выдачи на сервере
+        }
+      }
     };
 
     const closeModal = () => {
@@ -622,7 +691,6 @@ export default defineComponent({
       UserComp,
       GiftsComp,
       ModalComp,
-      CategoriesList,
       GiftTableList,
       GiftPurchasedOffset,
       GiftPurchasedLimit,

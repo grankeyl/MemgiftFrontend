@@ -62,7 +62,9 @@ export default {
         initDataRaw = window.Telegram.WebApp.initData; 
       }
     } else {
-      initDataRaw = import.meta.env.VITE_APP_INIT_DATA;
+      if (window.Telegram?.WebApp?.initData) {
+        initDataRaw = window.Telegram.WebApp.initData;
+      }
     }
     
     const authenticate = async () => {
