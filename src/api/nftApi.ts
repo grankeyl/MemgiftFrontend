@@ -441,20 +441,6 @@ export const upgrade = async (
     }
 };
 
-export const getBackgrounds = async () => {
-    try {
-        const tokenBearer = Cookies.get("token");
-        const response = await axios.get(
-            `${API_URL}/nft/upgrades/backgrounds`,
-            { headers: { Authorization: `Bearer ${tokenBearer}` } }
-        );
-        const count = response.data;
-        return count;
-    } catch (error) {
-        return false;
-    }
-};
-
 export const getNftUpgradeInfo = async (
     nftUniqueKey: string,
     modelName: string,

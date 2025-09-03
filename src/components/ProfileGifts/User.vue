@@ -139,7 +139,6 @@ import { obfuscateAddress } from '@/utils/useApp';
 import { toUserFriendlyAddress } from 'ton-ui-vue';
 
 import * as walletApi from '../../api/walletApi';
-import * as balanceApi from '../../api/balanceApi';
 
 import TelegramModule from '../../hooks/useTelegram';
 import Lottie from '../Lottie.vue';

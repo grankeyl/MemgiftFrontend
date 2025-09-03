@@ -110,7 +110,6 @@ import { useCacheStore } from '@/stores/pinia/piniaStore';
 import { fireCircle } from '@/utils/useConfetti';
 
 import * as nftApi from '@/api/nftApi';
-import * as balanceApi from '@/api/balanceApi';
 import * as telegramApi from '@/api/telegramApi';
 import * as taskApi from '@/api/taskApi';
 

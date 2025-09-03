@@ -60,9 +60,6 @@ import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { unixToRelative } from '../../utils/useApp';
 import { cleanString } from '../../utils/useApp';
 
-import * as balanceApi from '../../api/balanceApi';
-import * as historyTicketApi from '../../api/historyTicketApi';
-
 import Lottie from '../Lottie.vue';
 
 import Image_Avatar from '@/assets/images/avatar.png';
@@ -102,13 +99,6 @@ export default {
 
   mounted() {
     this.loadResources();
-    this.getTickets();
-    this.getHistory();
-
-    this.$watch(() => this.storeCache.TelegramData, () => {
-      this.getTickets();
-      this.getHistory();
-    });
   },
 
   computed: {
@@ -118,21 +108,6 @@ export default {
   },
   
   methods: {
-    async getTickets() {
-      try {
-        this.storeCache.UserData.Tickets = this.storeCache.UserData.Tickets || 0;
-      } catch {}
-    },
-
-    async getHistory() {
-      try {
-        const userId = this.storeCache.TelegramData.user.id;
-        const data = await historyTicketApi.getAll();
-        if (!data) return;
-        this.HistoryList = data;
-      } catch {}
-    },
-
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadImages()]);

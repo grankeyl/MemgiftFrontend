@@ -20,8 +20,6 @@
 <script>
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 
-import * as balanceApi from '../../api/balanceApi';
-
 import Image_Ticket from '@/assets/images/ticket.svg';
 
 export default {

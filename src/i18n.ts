@@ -194,6 +194,7 @@ i18next.init({
                 profileShare: "Share",
                 profileLink: "Link",
                 profileProfile: "Profile",
+                profileSell: "Sell",
                 profileCopiedLink: "Link copied to clipboard",
                 profileTransfersAll: "Transfer all to \"Received\"",
                 profileConfirmTransfer: {
@@ -523,6 +524,7 @@ i18next.init({
                 profileShare: "Поделиться",
                 profileLink: "Ссылка",
                 profileProfile: "Профиль",
+                profileSell: "Продать",
                 profileCopiedLink: "Ссылка скопирована в буфер обмена",
                 profileTransfersAll: "Перевести все в \"Получено\"",
                 profileConfirmTransfer: {

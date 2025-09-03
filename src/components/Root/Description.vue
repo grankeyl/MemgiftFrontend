@@ -12,8 +12,6 @@
 <script>
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 
-import * as balanceApi from '../../api/balanceApi';
-
 export default {
   props: {
     Skeleton: {

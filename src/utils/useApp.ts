@@ -50,13 +50,15 @@ const cleanString = (str: string) => {
 export const getImageUrl = (nftKey: string) => {
   if (!nftKey) return '';
   const nftKeyCleaned = nftKey.replace('nft_', 'gift_');
-  return `https://memgifts-images.s3.eu-north-1.amazonaws.com/png/${nftKeyCleaned}.png`;
+  const bucketsLink = import.meta.env.VITE_APP_S3_LINK;
+  return `${bucketsLink}/gifts/png/${nftKeyCleaned}.png`;
 };
 
 export const getImageUrlSvg = (nftKey: string) => {
   if (!nftKey) return '';
   const nftKeyCleaned = nftKey;
-  return `https://memgifts-images.s3.eu-north-1.amazonaws.com/${nftKeyCleaned}.svg`;
+  const bucketsLink = import.meta.env.VITE_APP_S3_LINK;
+  return `${bucketsLink}/gifts/${nftKeyCleaned}.svg`;
 };
 
 export const obfuscateAddress = (address: string) => {

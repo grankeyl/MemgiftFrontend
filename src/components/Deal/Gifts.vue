@@ -10,7 +10,7 @@
                 <img :src="Image_GiftBg" alt="rarity" />
               </div>
               <div class="_nft">
-                <img :src="'https://memgifts-images.s3.eu-north-1.amazonaws.com/gift_durov.svg'" alt="nft" />
+                <img :src="'https://app.spicko-quane.shop/s3/gifts/gift_durov.svg'" alt="nft" />
               </div>
             </div>
           </div>

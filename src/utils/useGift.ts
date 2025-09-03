@@ -79,20 +79,20 @@ const pluralizeGift = (word: string, count: number, lang: string = 'en') => {
 const getUpgradedModel = (nftUniqueKey: string, model: string, media: string = 'svg') => {
     if (!nftUniqueKey || !model) return;
     const clearModel = model.replace(" ", "+");
-    const awsLink = import.meta.env.VITE_APP_AWS_LINK;
+    const bucketsLink = import.meta.env.VITE_APP_S3_LINK;
 
     if (media === 'svg') {
-        return `${awsLink}/models/${nftUniqueKey}/${clearModel}.svg`;
+        return `${bucketsLink}/models/${nftUniqueKey}/${clearModel}.svg`;
     } else {
-        return `/gifts/upgrades/${nftUniqueKey}/${clearModel}.json`;
+        return `${bucketsLink}/models/${nftUniqueKey}/${clearModel}.json`;
     }
 }
 
 const getUpgradedSymbol = (symbol: string) => {
     if (!symbol) return;
     const clearSymbol = symbol.replace(" ", "+");
-    const awsLink = import.meta.env.VITE_APP_AWS_LINK;
-    return `${awsLink}/symbols/${clearSymbol}.png`;
+    const bucketsLink = import.meta.env.VITE_APP_S3_LINK;
+    return `${bucketsLink}/symbols/${clearSymbol}.png`;
 }
 
 const clearBackgroundName = (background: string) => {

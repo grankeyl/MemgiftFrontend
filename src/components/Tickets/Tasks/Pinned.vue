@@ -45,7 +45,6 @@ import { taskName } from '@/utils/useTask';
 import { fireCircle } from '@/utils/useConfetti';
 import { Icon } from '@/components/Icon';
 
-import * as balanceApi from '@/api/balanceApi';
 import * as taskApi from '@/api/taskApi';
 
 import Lottie from '@/components/Lottie.vue';

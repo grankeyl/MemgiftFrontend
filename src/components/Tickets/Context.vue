@@ -34,8 +34,6 @@ import TelegramModule from '../../hooks/useTelegram';
 
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 
-import * as balanceApi from '../../api/balanceApi';
-
 import Lottie from '../Lottie.vue';
 
 import Image_Avatar from '@/assets/images/avatar.png';

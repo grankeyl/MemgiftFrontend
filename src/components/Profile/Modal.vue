@@ -111,7 +111,7 @@
             <button v-if="isUpgraded" disabled>
               <img src="/market.svg" alt="market" />
               <span>
-                Sell
+                {{ $t('profile.profileSell') }}
               </span>
             </button>
             <button @click="shareGiftLink">
@@ -262,6 +262,7 @@
             </div>
           </div>
         </div>
+
         <div v-if="ModalComp.NftStatus === 'received'" class="_profileGiftModalButtons">
           <div @click="closeModal()" class="_profileGiftModalButtonsClose">
             <button :class="{ _loading: ActiveButton }">

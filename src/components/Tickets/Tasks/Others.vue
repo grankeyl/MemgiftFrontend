@@ -69,7 +69,6 @@ import { useCacheStore } from '@/stores/pinia/piniaStore';
 import { fireCircle } from '@/utils/useConfetti';
 import { pluralizeGift } from '@/utils/useGift';
 
-import * as balanceApi from '@/api/balanceApi';
 import * as taskApi from '@/api/taskApi';
 
 import Lottie from '@/components/Lottie.vue';

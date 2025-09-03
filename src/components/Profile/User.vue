@@ -168,7 +168,6 @@ import { showToast } from '../../utils/toastManager';
 import { copyToClipboard } from '../../utils/copyToClipboard';
 
 import * as walletApi from '../../api/walletApi';
-import * as balanceApi from '../../api/balanceApi';
 import * as settingsApi from '../../api/settingsApi';
 
 import TelegramModule from '../../hooks/useTelegram';

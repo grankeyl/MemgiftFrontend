@@ -32,7 +32,6 @@ import * as telegramApi from "./api/telegramApi";
 import * as multicheckApi from "./api/multicheckApi";
 import * as taskApi from "./api/taskApi";
 import * as historyApi from "./api/historyApi";
-import * as nftApi from "./api/nftApi";
 
 import TelegramModule from './hooks/useTelegram';
 import Menu from './components/Menu/Menu.vue';
@@ -135,12 +134,10 @@ export default {
 
           const tasksGet = await taskApi.getAll();
           const historyGet = await historyApi.getAll();
-          const backgroundsGet = await nftApi.getBackgrounds();
 
           storeCache.UserData.user_full_name = cleanString(storeCache.UserData.user_full_name);
           storeCache.TasksApp = tasksGet;
           storeCache.HistoryApp = historyGet;
-          storeCache.Upgrades.Backgrounds = backgroundsGet;
         }
       }
     });
