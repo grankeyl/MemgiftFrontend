@@ -1,7 +1,6 @@
 <template>
   <div class="_direction _comp _item _user" :class="Key">
       <div v-if="isLoading" class="_skeleton">
-          <div class="_profileTickets"></div>
           <div class="_image"></div>
           <div class="_name"></div>
           <div class="_descr"></div>
@@ -306,9 +305,6 @@ export default {
   },
 
   computed: {
-    isLoading() {
-      return this.Skeleton;
-    },
     getLanguageSelect() {
       if (!this.storeCache.UserData.user.Language) return '';
       const lang = this.LanguageList.find(lang => lang.id === this.storeCache.UserData.user.Language);
@@ -334,23 +330,6 @@ export default {
       try {
         this.storeCache.UserData.Tickets = this.storeCache.UserData.Tickets || 0;
       } catch {}
-    },
-
-    async loadResources() {
-      try {
-        await Promise.all([this.loadFonts(), this.loadImages()]);
-        if (
-          this.UserAvatar,
-          this.$props.UserName,
-          this.$props.UserNftsCount,
-          this.$props.UserRank
-        ) {
-          this.isLoading = false;
-          this.$emit("loadSuccess");
-        }
-      } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
-      }
     },
 
     loadFonts() {

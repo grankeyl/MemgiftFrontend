@@ -33,7 +33,7 @@
                         </span>
                       </h4>
                       <h4 v-if="history.status === 'transferred'">
-                        {{ maxNameLength(cleanString(history.user_name)) }}
+                        {{ maxNameLength(cleanString(history.from_user_name)) }}
                         {{ $t('home.sended') }}
                         <span>
                           {{ history?.gift_name }}
