@@ -361,7 +361,7 @@ export default {
 
       if (task.type === 'subscribe_channel') {
         task.isLoading = true;
-        // TelegramModule.useLink(task.config.ChannelLink);
+        TelegramModule.useLink(task.config.ChannelLink);
         const use = await taskApi.use(task.id);
         if (use) {
           this.startUse(task);
@@ -370,7 +370,7 @@ export default {
 
       if (task.type === 'join_mini_app') {
         task.isLoading = true;
-        // TelegramModule.useLink(task.config.MiniAppLink);
+        TelegramModule.useLink(task.config.MiniAppLink);
         setTimeout(async () => { 
           task.isClaimed = true;
 
