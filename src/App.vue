@@ -48,8 +48,6 @@ export default {
 
   setup() {
     let initDataRaw = import.meta.env.VITE_APP_INIT_DATA as any;
-    if (window.Telegram?.WebApp?.initData) { initDataRaw = window.Telegram.WebApp.initData; }
-
     const miniAppTesting = import.meta.env.VITE_APP_TEST;
     const router = useRouter();
     const miniAppLang = getUserLanguage();
@@ -60,6 +58,10 @@ export default {
     const storeCache = useCacheStore() as any;
 
     if (miniAppTesting === 'production') {
+      if (window.Telegram?.WebApp?.initData) { 
+        initDataRaw = window.Telegram.WebApp.initData; 
+      }
+    } else {
       initDataRaw = import.meta.env.VITE_APP_INIT_DATA;
     }
     
