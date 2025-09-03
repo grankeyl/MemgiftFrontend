@@ -27,7 +27,7 @@ import { getConfig } from '../config';
 
 import Image_ReceivedGift from '../assets/images/received-gift.gif';
 
-import Developing from '../components/Dev/Developing.vue';
+import Developing from '../components/Dev/Developing.vue'; 
 
 export default {
     props: {
