@@ -45,65 +45,64 @@
           :class="NftData.NftRarity"
         >
           <div 
-            v-if="NftData.nftUpgraded" 
+            v-if="NftData.upgraded" 
             class="_pageGiftContentGradient"
             :style="{
-              '--center-color': BackgroundColors?.Center,
-              '--around-color': BackgroundColors?.Around
+              '--center-color': NftData.BackgroundColors?.Center,
+              '--around-color': NftData.BackgroundColors?.Around
             }"
           ></div>
           <div class="_symbols">
-            <img :src="Image_GiftBg" :class="{ _show: !NftData.nftUpgraded }" alt="symbols" />
-            <img :src="NftData?.SymbolImage" :class="{ _show: NftData.nftUpgraded }" alt="symbols" />
+            <img :src="Image_GiftBg" :class="{ _show: !NftData.upgraded }" alt="symbols" />
+            <img :src="NftData?.SymbolImage" :class="{ _show: NftData.upgraded }" alt="symbols" />
           </div>
           <div class="_pageGiftContentImage">
             <img 
-              v-if="NftData.NftMedia === 'svg'"
-              @load="isLoadingModalImage = false"
-              @error="isLoadingModalImage = true"
+              v-if="NftData.NftKey && NftData.NftMedia === 'svg'"
               :src="NftData.NftImage"
               alt="nft"
               class="modalImage"
-              v-bind:class="{ _loading: isLoadingModalImage, _hide: NftData.nftUpgraded }"
+              v-bind:class="{ _hide: NftData.upgraded }"
             />
             <GiftLottie
-              v-if="NftData.NftMedia === 'lottie'"
+              v-if="NftData.NftKey && NftData.NftMedia === 'lottie'"
+              v-bind:class="{ _loading: isLoadingUpgradeImage, _hide: NftData.upgraded }"
               class="_lottie"
-              :path="`/gifts/lottie/${NftData.NftKey}.json`"
+              :path="NftData?.NftImage"
               :loop="true"
               width="25"
               height="25"
               renderer="svg"
             />
             <img 
-              @load="isLoadingUpgradeImage = false"
-              @error="isLoadingUpgradeImage = true"
+              v-if="NftData.NftKey && NftData.NftMedia === 'svg'"
+              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.upgraded }"
               :src="NftData?.ModelImage"
               alt="nft"
               class="upgradedImage"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.nftUpgraded }"
             />
-            <Lottie 
-              v-if="isLoadingModalImage"
-              class="lt" 
-              slug="loading-spin" 
+            <GiftLottie
+              v-if="NftData.NftKey && NftData.NftMedia === 'lottie'"
+              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.upgraded }"
+              class="_lottie upgraded"
+              :path="NftData?.ModelImage"
               :loop="true"
-              width="75"
-              height="75"
+              width="25"
+              height="25"
               renderer="svg"
             />
           </div>
 
           <div 
-            v-if="NftData.nftUpgraded"
+            v-if="NftData.upgraded"
             class="_number"
           >
             <span>#{{ NftData?.ModelNumber }}</span>
           </div>
 
           <div class="_pageGiftContentTitle">
-            <h4 v-if="!NftData.nftUpgraded">{{ NftData.NftName }}</h4>
-            <h4 v-if="NftData.nftUpgraded">{{ NftData?.ModelName }}</h4>
+            <h4 v-if="!NftData.upgraded">{{ NftData.NftName }}</h4>
+            <h4 v-if="NftData.upgraded">{{ NftData?.ModelName }}</h4>
           </div>
 
           <div class="_pageGiftContentButtons">
@@ -122,7 +121,7 @@
           </div>
         </div>
 
-        <div class="_pageGiftContentTable" :class="{ _show: !NftData.nftUpgraded }">
+        <div class="_pageGiftContentTable" :class="{ _show: !NftData.upgraded }">
           <div class="_pageGiftContentTableRow">
             <div class="profile_gift_preview_table_item">
               <div class="profile_gift_preview_table_item_left">
@@ -174,13 +173,13 @@
           </div>
         </div>
 
-        <div class="_pageGiftContentTable" :class="{ _show: NftData.nftUpgraded }">
+        <div class="_pageGiftContentTable" :class="{ _show: NftData.upgraded }">
           <div class="_pageGiftContentTableRow">
             <div class="profile_gift_preview_table_item">
               <div class="profile_gift_preview_table_item_left">
                 <h4>{{ $t('profile.profileGiftPreviewTableItem1') }}</h4>
               </div>
-              <div class="profile_gift_preview_table_item_right">
+              <div v-if="Table.OwnerName" class="profile_gift_preview_table_item_right">
                 <span>{{ Table.OwnerName }}</span>
                 <div
                   v-if="Table.OwnerAvatar && OwnerImage"
@@ -299,16 +298,6 @@
       isLoading() {
         return this.Skeleton;
       },
-      BackgroundDropRate() {
-        const backgroundCleared = clearBackgroundName(this.NftData.nftModelBackground);
-        return this.storeCache?.Upgrades?.Backgrounds[backgroundCleared]?.DropRate;
-      },
-      BackgroundColors() {
-        const backgroundCleared = clearBackgroundName(this.NftData.nftModelBackground);
-        this.NftData.BackgroundColors.Center = this.storeCache?.Upgrades?.Backgrounds[backgroundCleared]?.BackgroundColors?.Center;
-        this.NftData.BackgroundColors.Around = this.storeCache?.Upgrades?.Backgrounds[backgroundCleared]?.BackgroundColors?.Around;
-        return this.storeCache?.Upgrades?.Backgrounds[backgroundCleared]?.BackgroundColors;
-      }
     },
   
     mounted() {

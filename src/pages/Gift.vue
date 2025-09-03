@@ -17,14 +17,13 @@ import { useCacheStore } from '../stores/pinia/piniaStore';
 import { getConfig } from '../config';
 import { isDesktop } from '../utils/checkDevice';
 import { Icon } from '../components/Icon';
+import { unixToDefault } from '../utils/useApp';
 
 import * as nftApi from '../api/nftApi';
 
 import TelegramModule from '../hooks/useTelegram';
 
 import Content from '../components/Gift/Content.vue';
-import { getUpgradedModel, getUpgradedSymbol } from '../utils/useGift';
-import { unixToDefault } from '../utils/useApp';
 
 export default {
     props: {
@@ -88,29 +87,28 @@ export default {
             this.NftData = nft;
             this.NftData.NftRarity = nftData.Rarity;
 
-            console.log(nft);
-
-            this.GiftTableList.OwnerName = nft.name;
-            this.GiftTableList.OwnerAvatar = nft.photo;
+            this.GiftTableList.OwnerName = nft.user_name;
+            this.GiftTableList.OwnerAvatar = nft.user_photo;
             this.GiftTableList.NftDate = unixToDefault(nft.timestamp);
             this.GiftTableList.NftPrice = nft.nft_price;
             this.GiftTableList.NftSupply = `${Math.max(nftData.Supply - nftData.SupplyUsers, 0)} of ${nftData.Supply}`;
 
             if (nft.upgraded) {
-                this.NftData.ModelName = nft.nftModelName;
-                this.NftData.ModelNumber = nft.nftModelNumber;
-                this.NftData.ModelImage = getUpgradedModel(nft.nftUniqueKey, nft.nftModelName);
+                this.NftData.ModelName = nft.upgrade.nft_name.name;
+                this.NftData.ModelNumber = nft.upgrade.seq;
+                this.NftData.ModelImage = nft.upgrade.nft_name.image;
+                this.NftData.ModelDropRate = nft.upgrade.nft_name.drop_rate;
 
-                this.NftData.SymbolName = nft.nftModelSymbol;
-                this.NftData.SymbolImage = getUpgradedSymbol(nft.nftModelSymbol);
+                this.NftData.SymbolName = nft.upgrade.symbol.name;
+                this.NftData.SymbolImage = nft.upgrade.symbol.image;
+                this.NftData.SymbolDropRate = nft.upgrade.symbol.drop_rate;
 
-                this.NftData.BackgroundName = nft.nftModelBackground;
-
-                await this.upgradeNftInfo(
-                    nftData.nftUniqueKey,
-                    nft.nftModelName, 
-                    nft.nftModelSymbol
-                );
+                this.NftData.BackgroundName = nft.upgrade.background.name;
+                this.NftData.BackgroundColors = {
+                    Center: nft.upgrade.background.colors_center,
+                    Around: nft.upgrade.background.colors_around
+                }
+                this.NftData.BackgroundDropRate = nft.upgrade.background.drop_rate;
 
                 if (!this.NftData.BackgroundColors) { this.NftData.BackgroundColors = {}; }
             }
@@ -124,25 +122,6 @@ export default {
             this.NftData.NftRarity = nftData.Rarity;
             this.NftData.NftUpgradePrice = nftData.UpgradePrice;
         },
-
-        async upgradeNftInfo(
-            nftUniqueKey: string,
-            modelName: string, 
-            modelSymbol: string
-        ) {
-            const upgradeNft = await nftApi.getNftUpgradeInfo(
-                nftUniqueKey,
-                modelName,
-                modelSymbol
-            );
-            if (!upgradeNft) {
-                this.NftData.ModelDropRate = 1.2;
-                this.NftData.SymbolDropRate = 1.4;
-            };
-            
-            this.NftData.ModelDropRate = upgradeNft.ModelDropRate;
-            this.NftData.SymbolDropRate = upgradeNft.SymbolDropRate;
-        }
     },
 };
 </script>
