@@ -183,7 +183,7 @@
         return this.Skeleton;
       },
       referralLink() {
-        return import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.Code}`;
+        return import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.user.Code}`;
       }
     },
   

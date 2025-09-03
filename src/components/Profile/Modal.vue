@@ -916,7 +916,7 @@ export default {
 
     shareGiftLink() {
       const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=gift_${this.ModalComp.NftId}`;
-      const message = `I recommend checking out "${this.ModalComp.NftName}" NFT.`;
+      const message = `I recommend checking out "${this.ModalComp.NftName ?? this.UpgradedNft?.ModelName}" NFT.`;
       TelegramModule.useShare(url, message);
     },
 

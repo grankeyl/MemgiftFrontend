@@ -5,7 +5,6 @@ import Home from '../pages/Home.vue'
 import Collection from '../pages/Collection.vue'
 import Activity from '../pages/Activity.vue'
 import Profile from '../pages/Profile.vue'
-import ProfileGifts from '../pages/ProfileGifts.vue'
 import Deposit from '../pages/Deposit.vue'
 import Receive from '../pages/Receive.vue'
 import Rating from '../pages/Rating.vue'
@@ -32,11 +31,6 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: Profile
-    },
-    {
-      path: '/profile/gifts/:nft',
-      name: 'profile-gifts',
-      component: ProfileGifts
     },
     {
       path: '/deposit',
