@@ -1,60 +1,6 @@
-// import { hapticFeedback, miniApp, on, postEvent, requestEmojiStatusAccess, setEmojiStatus, shareStory } from '@telegram-apps/sdk';
-// import { backButton, invoice, initDataStartParam, openTelegramLink } from '@telegram-apps/sdk';
-// import { init, viewport, requestWriteAccess, retrieveLaunchParams } from '@telegram-apps/sdk';
-// import { mockTelegramEnv } from '@telegram-apps/sdk';
 import { t } from "i18next";
 
 import WebApp from '@twa-dev/sdk';
-
-// function mock(status: string = import.meta.env.VITE_APP_TEST) {
-//   if (status === 'development') {
-//     mockTelegramEnv({
-//       themeParams: {
-//         button_color: "#2ea6ff", 
-//         button_text_color: "#ffffff", 
-//         accent_text_color: "#2ea6ff", 
-//         subtitle_text_color: "#b1c3d5", 
-//         section_header_text_color: "#b1c3d5"
-//       },
-//       initData: {
-//         user: {
-//           id: 2200247226,
-//           firstName: 'wwt',
-//           lastName: '',
-//           languageCode: 'ru',
-//           isPremium: true,
-//           allowsWriteToPm: true,
-//           photoUrl: 'https://a-ttgme.stel.com/i/userpic/320/OERv8lzDgDAie_Vug0fWgGKrGbilJE23xIyDJ0x0FcNpibvL9mFLSOkM7Dszycw_.svg',
-//         },
-//         hash: '488b3c2ebb52f3d29f9f6478c97c8fbf75c49a06425ac6371f172c358be703d0',
-//         authDate: new Date(1738006494000),
-//         signature: 'G327NYDx2mn6BzMyWirsvYUUMSPR9DAJUAacYo7AK56irlFGX21LTSttRIb7kAWlieCfhDLFybwEUis-hhZyDQ',
-//         chatType: 'sender',
-//         chatInstance: '8428209589180549439',
-//       },
-//       initDataRaw: new URLSearchParams([
-//         ['user', JSON.stringify({
-//           id: 2200247226,
-//           first_name: 'wwt',
-//           last_name: '',
-//           language_code: 'ru',
-//           is_premium: true,
-//           allows_write_to_pm: true,
-//         })],
-//         ['hash', '488b3c2ebb52f3d29f9f6478c97c8fbf75c49a06425ac6371f172c358be703d0'],
-//         ['auth_date', '1738006494'],
-//         ['signature', 'G327NYDx2mn6BzMyWirsvYUUMSPR9DAJUAacYo7AK56irlFGX21LTSttRIb7kAWlieCfhDLFybwEUis-hhZyDQ'],
-//         ['chat_type', 'sender'],
-//         ['chat_instance', '8428209589180549439'],
-//       ]).toString(),
-//       version: '8.0',
-//       platform: 'tdesktop',
-//     });
-//   }
-// }
-
-// mock();
-// init();
 
 const TelegramModule = {
     initMiniApp() {
@@ -152,6 +98,7 @@ const TelegramModule = {
     },
 
     async useSetEmoji(custom_emoji_id: string) {
+      console.log(custom_emoji_id);
       // const cleanup: VoidFunction[] = [];
 
       // if (!setEmojiStatus.isSupported() || !setEmojiStatus.isAvailable()) {
