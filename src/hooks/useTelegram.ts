@@ -98,7 +98,7 @@ const TelegramModule = {
     },
 
     async useSetEmoji(custom_emoji_id: string) {
-      console.log(custom_emoji_id);
+      console.log(custom_emoji_id); 
       // const cleanup: VoidFunction[] = [];
 
       // if (!setEmojiStatus.isSupported() || !setEmojiStatus.isAvailable()) {
