@@ -1,5 +1,5 @@
 <template>
-    <div class="_pageLoad" id="pageLoad" >
+    <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
       <div class="background">
         <img src="/bg-load.jpg" alt="background" />
       </div>
@@ -11,12 +11,12 @@
       </div>
     </div>
 
-    <!-- <div v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)" class="_main">
+    <div v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)" class="_main">
       <RouterView @loaded="onRouterViewLoaded" :success="pageSuccess" />
       <Toast />
     </div>
 
-    <Menu v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)" @loaded="onMenuLoaded" /> -->
+    <Menu v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)" @loaded="onMenuLoaded" />
 </template>
 
 <script lang="ts">
