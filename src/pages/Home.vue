@@ -26,10 +26,16 @@
                 <img :src="getFirstHistory.gift_image" />
               </div>
               <div class="_title">
-                <h4>
+                <h4 v-if="getFirstHistory.status === 'purchased'">
                   {{ getFirstHistory.user_name }}
-                  <p v-if="getFirstHistory.status === 'purchased'">{{ $t('home.buyed') }}</p>
-                  <p v-else-if="getFirstHistory.status === 'transferred'">{{ $t('home.sended') }}</p>
+                  <p>{{ $t('home.buyed') }}</p>
+                  <span @click="openCollection(getFirstHistory?.u_key)">
+                    {{ getFirstHistory?.gift_name }}
+                  </span>
+                </h4>
+                <h4 v-if="getFirstHistory.status === 'transferred'">
+                  {{ getFirstHistory.from_user_name }}
+                  <p>{{ $t('home.sended') }}</p>
                   <span @click="openCollection(getFirstHistory?.u_key)">
                     {{ getFirstHistory?.gift_name }}
                   </span>
