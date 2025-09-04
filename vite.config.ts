@@ -6,10 +6,6 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 
 export default defineConfig({
-  esbuild: {
-    target: 'esnext',
-  },
-
   plugins: [
     vue(),
     viteStaticCopy({
@@ -36,16 +32,11 @@ export default defineConfig({
   },
 
   build: {
-    target: 'esnext',
+    target: 'es2019',            // если нужна совместимость
     sourcemap: false,
     minify: 'esbuild',
     assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue'],
-        },
-      },
-    },
-  },
+    chunkSizeWarningLimit: 1000, // тише ворнинги
+    cssCodeSplit: true,
+  }
 });
