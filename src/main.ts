@@ -1,3 +1,5 @@
+import './hot-shim'
+
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createRedux } from './stores/storePlugin';
