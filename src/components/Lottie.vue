@@ -49,7 +49,9 @@ if (animationHeight.value === '0') {
 
 onMounted(() => {
   if (animationData && lottieContainer.value) {
-    const environment = import.meta.env.VITE_APP_ENV;
+    const environment = typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_ENV
+    ? import.meta.env.VITE_APP_AFFILIATE
+    : null;
     
     const animationPath = environment === 'production'
       ? animationData.replace('/src/assets/animations', '/lottie/')

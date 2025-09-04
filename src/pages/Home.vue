@@ -140,7 +140,9 @@ export default {
           ButtonSlide: "first",
           ImageContent: "/home/banner-5-image.png",
           BgImage: "/home/banner-5.png",
-          ButtonLink: import.meta.env.VITE_APP_AFFILIATE,
+          ButtonLink: typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_AFFILIATE
+          ? import.meta.env.VITE_APP_AFFILIATE
+          : null,
         },
         {
           id: 1,
@@ -161,7 +163,9 @@ export default {
           ButtonSlide: "other",
           ImageContent: "/home/banner-2-image.png",
           BgImage: "/home/banner-2.png",
-          ButtonLink: import.meta.env.VITE_APP_AFFILIATE,
+          ButtonLink: typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_AFFILIATE
+          ? import.meta.env.VITE_APP_AFFILIATE
+          : null,
         },
       ],
 

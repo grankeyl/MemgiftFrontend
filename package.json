@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "dev:nohmr": "NO_HMR=1 vite --host",
     "clean": "rimraf dist",
     "build": "npm run clean && vue-tsc -b && vite build",
     "serve": "vite preview",
@@ -18,7 +19,6 @@
     "@telegram-apps/sdk": "^2.11.3",
     "@telegram-apps/sdk-vue": "^1.0.15",
     "@tonconnect/ui": "^2.1.0",
-    "@townsquarelabs/ui-vue": "^2.0.11-beta.0",
     "@twa-dev/sdk": "^8.0.1",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.7",
@@ -68,6 +68,8 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "@rollup/plugin-replace": "^6.0.2",
     "@types/canvas-confetti": "^1.9.0",
     "@types/hammerjs": "^2.0.46",
     "@types/node": "^22.10.5",
@@ -77,12 +79,15 @@
     "@types/vue-router": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
+    "@vitejs/plugin-legacy": "^6.1.1",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
+    "core-js": "^3.45.1",
     "eslint": "^9.17.0",
     "eslint-plugin-vue": "^9.32.0",
     "glob": "^11.0.0",
     "path-browserify": "^1.0.1",
+    "regenerator-runtime": "^0.14.1",
     "rimraf": "^6.0.1",
     "rollup-plugin-copy": "^3.5.0",
     "sass": "^1.83.0",
@@ -91,7 +96,6 @@
     "vite": "^6.0.5",
     "vite-plugin-copy": "^0.1.6",
     "vite-plugin-static-copy": "^2.2.0",
-    "vite-plugin-vue-devtools": "^8.0.0",
     "vue-tsc": "^2.2.0"
   }
 }

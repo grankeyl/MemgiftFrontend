@@ -50,8 +50,15 @@ export default {
   },
 
   setup() {
-    let initDataRaw = import.meta.env.VITE_APP_INIT_DATA as any;
-    const miniAppTesting = import.meta.env.VITE_APP_TEST;
+    let initDataRaw =
+      typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_INIT_DATA
+        ? import.meta.env.VITE_APP_INIT_DATA
+        : null
+
+    const miniAppTesting =
+      typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_TEST
+        ? import.meta.env.VITE_APP_TEST
+        : null
     const router = useRouter();
     const miniAppLang = getUserLanguage();
     const miniAppMounted = ref(false);
