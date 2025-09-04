@@ -6,9 +6,9 @@ import vueDevtools from 'vite-plugin-vue-devtools'
 import path from 'path';
 
 export default defineConfig({
-  esbuild: {
-    target: 'esnext',
-  },
+  // esbuild: {
+  //   target: 'esnext',
+  // },
 
   plugins: [
     vue(),
@@ -49,17 +49,17 @@ export default defineConfig({
     },
   },
 
-  build: {
-    target: 'esnext',
-    sourcemap: false,
-    minify: 'esbuild',
-    assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vue: ['vue'],
-        },
-      },
-    },
-  },
+  // build: {
+  //   target: 'esnext',
+  //   sourcemap: false,
+  //   minify: 'esbuild',
+  //   assetsDir: 'assets',
+  //   rollupOptions: {
+  //     output: {
+  //       manualChunks: {
+  //         vue: ['vue'],
+  //       },
+  //     },
+  //   },
+  // },
 });
