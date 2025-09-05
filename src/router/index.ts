@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { usePostHog } from '../hooks/usePostHog'
 
 import Home from '../pages/Home.vue'
 import Collection from '../pages/Collection.vue'
@@ -109,8 +108,5 @@ const router = createRouter({
     }
   ]
 })
-
-const { posthog } = usePostHog()
-posthog.capture('$pageview')
 
 export default router

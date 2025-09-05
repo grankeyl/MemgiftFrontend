@@ -48,7 +48,6 @@
     "pinia": "^2.3.1",
     "plural-ru": "^2.0.2",
     "pluralize": "^8.0.0",
-    "posthog-js": "^1.257.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.3",
     "react-redux": "^9.2.0",

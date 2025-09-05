@@ -73,7 +73,6 @@
 <script>
   import { createInvoiceNft, createInvoiceNftToken } from '../../api/invoiceApi';
   import { useCacheStore } from '../../stores/pinia/piniaStore';
-  import { usePostHog } from '../../hooks/usePostHog';
 
   import * as nftApi from '../../api/nftApi';
   import * as tokenApi from '../../api/tokenApi';
@@ -81,7 +80,6 @@
   import TelegramModule from '../../hooks/useTelegram';
   import Lottie from '../Lottie.vue';
   
-  const { posthog } = usePostHog()
 
   export default {
     props: {
@@ -300,14 +298,6 @@
         const initData = TelegramModule.initData();
         if (!initData) return;
 
-        console.log(invoice);
-
-        posthog.capture(`Attempted purchase ${finalPrice} ⭐`, { 
-          nft: this.NftUniqueKey, 
-          amount: finalPrice, 
-          count: this.$props.NftBuyCount 
-        })
-
         if (!invoice.link && invoice.Status === 'success') {
           this.storeCache.UserData.user.Tickets -= invoice.TicketsOut;
           this.$router.push({ 
@@ -323,7 +313,6 @@
           TelegramModule.useInvoice(
             invoice.link, 
             () => {
-              posthog.capture(`Purchased NFT ${finalPrice} ⭐`, { nft: this.NftUniqueKey, amount: finalPrice, count: this.$props.NftBuyCount })
               this.isLoadingButton = false;
               this.$router.push({ 
                 name: 'receive', 
@@ -378,7 +367,6 @@
         const createNftFree = await nftApi.giftFree();
         console.log(createNftFree);
         if (createNftFree) {
-          posthog.capture(`Get free NFT`, { nft: this.NftUniqueKey })
           this.isLoadingButton = false;
           this.$router.push({ 
             name: 'receive', 
