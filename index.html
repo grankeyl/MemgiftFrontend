@@ -97,6 +97,19 @@
           }
       });
     </script>
+    <script>
+      // грузим eruda из CDN и сразу инициализируем
+      (function () {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+        s.onload = function () {
+          eruda.init();
+          // по желанию: кнопка сворачивания
+          // eruda.get('settings').config.set('displaySize', 50);
+        };
+        document.body.appendChild(s);
+      })();
+    </script>
     <script type="module" src="/src/main.ts"></script>
     <style>
       html { background: #1C1C1C; }
