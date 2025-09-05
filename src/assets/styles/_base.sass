@@ -119,22 +119,24 @@
   opacity: 0
   visibility: hidden
   pointer-events: none
-  // прячем после окончания fade-out
   transition: opacity .3s ease, visibility 0s linear .3s, backdrop-filter 0s linear .3s
-  // базовый фон (если нужен полупрозрачный)
   background: rgba(0,0,0,.35)
 
   &.is-open
     opacity: 1
     visibility: visible
     pointer-events: auto
-    // показываем сразу, без задержки visibility
     transition: opacity .3s ease, visibility 0s linear 0s
 
   &.is-dark
     background: rgba(0,0,0,.8)
     -webkit-backdrop-filter: blur(20px)
     backdrop-filter: blur(20px)
+
+@media (max-width: 768px)
+  .overlay.is-dark
+    -webkit-backdrop-filter: none !important
+    backdrop-filter: none !important
 
 .loading
     position: fixed
