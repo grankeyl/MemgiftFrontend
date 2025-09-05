@@ -113,30 +113,28 @@
 
 
 .overlay
-    max-width: $app-max-preview-width
-    position: fixed
-    top: 0
-    left: 50%
-    transform: translateX(-50%)
-    width: 100%
-    height: 100%
-    z-index: 1000
-    background: $app-preview
-    opacity: 0.35
-    visibility: vissible
-    transition: 0.35s ease-in-out
+  position: fixed
+  inset: 0
+  z-index: 1000
+  opacity: 0
+  visibility: hidden
+  pointer-events: none
+  // прячем после окончания fade-out
+  transition: opacity .3s ease, visibility 0s linear .3s, backdrop-filter 0s linear .3s
+  // базовый фон (если нужен полупрозрачный)
+  background: rgba(0,0,0,.35)
 
-    &.darkned
-        background: rgba(#000000, 0.80)
-        opacity: 1
-        -webkit-backdrop-filter: blur(20px)
-        backdrop-filter: blur(20px)
+  &.is-open
+    opacity: 1
+    visibility: visible
+    pointer-events: auto
+    // показываем сразу, без задержки visibility
+    transition: opacity .3s ease, visibility 0s linear 0s
 
-    &.hide
-        opacity: 0
-        vissibility: hidden
-        pointer-events: none
-        transition: 0.35s ease-in-out
+  &.is-dark
+    background: rgba(0,0,0,.8)
+    -webkit-backdrop-filter: blur(20px)
+    backdrop-filter: blur(20px)
 
 .loading
     position: fixed

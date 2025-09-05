@@ -1,33 +1,9 @@
 <template>
-  <div
-    @click="ModalComp.ModalActive = false"
-    class="overlay"
-    :class="{ hide: !ModalComp.ModalActive }"
-  ></div>
-
-  <div
-    @click="ModalComp.ModalTransferActive = false"
-    class="overlay"
-    :class="{ hide: !ModalComp.ModalTransferActive }"
-  ></div>
-
-  <div
-    @click="ModalDisconnectWalletComp.ModalActive = false"
-    class="overlay"
-    :class="{ hide: !ModalDisconnectWalletComp.ModalActive }"
-  ></div>
-
-  <div
-    @click="ModalModelComp.ModalActive = false"
-    class="overlay darkned"
-    :class="{ hide: !ModalModelComp.ModalActive }"
-  ></div>
-
-  <div
-    @click="ModalSortComp.ModalActive = false"
-    class="overlay darkned"
-    :class="{ hide: !ModalSortComp.ModalActive }"
-  ></div>
+  <div class="overlay" :class="{ 'is-open': ModalComp.ModalActive }" @click="ModalComp.ModalActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': ModalModelComp.ModalActive }" @click="ModalModelComp.ModalActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': ModalSortComp.ModalActive }" @click="ModalSortComp.ModalActive = false" />
+  <div class="overlay" :class="{ 'is-open': ModalComp.ModalTransferActive }" @click="ModalComp.ModalTransferActive = false" />
+  <div class="overlay" :class="{ 'is-open': ModalDisconnectWalletComp.ModalActive }" @click="ModalDisconnectWalletComp.ModalActive = false" />
 
   <div 
     class="_wrap _profile flex-grow-scroll" 

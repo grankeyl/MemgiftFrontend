@@ -1,21 +1,21 @@
 <template>
   <div
+    class="overlay"
+    :class="{ 'is-open': ModalComp.ModalActive }"
     @click="ModalComp.ModalActive = false"
-    class="overlay"
-    :class="{ hide: !ModalComp.ModalActive }"
-  ></div>
+  />
 
   <div
+    class="overlay"
+    :class="{ 'is-open': ModalComp.ModalTransferActive }"
     @click="ModalComp.ModalTransferActive = false"
-    class="overlay"
-    :class="{ hide: !ModalComp.ModalTransferActive }"
-  ></div>
+  />
 
   <div
-    @click="ModalDisconnectWalletComp.ModalActive = false"
     class="overlay"
-    :class="{ hide: !ModalDisconnectWalletComp.ModalActive }"
-  ></div>
+    :class="{ 'is-open': ModalDisconnectWalletComp.ModalActive }"
+    @click="ModalDisconnectWalletComp.ModalActive = false"
+  />
 
   <div 
     class="_wrap _profile flex-grow-scroll" 
