@@ -4,6 +4,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createRedux } from './stores/storePlugin';
 import { store } from './stores/store';
+import { Confirm } from 'notiflix';
 
 import AppVue from './App.vue';
 import Router from './router';
@@ -15,6 +16,11 @@ import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 const app = createApp(AppVue);
 const pinia = createPinia();
+
+Confirm.init({
+  backgroundColor: 'transparent',
+  zindex: 2000,
+});
 
 app.config.warnHandler = () => {};
 app.use(Router);
