@@ -221,7 +221,7 @@
               </div>
               <div class="profile_gift_preview_table_item_right">
                 <p>{{ NftData?.BackgroundName }}</p>
-                <span>{{ BackgroundDropRate }}%</span>
+                <span>{{ NftData?.BackgroundDropRate }}%</span>
               </div>
             </div>
             <div class="profile_gift_preview_table_item">
@@ -350,7 +350,7 @@
       openProfile() {
         this.$router.push({
           name: 'view',
-          params: { id: this.NftData.nftOwner.userId },
+          params: { id: this.NftData.user_id },
           query: {
             type: 'giftPage',
             key: this.NftData.id,

@@ -108,7 +108,7 @@ export default {
                     Center: nft.upgrade.background.colors_center,
                     Around: nft.upgrade.background.colors_around
                 }
-                this.NftData.BackgroundDropRate = nft.upgrade.background.drop_rate;
+                this.NftData.BackgroundDropRate = nft.upgrade.background.drop_rate || 0;
 
                 if (!this.NftData.BackgroundColors) { this.NftData.BackgroundColors = {}; }
             }

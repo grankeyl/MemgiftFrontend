@@ -830,7 +830,7 @@
             width: 100%
             height: 203px
             background: $app-background-secondary
-            border-radius: 16px
+            border-radius: 20px
             position: sticky
             animation: bubbleNft 0.20s linear
             will-change: transform opacity
@@ -1049,14 +1049,18 @@
                 z-index: 10
 
                 & button
-                    height: 34px
                     background: $app-button-background-blur
-                    padding: 0 21px
+                    padding: 6px 11px
                     white-space: nowrap
                     width: fit-content
+                    gap: 3px
+
+                    & p 
+                        font-size: 15px
+                        font-weight: 600
 
                     & .starsSmall
-                        width: 17px
+                        width: 16px
                         height: 16px
 
             ._sendNft

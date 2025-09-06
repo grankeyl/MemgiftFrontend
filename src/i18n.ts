@@ -174,6 +174,7 @@ i18next.init({
                 },
                 profileTransferLabel: "Search by",
                 profileTransferInputPlaceholder: "Enter",
+                profileGiftModalTransferError: "You can't send yourself.",
 
                 profileReferralProgram: "Referral Program",
                 profileCreatePrivateDeal: "Private Deal",
@@ -527,6 +528,7 @@ i18next.init({
                     telegram_id: "Tg ID",
                 },
                 profileTransferInputPlaceholder: "Введите",
+                profileGiftModalTransferError: "Вы не можете отправить самому себе.",
 
                 profileReferralProgram: "Реферальная программа",
                 profileCreatePrivateDeal: "Приватная сделка",

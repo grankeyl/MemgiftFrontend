@@ -448,6 +448,10 @@
             </div>
           </div>
 
+          <div v-if="transferYourselfError" class="error">
+            <p>{{ $t('profile.profileGiftModalTransferError') }}</p>
+          </div>
+
           <div class="_profileGiftModalButtonsInput">
             <div v-if="isTransferInputSuccess" class="_profileGiftModalButtonsInputContent">
               
@@ -582,11 +586,13 @@ export default {
       isTransferOpen: false,
       isTransferInputSuccess: false,
       isTransferSuccess: false,
+      transferTimeout: null,
 
       showDefaultAvatar: false,
       transferUsers: [],
       transferUserSelected: null,
       transferData: { query: null, userId: null, avatar: null, name: null, success: false },
+      transferYourselfError: false,
       transferSections: {
         active: {
           label: this.$t('profile.profileTransferSections.name'),
@@ -757,23 +763,40 @@ export default {
 
     keyTransferInput(event) {
       document.addEventListener('click', this.handleClickOutside);
-      
-      let userId = false;
-      let username = false;
-      
+
       const eventText = event.target.value.trim();
+      this.transferYourselfError = false;
 
       if (eventText !== "") {
         if (eventText.startsWith("@")) {
           this.setActiveTransferTab("username");
-        }
-        if (!eventText.startsWith("@")) {
-          this.setActiveTransferTab("name");
-        }
-        if (!isNaN(eventText)) {
+          if (eventText === '@' + this.storeCache.UserData.user.Username) {
+            this.transferYourselfError = true;
+            return;
+          };
+        } else if (!isNaN(eventText)) {
           this.setActiveTransferTab("telegram_id");
+          if (eventText === this.storeCache.UserData.user.Tld.toString()) {
+            this.transferYourselfError = true;
+            return;
+          };
+        } else {
+          this.setActiveTransferTab("name");
+          if ((eventText.toLowerCase() === this.storeCache.UserData.user.Name.toLowerCase()) || (eventText.toLowerCase() === this.storeCache.UserData.user.Username.toLowerCase())) {
+            this.transferYourselfError = true;
+            return;
+          };
         }
+
         this.transferData.query = eventText;
+
+        if (this.transferTimeout) {
+          clearTimeout(this.transferTimeout);
+        }
+
+        this.transferTimeout = setTimeout(() => {
+          this.getTransferData();
+        }, 1500);
       } else {
         this.transferUsers = [];
         this.transferUserSelected = null;
@@ -788,6 +811,14 @@ export default {
     },
 
     async getTransferData() {
+      if (!this.transferData.query) return;
+      if (this.transferData.query === this.storeCache.UserData.user.Tld.toString()) {
+        this.transferYourselfError = true;
+        return;
+      };
+      if (this.transferData.query.startsWith("@")) {
+        this.transferData.query = this.transferData.query.slice(1);
+      }
       const response = await userApi.searchUser(this.transferData.query);
       if (response) {
         this.transferUsers = response;
@@ -804,7 +835,10 @@ export default {
 
     async transferInvoiceSendGift() {
       if (!this.transferData.success) return;
-      if (parseInt(this.transferData.userId) === parseInt(this.storeCache.TelegramData.user.id)) return;
+      if (parseInt(this.transferData.userId) === parseInt(this.storeCache.TelegramData.user.id)) {
+        this.transferYourselfError = true;
+        return;
+      };
 
       if (this.ModalComp.NftStatus === 'purchased' || this.ModalComp.NftStatus === 'sended') {
         this.ActiveButton = true;

@@ -27,8 +27,20 @@
           <div class="_items">
             <div class="_item">
               <div class="_title">{{ NftName }}</div>
-              <div class="_supply" :class="{ _loading: !NftSupply || !NftSupplyMax }">
+              <div
+                v-if="NftSupply && NftSupplyMax"
+                class="_supply"
+                :class="{ _loading: NftSupply == null || NftSupplyMax == null }"
+              >
                 <p>{{ Math.max(NftSupply, 0) }} {{ $t(`app.supplySubmission`) }} {{ NftSupplyMax }}</p>
+                <div class="load-icon"></div>
+              </div>
+              <div
+                v-if="!NftSupply || !NftSupplyMax"
+                class="_supply"
+                :class="{ _loading: NftSupply == null || NftSupplyMax == null }"
+              >
+                <p>0 {{ $t(`app.supplySubmission`) }} {{ NftSupplyMax }}</p>
                 <div class="load-icon"></div>
               </div>
               <div class="_rig">

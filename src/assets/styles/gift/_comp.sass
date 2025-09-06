@@ -209,8 +209,14 @@
                 width: 175px
                 height: 175px
 
-                &._lottie
+                & ._lottie
                     margin-bottom: 5px
+
+                    &._hide
+                        opacity: 0
+                        width: 0
+                        height: 175px
+                        transition: opacity 0.22s ease
 
                 & .lottie-gift
                     width: 155px

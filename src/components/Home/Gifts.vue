@@ -115,8 +115,8 @@
         
         <div class="_buy">
           <button v-if="gift.Price">
-            <img class="starsSmall" :src="Image_starsPng" alt="stars" />
             <p>{{ checkPriceNumber(gift.Price) }}</p>
+            <img class="starsSmall" :src="Image_starsPng" alt="stars" />
           </button>
           <button v-else>
             <p>{{ $t('app.price_free') }}</p>

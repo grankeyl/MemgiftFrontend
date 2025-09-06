@@ -695,15 +695,19 @@
 
             &.holders
                 transform: translateX(0%)
+                visibility: visible
                 height: 100%
 
                 &.hide
                     transform: translateX(-100%)
+                    visibility: hidden
                     height: 0
 
             &.gifts
                 transform: translateX(-100%)
                 margin-top: 12px
+                visibility: visible
+                height: auto
 
                 .other-list
                     .small-avatar
@@ -712,6 +716,8 @@
 
                 &.hide
                     transform: translateX(0%)
+                    visibility: hidden
+                    height: 0
 
             .top-three
                 display: flex

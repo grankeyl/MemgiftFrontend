@@ -32,11 +32,11 @@ export default defineConfig({
   },
 
   build: {
-    target: 'es2019',            // если нужна совместимость
+    target: 'es2019',
     sourcemap: false,
     minify: 'esbuild',
     assetsDir: 'assets',
-    chunkSizeWarningLimit: 1000, // тише ворнинги
+    chunkSizeWarningLimit: 1000,
     cssCodeSplit: true,
   }
 });

@@ -352,7 +352,6 @@
         if (!this.$props.NftData) return;
         const NftData = this.$props.NftData;
         const checkNftFree = await nftApi.checkFree();
-        console.log(checkNftFree);
         if (checkNftFree.ok && !checkNftFree.claimed) {
           this.NftGetFree = true;
           this.$emit('checkNftFree', true, this.Terms);

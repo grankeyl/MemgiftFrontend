@@ -284,7 +284,6 @@
 
           TelegramModule.useShareMessage(preparedMessage.prepared_message_id)
             .then(async (sharedMessage) => {
-              this.$emit('completeTerm', 'InviteFriends');
             })
             .catch(() => {
             });
