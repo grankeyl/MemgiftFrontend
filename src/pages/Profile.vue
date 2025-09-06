@@ -50,6 +50,7 @@
           :SelectedSort="ModalSortComp.SortSelected"
           :SortItems="ModalSortComp.SortItems"
           :Searching="GiftsComp.Searching"
+          :HasMore="GiftsComp.HasMore"
         />
       </div>
 
@@ -169,6 +170,7 @@ export default defineComponent({
       Offset: 0,
       Limit: 24,
       NFTsCount: 0 as number | null,
+      HasMore: false,
     });
 
     const ModalComp = ref({
@@ -269,9 +271,6 @@ export default defineComponent({
       UserComp.value.Image = Image;
       UserComp.value.Name = FullName;
       UserComp.value.NFTs = storeCache.UserData.nft_count;
-
-      resetLocalStorage();
-      fetchNftsStacks();
     };
 
     const UpgradedNftClear = () => {
@@ -502,7 +501,7 @@ export default defineComponent({
 
     const keyFor = (tab: string, sort: string, models: string[]) =>
       `${tab}|${sort}|${models.join(',')}`;
-
+      
     const fetchNftsStacks = async () => {
       if (GiftsComp.value.Searching) return;
       GiftsComp.value.Searching = true;
@@ -512,25 +511,30 @@ export default defineComponent({
       const modelsCsv = ModalModelComp.value.ModelsSelected;
       const cacheKey = keyFor(tab, sort, modelsCsv);
 
-      // Инициализируем кэш-ячейку при первом обращении
       if (!storeCache.UserNFTs[cacheKey]) {
         storeCache.UserNFTs[cacheKey] = { items: [], count: 0, fullyLoaded: false };
       }
 
       const bucket = storeCache.UserNFTs[cacheKey];
 
-      // Сначала пробуем отдать из кэша порцию PAGE, если там уже что-то есть,
-      // но в UI ещё не всё показали.
+      // ===== 1) Отдаём из кэша, если там уже есть больше, чем показано
       const hasEnoughInCache = bucket.items.length > GiftsComp.value.List.length;
       if (hasEnoughInCache) {
         const next = bucket.items.slice(0, GiftsComp.value.List.length + GiftsComp.value.Limit);
-        GiftsComp.value.List = next;
+        GiftsComp.value.List      = next;
         GiftsComp.value.NFTsCount = bucket.count;
+
+        // <-- ВАЖНО: считаем HasMore ИЗ КЭША
+        const calcHasMoreFromCache =
+          bucket.items.length > next.length // в кэше ещё остались элементы на показ
+          || (!bucket.fullyLoaded && (bucket.count === 0 || bucket.items.length < bucket.count)); // или сервер ещё не исчерпан
+
+        GiftsComp.value.HasMore   = calcHasMoreFromCache;
         GiftsComp.value.Searching = false;
         return;
       }
 
-      // Если кэш закончился, а ещё не всё выкачано — берём с сервера
+      // ===== 2) Если кэш закончился — догружаем с сервера
       if (!bucket.fullyLoaded) {
         const offset = bucket.items.length;
         const gifts = await nftApi.getGifts(
@@ -542,7 +546,6 @@ export default defineComponent({
         );
 
         if (gifts) {
-          // дописываем в кэш
           bucket.items.push(...gifts.items);
           bucket.count = gifts.count ?? bucket.count;
           if (gifts.items.length < GiftsComp.value.Limit || bucket.items.length >= bucket.count) {
@@ -551,11 +554,25 @@ export default defineComponent({
         }
       }
 
-      // Обновляем UI из кэша
-      GiftsComp.value.List = bucket.items.slice(0, GiftsComp.value.List.length + GiftsComp.value.Limit);
+      // ===== 3) Обновляем UI и HasMore (после сервера ИЛИ если сервер ничего не вернул)
+      const next = bucket.items.slice(0, GiftsComp.value.List.length + GiftsComp.value.Limit);
+      GiftsComp.value.List      = next;
       GiftsComp.value.NFTsCount = bucket.count;
+
+      const calcHasMoreFinal =
+        bucket.items.length > next.length
+        || (!bucket.fullyLoaded && (bucket.count === 0 || bucket.items.length < bucket.count));
+
+      GiftsComp.value.HasMore   = calcHasMoreFinal;
       GiftsComp.value.Searching = false;
     };
+
+    const resetLocalStorage = () => {
+      storeCache.UserNFTs = {};
+    }
+
+    resetLocalStorage();
+    fetchNftsStacks();
 
     /** Смена фильтров/таба — просто меняем ключ; если кэша нет, первая загрузка начнётся с сервера */
     watch([ActiveTab, () => ModalSortComp.value.SortSelected, () => ModalModelComp.value.ModelsSelected.join(',')], () => {
@@ -574,10 +591,6 @@ export default defineComponent({
       }
       fetchNftsStacks();
     });
-
-    const resetLocalStorage = () => {
-      storeCache.UserNFTs = {};
-    }
 
     const applyModels = (models: any) => {
       ModalModelComp.value.ModelsSelected = models;

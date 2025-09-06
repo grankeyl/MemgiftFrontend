@@ -13,13 +13,11 @@
 
   <RouterView v-slot="{ Component, route }">
     <template v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
-      <!-- обычные страницы -->
       <div v-if="!route.meta.noLayout" class="_main">
         <component :is="Component" @loaded="onRouterViewLoaded" :success="pageSuccess" />
         <Toast />
       </div>
 
-      <!-- 404 (или любые noLayout-роуты) — без всего -->
       <component v-else :is="Component" />
 
       <Menu

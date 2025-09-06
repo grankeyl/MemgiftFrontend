@@ -96,7 +96,7 @@
       <div v-if="tabViewNFTs === 'blocks'" class="items blocks">
         <div 
           v-for="(item, index) in GiftsList"
-          :key="index" 
+          :key="item.uuid" 
           @click="useModal(item.uuid)"
           class="item"
         >
@@ -162,7 +162,7 @@
       <div v-if="tabViewNFTs === 'lists'" class="items lists">
         <div
           v-for="(item, index) in GiftsList"
-          :key="index"
+          :key="item.uuid"
           @click="useModal(item.uuid)"
           class="item"
         >
@@ -321,6 +321,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    HasMore: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   components: {
@@ -347,6 +351,7 @@ export default {
 
       tabViewNFTs: "blocks",
       observer: null,
+      _ioBusy: false,
 
       CategoriesList: [
         { id: 1, Key: 'received' },
@@ -422,7 +427,13 @@ export default {
       return !(this.hasModels || this.hasSort) 
     },
     hasMore() {
-      return (this.GiftsList?.length || 0) < (this.GiftsCount || 0);
+      if (this.HasMore !== null) return this.HasMore;
+      return this.GiftsCount > (this.GiftsList?.length || 0);
+    },
+    lastCursor() {
+      const last = this.GiftsList?.[this.GiftsList.length - 1];
+      // выбери, чем пагинироваться: uuid или created_at
+      return last ? { uuid: last.uuid, created_at: last.created_at } : null;
     },
   },
 
@@ -432,8 +443,6 @@ export default {
       this.$nextTick(() => this.resetObserver());
     },
     GiftsList(newValue) {
-      if (!this.GiftsList || this.GiftsList.length === 0) return;
-      this.GiftsList.splice(0, this.GiftsList.length, ...newValue);
       this.$nextTick(() => this.resetObserver());
     },
   },
@@ -563,20 +572,33 @@ export default {
         });
     },
 
+    findScrollRoot(el) {
+      let n = el.parentElement;
+      while (n) {
+        const style = getComputedStyle(n);
+        const oy = style.overflowY;
+        if (oy === 'auto' || oy === 'scroll') return n;
+        n = n.parentElement;
+      }
+      return null;
+    },
+
     initObserver() {
       if (this.observer) return;
       const sentinel = this.$refs.sentinel;
       if (!sentinel) return;
 
+      const rootEl = this.findScrollRoot(this.$el) || null; // fallback — окно
+
       this.observer = new IntersectionObserver(
         (entries) => {
           const [entry] = entries;
-          if (!entry?.isIntersecting) return;
-          if (this.Searching) return;      // уже грузим — выходим
-          if (!this.hasMore) return;       // всё загрузили — выходим
-          this.requestMore();               // просим родителя догрузить
+          if (!entry?.isIntersecting || this.Searching || !this.hasMore || this._ioBusy) return;
+          this._ioBusy = true;
+          this.requestMore();
+          setTimeout(() => (this._ioBusy = false), 400);
         },
-        { root: null, rootMargin: '300px 0px 300px 0px', threshold: 0.01 }
+        { root: rootEl, rootMargin: '0px 0px 100px 0px', threshold: 0.01 }
       );
 
       this.observer.observe(sentinel);

@@ -392,7 +392,7 @@ export default {
     },
 
     copyUserId() {
-      copyToClipboard(this.storeCache.UserData.Tld);
+      copyToClipboard(this.storeCache.UserData.user.Tld);
       showToast('User ID copied', 'success');
     }
   },
