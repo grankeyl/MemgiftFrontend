@@ -4,12 +4,14 @@ export const MenuJson = {
     Home: {
         Key: 'home',
         Icon: Icon.Gift,
-        Route: '/'
+        Route: '/',
+        Disable: false,
     },
     Rating: {
         Key: 'rating',
         Icon: Icon.Rating,
-        Route: '/rating'
+        Route: '/rating',
+        Disable: false
     },
     Tickets: {
         Key: 'tasks',
@@ -20,11 +22,13 @@ export const MenuJson = {
     Market: {
         Key: 'market',
         Icon: Icon.Market,
-        Route: '/market'
+        Route: '/market',
+        Disable: false
     },
     Profile: {
         Key: 'profile',
         Icon: Icon.User,
-        Route: '/profile'
+        Route: '/profile',
+        Disable: false
     }
 }
