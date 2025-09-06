@@ -1,31 +1,27 @@
 <template>
-  <div :class="['_direction _comp _item _purchased', Key]">
-    <div v-if="isLoading" class="_skeleton">
+  <div :class="['_direction _comp _item _dev', Key]">
+    <div class="_content">
       <div class="_block">
-        <div class="_image"></div>
-        <div class="_title"></div>
-        <div class="_descr"></div>
-      </div>
-    </div>
-    <div class="_content" :class="{ hide: isLoading }">
-      <div class="_block">
-        <div 
-          style="margin-bottom: 10px;"
-          class="_image"
-        >
-          <Lottie
-            class="lt"
-            slug="duck-private"
-            :loop="true"
-            width="150"
-            height="150"
-          />
+        <div class="image">
+          <img src="/market/logotype.svg" alt="logo">
         </div>
-        <div class="_title">
-          <h4>{{ Text }}</h4>
-        </div>
-        <div class="_descr">
-          <p>{{ Descr }}</p>
+        <div class="countdown">
+          <div class="countdown-item">
+            <div class="countdown-item-number"><NumberFlip :value="time.days" /></div>
+            <div class="countdown-item-text"><span>days</span></div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-item-number"><NumberFlip :value="time.hours" /></div>
+            <div class="countdown-item-text"><span>hours</span></div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-item-number"><NumberFlip :value="time.minutes" /></div>
+            <div class="countdown-item-text"><span>minutes</span></div>
+          </div>
+          <div class="countdown-item">
+            <div class="countdown-item-number"><NumberFlip :value="time.seconds" /></div>
+            <div class="countdown-item-text"><span>seconds</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -34,54 +30,69 @@
 
 <script>
 import Lottie from '../Lottie.vue';
+import NumberFlip from './NumberFlip.vue'
 
 export default {
   props: {
-    Skeleton: {
-      type: Boolean,
-      required: true,
-    },
-    SkeletonTime: {
-      type: Number,
-      required: true,
-    },
-    Text: {
-      type: String,
-      required: true,
-    },
-    Descr: {
-      type: String,
-      required: true,
-    },
+    Skeleton: { type: Boolean, required: true },
+    SkeletonTime: { type: Number, required: true },
+    Text: { type: String, required: true },
+    Descr: { type: String, required: true },
   },
 
-  components: {
-    Lottie,
-  },
+  components: { Lottie, NumberFlip },
 
   data() {
+    const startTimestamp = Date.now();
+    const targetTimestamp = startTimestamp + (12 * 24 * 60 * 60 * 1000) - (5 * 60 * 60 * 1000);
     return {
       isLoading: this.Skeleton,
-
       loadingLottie: true,
+      time: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      },
+      timer: null,
+      startDate: startTimestamp,
+      targetDate: targetTimestamp,
     };
   },
 
   mounted() {
     this.loadResources();
+    setTimeout(() => (this.loadingLottie = false), 1200);
 
-    setTimeout(() => {
-      this.loadingLottie = false;
-    }, 1200);
+    this.startCountdown();
   },
 
-  computed: {
-    isLoading() {
-      return this.Skeleton;
-    },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer);
   },
 
   methods: {
+    startCountdown() {
+      this.updateCountdown();
+      this.timer = setInterval(this.updateCountdown, 1000);
+    },
+
+    updateCountdown() {
+      const now = Date.now();
+      const diff = this.targetDate - now;
+
+      if (diff <= 0) {
+        clearInterval(this.timer);
+        this.time = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        return;
+      }
+
+      this.time.days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      this.time.hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      this.time.minutes = Math.floor((diff / (1000 * 60)) % 60);
+      this.time.seconds = Math.floor((diff / 1000) % 60);
+    },
+
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadIcons()]);
@@ -98,7 +109,7 @@ export default {
     loadIcons() {
       return new Promise((resolve, reject) => {
         const div = document.createElement("div");
-        div.innerHTML = this.Icon;
+        div.innerHTML = this.Icon || "";
 
         const icons = div.querySelectorAll("img, svg");
         const promises = Array.from(icons).map((icon) => {
@@ -112,11 +123,8 @@ export default {
           } else if (icon.tagName === "SVG") {
             return new Promise((resolveSvg) => {
               const checkSvgLoaded = () => {
-                if (icon.getBBox().width > 0) {
-                  resolveSvg();
-                } else {
-                  requestAnimationFrame(checkSvgLoaded);
-                }
+                if (icon.getBBox().width > 0) resolveSvg();
+                else requestAnimationFrame(checkSvgLoaded);
               };
               checkSvgLoaded();
             });

@@ -34,6 +34,10 @@ import sortIcon from '@/assets/icons/Sort.svg?raw';
 import listIcon from '@/assets/icons/List.svg?raw';
 import blocksIcon from '@/assets/icons/Blocks.svg?raw';
 import marketIcon from '@/assets/icons/Market.svg?raw';
+import symbolIcon from '@/assets/icons/Symbol.svg?raw';
+import backdropIcon from '@/assets/icons/Backdrop.svg?raw';
+import rangeIcon from '@/assets/icons/Range.svg?raw';
+import giftOthIcon from '@/assets/icons/GiftOth.svg?raw';
 
 export const Icon = {
   Gift: giftIcon,
@@ -71,44 +75,8 @@ export const Icon = {
   List: listIcon,
   Blocks: blocksIcon,
   Market: marketIcon,
-};
-
-
-// gifts
-import gift_durov from '@/assets/gifts/nft_durov.svg';
-import gift_dyson from '@/assets/gifts/nft_dyson.svg';
-import gift_plane from '@/assets/gifts/nft_plane.svg';
-import gift_plane_stars from '@/assets/gifts/nft_plane_stars.svg';
-import gift_pepe_toilet from '@/assets/gifts/nft_pepe_toilet.svg';
-import gift_joint from '@/assets/gifts/nft_joint.svg';
-import gift_chillguy from '@/assets/gifts/nft_chillguy.svg';
-import gift_mamonth from '@/assets/gifts/nft_mamonth.svg';
-
-export const GiftIcon = {
-  gift_durov,
-  gift_dyson,
-  gift_plane,
-  gift_plane_stars,
-  gift_pepe_toilet,
-  gift_joint,
-  gift_chillguy,
-  gift_mamonth,
-};
-
-
-// rarity
-import rarity_rare from '@/assets/images/rare.svg';
-import rarity_very_rare from '@/assets/images/veryrare.svg';
-import rarity_epic from '@/assets/images/epic.svg';
-import rarity_legend from '@/assets/images/legend.svg';
-import rarity_sold_out from '@/assets/images/sold-out.svg';
-import rarity_sended from '@/assets/images/sended.svg';
-
-export const RarityIcon = {
-  rarity_rare,
-  rarity_very_rare,
-  rarity_epic,
-  rarity_legend,
-  rarity_sold_out,
-  rarity_sended,
+  Symbol: symbolIcon,
+  Backdrop: backdropIcon,
+  Range: rangeIcon,
+  GiftOth: giftOthIcon,
 };

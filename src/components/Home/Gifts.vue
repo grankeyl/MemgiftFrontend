@@ -269,9 +269,9 @@ export default {
         }
       }
 
-      // if (this.checkboxHideSoldOut) {
-      //   filtered = filtered.filter((nft) => nft.nftSupplyUsers < nft.nftSupply);
-      // }
+      if (this.checkboxHideSoldOut) {
+        filtered = filtered.filter((nft) => !nft.soldOut);
+      }
 
       const sortType = this.selectSortbyValue;
 

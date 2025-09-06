@@ -1,0 +1,153 @@
+@use "./../../assets/styles/_variables" as *
+    
+.filters
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        .items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            .item
+                width: 100%
+                height: 60px
+                background: $app-background-secondary
+                border-radius: 16px
+                opacity: .2
+    
+    ._content
+        width: 100%
+        display: flex
+        gap: 10px
+        overflow-x: scroll
+        overflow-y: hidden
+
+        &.hide
+            opacity: 0
+            pointer-events: none
+            display: none
+        
+        .cont
+            display: flex
+            align-items: center
+            justify-content: space-between
+            gap: 16px
+                
+            .item
+                    width: fit-content
+                    height: 100%
+                    display: flex
+                    align-items: center
+                    gap: 6px
+                    position: relative
+
+                    .circle
+                        width: 6px
+                        height: 6px
+                        border-radius: 50%
+                        background: $app-background-blue-secondary
+                        position: absolute
+                        top: 4px
+                        right: -1px
+                        z-index: 1
+                    
+                    .icon
+                        width: fit-content
+                        height: fit-content
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        
+                        & .kit-icon
+                            width: 18px
+                            height: 18px
+
+                            & svg
+                                width: 100%
+                                height: 100%
+                            
+                    .title
+                        width: fit-content
+                        height: fit-content
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color-descr-primary
+                        white-space: nowrap
+                    
+                    .dropdown
+                        width: 19px
+                        height: 19px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        background: $app-background-secondary
+                        border-radius: 50px
+
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+                            margin-top: 3px
+                            
+            .righted
+                width: fit-content
+                height: 100%
+                display: flex
+                align-items: center
+                gap: 10px
+                position: relative
+                
+                .gifts
+                    width: fit-content
+                    height: fit-content
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    
+                    & h5
+                        width: fit-content
+                        height: fit-content
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                        position: relative
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color-descr-primary
+
+                .display
+                    width: fit-content
+                    height: fit-content
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    position: relative
+                    
+                    & .kit-icon
+                        width: 28px
+                        height: 28px
+
+                        & svg
+                            width: 100%
+                            height: 100%
+        

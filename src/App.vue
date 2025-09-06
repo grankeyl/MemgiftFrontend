@@ -1,27 +1,38 @@
 <template>
-    <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
-      <div class="background">
-        <img src="/bg-load.jpg" alt="background" />
-      </div>
-      <div class="centered">
-        <div class="logotype">
-          <img src="/logotype.svg" alt="logotype" />
-        </div>
-        <div class="kit-icon" v-html="Icon.Load"></div>
-      </div>
+  <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
+    <div class="background">
+      <img src="/bg-load.jpg" alt="background" />
     </div>
-
-    <div v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)" class="_main">
-      <RouterView @loaded="onRouterViewLoaded" :success="pageSuccess" />
-      <Toast />
+    <div class="centered">
+      <div class="logotype">
+        <img src="/logotype.svg" alt="logotype" />
+      </div>
+      <div class="kit-icon" v-html="Icon.Load"></div>
     </div>
+  </div>
 
-    <Menu v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)" @loaded="onMenuLoaded" />
+  <RouterView v-slot="{ Component, route }">
+    <template v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
+      <!-- обычные страницы -->
+      <div v-if="!route.meta.noLayout" class="_main">
+        <component :is="Component" @loaded="onRouterViewLoaded" :success="pageSuccess" />
+        <Toast />
+      </div>
+
+      <!-- 404 (или любые noLayout-роуты) — без всего -->
+      <component v-else :is="Component" />
+
+      <Menu
+        v-if="!route.meta.noLayout"
+        @loaded="onMenuLoaded"
+      />
+    </template>
+  </RouterView>
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useCacheStore } from './stores/pinia/piniaStore';
 import { getUserLanguage, cleanString } from './utils/useApp';
 import { miniApp } from '@telegram-apps/sdk';
@@ -50,15 +61,9 @@ export default {
   },
 
   setup() {
-    let initDataRaw =
-      typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_INIT_DATA
-        ? import.meta.env.VITE_APP_INIT_DATA
-        : null
-
-    const miniAppTesting =
-      typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_TEST
-        ? import.meta.env.VITE_APP_TEST
-        : null
+    let initDataRaw = import.meta.env.VITE_APP_INIT_DATA as any;
+    const miniAppTesting = import.meta.env.VITE_APP_TEST as any;
+    const route = useRoute();
     const router = useRouter();
     const miniAppLang = getUserLanguage();
     const miniAppMounted = ref(false);
@@ -66,6 +71,13 @@ export default {
 
     const pageSuccess = ref(false);
     const storeCache = useCacheStore() as any;
+
+    function runSafeEffects() {
+      if (route.meta.noLayout) return
+    }
+
+    onMounted(runSafeEffects)
+    watch(() => route.fullPath, runSafeEffects)
 
     if (miniAppTesting === 'production') {
       if (window.Telegram?.WebApp?.initData) { 
@@ -131,10 +143,19 @@ export default {
         const nftsApp = await giftsApi.getAll();
 
         if (nftsApp) {
-          storeCache.TelegramData = { ...TelegramModule.initData() };
-          storeCache.TelegramData.user.firstName = cleanString(storeCache.TelegramData.user.first_name);
-          storeCache.TelegramData.user.lastName = cleanString(storeCache.TelegramData.user.last_name);
-          storeCache.TelegramData.user.language = miniAppLang;
+          const initData = TelegramModule.initData();
+          
+          if (miniAppTesting !== 'production') {
+            storeCache.TelegramData = { ...TelegramModule.parseQueryToJSON(import.meta.env.VITE_APP_INIT_DATA) };
+          } else {
+            storeCache.TelegramData = { ...initData };
+          }
+
+          if (storeCache.TelegramData) {
+            storeCache.TelegramData.user.firstName = cleanString(storeCache.TelegramData.user.first_name);
+            storeCache.TelegramData.user.lastName = cleanString(storeCache.TelegramData.user.last_name);
+            storeCache.TelegramData.user.language = miniAppLang;
+          }
           
           storeCache.NftsApp = nftsApp.items;
           storeCache.NftsAppData = nftsApp.items;

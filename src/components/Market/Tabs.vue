@@ -1,31 +1,30 @@
 <template>
-  <div :class="['_direction _comp _item _purchased', Key]">
+  <div class="_direction _comp _item tabs">
     <div v-if="isLoading" class="_skeleton">
-      <div class="_block">
-        <div class="_image"></div>
-        <div class="_title"></div>
-        <div class="_descr"></div>
+      <div class="items">
+        <div class="item"></div>
+        <div class="item"></div>
       </div>
     </div>
     <div class="_content" :class="{ hide: isLoading }">
-      <div class="_block">
-        <div 
-          style="margin-bottom: 10px;"
-          class="_image"
+      <div class="items">
+        <div
+          v-for="(tab, index) in Tabs.List"
+          :key="index"
+          class="item"
+          :class="{ active: Tabs.Active === tab.id }"
+          @click="Tabs.Active = tab.id"
         >
-          <Lottie
-            class="lt"
-            slug="duck-private"
-            :loop="true"
-            width="150"
-            height="150"
-          />
+          <h4>{{ $t(`market.tabs.${tab.id}`) }}</h4>
         </div>
-        <div class="_title">
-          <h4>{{ Text }}</h4>
+      </div>
+      <div class="balance">
+        <div class="context">
+          <h4>0.00</h4>
+          <img src="/market/ton.svg" alt="ton" />
         </div>
-        <div class="_descr">
-          <p>{{ Descr }}</p>
+        <div class="button">
+          <img src="/market/plus.svg" alt="plus" />
         </div>
       </div>
     </div>
@@ -33,6 +32,8 @@
 </template>
 
 <script>
+import { Icon } from '../Icon';
+
 import Lottie from '../Lottie.vue';
 
 export default {
@@ -45,12 +46,8 @@ export default {
       type: Number,
       required: true,
     },
-    Text: {
-      type: String,
-      required: true,
-    },
-    Descr: {
-      type: String,
+    Tabs: {
+      type: Object,
       required: true,
     },
   },
@@ -63,28 +60,22 @@ export default {
     return {
       isLoading: this.Skeleton,
 
-      loadingLottie: true,
+      Icon,
     };
   },
 
   mounted() {
     this.loadResources();
-
-    setTimeout(() => {
-      this.loadingLottie = false;
-    }, 1200);
   },
 
   computed: {
-    isLoading() {
-      return this.Skeleton;
-    },
   },
 
   methods: {
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadIcons()]);
+        this.isLoading = false;
         this.$emit("loadSuccess");
       } catch (error) {
         console.error("Ошибка при загрузке ресурсов:", error);
@@ -129,3 +120,7 @@ export default {
   },
 };
 </script>
+
+<style lang="sass">
+@use "./Tabs.sass"
+</style>

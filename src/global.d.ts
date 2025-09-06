@@ -1,14 +1,5 @@
 declare global {
   interface Window {
-      telemetree?: (config: {
-          projectId: string;
-          apiKey: string;
-          appName: string;
-          isTelegramContext: boolean;
-          logLevel: string;
-          trackGroup: string;
-      }) => any;
-      telemetreeBuilder?: { track: (event: string, data: any) => void, setUser: (user: any) => void };
       Telegram?: {
         WebApp: {
           ready: () => void;

@@ -2,7 +2,25 @@
     <div class="_wrap _market" :class="{ desktop: isDesktop() }">
         <div class="_view">
             <div class="bg"></div>
-
+            
+            <div class="display">
+                <div class="logotype">
+                    <img src="/market/logotype.svg" alt="logotype" />
+                </div>
+                <Tabs
+                    :Skeleton="isPageLoading"
+                    :SkeletonTime="configApp.skeletonTime"
+                    :Tabs="Tabs"
+                />
+                <Filters
+                    :Skeleton="isPageLoading"
+                    :SkeletonTime="configApp.skeletonTime"
+                />
+                <Gifts
+                    :Skeleton="isPageLoading"
+                    :SkeletonTime="configApp.skeletonTime"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -16,6 +34,10 @@ import { shootConfetti } from '../utils/useConfetti';
 import { Icon } from '../components/Icon';
 import { getConfig } from '../config';
 
+import Tabs from '../components/Market/Tabs.vue';
+import Filters from '../components/Market/Filters.vue';
+import Gifts from '../components/Market/Gifts.vue';
+
 export default {
     props: {
         success: {
@@ -25,6 +47,9 @@ export default {
     },
 
     components: {
+        Tabs,
+        Filters,
+        Gifts,
     },
 
     data() {
@@ -34,6 +59,14 @@ export default {
             handleLoads: 0,
             propsSuccess: this.$props.success,
             isPageLoading: true,
+
+            Tabs: {
+                Active: 'gifts',
+                List: [
+                    { id: 'gifts' },
+                    { id: 'listings' }
+                ]
+            },
 
             isDesktop,
             Icon,

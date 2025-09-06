@@ -338,10 +338,6 @@ i18next.init({
 
                 buttonDeposit: "Deposit",
             },
-            market: {
-                developmentTitle: "In development",
-                developmentDescription: "The page is currently under construction.",
-            },
             referral: {
                 title: "Gifts for invites!",
                 description: "Invite your friends to Telegram, or promote the link via",
@@ -355,7 +351,16 @@ i18next.init({
                     descr: "You have no referrals yet",
                     button: "Share link",
                 }
-            }
+            },
+            market: {
+                developmentTitle: "In development",
+                developmentDescription: "The page is currently under construction.",
+
+                tabs: {
+                    gifts: "Gifts",
+                    listings: "Listings",
+                },
+            },
         }
     },
     ru: {
@@ -686,10 +691,6 @@ i18next.init({
 
                 buttonDeposit: "Пополнить",
             },
-            market: {
-                developmentTitle: "В разработке",
-                developmentDescription: "Страница находится на стадии разработки",
-            },
             referral: {
                 title: "Подарки за инвайты!",
                 description: "Приглашайте друзей в Telegram или рекламируйте ссылку через",
@@ -703,7 +704,16 @@ i18next.init({
                     descr: "У вас ещё нет рефералов",
                     button: "Пригласить",
                 }
-            }
+            },
+            market: {
+                developmentTitle: "В разработке",
+                developmentDescription: "Страница находится на стадии разработки",
+                
+                tabs: {
+                    gifts: "Gifts",
+                    listings: "Listings",
+                },
+            },
         }
     },
   },

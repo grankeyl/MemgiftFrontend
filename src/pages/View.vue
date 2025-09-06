@@ -119,7 +119,7 @@ import { isDesktop } from '../utils/checkDevice';
 import { checkLoaded } from '../utils/checkLoaded';
 import { unixToDefault } from '../utils/useApp';
 import { clearBackgroundName } from '../utils/useGift';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import * as nftApi from '../api/nftApi';
 import * as userApi from '../api/userApi';
@@ -146,6 +146,7 @@ export default defineComponent({
 
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const pageApp = ref('Profile');
     const configApp = ref(getConfig());
     const storeCache = useCacheStore() as any;
@@ -555,6 +556,8 @@ export default defineComponent({
       },
       { immediate: true }
     );
+
+    TelegramModule.useBackButton(() => router.push('/rating'));
 
     return {
       configApp,

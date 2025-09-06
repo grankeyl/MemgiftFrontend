@@ -262,7 +262,7 @@ export default {
           fireCircle();
 
           if (createTask.status === 'done') {
-            this.storeCache.UserData.Tickets += createTask.tickets;
+            this.storeCache.UserData.user.Tickets += createTask.tickets;
           }
         }
       }

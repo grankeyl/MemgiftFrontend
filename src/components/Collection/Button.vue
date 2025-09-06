@@ -6,7 +6,7 @@
           </div>
         </div>
         <div v-else class="_content">
-          <div v-if="NftFree" class="checker">
+          <!-- <div v-if="NftFree" class="checker">
             <div v-if="!isTermsCompleted && NftGetFree" class="_button">
               <button :class="{ _loading: isLoadingButton }" style="opacity: .3; pointer-events: none;">
                 <h4>{{ $t('collection.buttonConditions') }}</h4>
@@ -22,7 +22,7 @@
                 <h4>{{ $t('collection.buttonGoToStore') }}</h4>
               </button>
             </div>
-          </div>
+          </div> -->
 
           <div v-if="!NftFree" class="checker">
             <div v-if="NftData?.nftSupplyCurrent && NftData?.nftSupplyCurrent > 0" class="_button">

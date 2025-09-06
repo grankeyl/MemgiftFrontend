@@ -192,11 +192,7 @@
               <div class="name">{{ cleanString(leader?.name) || 'No Name' }}</div>
               <div class="gifts">
                 {{ leader?.refCount }}
-                {{ pluralizeGift(
-                  $t('rating.referrals'),
-                  leader?.refCount, 
-                  storeCache.TelegramData.user.language
-                ) }}
+                referrals
               </div>
             </div>
           </div>
@@ -215,11 +211,7 @@
                 <div class="name" v-else>No Name</div>
                 <div class="gifts">
                   {{ leader?.refCount }} 
-                  {{ pluralizeGift(
-                    $t('rating.referrals'),
-                    leader?.refCount, 
-                    storeCache.TelegramData.user.language
-                  ) }}
+                  referrals
                 </div>
               </div>
               <img 

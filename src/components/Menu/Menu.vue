@@ -40,7 +40,7 @@ onMounted(() => {
             <div class="menu_routes">
                 <div 
                   v-for="route in MenuJson" 
-                  :class="{ active: $route.path === route.Route }"
+                  :class="{ active: $route.path === route.Route, disable: route.Disable }"
                   class="menuRoute"
                 >
                     <div @click="openRoute(route.Route)" class="menu_route">

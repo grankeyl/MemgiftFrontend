@@ -82,7 +82,7 @@ export default {
   methods: {
     async getTickets() {
       try {
-        this.storeCache.UserData.Tickets = this.storeCache.UserData.Tickets || 0;
+        this.storeCache.UserData.user.Tickets = this.storeCache.UserData.user.Tickets || 0;
       } catch {}
     },
 

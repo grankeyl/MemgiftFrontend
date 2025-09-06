@@ -8,8 +8,6 @@
     <title>Memgift - Mini App</title>
     <link rel="stylesheet" href="/src/assets/styles/fonts.css">
     <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
-    <script src="https://cdn.jsdelivr.net/gh/TONSolutions/telemetree-pixel@main/telemetree-pixel.js"></script>
-    <script src="https://backsdk.trafficgram.io/static/sdk.js"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -85,31 +83,6 @@
   </head>
   <body>
     <div id="app"></div>
-    <script>
-      window.addEventListener('load', () => {
-          window.TrafficGramSDK = window.TrafficGramSDKInstance.initialize(
-              "KsFSPL9xavF4B16RmohkGNneCQV82pnUEMs8j8LSA5e0bW6qGUD1EwS6RE-d36kk",
-              10000
-          );
-
-          if (!window.TrafficGramSDK) {
-            return;
-          }
-      });
-    </script>
-    <script>
-      // грузим eruda из CDN и сразу инициализируем
-      (function () {
-        var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/eruda';
-        s.onload = function () {
-          eruda.init();
-          // по желанию: кнопка сворачивания
-          // eruda.get('settings').config.set('displaySize', 50);
-        };
-        document.body.appendChild(s);
-      })();
-    </script>
     <script type="module" src="/src/main.ts"></script>
     <style>
       html { background: #1C1C1C; }

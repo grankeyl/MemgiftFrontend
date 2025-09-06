@@ -20,7 +20,28 @@ const TelegramModule = {
     },
 
     initData() {
+      if (!WebApp.initDataUnsafe) return;
       return WebApp.initDataUnsafe;
+    },
+
+    parseQueryToJSON(qs: string) {
+      const s = qs.startsWith('?') ? qs.slice(1) : qs;
+      const params = new URLSearchParams(s);
+      const out = {} as any;
+
+      for (const [k, v] of params.entries()) {
+        let val = v as any;
+
+        if (k === 'user' || k === 'receiver' || k === 'chat' || k.endsWith('_json')) {
+          try { val = JSON.parse(val); } catch {}
+        } else if (/^-?\d+$/.test(val)) {
+          val = Number(val);
+        } else if (val === 'true' || val === 'false') {
+          val = (val === 'true');
+        }
+        out[k] = val;
+      }
+      return out;
     },
 
     checkStartParam() {
@@ -97,31 +118,19 @@ const TelegramModule = {
       }
     },
 
-    async useSetEmoji(custom_emoji_id: string) {
-      console.log(custom_emoji_id); 
-      // const cleanup: VoidFunction[] = [];
+    async useSetEmoji(custom_emoji_id: string): Promise<void> {
+      WebApp.requestEmojiStatusAccess();
 
-      // if (!setEmojiStatus.isSupported() || !setEmojiStatus.isAvailable()) {
-      //   return Promise.reject(new Error('Emoji status not supported'));
-      // }
-
-      // if (!requestEmojiStatusAccess.isSupported() || !requestEmojiStatusAccess.isAvailable()) {
-      //   return Promise.reject(new Error('Access not available'));
-      // }
-
-      // return new Promise((res, rej) => {
-      //   cleanup.push(
-      //     on('emoji_status_failed' as any, rej),
-      //     on('emoji_status_set' as any, res),
-      //   );
-      //   postEvent('web_app_set_emoji_status' as any, { custom_emoji_id });
-      // })
-      // .catch((err) => {
-      //   return Promise.reject(err);
-      // })
-      // .finally(() => {
-      //   cleanup.forEach(c => c());
-      // });
+      return new Promise((resolve, reject) => {
+        try {
+          (WebApp as any).setEmojiStatus({
+            custom_emoji_id,
+          });
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      });
     },
 
     async useShareStory(storyMedia: string) {
