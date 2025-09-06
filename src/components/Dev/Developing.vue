@@ -43,20 +43,17 @@ export default {
   components: { Lottie, NumberFlip },
 
   data() {
-    const startTimestamp = Date.now();
-    const targetTimestamp = startTimestamp + (12 * 24 * 60 * 60 * 1000) - (5 * 60 * 60 * 1000);
+    const startSec = 1757164938;
+    const startMs  = startSec * 1000;
+    const targetMs = startMs + (12*24*60*60*1000) - (5*60*60*1000);
+
     return {
       isLoading: this.Skeleton,
       loadingLottie: true,
-      time: {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      },
+      time: { days: 0, hours: 0, minutes: 0, seconds: 0 },
       timer: null,
-      startDate: startTimestamp,
-      targetDate: targetTimestamp,
+      startDate: startMs,
+      targetDate: targetMs,
     };
   },
 
@@ -79,18 +76,13 @@ export default {
 
     updateCountdown() {
       const now = Date.now();
-      const diff = this.targetDate - now;
+      const diff = Math.max(0, this.targetDate - now);
 
-      if (diff <= 0) {
-        clearInterval(this.timer);
-        this.time = { days: 0, hours: 0, minutes: 0, seconds: 0 };
-        return;
-      }
-
-      this.time.days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      this.time.hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      this.time.minutes = Math.floor((diff / (1000 * 60)) % 60);
+      this.time.days    = Math.floor(diff / (1000*60*60*24));
+      this.time.hours   = Math.floor((diff / (1000*60*60)) % 24);
+      this.time.minutes = Math.floor((diff / (1000*60)) % 60);
       this.time.seconds = Math.floor((diff / 1000) % 60);
+      if (diff === 0) clearInterval(this.timer);
     },
 
     async loadResources() {

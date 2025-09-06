@@ -17,7 +17,7 @@ export const MenuJson = {
         Key: 'tasks',
         Icon: Icon.Ticket,
         Route: '/tickets',
-        Disable: true
+        Disable: false
     },
     Market: {
         Key: 'market',

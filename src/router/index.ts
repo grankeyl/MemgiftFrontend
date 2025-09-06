@@ -11,7 +11,7 @@ import View from '../pages/View.vue'
 import Gift from '../pages/Gift.vue'
 // import Market from '../pages/Market.vue'
 import Dev from '../pages/Dev.vue'
-// import Tickets from '../pages/Tickets.vue'
+import Tickets from '../pages/Tickets.vue'
 import Multicheck from '../pages/Multicheck.vue'
 import Deal from '../pages/Deal.vue'
 import PrivateDeal from '../pages/PrivateDeal.vue'
@@ -34,7 +34,7 @@ const router = createRouter({
     { path: '/market', name: 'market', component: Dev },
     // { path: '/market', name: 'market', component: Market },
     // { path: '/market-dev', name: 'market-dev', component: Market },
-    // { path: '/tickets', name: 'tickets', component: Tickets },
+    { path: '/tickets', name: 'tickets', component: Tickets },
     { path: '/multicheck', name: 'multicheck', component: Multicheck },
     { path: '/deal', name: 'deal', component: Deal },
     { path: '/private-deal', name: 'private-deal', component: PrivateDeal },
