@@ -279,6 +279,8 @@ export default defineComponent({
       UserComp.value.Name = data.user.Name;
       UserComp.value.NFTs = data.nft_count;
 
+      ModalSortComp.value.SortSelected = 'price_high';
+
       resetLocalStorage();
       fetchNftsStacks();
     };
