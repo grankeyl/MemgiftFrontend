@@ -46,8 +46,9 @@
                 <h5>2500</h5>
                 <img src="/market/ton-white.svg" alt="ton" />
               </button>
-              <button>
+              <button class="added">
                 <img src="/market/basket-white.svg" alt="basket" />
+                <img src="/market/done.svg" alt="basket" />
               </button>
             </div>
           </div>

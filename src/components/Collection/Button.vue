@@ -314,6 +314,7 @@
             invoice.link, 
             () => {
               this.isLoadingButton = false;
+              this.storeCache.UserData.user.Tickets -= finalTickets;
               this.$router.push({ 
                 name: 'receive', 
                 params: { 
@@ -364,7 +365,6 @@
 
       async createNftFree() {
         const createNftFree = await nftApi.giftFree();
-        console.log(createNftFree);
         if (createNftFree) {
           this.isLoadingButton = false;
           this.$router.push({ 

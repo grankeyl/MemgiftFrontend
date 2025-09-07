@@ -2,7 +2,15 @@
     <div class="_wrap _market" :class="{ desktop: isDesktop() }">
         <div class="_view">
             <div class="bg"></div>
-            
+                <div class="basket">
+                    <div class="image">
+                        <img src="/market/basket-black.svg" alt="basket" />
+                    </div>
+                    <div class="context">
+                        <h4>10 TON</h4>
+                        <p>1 item</p>
+                    </div>
+                </div>
             <div class="display">
                 <div class="logotype">
                     <img src="/market/logotype.svg" alt="logotype" />

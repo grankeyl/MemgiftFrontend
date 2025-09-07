@@ -4,6 +4,7 @@
       </div>
       <div class="_content" :class="{ hide: isLoading }">
         <div class="cont">
+          <div class="items">
             <div class="item">
               <!-- <div class="circle"></div> -->
               <div class="icon">
@@ -65,22 +66,38 @@
               </div>
             </div>
           </div>
-        <!-- <div v-if="!isEmptyFilter" class="cheaps">
-          <div class="cheap clear" @click="clearAll">
-            <h4>{{ $t('profile.clearAll') }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
+          <div class="cheaps">
+            <div class="cheap clear">
+              <h4>{{ $t('profile.clearAll') }}</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div class="cheap model">
+              <div class="kit-icon" v-html="Icon.Gift"></div>
+              <h4>3 Models</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div class="cheap symbol">
+              <div class="kit-icon" v-html="Icon.Symbol"></div>
+              <h4>3 Symbols</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div class="cheap backdrop">
+              <div class="kit-icon" v-html="Icon.Backdrop"></div>
+              <h4>3 Backdrops</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div class="cheap price">
+              <div class="kit-icon" v-html="Icon.Range"></div>
+              <h4>Price Range</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div class="cheap sort">
+              <div class="kit-icon" v-html="Icon.Sort"></div>
+              <h4>Latest</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
           </div>
-          <div v-if="hasModels" class="cheap model" @click="clearModels">
-            <div class="kit-icon" v-html="Icon.Gift"></div>
-            <h4>{{ modelsCount === 1 ? `Model: ${SelectedModels[0]}` : `${modelsCount} Models` }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-          <div v-if="hasSort" class="cheap sort" @click="clearSort">
-            <div class="kit-icon" v-html="Icon.Sort"></div>
-            <h4>{{ sortTitle }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-        </div> -->
+        </div>
       </div>
   </div>
 </template>

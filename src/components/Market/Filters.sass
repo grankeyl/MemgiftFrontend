@@ -3,7 +3,6 @@
 .filters
     width: 100%
     height: fit-content
-    margin-bottom: 15px
     
     ._skeleton
         width: 100%
@@ -31,10 +30,6 @@
     
     ._content
         width: 100%
-        display: flex
-        gap: 10px
-        overflow-x: scroll
-        overflow-y: hidden
 
         &.hide
             opacity: 0
@@ -43,11 +38,18 @@
         
         .cont
             display: flex
-            align-items: center
-            justify-content: space-between
-            gap: 16px
+            flex-direction: column
+            gap: 20px
+
+            .items
+                display: flex
+                align-items: center
+                position: relative
+                gap: 14px
+                overflow-x: scroll
+                overflow-y: hidden
                 
-            .item
+                .item
                     width: fit-content
                     height: 100%
                     display: flex
@@ -151,3 +153,101 @@
                             width: 100%
                             height: 100%
         
+            .cheaps
+                width: 100%
+                height: 100%
+                display: flex
+                align-items: center
+                justify-content: start
+                position: relative
+                overflow-x: scroll
+                overflow-y: hidden
+                gap: 8px
+
+                .cheap
+                    width: fit-content
+                    height: 29px
+                    padding: 6px 13px 6px 8px
+                    background: $app-mark-background
+                    border-radius: 30px
+                    display: flex
+                    align-items: center
+                    gap: 7px
+
+                    &.clear
+                        background: rgba($app-background-blue-secondary, 0.2)
+                        h4
+                            color: $app-background-blue-secondary
+                        .kit-icon
+                            width: fit-content
+                            height: fit-content
+                            svg
+                                opacity: 1
+                                path
+                                    stroke: $app-background-blue-secondary
+
+                    h4
+                        font-size: 14px
+                        font-weight: 600
+                        color: $app-text-color
+                        max-width: 170px
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
+
+                    & .kit-icon
+                        width: fit-content
+                        height: fit-content
+
+                        &:first-child
+                            & svg 
+                                opacity: 1
+                                path
+                                    stroke: $app-text-color
+                        
+                        &:last-child
+                            & svg 
+                                width: 11px
+                                height: 11px
+
+                        & svg
+                            width: 14px
+                            height: 14px
+                            opacity: .6
+                            margin-right: -4px
+                            margin-top: 3px
+
+                    &.symbol
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+
+                            &:first-child
+                                & svg 
+                                    opacity: 1
+                                    path
+                                        fill: $app-text-color
+
+                    &.backdrop
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+
+                            &:first-child
+                                & svg 
+                                    opacity: 1
+                                    path
+                                        fill: $app-text-color
+                                        stroke: transparent
+
+                    &.price
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+
+                            &:first-child
+                                & svg 
+                                    opacity: 1
+                                    path
+                                        fill: $app-text-color
+                                        stroke: $app-text-color-descr
