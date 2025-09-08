@@ -23,5 +23,5 @@ export const init = async (initData: string) => {
       window.location.reload();
     }
     return false;
-  }
+  } 
 };
