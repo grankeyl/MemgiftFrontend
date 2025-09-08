@@ -9,8 +9,9 @@ import Receive from '../pages/Receive.vue'
 import Rating from '../pages/Rating.vue'
 import View from '../pages/View.vue'
 import Gift from '../pages/Gift.vue'
-// import Market from '../pages/Market.vue'
 import Dev from '../pages/Dev.vue'
+// import Market from '../pages/Market/Market.vue'
+// import MarketBasket from '../pages/Market/Basket.vue'
 import Tickets from '../pages/Tickets.vue'
 import Multicheck from '../pages/Multicheck.vue'
 import Deal from '../pages/Deal.vue'
@@ -33,7 +34,7 @@ const router = createRouter({
     { path: '/rating', name: 'rating', component: Rating },
     { path: '/market', name: 'market', component: Dev },
     // { path: '/market', name: 'market', component: Market },
-    // { path: '/market-dev', name: 'market-dev', component: Market },
+    // { path: '/market/basket', name: 'market-basket', component: MarketBasket },
     { path: '/tickets', name: 'tickets', component: Tickets },
     { path: '/multicheck', name: 'multicheck', component: Multicheck },
     { path: '/deal', name: 'deal', component: Deal },

@@ -1,0 +1,224 @@
+@use "./../../../assets/styles/_variables" as *
+    
+.blocks
+    width: 100%
+    height: fit-content
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+    
+    ._content
+        width: 100%
+        display: flex
+        gap: 10px
+
+        &.hide
+            opacity: 0
+            pointer-events: none
+            display: none
+
+        & .items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+
+            & .item
+                width: 100%
+                height: fit-content
+                display: flex
+                justify-content: space-between
+                align-items: center
+                gap: 16px
+                position: relative
+                border-bottom: 1px solid #232327
+                padding-top: 14px
+                padding-bottom: 14px
+
+                &:last-child
+                    border-bottom: none
+
+                & .nft
+                    width: 67px
+                    min-width: 67px
+                    max-width: 67px
+                    height: 67px
+                    position: relative
+                    background: $app-background-secondary
+                    border-radius: 16px
+                    overflow: hidden
+
+                    & .background.upg
+                        width: 100%
+                        height: 100%
+                        background: radial-gradient(circle, var(--center-color), var(--around-color))
+                        position: absolute
+                        top: 0
+                        left: 0
+                        z-index: 0
+
+                    & .symbol
+                        position: absolute
+                        width: 100%
+                        height: 100%
+                        overflow: hidden
+                        opacity: .6
+                        z-index: 1
+                        mix-blend-mode: luminosity
+
+                        & img
+                            position: absolute            
+                            left: 50%
+                            top: 50%
+                            width: 100%
+                            height: calc(100% - 30px)
+                            transform: translate(-50%, -50%)
+                            object-fit: cover
+                            z-index: -1
+
+                    & .model
+                        width: 100%
+                        height: 100%
+                        margin: auto
+                        position: relative
+                        z-index: 2
+
+                        & img
+                            width: 100%
+                            height: 100%                            
+                            object-fit: cover
+
+                & .context
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    gap: 12px
+                    position: relative
+
+                    & .head
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        gap: 4px
+                        position: relative
+
+                        & h4
+                            font-size: 16px
+                            font-weight: 600
+                            color: $app-text-color
+                            max-width: 200px
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            white-space: nowrap
+                            display: flex
+                            align-items: center
+                            gap: 4px
+
+                        & p
+                            font-size: 16px
+                            font-weight: 600
+                            color: $app-text-color-descr-primary
+                            max-width: 220px
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            white-space: nowrap
+                            display: flex
+                            align-items: center
+                            gap: 4px
+
+                    & .button
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        gap: 4px
+                        position: relative
+
+                        & button
+                            width: fit-content
+                            height: 36px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            gap: 1.6px
+                            background: $app-background-blue-secondary
+                            padding: 0 16px 0px 15px
+                            border-radius: 12px
+                            cursor: pointer
+                            transform: scale(1)
+                            transition: transform 0.22s ease
+
+                            &:active
+                                transform: scale(0.94)
+
+                            & h4
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-text-color
+                                white-space: nowrap
+                                max-width: 100px
+                                overflow: hidden                    
+                                text-overflow: ellipsis
+
+                & .actions
+                    width: fit-content
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    justify-content: end
+                    align-items: center
+                    gap: 15px
+                    position: relative
+
+                    & .select
+                        width: 20px
+                        height: 20px
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        border: 2px solid rgba($app-text-color, 0.1)
+                        border-radius: 4px
+                        gap: 4px
+                        position: relative
+                        cursor: pointer
+
+                        &.active
+                            background: $app-background-blue-secondary
+                            border: 2px solid $app-background-blue-secondary
+
+                            & img
+                                display: block
+
+                        & img
+                            width: 12px
+                            height: 12px
+                            display: none
+
+                    & .delete
+                        width: 32px
+                        height: 32px
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        gap: 4px
+                        position: relative
+                        cursor: pointer
+                        background: $app-table-button
+                        border-radius: 12px
+                        transition: transform 0.22s ease
+                        transform: scale(1)
+
+                        &:active
+                            transform: scale(0.94)
+                        
+                        & img
+                            width: 20px                    
+                            height: 20px

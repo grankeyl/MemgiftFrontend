@@ -2,7 +2,7 @@
     <div class="_wrap _market" :class="{ desktop: isDesktop() }">
         <div class="_view">
             <div class="bg"></div>
-                <div class="basket">
+                <div class="basket" @click="openBasket">
                     <div class="image">
                         <img src="/market/basket-black.svg" alt="basket" />
                     </div>
@@ -34,17 +34,17 @@
 </template>
   
 <script lang="ts">
-import TelegramModule from '../hooks/useTelegram';
+import TelegramModule from '../../hooks/useTelegram';
 
-import { useCacheStore } from '../stores/pinia/piniaStore';
-import { isDesktop } from '../utils/checkDevice';
-import { shootConfetti } from '../utils/useConfetti';
-import { Icon } from '../components/Icon';
-import { getConfig } from '../config';
+import { useCacheStore } from '../../stores/pinia/piniaStore';
+import { isDesktop } from '../../utils/checkDevice';
+import { shootConfetti } from '../../utils/useConfetti';
+import { Icon } from '../../components/Icon';
+import { getConfig } from '../../config';
 
-import Tabs from '../components/Market/Tabs.vue';
-import Filters from '../components/Market/Filters.vue';
-import Gifts from '../components/Market/Gifts.vue';
+import Tabs from '../../components/Market/Tabs.vue';
+import Filters from '../../components/Market/Filters.vue';
+import Gifts from '../../components/Market/Gifts.vue';
 
 export default {
     props: {
@@ -98,6 +98,10 @@ export default {
                     shootConfetti();
                 }, this.configApp.skeletonTime);
             };
+        },
+
+        openBasket() {
+            this.$router.push('/market/basket');
         },
     },
 };

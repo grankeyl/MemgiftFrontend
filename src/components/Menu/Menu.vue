@@ -8,6 +8,7 @@ import { MenuJson } from './Menu'
 const router = useRouter();
 
 const emit = defineEmits(['loaded']);
+const prohibitedRoutes = ['/collection', '/market/basket'];
 
 const openRoute = (routePath: string) => {
   if (routePath !== '/soon') {
@@ -35,7 +36,7 @@ onMounted(() => {
 </script>
 
 <template>
-      <div v-if="!$route.path.includes('/collection')" class="menu">
+      <div v-if="!prohibitedRoutes.includes($route.path)" class="menu">
         <div class="menu_inner">
             <div class="menu_routes">
                 <div 
