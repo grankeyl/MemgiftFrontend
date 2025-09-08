@@ -273,7 +273,7 @@
         TelegramModule.useMediumHaptic();
 
         if (type === 'InviteFriends') {
-          const link = import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.referral_code}`;
+          const link = import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.user.Code}`;
           const preparedMessage = await telegramApi.createPrepareMessageInvite(
             'friends',
             this.storeCache.UserData.user.Tld,
@@ -290,7 +290,7 @@
         }
 
         if (type === 'SendChats') {
-          const link = import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.referral_code}`;
+          const link = import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.user.Code}`;
           const preparedMessage = await telegramApi.createPrepareMessageInvite(
             'chats',
             this.storeCache.UserData.user.Tld,
