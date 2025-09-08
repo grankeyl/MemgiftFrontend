@@ -24,4 +24,4 @@ export const init = async (initData: string) => {
     }
     return false;
   }
-};
+}; 
