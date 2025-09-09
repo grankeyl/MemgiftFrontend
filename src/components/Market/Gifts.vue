@@ -42,7 +42,7 @@
             </div>
 
             <div class="buttons">
-              <button>
+              <button @click="openGift()">
                 <h5>2500</h5>
                 <img src="/market/ton-white.svg" alt="ton" />
               </button>
@@ -139,6 +139,10 @@ export default {
 
         Promise.all(promises).then(resolve).catch(reject);
       });
+    },
+
+    openGift() {
+      this.$emit('openGift', {});
     },
   },
 };

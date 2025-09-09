@@ -7,6 +7,10 @@
         v-if="isLoading" 
         class="_skeleton"
         :class="{ hide: !ModalActive }"
+        @touchstart.passive="onTouchStart($event, 'skeleton')"
+        @touchmove.prevent="onTouchMove"
+        @touchend="onTouchEnd"
+        :style="sheetStyleSkeleton"
       >
         <div @click="closeModal" class="_profileGiftModalClose"></div>
         <div class="_profileGiftModalContent">
@@ -25,6 +29,10 @@
         v-if="!isLoading" 
         class="_content"
         :class="{ hide: !ModalActive }"
+        @touchstart.passive="onTouchStart($event, 'content')"
+        @touchmove.prevent="onTouchMove"
+        @touchend="onTouchEnd"
+        :style="sheetStyleContent"
       >
         <div @click="closeModal" class="_profileGiftModalClose">
           <div class="kit-icon" v-html="Icon.Close"></div>
@@ -613,6 +621,14 @@ export default {
       isLoadingUpgrade: false,
       isLoadingUpgradeImage: false,
       isUpgraded: false,
+
+      dragY: 0,
+      startY: 0,
+      startX: 0,
+      isDragging: false,
+      dragFrom: null,
+      startTimeMs: 0,
+      lastY: 0,
       
       Icon,
       Image_Stars,
@@ -638,7 +654,23 @@ export default {
     isUpgraded() {
       if (!this.ModalComp.NftUpgraded) return false;
       return true;
-    }
+    },
+    sheetStyleContent() {
+      if (!this.isDragging || !this.ModalActive || this.dragFrom !== 'content') return null;
+      return {
+        transform: `translate(-50%, ${Math.max(0, this.dragY)}px)`,
+        transition: 'none',
+        willChange: 'transform',
+      };
+    },
+    sheetStyleSkeleton() {
+      if (!this.isDragging || !this.ModalActive || this.dragFrom !== 'skeleton') return null;
+      return {
+        transform: `translateY(${Math.max(0, this.dragY)}px)`,
+        transition: 'none',
+        willChange: 'transform',
+      };
+    },
   },
 
   watch: {
@@ -979,6 +1011,61 @@ export default {
       this.$refs.transferInput?.blur();
       this.isTransferInputSuccess = true;
       document.removeEventListener('click', this.handleClickOutside);
+    },
+    
+    onTouchStart(e, from) {
+      if (!this.ModalActive) return;
+      const t = e.touches?.[0] ?? e;
+      this.dragFrom = from;
+      this.isDragging = true;
+      this.startY = t.clientY;
+      this.startX = t.clientX;
+      this.lastY = t.clientY;
+      this.dragY = 0;
+      this.startTimeMs = performance.now();
+    },
+
+    onTouchMove(e) {
+      if (!this.isDragging) return;
+      const t = e.touches?.[0] ?? e;
+      const dy = t.clientY - this.startY;
+      const dx = Math.abs(t.clientX - this.startX);
+
+      // Игнорим горизонтальные жесты
+      if (dx > Math.abs(dy)) return;
+
+      // Тянем только вниз
+      this.dragY = dy > 0 ? dy : 0;
+      this.lastY = t.clientY;
+    },
+
+    onTouchEnd() {
+      if (!this.isDragging) return;
+
+      // Порог/скорость для закрытия
+      const elapsed = Math.max(1, performance.now() - this.startTimeMs); // ms
+      const distance = Math.max(0, this.dragY); // px
+      const velocity = distance / elapsed; // px/ms
+
+      // контентная высота ~ 86vh, возьмём безопасный порог
+      const CLOSE_DISTANCE = 120;   // px
+      const CLOSE_VELOCITY = 0.6;   // px/ms (~быстрый "флик")
+
+      const shouldClose = distance > CLOSE_DISTANCE || velocity > CLOSE_VELOCITY;
+
+      // Сброс инлайна — вернёт CSS-анимацию
+      this.isDragging = false;
+
+      if (shouldClose) {
+        this.closeModal();
+      } else {
+        // Отпружиниваем назад (CSS сам вернёт по transition)
+        this.dragY = 0;
+        // Небольшой тик, чтобы убрать инлайн-стили после кадра
+        requestAnimationFrame(() => {
+          this.dragFrom = null;
+        });
+      }
     },
   },
 };

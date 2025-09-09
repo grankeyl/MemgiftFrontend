@@ -192,7 +192,7 @@
 
     methods: {
       async getTaskSubscribeChannel() {
-        const task = this.storeCache.TasksApp.partners[1];
+        const task = this.storeCache.TasksApp.partners.find(t => t.id === '00580bd6-bd4b-47d4-b811-f6b657597469');
         this.subscribeChannelTask = { ...task, isLoading: false };
       },
 
@@ -309,7 +309,7 @@
 
         if (type === 'SubscribedChannel') {
           if (!this.subscribeChannelTask) return;
-          // TelegramModule.useLink(this.subscribeChannelTask.config.ChannelLink);
+          TelegramModule.useLink(this.subscribeChannelTask.config.ChannelLink);
           const use = await taskApi.use(this.subscribeChannelTask.id);
           if (use) {
             this.startUse(this.subscribeChannelTask);

@@ -3,12 +3,24 @@
         <div class="_view">
             <div class="bg"></div>
             <div class="display">
+                <Notify
+                    @unVisible="unVisibleNotifyBuyed"
+                    :Title="`Подарки успешно приобретены и добавлены в Профиль`"
+                    :Button="`Go to Profile`"
+                    :ButtonLink="`/profile`"
+                    :Visible="NotifyBuyedVisible"
+                />
                 <ModalConfirm
                     @loadSuccess="handleLoadSuccess"
+                    @closeModal="ModalConfirmActive = false"
+
+                    @BUYED="NotifyBuyedVisible = true"
+
                     :Skeleton="isPageLoading"
                     :SkeletonTime="configApp.skeletonTime"
                     :ModalActive="ModalConfirmActive"
                 />
+
                 <div class="balance">
                     <div class="context">
                     <h4>0.00</h4>
@@ -68,6 +80,7 @@ import { getConfig } from '../../config';
 
 import Head from '../../components/Market/Basket/Head.vue';
 import Items from '../../components/Market/Basket/Items.vue';
+import Notify from '../../components/Market/Notify/Notify.vue';
 import ModalConfirm from '../../components/Market/Basket/ModalConfirm.vue';
 
 export default {
@@ -81,6 +94,7 @@ export default {
     components: {
         Head,
         Items,
+        Notify,
         ModalConfirm,
     },
 
@@ -93,6 +107,8 @@ export default {
             isPageLoading: true,
 
             ModalConfirmActive: false,
+
+            NotifyBuyedVisible: false,
 
             isDesktop,
             Icon,
@@ -120,6 +136,11 @@ export default {
 
         openModalConfirm() {
             this.ModalConfirmActive = true;
+        },
+
+        unVisibleNotifyBuyed() {
+            this.NotifyBuyedVisible = false;
+            this.ModalConfirmActive = false;
         },
     },
 };

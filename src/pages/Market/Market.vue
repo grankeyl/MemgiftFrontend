@@ -2,15 +2,25 @@
     <div class="_wrap _market" :class="{ desktop: isDesktop() }">
         <div class="_view">
             <div class="bg"></div>
-                <div class="basket" @click="openBasket">
-                    <div class="image">
-                        <img src="/market/basket-black.svg" alt="basket" />
-                    </div>
-                    <div class="context">
-                        <h4>10 TON</h4>
-                        <p>1 item</p>
-                    </div>
+
+            <Modal
+                @closeModal="ModalComp.ModalActive = false"
+                @loadSuccess="handleLoadSuccess"
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
+                :ModalActive="ModalComp.ModalActive"
+            />
+
+            <div class="basket" @click="openBasket">
+                <div class="image">
+                    <img src="/market/basket-black.svg" alt="basket" />
                 </div>
+                <div class="context">
+                    <h4>10 TON</h4>
+                    <p>1 item</p>
+                </div>
+            </div>
+
             <div class="display">
                 <div class="logotype">
                     <img src="/market/logotype.svg" alt="logotype" />
@@ -25,6 +35,7 @@
                     :SkeletonTime="configApp.skeletonTime"
                 />
                 <Gifts
+                    @openGift="openGift"
                     :Skeleton="isPageLoading"
                     :SkeletonTime="configApp.skeletonTime"
                 />
@@ -38,13 +49,13 @@ import TelegramModule from '../../hooks/useTelegram';
 
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { isDesktop } from '../../utils/checkDevice';
-import { shootConfetti } from '../../utils/useConfetti';
 import { Icon } from '../../components/Icon';
 import { getConfig } from '../../config';
 
 import Tabs from '../../components/Market/Tabs.vue';
 import Filters from '../../components/Market/Filters.vue';
 import Gifts from '../../components/Market/Gifts.vue';
+import Modal from '../../components/Market/Modal.vue';
 
 export default {
     props: {
@@ -58,6 +69,7 @@ export default {
         Tabs,
         Filters,
         Gifts,
+        Modal,
     },
 
     data() {
@@ -74,6 +86,10 @@ export default {
                     { id: 'gifts' },
                     { id: 'listings' }
                 ]
+            },
+
+            ModalComp: {
+                ModalActive: false,
             },
 
             isDesktop,
@@ -94,14 +110,17 @@ export default {
             if (this.handleLoads >= 1) {
                 setTimeout(() => {
                     this.isPageLoading = false;
-                    TelegramModule.useMediumHaptic();
-                    shootConfetti();
                 }, this.configApp.skeletonTime);
             };
         },
 
         openBasket() {
             this.$router.push('/market/basket');
+        },
+
+        openGift(gift: any) {
+            console.log(gift);
+            this.ModalComp.ModalActive = true;
         },
     },
 };

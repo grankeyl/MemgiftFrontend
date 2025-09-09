@@ -184,8 +184,9 @@ export default {
     apply() {
       this.buyType = 'processed';
       setTimeout(() => {
-        this.buyType = 'success';
         shootConfetti();
+        this.buyType = 'success';
+        this.$emit('BUYED');
       }, 1200);
     },
 

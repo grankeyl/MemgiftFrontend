@@ -1,0 +1,424 @@
+<template>
+  <div class="overlay" :class="{ 'is-open is-dark': ModalActive }" @click="closeModal" />
+
+  <div 
+    class="_direction _comp _item modal gift"
+    :class="[Key]"
+  >
+      <div 
+        v-if="isLoading" 
+        class="_skeleton"
+        :class="{ hide: !ModalActive }"
+        @touchstart.passive="onTouchStart($event, 'skeleton')"
+        @touchmove.prevent="onTouchMove"
+        @touchend="onTouchEnd"
+        :style="sheetStyleSkeleton"
+      >
+        <div @click="closeModal" class="_profileGiftModalClose"></div>
+        <div class="_profileGiftModalContent">
+          <div class="_profileGiftModalContentImage"></div>
+          <div class="_profileGiftModalContentTitle"></div>
+        </div>
+        <div class="_profileGiftModalTable">
+          <div class="_profileGiftModalTableRow"></div>
+        </div>
+        <div class="_profileGiftModalButtons">
+          <div class="_profileGiftModalButtonsCollectable"></div>
+          <div class="_profileGiftModalButtonsSend"></div>
+        </div>
+      </div>
+      <div 
+        v-if="!isLoading" 
+        class="_content"
+        :class="{ hide: !ModalActive }"
+        @touchstart.passive="onTouchStart($event, 'content')"
+        @touchmove.prevent="onTouchMove"
+        @touchend="onTouchEnd"
+        :style="sheetStyleContent"
+      >
+        <div @click="closeModal" class="_profileGiftModalClose">
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+        <div 
+          class="_profileGiftModalContent" 
+        >
+          <div 
+            class="_profileGiftModalGradient"
+            :style="{
+              '--center-color': '#EAB843',
+              '--around-color': '#AB4063'
+            }"
+          ></div>
+
+          <div class="_symbols">
+             <img src="https://app.spicko-quane.shop/s3/symbols/Party.png" class="_show" alt="rarity" />
+          </div>
+
+          <div class="_profileGiftModalContentImage">
+            <img 
+              src="https://app.spicko-quane.shop/s3/models/BestCap/Metapaper.svg"
+              alt="nft"
+              class="upgradedImage _show"
+            />
+            <!-- <GiftLottie
+              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'lottie'"
+              class="_lottie upgraded _show"
+              :path="UpgradedNft?.ModelImage"
+              :loop="true"
+              width="25"
+              height="25"
+              renderer="svg"
+            /> -->
+          </div>
+
+          <div class="_profileGiftModalContentTitle">
+            <h4>Spider</h4>
+          </div>
+
+          <div class="_profileGiftModalContentNumber">
+            <h4>#100</h4>
+          </div>
+
+          <div class="_profileGiftModalContentButtons">
+            <button @click="shareGiftLink">
+              <img src="/forward.svg" alt="forward" />
+              <span>
+                {{ $t('profile.profileShare') }}
+              </span>
+            </button>
+            <button @click="copyGiftLink">
+              <img src="/copy.svg" alt="market" />
+              <span>
+                {{ $t('profile.profileLink') }}
+              </span>
+            </button>
+          </div>
+        </div>
+        <div class="_profileGiftModalTable _show">
+          <div class="_profileGiftModalTableRow">
+            <div class="profile_gift_preview_table_item">
+              <div class="profile_gift_preview_table_item_left">
+                <h4>{{ $t('profile.profileGiftPreviewTableItem1') }}</h4>
+              </div>
+              <div class="profile_gift_preview_table_item_right">
+                <span>Name</span>
+                <!-- <div
+                  v-if="Table.OwnerAvatar && OwnerImage"
+                  class="avatar_null"
+                >
+                  <img 
+                    @load="Table.OwnerAvatarLoading = false"
+                    @error="OwnerImage = false"
+                    :src="Table.OwnerAvatar"
+                    alt="avatar" 
+                  />
+                </div> -->
+                <div class="avatar_null">
+                  <h4>N</h4>
+                </div>
+              </div>
+            </div>
+            <div class="profile_gift_preview_table_item">
+              <div class="profile_gift_preview_table_item_left">
+                <h4>{{ $t('profile.profileGiftPreviewTableMintedItem1') }}</h4>
+              </div>
+              <div class="profile_gift_preview_table_item_right">
+                <p>Model Name</p>
+                <span>1.3%</span>
+              </div>
+            </div>
+            <div class="profile_gift_preview_table_item">
+              <div class="profile_gift_preview_table_item_left">
+                <h4>{{ $t('profile.profileGiftPreviewTableMintedItem2') }}</h4>
+              </div>
+              <div class="profile_gift_preview_table_item_right">
+                <p>Symbol Name</p>
+                <span>1.1%</span>
+              </div>
+            </div>
+            <div class="profile_gift_preview_table_item">
+              <div class="profile_gift_preview_table_item_left">
+                <h4>{{ $t('profile.profileGiftPreviewTableMintedItem3') }}</h4>
+              </div>
+              <div class="profile_gift_preview_table_item_right">
+                <p>Background Name</p>
+                <span>0.9%</span>
+              </div>
+            </div>
+            <div class="profile_gift_preview_table_item">
+              <div class="profile_gift_preview_table_item_left last">
+                <h4>{{ $t('profile.profileGiftPreviewTableItem4') }}</h4>
+              </div>
+              <div class="profile_gift_preview_table_item_right last">
+                <p>0 of 100</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="_profileGiftModalButtons">
+          <div class="_profileGiftModalButtonsClose">
+            <button :class="{ _loading: ActiveButton }">
+              <img src="/market/basket-white.svg" alt="basket" />
+              <h4>Add to Basket</h4>
+              <Lottie 
+                class="lt" 
+                slug="loading-spin" 
+                :loop="true"
+                width="75"
+                height="75"
+                renderer="svg"
+              />
+            </button>
+          </div>
+          <div class="_profileGiftModalButtonsBuy">
+            <button :class="{ _loading: ActiveButton }">
+              <h4>Buy 225</h4>
+              <img src="/market/ton-white.svg" alt="ton" />
+              <Lottie 
+                class="lt" 
+                slug="loading-spin" 
+                :loop="true"
+                width="75"
+                height="75"
+                renderer="svg"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+  </div>
+</template>
+
+<script>
+import { Icon } from '../Icon';
+import { useCacheStore } from '../../stores/pinia/piniaStore';
+import { getUpgradedModel } from '../../utils/useGift';
+import { showToast } from '../../utils/toastManager';
+import { copyToClipboard } from '../../utils/copyToClipboard';
+
+import TelegramModule from '../../hooks/useTelegram';
+
+import Image_Stars from '@/assets/images/stars.png';
+import Image_StarsWhite from '@/assets/images/stars-white.png';
+import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
+import Lottie from '../Lottie.vue';
+import GiftLottie from '../GiftLottie.vue';
+import Notiflix from 'notiflix';
+
+export default {
+  props: {
+    Skeleton: {
+      type: Boolean,
+      required: true,
+    },
+    SkeletonTime: {
+      type: Number,
+      required: true,
+    },
+    ModalActive: {
+      type: Boolean,
+      required: true,
+    },
+  },
+
+  components: {
+    Lottie,
+    GiftLottie,
+  },
+
+  data() {
+    return {
+      storeCache: useCacheStore(),
+
+      isLoading: this.$props.Skeleton,
+      isLoadingModalImage: true,
+
+      isTransferOpen: false,
+      isTransferInputSuccess: false,
+      isTransferSuccess: false,
+      transferTimeout: null,
+
+      OwnerImage: true,
+      ActiveButton: false,
+
+      isLoadingUpgrade: false,
+      isLoadingUpgradeImage: false,
+      isUpgraded: false,
+
+      dragY: 0,
+      startY: 0,
+      startX: 0,
+      isDragging: false,
+      dragFrom: null,
+      startTimeMs: 0,
+      lastY: 0,
+      
+      Icon,
+      Image_Stars,
+      Image_StarsWhite,
+      Image_GiftBg,
+
+      getUpgradedModel,
+    };
+  },
+
+  mounted() {
+    this.loadResources();
+  },
+
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+
+  computed: {
+    isLoading() {
+      return this.Skeleton;
+    },
+    isUpgraded() {
+      if (!this.ModalComp.NftUpgraded) return false;
+      return true;
+    },
+    sheetStyleContent() {
+      if (!this.isDragging || !this.ModalActive || this.dragFrom !== 'content') return null;
+      return {
+        transform: `translate(-50%, ${Math.max(0, this.dragY)}px)`,
+        transition: 'none',
+        willChange: 'transform',
+      };
+    },
+    sheetStyleSkeleton() {
+      if (!this.isDragging || !this.ModalActive || this.dragFrom !== 'skeleton') return null;
+      return {
+        transform: `translateY(${Math.max(0, this.dragY)}px)`,
+        transition: 'none',
+        willChange: 'transform',
+      };
+    },
+  },
+
+  methods: {
+    handleClickOutside(event) {
+      if (!this.$refs.transferInput.contains(event.target)) {
+        this.blurTransferInput();
+      }
+    },
+
+    async loadResources() {
+      try {
+        await Promise.all([this.loadFonts(), this.loadImages()]);
+        this.isLoading = false;
+        this.$emit("loadSuccess");
+      } catch (error) {
+        console.error("Ошибка при загрузке ресурсов:", error);
+      }
+    },
+
+    loadFonts() {
+      return document.fonts.ready;
+    },
+
+    loadImages() {
+      const staticImages = [
+        Image_Stars
+      ].map((src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      });
+
+      return Promise.all([...staticImages]);
+    },
+
+    closeModal() {
+      this.$emit('closeModal');
+    },
+
+    handleResize() {
+      const viewportHeight = window.innerHeight;
+      const fullHeight = document.documentElement.clientHeight;
+      this.keyboardHeight = fullHeight - viewportHeight;
+    },
+
+    async checkUpgradedNft() {
+      if (this.UpgradedNft.ModelImage) {
+        this.isUpgraded = true;
+      };
+    },
+
+    shareGiftLink() {
+      const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=gift_${this.ModalComp.NftId}`;
+      const message = `I recommend checking out "${this.ModalComp.NftName ?? this.UpgradedNft?.ModelName}" NFT.`;
+      TelegramModule.useShare(url, message);
+    },
+
+    copyGiftLink() {
+      const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=gift_${this.ModalComp.NftId}`;
+      copyToClipboard(url);
+      showToast(this.$t('profile.profileCopiedLink'), 'success');
+    },
+    
+    onTouchStart(e, from) {
+      if (!this.ModalActive) return;
+      const t = e.touches?.[0] ?? e;
+      this.dragFrom = from;
+      this.isDragging = true;
+      this.startY = t.clientY;
+      this.startX = t.clientX;
+      this.lastY = t.clientY;
+      this.dragY = 0;
+      this.startTimeMs = performance.now();
+    },
+
+    onTouchMove(e) {
+      if (!this.isDragging) return;
+      const t = e.touches?.[0] ?? e;
+      const dy = t.clientY - this.startY;
+      const dx = Math.abs(t.clientX - this.startX);
+
+      // Игнорим горизонтальные жесты
+      if (dx > Math.abs(dy)) return;
+
+      // Тянем только вниз
+      this.dragY = dy > 0 ? dy : 0;
+      this.lastY = t.clientY;
+    },
+
+    onTouchEnd() {
+      if (!this.isDragging) return;
+
+      // Порог/скорость для закрытия
+      const elapsed = Math.max(1, performance.now() - this.startTimeMs); // ms
+      const distance = Math.max(0, this.dragY); // px
+      const velocity = distance / elapsed; // px/ms
+
+      // контентная высота ~ 86vh, возьмём безопасный порог
+      const CLOSE_DISTANCE = 120;   // px
+      const CLOSE_VELOCITY = 0.6;   // px/ms (~быстрый "флик")
+
+      const shouldClose = distance > CLOSE_DISTANCE || velocity > CLOSE_VELOCITY;
+
+      // Сброс инлайна — вернёт CSS-анимацию
+      this.isDragging = false;
+
+      if (shouldClose) {
+        this.closeModal();
+      } else {
+        // Отпружиниваем назад (CSS сам вернёт по transition)
+        this.dragY = 0;
+        // Небольшой тик, чтобы убрать инлайн-стили после кадра
+        requestAnimationFrame(() => {
+          this.dragFrom = null;
+        });
+      }
+    },
+  },
+};
+</script>
+
+<style lang="sass" scoped>
+@use "./Modal.sass"
+</style>
