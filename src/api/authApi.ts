@@ -13,13 +13,13 @@ export const init = async (initData: string) => {
     if (response.status === 200) {
       Cookies.set("token", initData);
       return response.data;
-    } else if (response.status === 403) {
+    } else if (response.status === 403 || response.status === 405) {
       window.location.reload();
       return false;
     }
     return false;
   } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response?.status === 403) {
+    if (axios.isAxiosError(error) && error.response?.status === 403 || error.response?.status === 405) {
       window.location.reload();
     }
     return false;
