@@ -45,8 +45,11 @@ export default {
   data() {
     const startSec = 1757164938;
     const startMs  = startSec * 1000;
-    const targetMs = startMs + (12*24*60*60*1000) - (5*60*60*1000);
-
+    const targetMs = startMs 
+      + (12 * 24 * 60 * 60 * 1000)   // 12 дней
+      + (3 * 24 * 60 * 60 * 1000)    // +3 дня
+      - (5 * 60 * 60 * 1000);        // -5 часов
+  
     return {
       isLoading: this.Skeleton,
       loadingLottie: true,
