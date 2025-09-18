@@ -107,6 +107,10 @@ export default {
           const giftId = dtx.split('gift_')[1];
           router.push(`/gift/${giftId}`);
         }
+        if (dtx.startsWith('u_')) {
+          const userId = dtx.split('u_')[1];
+          router.push(`/view/${userId}`);
+        }
         if (dtx === 'profile') { router.push('/profile'); }
         if (dtx === 'tickets') { router.push('/tickets'); }
 
