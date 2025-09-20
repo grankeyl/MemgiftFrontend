@@ -47,7 +47,7 @@ export default {
     const startMs  = startSec * 1000;
     const targetMs = startMs 
       + (12 * 24 * 60 * 60 * 1000)   // 12 дней
-      + (3 * 24 * 60 * 60 * 1000)    // +3 дня
+      + (6 * 24 * 60 * 60 * 1000)    // +3 дня
       - (5 * 60 * 60 * 1000);        // -5 часов
   
     return {
