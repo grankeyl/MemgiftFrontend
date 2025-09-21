@@ -278,9 +278,13 @@ export default {
         false
       );
       if (!response) return;
+
       this.sellType = 'success';
+
       setTimeout(() => {
         this.sellType = 'notactive';
+        this.minimumPrice = 5;
+        this.sellPrice = 0;
       }, 1200);
 
       const price = cutNumberNano(response.lot.price_nano_com);

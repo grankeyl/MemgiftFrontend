@@ -117,7 +117,7 @@
               </span>
             </button>
             <button v-if="isUpgraded && !ModalComp.Market.MarketOn" @click="sellGift">
-              <img src="/market.svg" alt="market" />
+              <img :src="MarketImg" alt="market" />
               <span>
                 {{ $t('profile.profileSell') }}
               </span>
@@ -570,6 +570,7 @@ import GiftLottie from '../GiftLottie.vue';
 import Notiflix from 'notiflix';
 
 // Images
+import MarketImg from '@/assets/images/market.svg';
 import TonImg from '@/assets/images/market/ton.svg';
 
 export default {
@@ -611,8 +612,9 @@ export default {
 
   data() {
     return {
+      MarketImg,
       TonImg,
-      
+
       storeCache: useCacheStore(),
 
       isLoading: this.$props.Skeleton,

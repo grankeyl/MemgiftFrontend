@@ -30,6 +30,7 @@
             :key="index"
             @click="applyModel(item.UKey)"
             class="item"
+            v-show="item.UpgradeSupport"
           >
             <div class="left">
               <img :src="item.ImageMain" alt="">
@@ -160,5 +161,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-@use "./ModelModal.sass"
+.item.deleted
+    display: none
 </style>
