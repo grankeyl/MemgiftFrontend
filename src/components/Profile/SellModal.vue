@@ -140,7 +140,7 @@ export default {
       sellType: 'notactive', // notactive | processed | success
       sellPrice: 0,
 
-      minimumPrice: 0,
+      minimumPrice: 5,
 
       Icon,
       Image_Stars,
