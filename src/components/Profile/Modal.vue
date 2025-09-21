@@ -274,7 +274,7 @@
               </div>
               <div class="profile_gift_preview_table_item_right">
                 <p>{{ $t('profile.sellFor') }} {{ cutNumber(ModalComp.Market.TonPrice) }}</p>
-                <img src="/market/ton.svg" alt="ton" />
+                <img :src="TonImg" alt="ton" />
               </div>
             </div>
             <div class="profile_gift_preview_table_item">
@@ -569,6 +569,9 @@ import Lottie from '../Lottie.vue';
 import GiftLottie from '../GiftLottie.vue';
 import Notiflix from 'notiflix';
 
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+
 export default {
   props: {
     Skeleton: {
@@ -608,6 +611,8 @@ export default {
 
   data() {
     return {
+      TonImg,
+      
       storeCache: useCacheStore(),
 
       isLoading: this.$props.Skeleton,
