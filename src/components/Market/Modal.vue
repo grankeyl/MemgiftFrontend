@@ -4,10 +4,10 @@
     <div v-if="ModalActive" class="balance" @click="openWallet">
       <div class="context">
         <h4>{{ cutNumber(storeCache.UserData.user.Balance.balance_ton) }}</h4>
-        <img src="/market/ton.svg" alt="ton" />
+        <img :src="TonImg" alt="ton" />
       </div>
       <div class="button">
-        <img src="/market/plus.svg" alt="plus" />
+        <img :src="PlusImg" alt="plus" />
       </div>
     </div>
 
@@ -93,13 +93,13 @@
 
           <div class="_profileGiftModalContentButtons">
             <button @click="shareGiftLink">
-              <img src="/forward.svg" alt="forward" />
+              <img :src="ForwardImg" alt="forward" />
               <span>
                 {{ $t('profile.profileShare') }}
               </span>
             </button>
             <button @click="copyGiftLink">
-              <img src="/copy.svg" alt="market" />
+              <img :src="CopyImg" alt="market" />
               <span>
                 {{ $t('profile.profileLink') }}
               </span>
@@ -149,7 +149,7 @@
         <div class="_profileGiftModalButtons">
           <div class="_profileGiftModalButtonsClose">
             <button @click="addToBasket(ModalComp.Info)">
-              <img src="/market/basket-white.svg" alt="basket" />
+              <img :src="BasketWhiteImg" alt="basket" />
               <h4 v-if="ModalComp.BasketStatus">{{ $t('market.modal.removeBasket') }}</h4>
               <h4 v-else>{{ $t('market.modal.addBasket') }}</h4>
               <Lottie 
@@ -165,7 +165,7 @@
           <div class="_profileGiftModalButtonsBuy">
             <button :class="{ _loading: ActiveButton }" :disabled="!checkBalanceAndPrice" @click="buyGift(ModalComp.Info.id)">
               <h4>{{ $t('market.buy') }} {{ cutNumber(ModalComp.Info.price_ton) }}</h4>
-              <img v-if="!ActiveButton" src="/market/ton-white.svg" alt="ton" />
+              <img v-if="!ActiveButton" :src="TonWhiteImg" alt="ton" />
               <Lottie 
                 class="lt" 
                 slug="loading-spin" 
@@ -199,6 +199,14 @@ import Lottie from '../Lottie.vue';
 import GiftLottie from '../GiftLottie.vue';
 import Notiflix from 'notiflix';
 
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+import PlusImg from '@/assets/images/market/plus.svg';
+import ForwardImg from '@/assets/images/forward.svg';
+import CopyImg from '@/assets/images/copy.svg';
+import BasketWhiteImg from '@/assets/images/market/basket-white.svg';
+import TonWhiteImg from '@/assets/images/market/ton-white.svg';
+
 export default {
   props: {
     Skeleton: {
@@ -226,6 +234,13 @@ export default {
 
   data() {
     return {
+      TonImg,
+      PlusImg,
+      ForwardImg,
+      CopyImg,
+      BasketWhiteImg,
+      TonWhiteImg,
+
       storeCache: useCacheStore(),
 
       isLoading: this.$props.Skeleton,

@@ -76,7 +76,7 @@
 
           <div class="price">
             <h4>{{ cutNumber(item.price_ton) }}</h4>
-            <img src="/market/ton.svg" alt="ton" />
+            <img :src="TonImg" alt="ton" />
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
           <div class="left"><h4>{{ $t('market.basket.confirm.summary') }}</h4></div>
           <div class="right">
             <h4>{{ cutNumber(summaryTon) }}</h4>
-            <img src="/market/ton.svg" alt="ton" />
+            <img :src="TonImg" alt="ton" />
           </div>
         </div>
 
@@ -95,7 +95,7 @@
           <button @click="apply">
             <h4>{{ $t('market.basket.confirm.buttons.buy') }}</h4>
             <IOSLoader />
-            <img src="/market/done.svg" alt="done" />
+            <img :src="DoneImg" alt="done" />
           </button>
         </div>
       </div>
@@ -109,12 +109,16 @@ import { useCacheStore } from '../../../stores/pinia/piniaStore';
 import { shootConfetti } from '../../../utils/useConfetti';
 import { getUpgradedModel } from '../../../utils/useGift';
 import { cutNumber } from '../../../utils/useTon';
+import { showToast } from '../../../utils/toastManager';
 
 import * as MarketLotApi from '@/api/market/lots';
 
 import Lottie from '../../Lottie.vue';
 import IOSLoader from '../../IOSLoader.vue';
-import { showToast } from '../../../utils/toastManager';
+
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+import DoneImg from '@/assets/images/market/done.svg';
 
 export default {
   name: 'ModalConfirm',
@@ -129,6 +133,9 @@ export default {
   components: { Lottie, IOSLoader },
   data() {
     return {
+      TonImg,
+      DoneImg,
+
       storeCache: useCacheStore(),
       buyType: 'notactive',   // notactive | processed | success
       Icon,

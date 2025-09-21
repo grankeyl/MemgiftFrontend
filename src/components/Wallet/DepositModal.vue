@@ -2,10 +2,10 @@
     <div v-if="ModalActive" class="balance">
       <div class="context">
         <h4>{{ cutNumber(getBalance) }}</h4>
-        <img src="/market/ton.svg" alt="ton" />
+        <img :src="TonImg" alt="ton" />
       </div>
       <div class="button">
-        <img src="/market/plus.svg" alt="plus" />
+        <img :src="PlusImg" alt="plus" />
       </div>
     </div>
 
@@ -27,7 +27,7 @@
       >
         <div class="head">
           <div class="centered">
-            <img src="/market/ton-white.svg" alt="ton-logo" />
+            <img :src="TonWhiteImg" alt="ton-logo" />
             <h3>{{ $t('wallet.depositModal.title') }}</h3>
           </div>
           <div @click="closeModal" class="close">
@@ -35,7 +35,7 @@
           </div>
         </div>
         <div v-if="walletConnected" class="connected">
-          <img src="/market/wallet.svg" alt="wallet" />
+          <img :src="WalletImg" alt="wallet" />
           <p>{{ obfuscateAddress(walletAddress) }}</p>
           <span @click="disconnectTonWallet">
             <Icon class="kit-icon" v-html="Icon.Close"></Icon>
@@ -50,24 +50,24 @@
             :value="amountStr + ' TON'"
             readonly
             @focus="$event.target.blur()" />
-          <img src="/market/ton.svg" alt="ton" />
+          <img :src="TonImg" alt="ton" />
         </div>
         <div class="num-pad">
           <button v-for="n in [1,2,3,4,5,6,7,8,9]" :key="n" @click="tap(n)">{{ n }}</button>
           <button @click="tap('.')">.</button>
           <button @click="tap(0)">0</button>
           <button class="back" @click="backspace">
-            <img src="/market/delete-am.svg" alt="delete" />
+            <img :src="DeleteAmImg" alt="delete" />
           </button>
         </div>
         <div class="buttons">
           <button v-if="amountNum > 0" @click="deposit">
-            <img src="/market/deposit.svg" alt="deposit" />
+            <img :src="DepositImg" alt="deposit" />
             <h4>{{ $t('wallet.deposit') }} {{ cutNumber(amountNum) }}</h4>
-            <img src="/market/ton-white.svg" alt="ton" />
+            <img :src="TonWhiteImg" alt="ton" />
           </button>
           <button v-else disabled>
-            <img src="/market/deposit.svg" alt="deposit" />
+            <img :src="DepositImg" alt="deposit" />
             <h4>{{ $t('wallet.deposit') }}</h4>
           </button>
         </div>
@@ -92,6 +92,14 @@ import Image_StarsWhite from '@/assets/images/stars-white.png';
 import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
 import Lottie from '../Lottie.vue';
 
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+import PlusImg from '@/assets/images/market/plus.svg';
+import TonWhiteImg from '@/assets/images/market/ton-white.svg';
+import WalletImg from '@/assets/images/market/wallet.svg';
+import DeleteAmImg from '@/assets/images/market/delete-am.svg';
+import DepositImg from '@/assets/images/market/deposit.svg';
+
 export default {
   props: {
     Skeleton: { type: Boolean, required: true },
@@ -102,6 +110,13 @@ export default {
 
   data() {
     return {
+      TonImg,
+      PlusImg,
+      TonWhiteImg,
+      WalletImg,
+      DeleteAmImg,
+      DepositImg,
+
       storeCache: useCacheStore(),
 
       // ВАЖНО: объявляем, иначе не реактивно

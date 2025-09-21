@@ -44,14 +44,14 @@
             <div class="buttons" :class="{ owner: iOwner(gift.balance_owner_id) }">
               <button @click="openGift(gift)">
                 <h5>{{ cutNumber(gift.price_ton) }}</h5> 
-                <img src="/market/ton-white.svg" alt="ton" />
+                <img :src="TonWhiteImg" alt="ton" />
               </button>
               <button 
                 @click="addToBasket(gift)"
                 :class="{ added: checkGiftInBasket(gift) }"
               >
-                <img src="/market/basket-white.svg" alt="basket" />
-                <img src="/market/done.svg" alt="basket" />
+                <img :src="BasketWhiteImg" alt="basket" />
+                <img :src="DoneImg" alt="basket" />
               </button>
             </div>
           </div>
@@ -74,7 +74,7 @@
   >
     <div class="null">
       <div class="image">
-        <img src="/profile/empty.svg" alt="empty" />
+        <img :src="ProfileEmptyImg" alt="empty" />
       </div>
       <div class="title">
         <h4>{{ $t('profile.profileGiftsNull') }}</h4>
@@ -92,6 +92,12 @@ import { Icon } from '../Icon';
 
 import Lottie from '../Lottie.vue';
 
+// Images
+import TonWhiteImg from '@/assets/images/market/ton-white.svg';
+import BasketWhiteImg from '@/assets/images/market/basket-white.svg';
+import DoneImg from '@/assets/images/market/done.svg';
+import ProfileEmptyImg from '@/assets/images/profile/empty.svg';
+
 export default {
   props: {
     Skeleton: { type: Boolean, required: true },
@@ -108,6 +114,11 @@ export default {
 
   data() {
     return {
+      TonWhiteImg,
+      BasketWhiteImg,
+      DoneImg,
+      ProfileEmptyImg,
+
       storeCache: useCacheStore(),
       isLoading: this.Skeleton,
 

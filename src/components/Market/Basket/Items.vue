@@ -41,16 +41,16 @@
             <div class="button">
               <button>
                 <h4>{{ cutNumber(item.price_ton) }}</h4>
-                <img src="/market/ton-white.svg" alt="ton" />
+                <img :src="TonWhiteImg" alt="ton" />
               </button>
             </div>
           </div>
           <div class="actions">
             <div class="select" :class="{ active: Selected.includes(item.id) }" @click="selectItem(item.id)">
-              <img src="/market/done.svg" alt="done" /> 
+              <img :src="DoneImg" alt="done" />
             </div>
             <div class="delete" @click="deleteItem(item)">
-              <img src="/market/delete.svg" alt="delete" />
+              <img :src="DeleteImg" alt="delete" />
             </div>
           </div>
         </div>
@@ -65,6 +65,11 @@ import { cutNumber } from '../../../utils/useTon';
 import { Icon } from '../../Icon';
 
 import Lottie from '../../Lottie.vue';
+
+// Images
+import TonWhiteImg from '@/assets/images/market/ton-white.svg';
+import DoneImg from '@/assets/images/market/done.svg';
+import DeleteImg from '@/assets/images/market/delete.svg';
 
 export default {
   props: {
@@ -92,6 +97,10 @@ export default {
 
   data() {
     return {
+      TonWhiteImg,
+      DoneImg,
+      DeleteImg,
+
       isLoading: this.Skeleton,
 
       Icon,

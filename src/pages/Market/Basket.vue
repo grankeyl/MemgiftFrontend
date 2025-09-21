@@ -27,10 +27,10 @@
                 <div class="balance" @click="openWallet">
                     <div class="context">
                     <h4>{{ cutNumber(getBalance.toString()) }}</h4>
-                    <img src="/market/ton.svg" alt="ton" />
+                    <img :src="TonImg" alt="ton" />
                     </div>
                     <div class="button">
-                    <img src="/market/plus.svg" alt="plus" />
+                    <img :src="PlusImg" alt="plus" />
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
                 <div class="fixed">
                     <div class="clear" @click="clearAll">
                         <p>{{ $t('market.basket.clearAll') }}</p>
-                        <img src="/market/delete-primary.svg" alt="delete" />
+                        <img :src="DeletePrimaryImg" alt="delete" />
                     </div>
                     <div class="footer" :class="{ error: !checkBalanceAndPrice }">
                         <div class="inner">
@@ -66,12 +66,12 @@
                             <div class="button" @click="openModalConfirm">
                                 <button :disabled="!checkBalanceAndPrice">
                                     <h4>{{ $t('market.basket.buyFor') }} {{ cutNumber(summaryTonF) }}</h4>
-                                    <img src="/market/ton-white.svg" alt="ton" />
+                                    <img :src="TonWhiteImg" alt="ton" />
                                 </button>
                             </div>
                             <div class="info">
                                 <p>{{ itemsBasketCount }}</p>
-                                <img src="/market/gift.svg" alt="gift" />
+                                <img :src="GiftImg" alt="gift" />
                             </div>
                         </div>
                     </div>
@@ -95,6 +95,13 @@ import Items from '../../components/Market/Basket/Items.vue';
 import Notify from '../../components/Notify/Notify.vue';
 import ModalConfirm from '../../components/Market/Basket/ModalConfirm.vue';
 
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+import PlusImg from '@/assets/images/market/plus.svg';
+import DeletePrimaryImg from '@/assets/images/market/delete-primary.svg';
+import TonWhiteImg from '@/assets/images/market/ton-white.svg';
+import GiftImg from '@/assets/images/market/gift.svg';
+
 const LS_KEY = 'market_basket_v1';
 
 export default {
@@ -114,6 +121,12 @@ export default {
 
     data() {
         return {
+            TonImg,
+            PlusImg,
+            DeletePrimaryImg,
+            TonWhiteImg,
+            GiftImg,
+
             storeCache: useCacheStore() as any,
             configApp: getConfig(),
             handleLoads: 0,

@@ -104,7 +104,7 @@
             <p>#{{ item.upgrade.seq }}</p>
           </div>
           <div v-if="item.upgraded && item.market" class="mark">
-            <img src="/market/store.svg" alt="store" />
+            <img :src="StoreImg" alt="store" />
             <p>{{ $t('profile.market') }}</p>
           </div>
           <div v-if="!item.upgraded && !item.market" class="rarity">
@@ -158,11 +158,11 @@
           <div class="button">
             <button v-if="!item.market">
               <h5>{{ item.purchase_price }}</h5>
-              <img src="/profile/stars.png" alt="stars" />
+              <img :src="StarsImg" alt="stars" />
             </button>
             <button v-if="item.market">
               <h5>{{ cutNumber(item.market.price_ton) }}</h5>
-              <img src="/market/ton.svg" alt="svg" />
+              <img :src="TonImg" alt="svg" />
             </button>
           </div>
         </div>
@@ -220,12 +220,12 @@
             <div class="info">
               <div v-if="!item.market" class="price">
                 <p>{{ item.purchase_price }}</p>
-                <img src="/profile/stars.png" alt="stars" />
+                <img :src="StarsImg" alt="stars" />
               </div>
               <div v-if="item.market" class="market-on">
                 <div class="price">
                   <p>{{ cutNumber(item.market.price_ton) }}</p>
-                  <img src="/market/ton.svg" alt="svg" />
+                  <img :src="TonImg" alt="svg" />
                 </div>
                 <div class="marker">
                   <svg width="9" height="10" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -256,7 +256,7 @@
   >
     <div class="null">
       <div class="image">
-        <img src="/profile/empty.svg" alt="empty" />
+        <img :src="ProfileEmptyImg" alt="empty" />
       </div>
       <div class="title">
         <h4>{{ $t('profile.profileGiftsNull') }}</h4>
@@ -301,6 +301,12 @@ import Lottie from '../Lottie.vue';
 import Button from '../Button.vue';
 import Funcs from './Funcs.vue';
 import GiftLottie from '../GiftLottie.vue';
+
+// Images
+import StoreImg from '@/assets/images/market/store.svg';
+import TonImg from '@/assets/images/market/ton.svg';
+import StarsImg from '@/assets/images/profile/stars.png';
+import ProfileEmptyImg from '@/assets/images/profile/empty.svg';
 
 export default {
   props: {
@@ -359,6 +365,11 @@ export default {
 
   data() {
     return {
+      StoreImg,
+      TonImg,
+      StarsImg,
+      ProfileEmptyImg,
+
       configApp: getConfig(),
       storeCache: useCacheStore(),
       storeNftsApp: {},

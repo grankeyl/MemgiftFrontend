@@ -5,7 +5,7 @@
     <div class="_content" :class="{ hide: isLoading }">
       <div class="context">
         <div class="image">
-          <img src="/market/basket-white.svg" alt="basket" />
+          <img :src="BasketWhiteImg" alt="basket" />
         </div>
         <div class="title">
           <h4>{{ $t('market.basket.title') }}</h4>
@@ -19,7 +19,7 @@
           <p>{{ $t('market.basket.selectAll') }}</p>
         </div>
         <div class="checkbox" :class="{ active: isSelectedAll }">
-            <img src="/market/done.svg" alt="done" /> 
+            <img :src="DoneImg" alt="done" />
         </div>
       </div>
     </div>
@@ -30,6 +30,10 @@
 import { Icon } from '../../Icon';
 
 import Lottie from '../../Lottie.vue';
+
+// Images
+import BasketWhiteImg from '@/assets/images/market/basket-white.svg';
+import DoneImg from '@/assets/images/market/done.svg';
 
 export default {
   props: {
@@ -57,6 +61,9 @@ export default {
 
   data() {
     return {
+      BasketWhiteImg,
+      DoneImg,
+
       isLoading: this.Skeleton,
 
       Icon,

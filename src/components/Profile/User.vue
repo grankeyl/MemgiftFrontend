@@ -28,10 +28,10 @@
           <div class="balance" @click="openWallet">
             <div class="context">
               <h4>{{ cutNumber(getBalance.toString()) }}</h4>
-              <img src="/market/ton.svg" alt="ton" />
+              <img :src="TonImg" alt="ton" />
             </div>
             <div class="button">
-              <img src="/market/plus.svg" alt="plus" />
+              <img :src="PlusImg" alt="plus" />
             </div>
           </div>
           <div class="_image">
@@ -187,6 +187,10 @@ import Image_Avatar from '@/assets/images/avatar.png';
 import Image_Ticket from '@/assets/images/ticket.svg';
 import i18next from 'i18next';
 
+// Images 
+import TonImg from '@/assets/images/market/ton.svg';
+import PlusImg from '@/assets/images/market/plus.svg';
+
 export default {
   setup() {
     const walletConnected = ref(false);
@@ -281,6 +285,9 @@ export default {
 
   data() {
     return {
+      TonImg,
+      PlusImg,
+
       configApp: getConfig(),
       storeCache: useCacheStore(),
       isLoading: false,

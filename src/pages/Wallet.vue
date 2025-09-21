@@ -24,7 +24,7 @@
 
             <div class="display">
                 <div class="logotype">
-                    <img src="/wallet/logotype.svg" alt="logotype" />
+                    <img :src="LogotypeImg" alt="logotype" />
                 </div>
                 <Blocker
                     @openDeposit="openDeposit"
@@ -60,6 +60,9 @@ import Blocker from '../components/Wallet/Blocker.vue';
 import DepositModal from '../components/Wallet/DepositModal.vue';
 import WithdrawModal from '../components/Wallet/WithdrawModal.vue';
 
+// Images
+import LogotypeImg from '@/assets/images/wallet/logotype.svg';
+
 export default {
     props: {
         success: {
@@ -76,6 +79,8 @@ export default {
 
     data() {
         return {
+            LogotypeImg,
+
             storeCache: useCacheStore() as any,
             configApp: getConfig(),
             handleLoads: 0,

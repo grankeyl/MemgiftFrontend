@@ -32,7 +32,7 @@
                 @click="openBasket"
             >
                 <div class="image">
-                    <img src="/market/basket-black.svg" alt="basket" />
+                    <img :src="BasketBlackImg" alt="basket" />
                 </div>
                 <div class="context">
                     <h4>{{ cutNumber(itemsBasketTotal) }} TON</h4>
@@ -42,7 +42,7 @@
 
             <div class="display">
                 <div class="logotype">
-                    <img src="/market/logotype.svg" alt="logotype" />
+                    <img :src="LogotypeImg" alt="logotype" />
                 </div>
                 <Tabs
                     @useTab="setActiveTab"
@@ -167,6 +167,10 @@ import SymbolModal from '../../components/Market/SymbolModal.vue';
 import BackdropModal from '../../components/Market/BackdropModal.vue';
 import Notify from '../../components/Notify/Notify.vue';
 
+// Images
+import BasketBlackImg from '@/assets/images/market/basket-black.svg';
+import LogotypeImg from '@/assets/images/market/logotype.svg';
+
 const LS_KEY = 'market_basket_v1';
 
 export default {
@@ -192,6 +196,9 @@ export default {
 
     data() {
         return {
+            BasketBlackImg,
+            LogotypeImg,
+
             storeCache: useCacheStore() as any,
             configApp: getConfig(),
             handleLoads: 0,

@@ -9,14 +9,14 @@
     <div class="_content" :class="{ hide: isLoading }">
       <div class="block">
         <div v-if="walletConnected" class="wallet">
-          <img src="/market/wallet.svg" alt="wallet" />
+          <img :src="WalletImg" alt="wallet" />
           <p>{{ obfuscateAddress(walletAddress) }}</p>
           <span @click="disconnectTonWallet">
             <Icon class="kit-icon" v-html="Icon.Close"></Icon>
           </span>
         </div>
         <div v-if="!walletConnected" class="wallet">
-          <img src="/market/wallet.svg" alt="wallet" />
+          <img :src="WalletImg" alt="wallet" />
           <p>{{ $t('wallet.walletNotConnected') }}</p>
           <button @click="openTonWallet">
             <p>{{ $t('wallet.connect') }}</p>
@@ -27,15 +27,15 @@
         </div>
         <div class="bal">
           <h1>{{ cutNumber(getBalance) }}</h1>
-          <img src="/market/ton.svg" alt="ton" />
+          <img :src="TonImg" alt="ton" />
         </div>
         <div class="buttons" :class="{ disabled: !walletConnected }">
           <button @click="openWithdraw">
-            <img src="/market/withdraw.svg" alt="withdraw" />
+            <img :src="WithdrawImg" alt="withdraw" />
             <h4>{{ $t('wallet.withdraw') }}</h4>
           </button>
           <button @click="openDeposit">
-            <img src="/market/deposit.svg" alt="deposit" />
+            <img :src="DepositImg" alt="deposit" />
             <h4>{{ $t('wallet.deposit') }}</h4>
           </button>
         </div>
@@ -58,6 +58,12 @@ import * as walletApi from '../../api/walletApi';
 
 import Lottie from '../Lottie.vue';
 
+// Images
+import WalletImg from '@/assets/images/market/wallet.svg';
+import TonImg from '@/assets/images/market/ton.svg';
+import WithdrawImg from '@/assets/images/market/withdraw.svg';
+import DepositImg from '@/assets/images/market/deposit.svg';
+
 export default {
   props: {
     Skeleton: {
@@ -76,6 +82,11 @@ export default {
 
   data() {
     return {
+      WalletImg,
+      TonImg,
+      WithdrawImg,
+      DepositImg,
+
       storeCache: useCacheStore(),
       isLoading: this.Skeleton,
 

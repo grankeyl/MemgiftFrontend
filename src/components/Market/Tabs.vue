@@ -21,10 +21,10 @@
       <div class="balance" @click="openWallet">
         <div class="context">
           <h4>{{ cutNumber(getBalance.toString()) }}</h4>
-          <img src="/market/ton.svg" alt="ton" />
+          <img :src="TonImg" alt="ton" />
         </div>
         <div class="button">
-          <img src="/market/plus.svg" alt="plus" />
+          <img :src="PlusImg" alt="plus" />
         </div>
       </div>
     </div>
@@ -37,6 +37,10 @@ import { cutNumber } from '../../utils/useTon';
 import { Icon } from '../Icon';
 
 import Lottie from '../Lottie.vue';
+
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+import PlusImg from '@/assets/images/market/plus.svg';
 
 export default {
   props: {
@@ -60,6 +64,10 @@ export default {
 
   data() {
     return {
+      TonImg,
+      PlusImg,
+
+
       storeCache: useCacheStore(),
       isLoading: this.Skeleton,
 

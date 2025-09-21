@@ -3,7 +3,7 @@
     <div class="_content">
       <div class="_block">
         <div class="image">
-          <img src="/market/logotype.svg" alt="logo">
+          <img :src="LogotypeImg" alt="logotype" />
         </div>
         <div class="countdown">
           <div class="countdown-item">
@@ -32,6 +32,9 @@
 import Lottie from '../Lottie.vue';
 import NumberFlip from './NumberFlip.vue'
 
+// Images
+import LogotypeImg from '@/assets/images/market/logotype.svg';
+
 export default {
   props: {
     Skeleton: { type: Boolean, required: true },
@@ -48,6 +51,8 @@ export default {
     const targetMs = startMs + (12*24*60*60*1000) - (5*60*60*1000);
 
     return {
+      LogotypeImg,
+
       isLoading: this.Skeleton,
       loadingLottie: true,
       time: { days: 0, hours: 0, minutes: 0, seconds: 0 },

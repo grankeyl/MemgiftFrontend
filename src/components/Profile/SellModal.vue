@@ -69,7 +69,7 @@
                   @input="onPriceInput($event, sell, 2)"
                   @blur="onPriceBlur($event, sell, 2)"
                 />
-                <img src="/market/ton.svg" alt="ton" />
+                <img :src="TonImg" alt="ton" />
               </div>
               <div class="summary" v-if="!checkAmount">
                 <p>Min: {{ cutNumber(minimumPrice) }} TON</p>
@@ -83,9 +83,9 @@
           </button>
           <button @click="apply" :disabled="!checkAmount">
             <h4>Sell for {{ cutNumber(comissionAmount) }}</h4>
-            <img src="/market/ton-white.svg" alt="ton" />
+            <img :src="TonWhiteImg" alt="ton" />
             <IOSLoader />
-            <img src="/market/done.svg" alt="done" />
+            <img :src="DoneImg" alt="done" />
           </button>
         </div>
       </div>
@@ -107,6 +107,11 @@ import Image_StarsWhite from '@/assets/images/stars-white.png';
 import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
 import Lottie from '../Lottie.vue';
 
+// Images
+import TonImg from '@/assets/images/market/ton.svg';
+import TonWhiteImg from '@/assets/images/market/ton-white.svg';
+import DoneImg from '@/assets/images/market/done.svg';
+
 export default {
   props: {
     Skeleton: { type: Boolean, required: true },
@@ -122,6 +127,10 @@ export default {
 
   data() {
     return {
+      TonImg,
+      TonWhiteImg,
+      DoneImg,
+
       storeCache: useCacheStore(),
       isLoadingModalImage: true,
 

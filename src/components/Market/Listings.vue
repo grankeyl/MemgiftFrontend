@@ -45,7 +45,7 @@
               </div>
               <div class="spanner purchased" v-if="item.nft_status === 'removed'">
                 <div class="icon">
-                  <img src="/market/gift.svg" alt="gift" />
+                  <img :src="GiftImg" alt="gift" />
                 </div>
                 <div class="text">
                   <h4>Removed from sale</h4>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="price">
                   <h4>{{ cutNumberNano(item.nft_price_nano) }}</h4>
-                  <img src="/market/ton.svg" alt="ton" />
+                  <img :src="TonImg" alt="ton" />
                 </div>
               </div>
               <div class="spanner onsale" v-if="item.nft_status === 'listed'">
@@ -78,13 +78,13 @@
                 </div>
                 <div class="price">
                   <h4>{{ cutNumberNano(item.nft_price_nano) }}</h4>
-                  <img src="/market/ton.svg" alt="ton" />
+                  <img :src="TonImg" alt="ton" />
                 </div>
               </div>
             </div>
             <div class="actions">
               <div class="next">
-                <img src="/market/chevrone-right.svg" alt="done" /> 
+                <img :src="ChevroneRightImg" alt="done" />
               </div>
             </div>
           </div>
@@ -113,6 +113,11 @@ import { Icon } from '../Icon';
 
 import Lottie from '../Lottie.vue';
 
+// Images
+import GiftImg from '@/assets/images/market/gift.svg';
+import TonImg from '@/assets/images/market/ton.svg';
+import ChevroneRightImg from '@/assets/images/market/chevrone-right.svg';
+
 export default {
   props: {
     Skeleton: { type: Boolean, required: true },
@@ -128,6 +133,10 @@ export default {
 
   data() {
     return {
+      GiftImg,
+      TonImg,
+      ChevroneRightImg,
+
       isLoading: this.Skeleton,
       observer: null,
 

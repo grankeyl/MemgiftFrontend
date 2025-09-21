@@ -76,6 +76,11 @@ export const splitCamelCase = (name: string) => {
 export const pluralizeReferrals = (word: string, count: number, lang: string = 'en') => {
     if (lang === "ru") return pluralizeRu(count, "реферал", "реферала", "рефералов");
     return inflection.inflect(word, count);
-}
+};
+
+export const getImg = (name: string) => {
+    const bucketsLink = import.meta.env.VITE_APP_S3_LINK;
+    return `${bucketsLink}/public/${name}`;
+};
 
 export { getUserLanguage, unixToDefault, unixToRelative, randomString, cleanString };
