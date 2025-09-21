@@ -100,10 +100,14 @@
           @click="useModal(item.uuid)"
           class="item"
         >
-          <div v-if="item.upgraded" class="mark">
+          <div v-if="item.upgraded && !item.market" class="mark">
             <p>#{{ item.upgrade.seq }}</p>
           </div>
-          <div v-else class="rarity">
+          <div v-if="item.upgraded && item.market" class="mark">
+            <img src="/market/store.svg" alt="store" />
+            <p>{{ $t('profile.market') }}</p>
+          </div>
+          <div v-if="!item.upgraded && !item.market" class="rarity">
             <div class="image">
               <img 
                 :src="checkRarityImage(storeCache.NftsAppData?.[item.gift_ukey]?.Rarity)" 
@@ -152,9 +156,13 @@
             </div>
           </div>
           <div class="button">
-            <button>
+            <button v-if="!item.market">
               <h5>{{ item.purchase_price }}</h5>
               <img src="/profile/stars.png" alt="stars" />
+            </button>
+            <button v-if="item.market">
+              <h5>{{ cutNumber(item.market.price_ton) }}</h5>
+              <img src="/market/ton.svg" alt="svg" />
             </button>
           </div>
         </div>
@@ -210,9 +218,23 @@
               <p v-if="item.upgraded">#{{ item.upgrade.seq }}</p>
             </div>
             <div class="info">
-              <div class="price">
+              <div v-if="!item.market" class="price">
                 <p>{{ item.purchase_price }}</p>
                 <img src="/profile/stars.png" alt="stars" />
+              </div>
+              <div v-if="item.market" class="market-on">
+                <div class="price">
+                  <p>{{ cutNumber(item.market.price_ton) }}</p>
+                  <img src="/market/ton.svg" alt="svg" />
+                </div>
+                <div class="marker">
+                  <svg width="9" height="10" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.95003 3.66223L8.18925 1.72701C8.07645 1.44008 8.02004 1.2966 7.9292 1.19129C7.84891 1.09821 7.74974 1.02692 7.63964 0.983134C7.51506 0.933594 7.37188 0.933594 7.08552 0.933594H1.91454C1.62818 0.933594 1.485 0.933594 1.36042 0.983134C1.25031 1.02692 1.15114 1.09821 1.07085 1.19129C0.980011 1.2966 0.92361 1.44007 0.810807 1.72701L0.050022 3.66223H8.95003Z" fill="#98989D"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.747463 6.05565C0.952178 6.13754 1.17337 6.18223 1.40416 6.18223C1.78431 6.18223 2.13877 6.06058 2.43611 5.85158C2.73346 6.06058 3.08791 6.18223 3.46807 6.18223C3.84822 6.18223 4.20268 6.06058 4.50002 5.85158C4.79737 6.06058 5.15182 6.18223 5.53198 6.18223C5.91214 6.18223 6.26659 6.06058 6.56393 5.85158C6.86128 6.06058 7.21573 6.18223 7.59589 6.18223C7.82668 6.18223 8.04787 6.13754 8.25259 6.05565V8.6245C8.25259 9.08273 8.25259 9.31184 8.17079 9.48686C8.09884 9.64081 7.98402 9.76598 7.84281 9.84442C7.68226 9.93359 7.4721 9.93359 7.05177 9.93359H1.94828C1.52796 9.93359 1.31779 9.93359 1.15725 9.84442C1.01603 9.76598 0.901218 9.64081 0.829264 9.48686C0.747463 9.31184 0.747463 9.08273 0.747463 8.6245V6.05565ZM1.49796 7.7245C1.49796 7.49539 1.49796 7.38083 1.53886 7.29332C1.57483 7.21635 1.63224 7.15377 1.70285 7.11455C1.78312 7.06996 1.8882 7.06996 2.09837 7.06996H3.52434C3.73451 7.06996 3.83959 7.06996 3.91986 7.11455C3.99047 7.15377 4.04787 7.21635 4.08385 7.29332C4.12475 7.38083 4.12475 7.49539 4.12475 7.7245V8.46087C4.12475 8.68998 4.12475 8.80453 4.08385 8.89204C4.04787 8.96902 3.99047 9.0316 3.91986 9.07082C3.83959 9.11541 3.73451 9.11541 3.52434 9.11541H2.09837C1.8882 9.11541 1.78312 9.11541 1.70285 9.07082C1.63224 9.0316 1.57483 8.96902 1.53886 8.89204C1.49796 8.80453 1.49796 8.68998 1.49796 8.46087V7.7245Z" fill="#98989D"/>
+                    <path d="M1.40413 5.63814C0.658477 5.63814 0.0482754 5.00589 0 4.20632H9C8.95172 5.00589 8.34152 5.63814 7.59587 5.63814C7.18814 5.63814 6.82091 5.4491 6.56391 5.14704C6.30691 5.4491 5.93968 5.63814 5.53196 5.63814C5.12423 5.63814 4.757 5.4491 4.5 5.14704C4.243 5.4491 3.87577 5.63814 3.46804 5.63814C3.06032 5.63814 2.69309 5.4491 2.43609 5.14704C2.17909 5.4491 1.81186 5.63814 1.40413 5.63814Z" fill="#98989D"/>
+                  </svg>
+                  <p>{{ $t('profile.market') }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -263,6 +285,8 @@ import { ref, watch, onMounted } from 'vue';
 import { checkRarityImage } from '../../utils/useGift';
 import { Icon } from '../Icon';
 import { getImageUrl, getUserLanguage, splitCamelCase } from '../../utils/useApp';
+import { t } from 'i18next';
+import { cutNumber } from '../../utils/useTon';
 
 import TelegramModule from '../../hooks/useTelegram';
 import * as nftApi from '../../api/nftApi';
@@ -277,7 +301,6 @@ import Lottie from '../Lottie.vue';
 import Button from '../Button.vue';
 import Funcs from './Funcs.vue';
 import GiftLottie from '../GiftLottie.vue';
-import { t } from 'i18next';
 
 export default {
   props: {
@@ -369,6 +392,7 @@ export default {
       clearBackgroundName,
       
       Icon,
+      cutNumber,
       Image_GiftBg,
       Image_RarirySended,
       Image_Ticket,
@@ -416,15 +440,15 @@ export default {
     hasSort() {
       return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort] 
     },
+    isEmptyFilter() {
+      return !(this.hasModels || this.hasSort) 
+    },
     sortTitle() {
       if (this.hasSort) {
         return this.$t(`profile.profileFilterModal.items.${this.SelectedSort}`)
       } else {
         return ''
       }
-    },
-    isEmptyFilter() {
-      return !(this.hasModels || this.hasSort) 
     },
     hasMore() {
       if (this.HasMore !== null) return this.HasMore;

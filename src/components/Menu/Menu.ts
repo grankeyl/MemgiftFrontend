@@ -22,7 +22,7 @@ export const MenuJson = {
     Market: {
         Key: 'market',
         Icon: Icon.Market,
-        Route: '/market',
+        Route: '/m',
         Disable: false
     },
     Profile: {

@@ -8,17 +8,19 @@
           <img src="/market/basket-white.svg" alt="basket" />
         </div>
         <div class="title">
-          <h4>Basket</h4>
+          <h4>{{ $t('market.basket.title') }}</h4>
         </div>
         <div class="descr">
-          <p>{{ GiftsCount }} gifts</p>
+          <p>{{ GiftsCount }} {{ $t('market.basket.gifts') }}</p>
         </div>
       </div>
-      <div class="selectel">
+      <div class="selectel" @click="selectAll">
         <div class="descr">
-          <p>Select All</p>
+          <p>{{ $t('market.basket.selectAll') }}</p>
         </div>
-        <div class="checkbox"></div>
+        <div class="checkbox" :class="{ active: isSelectedAll }">
+            <img src="/market/done.svg" alt="done" /> 
+        </div>
       </div>
     </div>
   </div>
@@ -43,6 +45,10 @@ export default {
       type: Number,
       required: true,
     },
+    Selected: {
+      type: Array,
+      required: true,
+    },
   },
 
   components: {
@@ -62,6 +68,12 @@ export default {
   },
 
   computed: {
+    isSelected() {
+      return this.Selected.length > 0;
+    },
+    isSelectedAll() {
+      return this.Selected.length === this.GiftsCount;
+    },
   },
 
   methods: {
@@ -109,6 +121,14 @@ export default {
 
         Promise.all(promises).then(resolve).catch(reject);
       });
+    },
+
+    selectAll() {
+      if (this.isSelectedAll) {
+        this.$emit('unselectAll');
+        return;
+      };
+      this.$emit('selectAll');
     },
   },
 };

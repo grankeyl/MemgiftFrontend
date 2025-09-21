@@ -16,20 +16,3 @@ export const getAll = async () => {
         return false;
     }
 };
-
-export const get = async (
-    nftKey: string,
-) => {
-    try {
-        const tokenBearer = Cookies.get("token");
-        const response = await axios.post(
-            `${API_URL}/history/get/all`,
-            { nftKey },
-            { headers: { Authorization: `${tokenBearer}` } }
-        );
-        const history = response.data;
-        return history;
-    } catch (error) {
-        return false;
-    }
-};

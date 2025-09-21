@@ -8,7 +8,7 @@ import { MenuJson } from './Menu'
 const router = useRouter();
 
 const emit = defineEmits(['loaded']);
-const prohibitedRoutes = ['/collection', '/market/basket'];
+const prohibitedRoutes = ['/collection', '/m/basket', '/wallet'];
 
 const openRoute = (routePath: string) => {
   if (routePath !== '/soon') {

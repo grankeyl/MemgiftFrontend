@@ -130,12 +130,7 @@
   
     mounted() {
       this.loadResources();
-      this.getHistory(this.$props.NftKey);
       this.getTaskSubscribeChannel();
-
-      this.$watch(() => this.$props.NftKey, () => {
-        this.getHistory(this.$props.NftKey);
-      });
 
       this.$watch(() => this.storeCache.TasksApp, () => {
         this.getTaskSubscribeChannel();
@@ -231,16 +226,6 @@
 
           Promise.all(promises).then(resolve).catch(reject);
         });
-      },
-
-      async getHistory(nftKey) {
-        if (!nftKey) return;
-
-        const history = await historyApi.get(nftKey);
-        if (!history) return;
-
-        this.HistoryList = history;
-        return this.HistoryList;
       },
 
       startUse(Task) {

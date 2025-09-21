@@ -68,21 +68,21 @@
               v-if="NftData.NftKey && NftData.NftMedia === 'lottie'"
               v-bind:class="{ _loading: isLoadingUpgradeImage, _hide: NftData.upgraded }"
               class="_lottie"
-              :path="NftData?.NftImage"
+              :path="`/gifts/lottie/${NftData.NftKey}.json`"
               :loop="true"
               width="25"
               height="25"
               renderer="svg"
             />
             <img 
-              v-if="NftData.NftKey && NftData.NftMedia === 'svg'"
+              v-if="NftData.upgraded && NftData.NftKey && NftData.NftMedia === 'svg'"
               v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.upgraded }"
               :src="NftData?.ModelImage"
               alt="nft"
               class="upgradedImage"
             />
             <GiftLottie
-              v-if="NftData.NftKey && NftData.NftMedia === 'lottie'"
+              v-if="NftData.upgraded && NftData.NftKey && NftData.NftMedia === 'lottie'"
               v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.upgraded }"
               class="_lottie upgraded"
               :path="NftData?.ModelImage"

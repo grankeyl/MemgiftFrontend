@@ -45,11 +45,14 @@ import * as multicheckApi from "./api/multicheckApi";
 import * as taskApi from "./api/taskApi";
 import * as historyApi from "./api/historyApi";
 
+import * as MarketBalanceApi from "./api/market/balance";
+
 import TelegramModule from './hooks/useTelegram';
 import Menu from './components/Menu/Menu.vue';
 import Lottie from './components/Lottie.vue';
 import Toast from './components/Toast/Toast.vue';
 import i18next from 'i18next';
+import { cutNumber } from './utils/useTon';
 
 export default {
   components: {
@@ -95,7 +98,6 @@ export default {
 
     const miniAppTransport = (dtx: any) => {
       if (dtx && dtx !== 'debug') {
-
         if (dtx.startsWith('cln_')) { 
           const collectionKey = dtx.split('cln_')[1];
 
@@ -107,8 +109,14 @@ export default {
           const giftId = dtx.split('gift_')[1];
           router.push(`/gift/${giftId}`);
         }
+        if (dtx.startsWith('u_')) {
+          const userId = dtx.split('u_')[1];
+          router.push(`/view/${userId}`);
+        }
         if (dtx === 'profile') { router.push('/profile'); }
         if (dtx === 'tickets') { router.push('/tickets'); }
+        if (dtx === 'market') { router.push('/market'); }
+        if (dtx === 'referrals') { router.push('/referrals'); }
 
         mountMiniApp();
       }
@@ -167,6 +175,11 @@ export default {
 
           const tasksGet = await taskApi.getAll();
           const historyGet = await historyApi.getAll();
+          const balance = await MarketBalanceApi.get(storeCache.UserData.user.ID);
+          if (balance && balance.balance_ton) {
+            storeCache.UserData.user.Balance = balance;
+            storeCache.UserData.user.Balance.balance_ton = cutNumber(balance.balance_ton);
+          }
 
           storeCache.UserData.user_full_name = cleanString(storeCache.UserData.user_full_name);
           storeCache.TasksApp = tasksGet;

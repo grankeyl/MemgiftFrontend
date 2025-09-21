@@ -2,6 +2,7 @@
   <div class="overlay" :class="{ 'is-open': ModalComp.ModalActive }" @click="ModalComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open is-dark': ModalModelComp.ModalActive }" @click="ModalModelComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open is-dark': ModalSortComp.ModalActive }" @click="ModalSortComp.ModalActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': ModalSellComp.ModalActive }" @click="ModalSellComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open': ModalComp.ModalTransferActive }" @click="ModalComp.ModalTransferActive = false" />
   <div class="overlay" :class="{ 'is-open': ModalDisconnectWalletComp.ModalActive }" @click="ModalDisconnectWalletComp.ModalActive = false" />
 
@@ -55,6 +56,8 @@
       </div>
 
       <Modal
+        @openSellModal="openSellModal"
+
         @loadSuccess="handleLoadSuccess"
         @closeModal="closeModal"
         @transferNft="transferNft"
@@ -64,6 +67,7 @@
         @closeTransferModal="closeTransferModal"
         @upgradedNftModal="upgradedNftModal"
         @removeGift="removeGift"
+        @removeGiftLot="removeGiftLot"
 
         @UPGRADE="UPGRADE"
 
@@ -105,6 +109,22 @@
         :SortItems="ModalSortComp.SortItems"
         :Selected="ModalSortComp.SortSelected"
       />
+
+      <Notify
+        :Title="`Подарок выставлен на продажу`"
+        :Button="`Go to Market`"
+        :ButtonLink="`/m`"
+        :Visible="NotifySellComp.NotifySellActive"
+      />
+      <SellModal
+        @closeModal="() => { ModalSellComp.ModalActive = false }"
+        @apply="applySell"
+
+        :Skeleton="isPageLoading"
+        :SkeletonTime="configApp.skeletonTime"
+        :ModalActive="ModalSellComp.ModalActive"
+        :ModalSellList="ModalSellComp.ModalSellList"
+      />
       
     </div>
   </div>
@@ -118,6 +138,7 @@ import { useCacheStore } from '../stores/pinia/piniaStore';
 import { isDesktop } from '../utils/checkDevice';
 import { checkLoaded } from '../utils/checkLoaded';
 import { unixToDefault } from '../utils/useApp';
+import { clearBackgroundName } from '../utils/useGift';
 
 import * as nftApi from '../api/nftApi';
 
@@ -128,9 +149,10 @@ import Button from '../components/Profile/Button.vue';
 import DisconnectModal from '../components/Profile/DisconnectModal.vue';
 import ModelModal from '../components/Profile/ModelModal.vue';
 import SortModal from '../components/Profile/SortModal.vue';
+import SellModal from '../components/Profile/SellModal.vue';
+import Notify from '../components/Notify/Notify.vue';
 
 import i18next from 'i18next';
-import { clearBackgroundName } from '../utils/useGift';
 import TelegramModule from '../hooks/useTelegram';
 
 const { t } = i18next;
@@ -144,6 +166,8 @@ export default defineComponent({
     DisconnectModal,
     ModelModal,
     SortModal,
+    SellModal,
+    Notify,
   },
 
   setup() {
@@ -156,6 +180,11 @@ export default defineComponent({
 
     const handleLoads = ref(0);
     const isPageLoading = ref(true);
+
+    interface SellItem {
+      uuid: string;
+      upgraded: boolean;
+    }
 
     const UserComp = ref({
       Image: null as string | null,
@@ -189,6 +218,11 @@ export default defineComponent({
       NftUpgradeSupport: false,
       NftUpgradePrice: 0,
       NftUpgraded: false,
+      Market: {
+        MarketOn: false,
+        TonPrice: null,
+        LotId: null,
+      }
     });
 
     const UpgradedNft = ref({
@@ -227,6 +261,17 @@ export default defineComponent({
         upgraded: { id: 'upgraded', Title: 'Upgraded' },
         not_upgraded: { id: 'not_upgraded', Title: 'Not Upgraded' },
       },
+    });
+
+    const NotifySellComp = ref({
+      NotifySellActive: false,
+    });
+    const ModalSellComp = ref<{
+      ModalSellList: SellItem[];
+      ModalActive: boolean;
+    }>({
+      ModalSellList: [],
+      ModalActive: false,
     });
 
     const GiftTableList = ref({
@@ -335,6 +380,11 @@ export default defineComponent({
         UpgradedNft.value.BackgroundDropRate = nft.upgrade.background_drop_rate;
 
         UpgradedNft.value.ModelNumber = nft.upgrade.seq;
+
+        ModalComp.value.Market.MarketOn = nft.market?.price_ton > 0;
+        ModalComp.value.Market.TonPrice = nft.market?.price_ton;
+        ModalComp.value.Market.LotId = nft.market?.lot_id;
+
         return true;
       }
 
@@ -490,6 +540,12 @@ export default defineComponent({
       }
     };
 
+    const removeGiftLot = (id: string) => {
+      const nft = GiftsComp.value.List.find(gift => gift.uuid === id);
+      if (!nft) return;
+      nft.market = null;
+    }
+
     const openDisconnectModal = () => {
       console.log('openDisconnectModal');
       ModalDisconnectWalletComp.value.ModalActive = true;
@@ -602,6 +658,15 @@ export default defineComponent({
       fetchNftsStacks();
     }
 
+    const applySell = (item: any) => {
+      NotifySellComp.value.NotifySellActive = true;
+      ModalSellComp.value.ModalActive = false;
+
+      const nft = GiftsComp.value.List.find(gift => gift.uuid === item.gift_uuid);
+      if (!nft) return;
+      nft.market = { price_ton: item.price_ton, lot_id: item.lot_id };
+    }
+
     const clearAll = () => {
       ModalModelComp.value.ModelsSelected = [];
       ModalSortComp.value.SortSelected = '';
@@ -656,6 +721,11 @@ export default defineComponent({
         ModelNumber: data.seq ?? null,
       };
     }
+
+    const openSellModal = (item: SellItem) => {
+      ModalSellComp.value.ModalSellList = [item];
+      ModalSellComp.value.ModalActive = true;
+    };
 
     onMounted(() => {
       pageEmit();
@@ -714,9 +784,16 @@ export default defineComponent({
       ModalSortComp,
       applySort,
 
+      NotifySellComp,
+      ModalSellComp,
+      openSellModal,
+      applySell,
+
       clearAll,
       clearModels,
       clearSort,
+
+      removeGiftLot,
 
       UPGRADE,
     };

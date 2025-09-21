@@ -148,8 +148,18 @@
             height: 100%
             display: flex
             flex-direction: column
-            max-height: 225px
+            max-height: 425px
             overflow-y: scroll
+
+            @media screen and (max-height: 754px)
+                max-height: 374px
+
+
+            @media screen and (max-height: 725px)
+                max-height: 324px
+            
+            @media screen and (max-height: 670px)
+                max-height: 274px
 
             & .item
                 width: 100%

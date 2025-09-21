@@ -63,6 +63,9 @@
                 align-items: center
                 position: relative
 
+                @media screen and (max-width: 400px)
+                    display: none
+
                 & p
                     font-size: 16px
                     font-weight: 600
@@ -115,8 +118,14 @@
                 position: relative
                 cursor: pointer
 
-                & .kit-icon
-                    width: fit-content
-                    height: fit-content
-                    margin-top: 2px
-                    margin-left: -1px
+                &.active
+                    background: $app-background-blue-secondary
+                    border: 2px solid $app-background-blue-secondary
+
+                    & img
+                        display: block
+
+                & img
+                    width: 12px
+                    height: 12px
+                    display: none

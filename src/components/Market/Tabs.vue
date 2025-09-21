@@ -13,14 +13,14 @@
           :key="index"
           class="item"
           :class="{ active: Tabs.Active === tab.id }"
-          @click="Tabs.Active = tab.id"
+          @click="setActiveTab(tab.id)"
         >
           <h4>{{ $t(`market.tabs.${tab.id}`) }}</h4>
         </div>
       </div>
-      <div class="balance">
+      <div class="balance" @click="openWallet">
         <div class="context">
-          <h4>0.00</h4>
+          <h4>{{ cutNumber(getBalance.toString()) }}</h4>
           <img src="/market/ton.svg" alt="ton" />
         </div>
         <div class="button">
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { useCacheStore } from '../../stores/pinia/piniaStore';
+import { cutNumber } from '../../utils/useTon';
 import { Icon } from '../Icon';
 
 import Lottie from '../Lottie.vue';
@@ -58,9 +60,11 @@ export default {
 
   data() {
     return {
+      storeCache: useCacheStore(),
       isLoading: this.Skeleton,
 
       Icon,
+      cutNumber,
     };
   },
 
@@ -69,6 +73,9 @@ export default {
   },
 
   computed: {
+    getBalance() {
+      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
   },
 
   methods: {
@@ -116,6 +123,14 @@ export default {
 
         Promise.all(promises).then(resolve).catch(reject);
       });
+    },
+
+    setActiveTab(arg) {
+      this.$emit('useTab', arg);
+    },
+
+    openWallet() {
+      this.$router.push('/wallet');
     },
   },
 };

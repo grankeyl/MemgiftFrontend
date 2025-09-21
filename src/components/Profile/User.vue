@@ -25,6 +25,15 @@
               </div>
             </div>
           </div>
+          <div class="balance" @click="openWallet">
+            <div class="context">
+              <h4>{{ cutNumber(getBalance.toString()) }}</h4>
+              <img src="/market/ton.svg" alt="ton" />
+            </div>
+            <div class="button">
+              <img src="/market/plus.svg" alt="plus" />
+            </div>
+          </div>
           <div class="_image">
             <div
               v-if="UserImage && UserAvatar"
@@ -157,14 +166,15 @@
 import { ref } from 'vue';
 import { getConfig } from '../../config';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
-import { tonConnectUI } from '@/hooks/useTonConnect';
 import { useToast } from 'vue-toast-notification';
 import { Icon } from '../Icon';
 import { obfuscateAddress } from '@/utils/useApp';
+import { tonConnectUI } from '@/hooks/useTonConnect';
 import { toUserFriendlyAddress } from 'ton-ui-vue';
 import { pluralizeGift } from '../../utils/useGift';
 import { showToast } from '../../utils/toastManager';
 import { copyToClipboard } from '../../utils/copyToClipboard';
+import { cutNumber } from '../../utils/useTon';
 
 import * as walletApi from '../../api/walletApi';
 import * as settingsApi from '../../api/settingsApi';
@@ -218,7 +228,6 @@ export default {
     const disconnectTonWallet = () => {
       walletConnected.value = false;
       tonConnectUI.disconnect();
-      // walletApi.disconnect();
     }
 
     getTonWalletAddress();
@@ -291,6 +300,7 @@ export default {
 
       obfuscateAddress,
       pluralizeGift,
+      cutNumber,
     };
   },
 
@@ -309,7 +319,10 @@ export default {
       if (!this.storeCache.UserData.user.Language) return '';
       const lang = this.LanguageList.find(lang => lang.id === this.storeCache.UserData.user.Language);
       return lang?.title;
-    }
+    },
+    getBalance() {
+      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
   },
   
   methods: {
@@ -394,7 +407,11 @@ export default {
     copyUserId() {
       copyToClipboard(this.storeCache.UserData.user.Tld);
       showToast('User ID copied', 'success');
-    }
+    },
+
+    openWallet() {
+      this.$router.push('/wallet');
+    },
   },
 };
 </script>

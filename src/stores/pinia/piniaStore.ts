@@ -15,6 +15,14 @@ export const useCacheStore = defineStore('cache', {
     HistoryApp: [],
     Upgrades: {
       Backgrounds: []
+    },
+
+    Market: {
+      Basket: {
+        Items: [],
+        Count: 0,
+        FullyLoaded: false,
+      },
     }
   }),
 });

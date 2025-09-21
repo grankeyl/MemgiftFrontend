@@ -217,6 +217,8 @@ i18next.init({
                 profileFilters: {
                     model: "Model",
                     sort: "Sort",
+                    symbol: "Symbol",
+                    backdrop: "Backdrop",
                     gifts: "gifts",
                 },
                 profileModelModal: {
@@ -238,6 +240,9 @@ i18next.init({
                     apply: "Apply",
                 },
                 clearAll: "Clear all",
+                market: "Market",
+                sellFor: "Sell for",
+                removeListing: "Remove Listing",
             },
             receive: {
                 purchasedText: "Gift purchased",
@@ -361,7 +366,57 @@ i18next.init({
                     gifts: "Gifts",
                     listings: "Listings",
                 },
+
+                modal: {
+                    removeBasket: "Remove",
+                    addBasket: "Add to Basket",
+                },
+
+                buy: "Buy",
+
+                symbolModalTitle: "Symbol",
+                backdropModalTitle: "Backdrop",
+
+                notifyBuyed: "Gifts successfully purchased and added to Profile",
+                notifyBuyedButton: "Go to Profile",
+
+                basket: {
+                    title: "Basket",
+                    gifts: "gifts",
+                    selectAll: "Select all",
+                    buyFor: "Buy for",
+                    clearAll: "Clear all",
+                    insufficientBalance: "Insufficient balance",
+                    confirm: {
+                        title: "Confirm to Buy Gifts",
+                        sucessfulyBought: "Succesfuly Bought!",
+                        sucessfulyBoughtDescription: "Gifts have arrived to your profile",
+                        summary: "Summary",
+                        buttons: {
+                            cancel: "Close",
+                            buy: "Buy",
+                        }
+                    }
+                }
             },
+            wallet: {
+                back: "Back",
+                walletNotConnected: "Wallet not connected",
+                connect: "Connect",
+                deposit: "Deposit",
+                depositModal: {
+                    title: "Deposit balance",
+                    orderSuccess: "Deposit order created!",
+                    orderFailed: "Deposit order failed!",
+                },
+                withdraw: "Withdraw",
+                withdrawModal: {
+                    title: "Withdraw balance",
+                    info: "Withdrawal to the wallet with TAG/MEMO is not supported!",
+                    orderSuccess: "Withdraw order created!",
+                    orderFailed: "Withdraw order failed!",
+                },
+            }
         }
     },
     ru: {
@@ -544,6 +599,9 @@ i18next.init({
                 profileActions: "Действия",
                 profileOpenLink: "Показать",
 
+                notifyBuyed: "Подарок(ки) успешно приобретен и добавлен в Профиль",
+                notifyBuyedButton: "В профиль",
+
                 profileMint: "Улучшить",
                 profileTransfer: "Перенести",
                 profileShare: "Поделиться",
@@ -571,6 +629,8 @@ i18next.init({
                 profileFilters: {
                     model: "Модель",
                     sort: "Фильтр",
+                    symbol: "Символ",
+                    backdrop: "Фон",
                     gifts: "подарок",
                 },
                 profileModelModal: {
@@ -592,6 +652,9 @@ i18next.init({
                     apply: "Применить",
                 },
                 clearAll: "Очистить",
+                market: "Маркет",
+                sellFor: "Выставлено за",
+                removeListing: "Снять с продажи",
             },
             receive: {
                 purchasedText: "Подарок куплен",
@@ -710,12 +773,59 @@ i18next.init({
             market: {
                 developmentTitle: "В разработке",
                 developmentDescription: "Страница находится на стадии разработки",
-                
+
                 tabs: {
-                    gifts: "Gifts",
-                    listings: "Listings",
+                    gifts: "Подарки",
+                    listings: "Активность",
                 },
+
+                modal: {
+                    removeBasket: "Убрать",
+                    addBasket: "Добав. в корз.",
+                },
+
+                buy: "Купить",
+
+                symbolModalTitle: "Символ",
+                backdropModalTitle: "Фон",
+
+                basket: {
+                    title: "Корзина",
+                    gifts: "подарка(ов)",
+                    selectAll: "Выбрать все",
+                    buyFor: "Купить за",
+                    clearAll: "Очистить все",
+                    insufficientBalance: "Недостаточно средств",
+                    confirm: {
+                        title: "Подтверждение покупки",
+                        sucessfulyBought: "Успешно куплено!",
+                        sucessfulyBoughtDescription: "Подарки успешно приобретены и добавлены в профиль",
+                        summary: "Итого",
+                        buttons: {
+                            cancel: "Закрыть",
+                            buy: "Купить",
+                        }
+                    }
+                }
             },
+            wallet: {
+                back: "Назад",
+                walletNotConnected: "Кошелек не подключен",
+                connect: "Подключить",
+                deposit: "Внести",
+                depositModal: {
+                    title: "Внести баланс",
+                    orderSuccess: "Баланс внесен!",
+                    orderFailed: "Ошибка внесения баланса!",
+                },
+                withdraw: "Вывести",
+                withdrawModal: {
+                    title: "Вывести баланс",
+                    info: "Вывод на кошелек с TAG/MEMO не поддерживается!",
+                    orderSuccess: "Заявка на вывод создана!",
+                    orderFailed: "Ошибка вывода!",
+                },
+            }
         }
     },
   },

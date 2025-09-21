@@ -5,50 +5,51 @@
     <div class="_content" :class="{ hide: isLoading }">
       <div class="items">
         <div 
-          v-for="value in 4" 
+          v-for="(item, index) in Items"
+          :key="index"
           class="item"
         >
           <div class="nft">
             <div
               class="background upg"
               :style="{
-                '--center-color': '#76997C',
-                '--around-color': '#5E7657',
+                '--center-color': item.core.upgrade.background.colors_center,
+                '--around-color': item.core.upgrade.background.colors_around,
               }"
             ></div>
 
             <div class="symbol upg">
-              <img :src="'https://app.spicko-quane.shop/s3/symbols/Blaze.png'" :alt="''" />
+              <img :src="item.core.upgrade.symbol.image" :alt="item.core.upgrade.symbol.name" />
             </div>
 
             <div class="model">
               <div class="upg">
-                <div v-if="'svg' === 'svg'" class="image">
-                  <img :src="'https://app.spicko-quane.shop/s3/models/BestCap/Shinestone.svg'" alt="model" />
+                <div v-if="item.core.gift.media === 'svg'" class="image">
+                  <img :src="item.core.upgrade.nft_name.image" alt="model" />
                 </div>
-                <!-- <div v-if="item.gift_media === 'lottie'" class="image">
-                  <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="model" />
-                </div> -->
+                <div v-if="item.core.gift.media === 'lottie'" class="image">
+                  <img :src="getUpgradedModel(item.core.gift.u_key, item.core.upgrade.nft_name.name, 'svg')" alt="model" />
+                </div>
               </div>
             </div>
           </div>
           <div class="context">
             <div class="head">
-              <h4>Louis Verse</h4>
-              <p>#1876</p>
+              <h4>{{ item.core.upgrade.nft_name.name }}</h4>
+              <p>#{{ item.core.upgrade.seq }}</p>
             </div>
             <div class="button">
               <button>
-                <h4>2500</h4>
+                <h4>{{ cutNumber(item.price_ton) }}</h4>
                 <img src="/market/ton-white.svg" alt="ton" />
               </button>
             </div>
           </div>
           <div class="actions">
-            <div class="select">
+            <div class="select" :class="{ active: Selected.includes(item.id) }" @click="selectItem(item.id)">
               <img src="/market/done.svg" alt="done" /> 
             </div>
-            <div class="delete">
+            <div class="delete" @click="deleteItem(item)">
               <img src="/market/delete.svg" alt="delete" />
             </div>
           </div>
@@ -59,6 +60,8 @@
 </template>
 
 <script>
+import { getUpgradedModel } from '../../../utils/useGift';
+import { cutNumber } from '../../../utils/useTon';
 import { Icon } from '../../Icon';
 
 import Lottie from '../../Lottie.vue';
@@ -73,6 +76,14 @@ export default {
       type: Number,
       required: true,
     },
+    Items: {
+      type: Array,
+      required: true,
+    },
+    Selected: {
+      type: Array,
+      required: true,
+    },
   },
 
   components: {
@@ -84,6 +95,8 @@ export default {
       isLoading: this.Skeleton,
 
       Icon,
+      cutNumber,
+      getUpgradedModel,
     };
   },
 
@@ -139,6 +152,14 @@ export default {
 
         Promise.all(promises).then(resolve).catch(reject);
       });
+    },
+
+    selectItem(item) {
+      this.$emit('select', item);
+    },
+
+    deleteItem(item) {
+      this.$emit('deleteItem', item);
     },
   },
 };

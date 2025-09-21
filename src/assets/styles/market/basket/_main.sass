@@ -139,6 +139,7 @@
                 z-index: 10
 
                 &.error
+                    pointer-events: none
                     & .label
                         opacity: 1 !important
 
@@ -189,6 +190,10 @@
                             transform: scale(1)
                             transition: transform 0.22s ease, opacity 0.22s ease
 
+                            &:disabled
+                                pointer-events: none
+                                opacity: .5
+
                             &:active
                                 transform: scale(0.94)
 
@@ -197,7 +202,7 @@
                                 font-weight: 600
                                 color: $app-text-color
                                 white-space: nowrap
-                                max-width: 100px
+                                max-width: 340px
                                 overflow: hidden                    
                                 text-overflow: ellipsis
                             

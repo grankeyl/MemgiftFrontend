@@ -1,0 +1,162 @@
+@use "./../_variables" as *
+
+._wrap.wallet
+    padding-top: calc($app-menu-height + 30px)
+    display: flex
+    flex-direction: column
+    min-height: 100dvh
+
+    &.desktop
+        padding-top: 30px
+
+    ._view
+        -webkit-overflow-scrolling: touch
+        padding-bottom: calc($app-menu-height + 83px)
+
+        .bg
+            width: 100%
+            height: 100%
+            position: absolute
+            top: 0
+            left: 0
+            opacity: .2
+            pointer-events: none
+            background: radial-gradient(145.36% 31.28% at 81.92% -7%, #1E3AC6 0%, #2B2261 50%, #1C1C1E 100%)
+
+        .display
+            width: 100%
+            height: auto
+            display: flex
+            flex-direction: column
+            gap: 24px
+            z-index: 1
+
+            .logotype
+                width: fit-content
+                height: fit-content
+                margin: auto
+                opacity: .5
+
+                & img
+                    width: 163px
+                    height: 21px
+            
+            & .fixed
+                max-width: $app-max-preview-width
+                width: 100%
+                display: flex
+                position: fixed
+                bottom: 0
+                left: 50%
+                transform: translateX(-50%)
+            
+            & .footer
+                max-width: $app-max-preview-width
+                width: 100%
+                height: 156px
+                display: flex
+                flex-direction: column
+                align-items: center
+                gap: 20px
+                position: relative
+                border-top: 1px solid $app-table-border
+                background: $app-background
+                padding: 0 16px 0 16px
+                z-index: 10
+
+                & .inner
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 10px
+                    padding-top: 14px
+
+                    & .label
+                        width: fit-content
+                        height: fit-content
+                        margin: auto
+                        opacity: 0
+                        transition: opacity 0.22s ease
+
+                        & p
+                            font-size: 14px
+                            font-weight: 600
+                            color: $app-text-color-red
+
+                    & .button
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        gap: 10px
+                        position: relative
+
+                        & button
+                            width: 100%
+                            height: 51px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            gap: 1.6px
+                            background: $app-background-blue-secondary
+                            padding: 0 16px 0px 15px
+                            border-radius: 13px
+                            cursor: pointer
+                            transform: scale(1)
+                            transition: transform 0.22s ease, opacity 0.22s ease
+
+                            &.back
+                                width: 60%
+                                height: 51px
+                                display: flex
+                                align-items: center
+                                justify-content: center
+                                margin: auto
+                                gap: 1.6px
+                                padding: 0 16px 0px 15px
+                                border-radius: 13px
+                                cursor: pointer
+                                transform: scale(1)
+                                background: rgba($app-text-color, 0.2)
+
+                            &:disabled
+                                pointer-events: none
+                                opacity: .5
+
+                            &:active
+                                transform: scale(0.94)
+
+                            & h4
+                                font-size: 16px
+                                font-weight: 600
+                                color: $app-text-color
+                                white-space: nowrap
+                                max-width: 340px
+                                overflow: hidden                    
+                                text-overflow: ellipsis
+                            
+                            & img
+                                width: 18px
+                                height: 18px
+
+                        & .info
+                            width: fit-content
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            gap: 4px
+                            position: relative
+
+                            & p
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-text-color-phiolete
+                                max-width: 100px
+                                overflow: hidden                    
+                                text-overflow: ellipsis
+
+                            & img
+                                width: 12px
+                                height: 12px

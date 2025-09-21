@@ -1,0 +1,323 @@
+@use "./../../assets/styles/_variables" as *
+
+
+@keyframes tabShowBlocks
+  0%
+    opacity: 0
+    transform: translateY(-20px) scale(0.75)
+  100%
+    opacity: 1
+    transform: translateY(0px) scale(1)
+    
+.listings
+    width: 100%
+    height: 100%
+    margin-bottom: 15px
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        .items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            .item
+                width: 100%
+                height: 60px
+                background: $app-background-secondary
+                border-radius: 16px
+                opacity: .2
+    
+    ._content
+        width: 100%
+        height: 100%
+
+        &.hide
+            opacity: 0
+            pointer-events: none
+            display: none
+
+        & .items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+
+            & .item
+                width: 100%
+                height: fit-content
+                display: flex
+                justify-content: space-between
+                align-items: center
+                gap: 16px
+                position: relative
+                border-bottom: 1px solid #232327
+                padding-top: 14px
+                padding-bottom: 14px
+
+                &:last-child
+                    border-bottom: none
+
+                & .nft
+                    width: 67px
+                    min-width: 67px
+                    max-width: 67px
+                    height: 67px
+                    position: relative
+                    background: $app-background-secondary
+                    border-radius: 16px
+                    overflow: hidden
+
+                    & .background.upg
+                        width: 100%
+                        height: 100%
+                        background: radial-gradient(circle, var(--center-color), var(--around-color))
+                        position: absolute
+                        top: 0
+                        left: 0
+                        z-index: 0
+
+                    & .symbol
+                        position: absolute
+                        width: 100%
+                        height: 100%
+                        overflow: hidden
+                        opacity: .6
+                        z-index: 1
+                        mix-blend-mode: luminosity
+
+                        & img
+                            position: absolute            
+                            left: 50%
+                            top: 50%
+                            width: 100%
+                            height: calc(100% - 30px)
+                            transform: translate(-50%, -50%)
+                            object-fit: cover
+                            z-index: -1
+
+                    & .model
+                        width: 70%
+                        height: 70%
+                        margin: auto
+                        position: absolute
+                        z-index: 2
+                        top: 48%
+                        left: 50%
+                        transform: translate(-50%, -50%)
+
+                        & img
+                            width: 100%
+                            height: 100%                            
+                            object-fit: cover
+
+                & .context
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    gap: 12px
+                    position: relative
+
+                    & .head
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: start
+                        gap: 8px
+                        position: relative
+
+                        @media screen and (max-width: 365px)
+                            flex-direction: column
+                            gap: 4px
+
+                        .info
+                            display: flex
+                            gap: 4px
+
+                            & h4
+                                font-size: 16px
+                                font-weight: 600
+                                color: $app-text-color
+                                max-width: 200px
+                                overflow: hidden
+                                text-overflow: ellipsis
+                                white-space: nowrap
+                                display: flex
+                                align-items: center
+                                gap: 4px
+
+                            & p
+                                font-size: 16px
+                                font-weight: 600
+                                color: $app-text-color-descr-primary
+                                max-width: 220px
+                                overflow: hidden
+                                text-overflow: ellipsis
+                                white-space: nowrap
+                                display: flex
+                                align-items: center
+                                gap: 4px
+                        
+                        .date
+                            width: fit-content
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            position: relative
+
+                            & p
+                                font-size: 10px
+                                font-weight: 600
+                                color: $app-text-color-descr-primary
+                                max-width: 220px
+                                overflow: hidden
+                                text-overflow: ellipsis
+                                white-space: nowrap
+                        
+                    
+                    & .spanner
+                        width: fit-content
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        border-radius: 50px
+                        background: rgba($app-mark-background, 0.44)
+                        padding: 4px 6px 4px 10px
+                        gap: 4px
+
+                        &.purchased
+                            background: rgba($app-mark-background, 0.44)
+
+                        &.sold
+                            background: rgba($app-background-blue-secondary, 0.20)
+
+                            & .icon
+                                margin-top: -3px
+                                & svg
+                                    & path
+                                        fill: $app-button-blue-text-color
+                                        stroke: $app-button-blue-text-color
+
+                            & .text h4
+                                color: $app-button-blue-text-color
+
+                        &.onsale
+                            background: rgba($app-button-blue-light-text-color, 0.10)
+
+                            & .icon
+                                width: 16px
+                                height: 16px
+                                margin-top: 0px
+                                margin-left: -4px
+                                & svg
+                                    width: 16px
+                                    height: 16px
+                                    & path
+                                        fill: $app-button-blue-light-text-color
+                                        stroke: transparent
+
+                            & .text h4
+                                color: $app-button-blue-light-text-color
+
+                        & .icon
+                            width: 14px
+                            height: 14px
+                            margin-top: -5px
+                            margin-left: -1px
+
+                            & svg
+                                width: 14px
+                                height: 14px
+
+                                & path
+                                    stroke: $app-text-color-descr-primary
+
+                        & .text
+                            width: fit-content
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            gap: 4px
+
+                            & h4
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-text-color-descr-primary
+                                max-width: 100%
+                                overflow: hidden                    
+                                text-overflow: ellipsis
+
+                        & .price
+                            width: fit-content
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            gap: 2px
+                            margin-left: 2px
+
+                            & h4
+                                font-size: 16px
+                                font-weight: 600
+                                color: $app-text-color
+                                max-width: 100px
+                                display: flex
+                                align-items: center
+                                gap: 4px
+
+                            & img
+                                width: 18px
+                                height: 18px
+
+                    & .button
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        gap: 4px
+                        position: relative
+
+                        & button
+                            width: fit-content
+                            height: 36px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            gap: 1.6px
+                            background: $app-background-blue-secondary
+                            padding: 0 16px 0px 15px
+                            border-radius: 12px
+                            cursor: pointer
+                            transform: scale(1)
+                            transition: transform 0.22s ease
+
+                            &:active
+                                transform: scale(0.94)
+
+                            & h4
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-text-color
+                                white-space: nowrap
+                                max-width: 100px
+                                overflow: hidden                    
+                                text-overflow: ellipsis
+
+                & .actions
+                    width: fit-content
+                    height: fit-content
+                    display: flex
+                    flex-direction: column
+                    justify-content: end
+                    align-items: center
+                    gap: 15px
+                    position: relative

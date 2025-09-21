@@ -5,7 +5,7 @@
     display: flex
     flex-direction: column
     min-height: 100dvh
-    
+
     &.desktop
         padding-top: 30px
 
@@ -19,7 +19,6 @@
             position: absolute
             top: 0
             left: 0
-            opacity: .2
             pointer-events: none
             background: radial-gradient(145.36% 31.28% at 81.92% -7%, #1E3AC6 0%, #2B2261 50%, #1C1C1E 100%)
 
@@ -38,6 +37,14 @@
             padding: 0px 10px 0px 11px
             gap: 6px
             box-shadow: 0px 62px 17px rgba(0, 0, 0, 0), 0px 40px 16px rgba(0, 0, 0, 0.02), 0px 22px 13px rgba(0, 0, 0, 0.08), 0px 10px 10px rgba(0, 0, 0, 0.13), 0px 2px 5px rgba(0, 0, 0, 0.15)
+            opacity: 1
+            transform: scale(1)
+            transition: opacity 0.22s ease, transform 0.22s ease
+
+            &.empty
+                opacity: 0
+                transform: scale(0.3)
+                pointer-events: none
 
             .image
                 width: fit-content
@@ -68,8 +75,6 @@
                     font-weight: 600
                     color: $app-preview
             
-
-
         .display
             width: 100%
             height: auto

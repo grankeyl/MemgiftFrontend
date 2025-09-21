@@ -17,6 +17,8 @@
     "@rollup/plugin-json": "^6.1.0",
     "@telegram-apps/sdk": "^2.11.3",
     "@telegram-apps/sdk-vue": "^1.0.15",
+    "@ton/core": "^0.60.1",
+    "@ton/crypto": "^3.3.0",
     "@tonconnect/ui": "^2.1.0",
     "@townsquarelabs/ui-vue": "^2.0.11-beta.0",
     "@twa-dev/sdk": "^8.0.1",
@@ -25,6 +27,7 @@
     "@types/jsrsasign": "^10.5.15",
     "@vue/runtime-dom": "^3.5.13",
     "axios": "^1.7.9",
+    "buffer": "^6.0.3",
     "canvas-confetti": "^1.9.3",
     "dayjs": "^1.11.13",
     "hammerjs": "^2.0.8",
@@ -50,6 +53,7 @@
     "pluralize": "^8.0.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.3",
+    "process": "^0.11.10",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "structured-clone-polyfill": "^0.0.2",
@@ -90,6 +94,8 @@
     "typescript": "~5.6.2",
     "vite": "^6.0.5",
     "vite-plugin-copy": "^0.1.6",
+    "vite-plugin-mkcert": "^1.17.8",
+    "vite-plugin-node-polyfills": "^0.24.0",
     "vite-plugin-static-copy": "^2.2.0",
     "vue-tsc": "^2.2.0"
   }

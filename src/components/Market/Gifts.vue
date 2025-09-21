@@ -1,79 +1,106 @@
 <template>
-  <div class="_direction _comp _item gifts">
+  <div class="_direction _comp _item gifts" v-if="GiftsList && GiftsList.length > 0">
       <div v-if="isLoading" class="_skeleton">
       </div>
       <div class="_content" :class="{ hide: isLoading }">
         <div class="items">
-
-          <div v-for="value in 12" :key="value" class="item">
+          <div
+            v-for="(gift, index) in GiftsList"
+            :key="gift.id || index"
+            class="item"
+            :ref="el => setLastItemRef(el, index, GiftsList.length)"
+          >
             <div class="mark">
-              <p>#1456</p>
+              <p>#{{ gift.core.upgrade.seq }}</p>
             </div>
 
             <div
               class="background upg"
               :style="{
-                '--center-color': '#EAB843',
-                '--around-color': '#B24C6E',
+                '--center-color': gift.core.upgrade.background.colors_center,
+                '--around-color': gift.core.upgrade.background.colors_around,
               }"
             ></div>
 
             <div class="symbol upg">
-              <img src="https://app.spicko-quane.shop/assets/gift_bg-RDiJf5BU.png" alt="symbol" />
+              <img :src="gift.core.upgrade.symbol.image" :alt="gift.core.upgrade.symbol.name" />
             </div>
 
             <div class="model">
               <div class="upg">
-                <div class="image">
-                  <img src="https://app.spicko-quane.shop/s3/nft_miss_hammy.svg" alt="model" />
+                <div v-if="gift.core.gift.media === 'svg'" class="image">
+                  <img :src="gift.core.upgrade.nft_name.image" alt="model" />
                 </div>
-                
-                <!-- <div v-if="item.gift_media === 'svg'" class="image">
-                  <img :src="item.upgrade.nft_image" alt="model" />
-                </div> -->
-                <!-- <div v-if="item.gift_media === 'lottie'" class="image">
-                  <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="model" />
-                </div> -->
+                <div v-if="gift.core.gift.media === 'lottie'" class="image">
+                  <img :src="getUpgradedModel(gift.core.gift.u_key, gift.core.upgrade.nft_name.name, 'svg')" alt="model" />
+                </div>
               </div>
             </div>
 
             <div class="name">
-              <h4>Miss Hammy</h4>
+              <h4>{{ gift.core.upgrade.nft_name.name }}</h4>
             </div>
 
-            <div class="buttons">
-              <button @click="openGift()">
-                <h5>2500</h5>
+            <div class="buttons" :class="{ owner: iOwner(gift.balance_owner_id) }">
+              <button @click="openGift(gift)">
+                <h5>{{ cutNumber(gift.price_ton) }}</h5> 
                 <img src="/market/ton-white.svg" alt="ton" />
               </button>
-              <button class="added">
+              <button 
+                @click="addToBasket(gift)"
+                :class="{ added: checkGiftInBasket(gift) }"
+              >
                 <img src="/market/basket-white.svg" alt="basket" />
                 <img src="/market/done.svg" alt="basket" />
               </button>
             </div>
           </div>
-
         </div>
       </div>
+  </div>
+
+  <div
+    v-if="Searching"
+    class="_direction _comp _item _loads"
+  >
+    <div class="null">
+      <div class="load-icon"></div>
+    </div>
+  </div>
+
+  <div
+    v-if="!Searching && isEmptyList"
+    class="_direction _comp _item _empty"
+  >
+    <div class="null">
+      <div class="image">
+        <img src="/profile/empty.svg" alt="empty" />
+      </div>
+      <div class="title">
+        <h4>{{ $t('profile.profileGiftsNull') }}</h4>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { useCacheStore } from '../../stores/pinia/piniaStore';
+import { getUpgradedModel } from '../../utils/useGift';
+import { cutNumber } from '../../utils/useTon';
 import { Icon } from '../Icon';
 
 import Lottie from '../Lottie.vue';
 
 export default {
   props: {
-    Skeleton: {
-      type: Boolean,
-      required: true,
-    },
-    SkeletonTime: {
-      type: Number,
-      required: true,
-    },
+    Skeleton: { type: Boolean, required: true },
+    SkeletonTime: { type: Number, required: true },
+    GiftsList: { type: Array, required: true },
+    Searching: { type: Boolean, required: true },
+    HasMore: { type: Boolean, default: false },
   },
+  emits: ['openGift', 'addToBasket', 'loadMore', 'loadSuccess'],
 
   components: {
     Lottie,
@@ -81,10 +108,93 @@ export default {
 
   data() {
     return {
+      storeCache: useCacheStore(),
       isLoading: this.Skeleton,
 
       Icon,
+      cutNumber,
+      getUpgradedModel,
     };
+  },
+
+  setup(props, { emit }) {
+    const lastItemEl = ref(null);
+    let io = null;
+    let rootEl = null;
+    let lock = false; // защитный замок от мульти-триггеров
+
+    const getScrollParent = (el) => {
+      if (!el) return null;
+      let p = el.parentElement;
+      while (p && p !== document.body) {
+        const st = getComputedStyle(p);
+        if (st.overflowY === 'auto' || st.overflowY === 'scroll') return p;
+        p = p.parentElement;
+      }
+      return null;
+    };
+
+    const observe = () => {
+      if (io) { io.disconnect(); io = null; }
+      const el = lastItemEl.value;
+      if (!el) return;
+
+      if (!rootEl) rootEl = getScrollParent(el);
+
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          if (lock) return;                 // уже летит запрос – ждём
+          if (props.Searching) return;      // родитель уже грузит
+          if (!props.HasMore) return;       // нечего грузить
+
+          lock = true;
+          emit('loadMore');
+        },
+        {
+          root: rootEl ?? null,
+          rootMargin: '0px 0px 300px 0px',
+          threshold: 0,
+        }
+      );
+      io.observe(el);
+    };
+
+    // Ставим ref только на последний элемент
+    const setLastItemRef = (el, idx, len) => {
+      if (idx === len - 1) lastItemEl.value = el || null;
+    };
+
+    onMounted(() => nextTick(observe));
+    onBeforeUnmount(() => { io?.disconnect(); io = null; });
+
+    // Когда список меняется — перевешиваем наблюдатель на новый «последний элемент»
+    watch(() => props.GiftsList?.length, () => nextTick(observe));
+
+    // Когда загрузка закончилась — снимаем «замок»
+    watch(() => props.Searching, (now, prev) => {
+      if (prev && !now) {
+        // загрузка завершилась
+        lock = false;
+        // если новый хвост уже в зоне — IO сам триггернёт снова
+      }
+    });
+
+    // Если контента мало и «дно» уже видно — один «пинок»
+    const tryKick = () => {
+      if (!props.Searching && props.HasMore && lastItemEl.value) {
+        const rect = lastItemEl.value.getBoundingClientRect();
+        const inView =
+          rect.top < (window.innerHeight || document.documentElement.clientHeight) + 300;
+        if (inView && !lock) {
+          lock = true;
+          emit('loadMore');
+        }
+      }
+    };
+    watch(() => props.GiftsList?.length, () => nextTick(tryKick));
+
+    return { setLastItemRef };
   },
 
   mounted() {
@@ -92,6 +202,9 @@ export default {
   },
 
   computed: {
+    isEmptyList() {
+       return !this.GiftsList || this.GiftsList.length === 0;
+    },
   },
 
   methods: {
@@ -103,6 +216,16 @@ export default {
       } catch (error) {
         console.error("Ошибка при загрузке ресурсов:", error);
       }
+    },
+
+    iOwner(id) {
+      if (!this.storeCache.UserData.user.Balance) return false;
+      if (this.storeCache.UserData.user.Balance.user_uuid === id) return true;
+      return false;
+    },
+    
+    checkGiftInBasket(gift) {
+      return this.storeCache.Market.Basket.Items.some((item) => item.id === gift.id);
     },
 
     loadFonts() {
@@ -141,8 +264,12 @@ export default {
       });
     },
 
-    openGift() {
-      this.$emit('openGift', {});
+    openGift(gift) {
+      this.$emit('openGift', gift);
+    },
+
+    addToBasket(gift) {
+      this.$emit('addToBasket', gift);
     },
   },
 };

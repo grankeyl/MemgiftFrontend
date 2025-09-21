@@ -9,15 +9,16 @@ import Receive from '../pages/Receive.vue'
 import Rating from '../pages/Rating.vue'
 import View from '../pages/View.vue'
 import Gift from '../pages/Gift.vue'
-import Dev from '../pages/Dev.vue'
-// import Market from '../pages/Market/Market.vue'
-// import MarketBasket from '../pages/Market/Basket.vue'
+// import Dev from '../pages/Dev.vue'
+import Market from '../pages/Market/Market.vue'
+import MarketBasket from '../pages/Market/Basket.vue'
 import Tickets from '../pages/Tickets.vue'
 import Multicheck from '../pages/Multicheck.vue'
 import Deal from '../pages/Deal.vue'
 import PrivateDeal from '../pages/PrivateDeal.vue'
 import ActivateMulticheck from '../pages/Activate/Multicheck.vue'
 import Referral from '../pages/Referral.vue'
+import Wallet from '../pages/Wallet.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,9 +33,10 @@ const router = createRouter({
     { path: '/receive/:nft/:nftType', name: 'receive', component: Receive },
     { path: '/activate-multicheck/:nft/:nftType', name: 'activate-multicheck', component: ActivateMulticheck },
     { path: '/rating', name: 'rating', component: Rating },
-    { path: '/market', name: 'market', component: Dev },
-    // { path: '/market', name: 'market', component: Market },
-    // { path: '/market/basket', name: 'market-basket', component: MarketBasket },
+    // { path: '/market', name: 'market', component: Dev },
+    { path: '/m', name: 'market', component: Market },
+    { path: '/m/basket', name: 'market-basket', component: MarketBasket },
+    { path: '/wallet', name: 'wallet', component: Wallet },
     { path: '/tickets', name: 'tickets', component: Tickets },
     { path: '/multicheck', name: 'multicheck', component: Multicheck },
     { path: '/deal', name: 'deal', component: Deal },

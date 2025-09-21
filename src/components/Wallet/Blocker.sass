@@ -1,0 +1,164 @@
+@use "./../../assets/styles/_variables" as *
+    
+.blocker
+    width: 100%
+    height: fit-content
+    
+    ._skeleton
+        width: 100%
+        display: flex
+        flex-direction: column
+        align-items: center
+        margin: auto
+        gap: 10px
+        width: 100%
+        position: relative
+
+        .items
+            width: 100%
+            height: 100%
+            display: flex
+            flex-direction: column
+            gap: 11px
+
+            .item
+                width: 100%
+                height: 60px
+                background: $app-background-secondary
+                border-radius: 16px
+                opacity: .2
+    
+    ._content
+        width: 100%
+        display: flex
+        gap: 10px
+
+        &.hide
+            opacity: 0
+            pointer-events: none
+            display: none
+            
+        .block
+            width: 100%
+            height: fit-content
+            display: flex
+            flex-direction: column
+            gap: 16px
+            position: relative
+            background: $app-background-secondary
+            border-radius: 12px
+            align-items: center
+            justify-content: center
+            text-align: center
+            padding: 14px 0 8px 0
+
+            .wallet
+                width: fit-content
+                height: fit-content
+                margin-top: 3px
+                display: flex
+                align-items: center
+                gap: 4px
+                position: relative
+
+                & img
+                    width: 20px
+                    height: 20px
+                    margin-right: 2px
+                    
+                & p
+                    font-size: 12px
+                    font-weight: 600
+                    color: $app-text-color-descr-primary
+                
+                span
+                    width: 38px
+                    height: 26px
+                    display: flex
+                    align-items: center
+                    gap: 4px
+                    position: relative
+                    font-size: 10px
+                    font-weight: 600
+                    border-radius: 50px
+                    background: rgba($app-text-color, 0.1)
+                    justify-content: center
+
+                    & img
+                        width: 14px
+                        height: 14px
+                
+                & button
+                    width: fit-content
+                    height: 31px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    gap: 4px
+                    position: relative
+                    background: rgba($app-background-blue-secondary, 0.2)
+                    padding: 0 11px
+                    margin-left: 4px
+
+                    & p
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-background-blue-secondary
+            
+            .bal
+                width: fit-content
+                height: fit-content
+                display: flex
+                align-items: center
+                gap: 2px
+                position: relative
+
+                & h1
+                    font-size: 36px
+                    font-weight: 700
+                    color: $app-text-color
+
+                & img
+                    width: 38px
+                    height: 38px
+            
+            .buttons
+                width: fit-content
+                height: fit-content
+                display: flex
+                align-items: center
+                gap: 8px
+
+                &.disabled
+                    pointer-events: none
+                    opacity: .5
+
+                & button
+                    width: fit-content
+                    height: 52px
+                    padding: 0 15px
+                    border-radius: 13px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    gap: 7px
+                    cursor: pointer
+                    transform: scale(1)
+                    transition: transform 0.22s ease
+                    background: $app-background-blue-secondary
+
+                    &:disabled
+                        pointer-events: none
+                        opacity: .5
+
+                    &:first-child
+                        background: rgba($app-text-color, 0.22)
+
+                    & h4
+                        font-size: 16px
+                        font-weight: 600
+                        color: $app-text-color
+                        white-space: nowrap
+                        max-width: 100px
+                        overflow: hidden                    
+                        text-overflow: ellipsis
