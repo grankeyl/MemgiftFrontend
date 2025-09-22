@@ -162,6 +162,7 @@ export default {
       if (!this.amountNum) return false;
       if (this.amountNum < 0.2) return false;
       if (this.amountNum > 15000) return false;
+      if (!this.storeCache.UserData.user.Balance) return false;
       const clearBalance = parseFloat(this.storeCache.UserData.user.Balance.balance_ton);
       const clearPrice = parseFloat(this.amountNum);
       return clearBalance >= clearPrice;

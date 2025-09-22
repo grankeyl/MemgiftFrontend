@@ -63,6 +63,7 @@ import WalletImg from '@/assets/images/market/wallet.svg';
 import TonImg from '@/assets/images/market/ton.svg';
 import WithdrawImg from '@/assets/images/market/withdraw.svg';
 import DepositImg from '@/assets/images/market/deposit.svg';
+import TelegramModule from '../../hooks/useTelegram';
 
 export default {
   props: {
@@ -124,11 +125,12 @@ export default {
       walletConnected.value = isTonWallet;
     }
 
-    const getTonWalletAddress = () => {
+    const getTonWalletAddress = async () => {
       if (!tonConnectUI.account) return;
       const rawAddress = tonConnectUI.account.address;
       const walletAddressString = toUserFriendlyAddress(rawAddress);
       walletAddress.value = walletAddressString;
+      if (tonConnectUI.connected) { await walletApi.create(walletAddress.value); }
       return walletAddressString;
     }
 

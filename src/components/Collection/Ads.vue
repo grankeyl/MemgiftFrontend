@@ -41,6 +41,7 @@
   import { cleanString } from '../../utils/useApp';
 
   import Image_Stars from '@/assets/images/stars.png';
+import TelegramModule from '../../hooks/useTelegram';
 
   export default {
     props: {
@@ -113,6 +114,11 @@
           Promise.all(promises).then(resolve).catch(reject);
         });
       },
+
+      buy() {
+        TelegramModule.useMediumHaptic();
+        TelegramModule.useLink('https://t.me/MemGiftStarBot');
+      }
     }
   };
   </script>
