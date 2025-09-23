@@ -51,3 +51,23 @@ export const minPrice = async (
     return false;
   }
 };
+
+export const modelsName = async (
+    UKey: string,
+) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/name/${UKey}`,
+            {
+              headers: {
+                "X-Init-Data": tokenBearer || "",
+              },
+            }
+        );
+        const count = response.data;
+        return count;
+    } catch (error) {
+        return false;
+    }
+};

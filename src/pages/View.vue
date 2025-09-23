@@ -189,6 +189,11 @@ export default defineComponent({
       NftUpgradeSupport: false,
       NftUpgradePrice: 0,
       NftUpgraded: false,
+      Market: {
+        MarketOn: false,
+        TonPrice: null,
+        LotId: null,
+      }
     });
 
     const UpgradedNft = ref({
@@ -347,6 +352,11 @@ export default defineComponent({
         UpgradedNft.value.BackgroundDropRate = nft.upgrade.background_drop_rate;
 
         UpgradedNft.value.ModelNumber = nft.upgrade.seq;
+
+        ModalComp.value.Market.MarketOn = nft.market?.price_ton > 0;
+        ModalComp.value.Market.TonPrice = nft.market?.price_ton;
+        ModalComp.value.Market.LotId = nft.market?.lot_id;
+
         return true;
       }
 

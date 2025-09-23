@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_APP_API_MARKET_URL;
 
 export const lots = async (
   gift_ukey: string,
+  models: string,
   symbol: string,
   backdrop: string,
   sort: string,
@@ -15,6 +16,7 @@ export const lots = async (
     const tokenBearer = Cookies.get("token");
     const response = await axios.get(
       `${API_URL}/lots?gift_ukey=${gift_ukey}` +
+      `&models=${models}` +
       `&symbol=${symbol}` +
       `&background=${backdrop}` +
       `&sort=${sort}` +
@@ -91,9 +93,11 @@ export const backdrops = async () => {
 
 export const listings = async (
   gift_ukey: any,
+  models: any,
   symbol: any,
   backdrop: any,
   sort: string,
+  status: string,
   offset: number,
   limit: number
 ) => {
@@ -104,9 +108,11 @@ export const listings = async (
         const response = await axios.get(
             `${API_URL}/listings` +
             `?gift_name=${gift_ukey}` +
+            `&models=${models}` +
             `&nft_symbol_name=${symbolJ}` +
             `&nftbg_name=${backdropJ}` +
             `&sort=${sort}` +
+            `&status=${status}` +
             `&page=${offset}&limit=${limit}`,
             { headers: { Authorization: `${tokenBearer}` } }
         );

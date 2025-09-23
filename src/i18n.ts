@@ -215,8 +215,10 @@ i18next.init({
                     error: 'Error transferring to "Received"',
                 },
                 profileFilters: {
+                    collection: "Collection",
                     model: "Model",
                     sort: "Sort",
+                    status: "Status",
                     symbol: "Symbol",
                     backdrop: "Backdrop",
                     gifts: "gifts",
@@ -235,6 +237,16 @@ i18next.init({
                         price_low: "Price: Low to High",
                         upgraded: "Upgraded",
                         not_upgraded: "Not Upgraded",
+                    },
+                    cancel: "Cancel",
+                    apply: "Apply",
+                },
+                profileStatusModal: {
+                    title: "Status",
+                    items: {
+                        sold: "Sold",
+                        listing: "Listing",
+                        removed: "Removed",
                     },
                     cancel: "Cancel",
                     apply: "Apply",
@@ -397,7 +409,13 @@ i18next.init({
                             buy: "Buy",
                         }
                     }
-                }
+                },
+
+                listings: {
+                    soldFor: "Sold for",
+                    onSaleFor: "On Sale for",
+                    removeListing: "Remove from sale",
+                },
             },
             wallet: {
                 back: "Back",
@@ -627,8 +645,10 @@ i18next.init({
                     error: 'Ошибка при переводе в "Получено"',
                 },
                 profileFilters: {
+                    collection: "Коллекция",
                     model: "Модель",
                     sort: "Фильтр",
+                    status: "Статус",
                     symbol: "Символ",
                     backdrop: "Фон",
                     gifts: "подарок",
@@ -647,6 +667,16 @@ i18next.init({
                         price_low: "Цена: Низкая к Высокой",
                         upgraded: "Улучшенные",
                         not_upgraded: "Не улучшенные",
+                    },
+                    cancel: "Отмена",
+                    apply: "Применить",
+                },
+                profileStatusModal: {
+                    title: "Статус",
+                    items: {
+                        sold: "Проданные",
+                        listing: "Выставленные",
+                        removed: "Удаленные",
                     },
                     cancel: "Отмена",
                     apply: "Применить",
@@ -806,6 +836,12 @@ i18next.init({
                             buy: "Купить",
                         }
                     }
+                },
+
+                listings: {
+                    soldFor: "Продано за",
+                    onSaleFor: "В продаже за",
+                    removeListing: "Удалено из продажи",
                 }
             },
             wallet: {

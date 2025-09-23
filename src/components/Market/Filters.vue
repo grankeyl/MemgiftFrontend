@@ -17,8 +17,32 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
+            <div class="item" @click="openStatusModal" v-if="ActiveTab === 'listings'">
+              <div class="circle" v-if="hasStatus"></div>
+              <div class="icon pen">
+                <div class="kit-icon" v-html="Icon.Pen"></div>
+              </div>
+              <div class="title">
+                {{ $t('profile.profileFilters.status') }}
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
+            </div>
             <div class="item" @click="openModelModal">
               <div class="circle" v-if="hasModels"></div>
+              <div class="icon">
+                <div class="kit-icon" v-html="Icon.Blocks"></div>
+              </div>
+              <div class="title">
+                {{ $t('profile.profileFilters.collection') }}
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
+            </div>
+            <div class="item" @click="openGiftModelsModal" :class="{ disabled: !hasModels }">
+              <div class="circle" v-if="hasGiftModels"></div>
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.GiftOth"></div>
               </div>
@@ -73,12 +97,22 @@
             </div>
             <div v-if="hasModels" class="cheap model" @click="clearModels">
               <div class="kit-icon" v-html="Icon.Gift"></div>
-              <h4>{{ modelsCount === 1 ? `Model: ${SelectedModels[0]}` : `${modelsCount} Models` }}</h4>
+              <h4>{{ modelsCount === 1 ? `Collection: ${SelectedModels[0]}` : `${modelsCount} Collections` }}</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div v-if="hasGiftModels" class="cheap giftModel" @click="clearGiftModels">
+              <div class="kit-icon" v-html="Icon.Gift"></div>
+              <h4>{{ giftModelsCount === 1 ? `Model: ${SelectedGiftModels[0]}` : `${giftModelsCount} Models` }}</h4>
               <div class="kit-icon" v-html="Icon.Close"></div>
             </div>
             <div v-if="hasSort" class="cheap sort" @click="clearSort">
               <div class="kit-icon" v-html="Icon.Sort"></div>
               <h4>{{ sortTitle }}</h4>
+              <div class="kit-icon" v-html="Icon.Close"></div>
+            </div>
+            <div v-if="hasStatus" class="cheap status" @click="clearStatus">
+              <div class="kit-icon" v-html="Icon.Pen"></div>
+              <h4>{{ statusTitle }}</h4>
               <div class="kit-icon" v-html="Icon.Close"></div>
             </div>
             <div v-if="hasSymbols" class="cheap symbol" @click="clearSymbols">
@@ -120,11 +154,23 @@ export default {
       type: Boolean,
       required: true,
     },
+    ActiveTab: {
+      type: String,
+      required: true,
+    },
     SelectedModels: {
       type: Array,
       required: true,
     },
+    SelectedGiftModels: {
+      type: Array,
+      required: true,
+    },
     SelectedSort: {
+      type: String,
+      required: true,
+    },
+    SelectedStatus: {
       type: String,
       required: true,
     },
@@ -137,6 +183,10 @@ export default {
       required: true,
     },
     SortItems: {
+      type: Object,
+      required: true,
+    },
+    StatusItems: {
       type: Object,
       required: true,
     },
@@ -170,6 +220,9 @@ export default {
     modelsCount() {
       return this.SelectedModels?.length ?? 0 
     },
+    giftModelsCount() {
+      return this.SelectedGiftModels?.length ?? 0 
+    },
     symbolsCount() {
       return this.SelectedSymbols?.length ?? 0 
     },
@@ -179,8 +232,14 @@ export default {
     hasModels() {
       return this.modelsCount > 0 
     },
+    hasGiftModels() {
+      return this.giftModelsCount > 0 
+    },
     hasSort() {
-      return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort] 
+      return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort]
+    },
+    hasStatus() {
+      return !!this.SelectedStatus && !!this.StatusItems?.[this.SelectedStatus]
     },
     hasSymbols() {
       return this.symbolsCount > 0 
@@ -189,11 +248,18 @@ export default {
       return this.backdropsCount > 0 
     },
     isEmptyFilter() {
-      return !(this.hasModels || this.hasSort || this.hasSymbols || this.hasBackdrops)
+      return !(this.hasModels || this.hasGiftModels || this.hasSort || this.hasStatus || this.hasSymbols || this.hasBackdrops)
     },
     sortTitle() {
       if (this.hasSort) {
         return this.$t(`profile.profileFilterModal.items.${this.SelectedSort}`)
+      } else {
+        return ''
+      }
+    },
+    statusTitle() {
+      if (this.hasStatus) {
+        return this.$t(`profile.profileStatusModal.items.${this.SelectedStatus}`)
       } else {
         return ''
       }
@@ -251,8 +317,16 @@ export default {
       this.$emit('openModelModal');
     },
 
+    openGiftModelsModal() {
+      this.$emit('openGiftModelsModal');
+    },
+
     openSortModal() {
       this.$emit('openSortModal');
+    },
+
+    openStatusModal() {
+      this.$emit('openStatusModal');
     },
 
     openSymbolModal() {
@@ -271,8 +345,16 @@ export default {
       this.$emit('clearModels');
     },
 
+    clearGiftModels() {
+      this.$emit('clearGiftModels');
+    },
+
     clearSort() {
       this.$emit('clearSort');
+    },
+
+    clearStatus() {
+      this.$emit('clearStatus');
     },
 
     clearSymbols() {

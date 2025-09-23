@@ -10,6 +10,7 @@
         <div v-else class="_content">
           <div class="_items">
             <div 
+             @click="buy"
               class="_item"
             >
               <div class="_avatar">
@@ -41,7 +42,7 @@
   import { cleanString } from '../../utils/useApp';
 
   import Image_Stars from '@/assets/images/stars.png';
-import TelegramModule from '../../hooks/useTelegram';
+  import TelegramModule from '../../hooks/useTelegram';
 
   export default {
     props: {

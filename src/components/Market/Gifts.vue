@@ -15,6 +15,7 @@
             </div>
 
             <div
+              @click="openGift(gift)"
               class="background upg"
               :style="{
                 '--center-color': gift.core.upgrade.background.colors_center,
@@ -22,11 +23,11 @@
               }"
             ></div>
 
-            <div class="symbol upg">
+            <div @click="openGift(gift)" class="symbol upg">
               <img :src="gift.core.upgrade.symbol.image" :alt="gift.core.upgrade.symbol.name" />
             </div>
 
-            <div class="model">
+            <div @click="openGift(gift)" class="model">
               <div class="upg">
                 <div v-if="gift.core.gift.media === 'svg'" class="image">
                   <img :src="gift.core.upgrade.nft_name.image" alt="model" />

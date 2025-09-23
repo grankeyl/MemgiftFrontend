@@ -42,12 +42,21 @@
             gap: 20px
 
             .items
-                display: flex
+                display: grid
+                grid-template-columns: repeat(3, auto)
                 align-items: center
                 position: relative
-                gap: 14px
+                gap: 24px
                 overflow-x: scroll
                 overflow-y: hidden
+
+                @media screen and (max-width: 430px)
+                    grid-template-columns: repeat(3, 0fr)
+                    gap: 18px
+
+                @media screen and (max-width: 387px)
+                    grid-template-columns: repeat(3, 0fr)
+                    gap: 14px
                 
                 .item
                     width: fit-content
@@ -56,6 +65,10 @@
                     align-items: center
                     gap: 6px
                     position: relative
+
+                    &.disabled
+                        pointer-events: none
+                        opacity: .5
 
                     .circle
                         width: 6px
@@ -74,6 +87,18 @@
                         justify-content: center
                         align-items: center
                         position: relative
+
+                        &.pen
+                            & .kit-icon
+                                width: 16px
+                                height: 16px
+
+                                & svg
+                                    width: 100%
+                                    height: 100%
+
+                                    & path
+                                        fill: $app-text-color-descr-primary
                         
                         & .kit-icon
                             width: 18px
@@ -94,6 +119,12 @@
                         font-weight: 600
                         color: $app-text-color-descr-primary
                         white-space: nowrap
+
+                        @media screen and (max-width: 430px)
+                            font-size: 14px
+
+                        @media screen and (max-width: 387px)
+                            font-size: 12px
                     
                     .dropdown
                         width: 19px

@@ -48,7 +48,7 @@
                   <img :src="GiftImg" alt="gift" />
                 </div>
                 <div class="text">
-                  <h4>Removed from sale</h4>
+                  <h4>{{ $t('market.listings.removeListing') }}</h4>
                 </div>
               </div>
               <div class="spanner sold" v-if="item.nft_status === 'sold'">
@@ -58,7 +58,7 @@
                   </svg>
                 </div>
                 <div class="text">
-                  <h4>Sold for</h4>
+                  <h4>{{ $t('market.listings.soldFor') }}</h4>
                 </div>
                 <div class="price">
                   <h4>{{ cutNumberNano(item.nft_price_nano) }}</h4>
@@ -74,7 +74,7 @@
                   </svg>
                 </div>
                 <div class="text">
-                  <h4>On Sale for</h4>
+                  <h4>{{ $t('market.listings.onSaleFor') }}</h4>
                 </div>
                 <div class="price">
                   <h4>{{ cutNumberNano(item.nft_price_nano) }}</h4>

@@ -91,7 +91,7 @@ export const getUserGifts = async (
         const tokenBearer = Cookies.get("token");
         if (!tokenBearer) return false;
         const response = await axios.get(
-            `${API_URL}/nft/${userId}?status=${status}` +
+            `${API_URL}/nft/m_u/${userId}?status=${status}` +
             `&filter=${filter}` +
             `&gift_ukey=${gift_ukey}` +
             `&offset=${offset}&limit=${limit}`,

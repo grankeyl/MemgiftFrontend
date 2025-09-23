@@ -26,7 +26,7 @@
         </div>
         <div class="items">
           <div 
-            v-for="(item, index) in SortItems" 
+            v-for="(item, index) in sortedItems" 
             :key="index"
             @click="applySelect(item.id)"
             class="item"
@@ -65,6 +65,7 @@ export default {
     Skeleton: { type: Boolean, required: true },
     SkeletonTime: { type: Number, required: true },
     ModalActive: { type: Boolean, required: true },
+    ActiveTab: { type: String, required: true },
     SortItems: { type: Array, required: true },
     Selected: { type: Array, default: () => [] },
   },
@@ -103,6 +104,17 @@ export default {
   computed: {
     isSkeleton() {
       return this.Skeleton;
+    },
+    sortedItems() {
+      // берём массив из объекта или сам массив, если уже массив
+      const list = Array.isArray(this.SortItems)
+        ? this.SortItems
+        : Object.values(this.SortItems || {});
+
+      if (this.ActiveTab === 'gifts') {
+        return list.filter(i => !['sold', 'listed', 'removed'].includes(i.id));
+      }
+      return list;
     }
   },
   
@@ -156,5 +168,18 @@ export default {
 };
 </script>
 
-<style>
+<style lang="sass" scoped>
+@use "./../../assets/styles/_variables" as *
+
+.pen
+    & .kit-icon
+        width: 16px
+        height: 16px
+
+        & svg
+            width: 100%
+            height: 100%
+
+            & path    
+                fill: $app-text-color-descr-primary
 </style>

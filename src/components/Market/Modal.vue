@@ -3,7 +3,7 @@
 
     <div v-if="ModalActive" class="balance" @click="openWallet">
       <div class="context">
-        <h4>{{ cutNumber(storeCache.UserData.user.Balance.balance_ton) }}</h4>
+        <h4>{{ cutNumber(getBalance) }}</h4>
         <img :src="TonImg" alt="ton" />
       </div>
       <div class="button">
@@ -315,6 +315,9 @@ export default {
       const clearBalance = parseFloat(this.storeCache.UserData.user.Balance.balance_ton);
       const clearPrice = parseFloat(this.ModalComp.Info.price_ton);
       return clearBalance >= clearPrice;
+    },
+    getBalance() {
+      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
     },
   },
 

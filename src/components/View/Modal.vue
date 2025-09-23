@@ -223,6 +223,23 @@
                 <span>{{ UpgradedNft?.BackgroundDropRate }}%</span>
               </div>
             </div>
+            <div v-if="ModalComp.Market.MarketOn" class="profile_gift_preview_table_item">
+              <div class="profile_gift_preview_table_item_left">
+                <div class="marker">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.9389 5.335L14.0091 2.96973C13.8712 2.61904 13.8023 2.44367 13.6912 2.31496C13.5931 2.20119 13.4719 2.11406 13.3373 2.06055C13.1851 2 13.0101 2 12.6601 2H6.33999C5.98999 2 5.81499 2 5.66273 2.06055C5.52816 2.11406 5.40695 2.20119 5.30882 2.31496C5.19779 2.44368 5.12886 2.61903 4.99099 2.96973L4.06114 5.335H14.9389Z" fill="#6691FF"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4.91357 8.26029C5.16377 8.36037 5.43412 8.415 5.71619 8.415C6.18083 8.415 6.61405 8.26632 6.97747 8.01087C7.34089 8.26632 7.77411 8.415 8.23875 8.415C8.70339 8.415 9.13661 8.26632 9.50003 8.01087C9.86345 8.26632 10.2967 8.415 10.7613 8.415C11.2259 8.415 11.6592 8.26632 12.0226 8.01087C12.386 8.26632 12.8192 8.415 13.2839 8.415C13.5659 8.415 13.8363 8.36037 14.0865 8.26029V11.4C14.0865 11.9601 14.0865 12.2401 13.9865 12.454C13.8986 12.6422 13.7583 12.7951 13.5857 12.891C13.3894 13 13.1326 13 12.6188 13H6.38124C5.8675 13 5.61064 13 5.41442 12.891C5.24182 12.7951 5.10149 12.6422 5.01354 12.454C4.91357 12.2401 4.91357 11.9601 4.91357 11.4V8.26029ZM5.83084 10.3C5.83084 10.02 5.83084 9.87996 5.88083 9.773C5.9248 9.67892 5.99496 9.60243 6.08126 9.5545C6.17937 9.5 6.3078 9.5 6.56467 9.5H8.30753C8.5644 9.5 8.69283 9.5 8.79094 9.5545C8.87724 9.60243 8.9474 9.67892 8.99137 9.773C9.04136 9.87996 9.04136 10.02 9.04136 10.3V11.2C9.04136 11.48 9.04136 11.62 8.99137 11.727C8.9474 11.8211 8.87724 11.8976 8.79094 11.9455C8.69283 12 8.5644 12 8.30753 12H6.56467C6.3078 12 6.17937 12 6.08126 11.9455C5.99496 11.8976 5.9248 11.8211 5.88083 11.727C5.83084 11.62 5.83084 11.48 5.83084 11.2V10.3Z" fill="#6691FF"/>
+                    <path d="M5.71616 7.75C4.80481 7.75 4.059 6.97725 4 6H15C14.941 6.97725 14.1952 7.75 13.2838 7.75C12.7855 7.75 12.3367 7.51896 12.0226 7.14977C11.7084 7.51896 11.2596 7.75 10.7613 7.75C10.2629 7.75 9.81412 7.51896 9.5 7.14977C9.18589 7.51896 8.73705 7.75 8.23872 7.75C7.74039 7.75 7.29156 7.51896 6.97744 7.14977C6.66333 7.51896 6.2145 7.75 5.71616 7.75Z" fill="#6691FF"/>
+                  </svg>
+                  <p>{{ $t('profile.market') }}</p>
+                  <Icon class="kit-icon" v-html="Icon.ChevroneRight"></Icon>
+                </div>
+              </div>
+              <div class="profile_gift_preview_table_item_right">
+                <p>{{ $t('profile.sellFor') }} {{ cutNumber(ModalComp.Market.TonPrice) }}</p>
+                <img :src="TonImg" alt="ton" />
+              </div>
+            </div>
             <div class="profile_gift_preview_table_item">
               <div class="profile_gift_preview_table_item_left last">
                 <h4>{{ $t('profile.profileGiftPreviewTableItem4') }}</h4>
@@ -447,6 +464,7 @@ import { Icon } from '../Icon';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { fireFromBottom, shootConfetti } from '../../utils/useConfetti';
 import { getUpgradedModel, getUpgradedSymbol } from '../../utils/useGift';
+import { cutNumber } from '../../utils/useTon';
 
 import TelegramModule from '../../hooks/useTelegram';
 
@@ -458,6 +476,10 @@ import GiftLottie from '../GiftLottie.vue';
 import { showToast } from '../../utils/toastManager';
 import { copyToClipboard } from '../../utils/copyToClipboard';
 import Notiflix from 'notiflix';
+
+// Images
+import MarketImg from '@/assets/images/market.svg';
+import TonImg from '@/assets/images/market/ton.svg';
 
 export default {
   props: {
@@ -498,6 +520,9 @@ export default {
 
   data() {
     return {
+      MarketImg,
+      TonImg,
+
       storeCache: useCacheStore(),
 
       isLoading: this.$props.Skeleton,
@@ -544,6 +569,7 @@ export default {
       Image_Stars,
       Image_StarsWhite,
       Image_GiftBg,
+      cutNumber,
 
       getUpgradedModel,
     };
