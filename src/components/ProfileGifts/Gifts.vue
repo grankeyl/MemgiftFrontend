@@ -26,6 +26,10 @@
           </div>
           <div class="_descr">
             <p>{{ $t('profile.profileGiftsNullButtonAsking') }}</p>
+            <span @click="openStore">
+              <div class="kit-icon" v-html="Icon.Store"></div>
+              <p>Market</p>
+            </span>
           </div>
         </div>
         <div class="_right">
@@ -433,6 +437,10 @@ export default {
           // cancel
         }
       );
+    },
+
+    openStore() {
+      this.$router.push('/m');
     },
   },
 };

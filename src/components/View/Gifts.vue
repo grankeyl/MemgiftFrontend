@@ -264,6 +264,10 @@
       </div>
       <div class="description">
         <p>{{ $t('profile.profileGiftsNullButtonAsking') }}</p>
+        <span @click="openStore">
+          <div class="kit-icon" v-html="Icon.Store"></div>
+          <p>Market</p>
+        </span>
       </div>
     </div>
   </div>
@@ -367,7 +371,7 @@ export default {
       StarsImg,
       StoreImg,
       ProfileEmptyImg,
-      
+
       configApp: getConfig(),
       storeCache: useCacheStore(),
       storeNftsApp: {},
@@ -665,6 +669,10 @@ export default {
 
     clearSort() {
       this.$emit('clearSort');
+    },
+
+    openStore() {
+      this.$router.push('/m');
     },
   },
 };

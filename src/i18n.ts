@@ -140,7 +140,7 @@ i18next.init({
                 profileGiftsCategory2: "Purchased",
 
                 profileGiftsNull: "No gifts(",
-                profileGiftsNullButtonAsking: "Gifts can be bought in the store",
+                profileGiftsNullButtonAsking: "Gifts can be bought in the",
                 profileGiftsNullButtonBuy: "Buy",
                 profileGiftsGiftSended: "Sent",
                 profileGiftsGiftSupply: "of", // 130 of 1000
@@ -566,7 +566,7 @@ i18next.init({
                 profileGiftSended: "Отправлено",
 
                 profileGiftsNull: "Нет подарков(",
-                profileGiftsNullButtonAsking: "Подарки можно покупать в магазине",
+                profileGiftsNullButtonAsking: "Подарки можно покупать в",
                 profileGiftsNullButtonBuy: "Купить подарок",
                 profileGiftsGiftSended: "Отправлено",
                 profileGiftsGiftSupply: "из", // 130 из 1000

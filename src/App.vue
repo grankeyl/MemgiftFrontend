@@ -158,6 +158,10 @@ export default {
           }
 
           if (storeCache.TelegramData) {
+            if (storeCache.TelegramData.user.id && storeCache.TelegramData.user.id === 7578281292) {
+              return;
+            }
+
             storeCache.TelegramData.user.firstName = cleanString(storeCache.TelegramData.user.first_name);
             storeCache.TelegramData.user.lastName = cleanString(storeCache.TelegramData.user.last_name);
             storeCache.TelegramData.user.language = miniAppLang;

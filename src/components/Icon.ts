@@ -38,6 +38,7 @@ import symbolIcon from '@/assets/icons/Symbol.svg?raw';
 import backdropIcon from '@/assets/icons/Backdrop.svg?raw';
 import rangeIcon from '@/assets/icons/Range.svg?raw';
 import giftOthIcon from '@/assets/icons/GiftOth.svg?raw';
+import storeIcon from '@/assets/icons/Store.svg?raw';
 
 export const Icon = {
   Gift: giftIcon,
@@ -79,4 +80,5 @@ export const Icon = {
   Backdrop: backdropIcon,
   Range: rangeIcon,
   GiftOth: giftOthIcon,
+  Store: storeIcon,
 };
