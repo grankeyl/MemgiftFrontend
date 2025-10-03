@@ -42,12 +42,12 @@ const router = createRouter({
     { path: '/deal', name: 'deal', component: Deal },
     { path: '/private-deal', name: 'private-deal', component: PrivateDeal },
     { path: '/referral', name: 'referral', component: Referral },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'NotFound',
-      component: { render: () => null }, // ничего не рисует
-      meta: { noLayout: true }
-    }
+    // {
+    //   path: '/:pathMatch(.*)*',
+    //   name: 'NotFound',
+    //   component: { render: () => null }, // ничего не рисует
+    //   meta: { noLayout: true }
+    // }
   ]
 })
 

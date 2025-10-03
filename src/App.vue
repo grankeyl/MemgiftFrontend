@@ -115,7 +115,7 @@ export default {
         }
         if (dtx === 'profile') { router.push('/profile'); }
         if (dtx === 'tickets') { router.push('/tickets'); }
-        if (dtx === 'market') { router.push('/market'); }
+        if (dtx === 'market') { router.push('/m'); }
         if (dtx === 'referrals') { router.push('/referrals'); }
 
         mountMiniApp();
