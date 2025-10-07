@@ -123,10 +123,12 @@ i18next.init({
             rating: {
                 title: "Rating",
                 description: "Receive gifts by friends and boost your rating!",
+                section0: "Contest",
                 section1: "Holders",
                 section2: "Referrals",
                 gifts: "gifts",
                 referrals: "referrals",
+                contestDescr: "Results after reaching a trading volume of 20,000 TON",
             },
             profile: {
                 profileGiftsCount: "gifts", // 0 gifts
@@ -549,10 +551,12 @@ i18next.init({
             rating: {
                 title: "Рейтинг",
                 description: "Получай подарки и увеличивай свой рейтинг!",
+                section0: "Конкурс",
                 section1: "Холдеры",
                 section2: "Рефералы",
                 gifts: "подарок",
                 referrals: "реферал",
+                contestDescr: "Результаты после достижения объема торгов в 20 000 TON",
             },
             profile: {
                 profileGiftsCount: "подар(ков)", // 1 подарков

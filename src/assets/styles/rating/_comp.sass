@@ -672,6 +672,10 @@
                 will-change: background
                 cursor: pointer
 
+                @media screen and (max-width: 363px)
+                    height: 34px
+                    padding: 0 12px
+
                 &.active
                     background: $app-span-gray-background
                     
@@ -692,6 +696,99 @@
             height: 100%
             transform: translateX(0%)
             transition: transform 0.22s ease
+
+            &.contest
+                .top-three
+                    .gifts
+                        display: flex
+                        width: fit-content
+                        white-space: nowrap
+                        align-items: center
+                        background: rgba($app-background-blue-secondary, 0.15) !important
+                        
+                        img
+                            width: 11px
+                            height: 11px
+                            margin-left: 4px
+
+                .progress-contest
+                    width: 100%
+                    height: fit-content
+                    margin-top: -10px
+                    margin-bottom: 22px
+                    border-radius: 10px
+                    padding: 0 16px
+
+                    .progress-contest-lined
+                        width: 100%
+                        height: 6px
+                        background: rgba($app-background-blue-secondary, 0.05)
+                        border-radius: 10px
+
+                        .progress-contest-line
+                            width: 10%
+                            height: 100%
+                            background: rgba($app-background-blue-secondary, 0.8)
+                            border-radius: 10px
+                            transition: width 0.2s linear
+                    
+                    .progressed-texts
+                        width: 100%
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        justify-content: space-between
+                        margin-top: 10px
+                        margin-bottom: 8px
+
+                        .title
+                            width: fit-content
+                            height: 100%
+                            display: flex
+                            align-items: center
+                            justify-content: center
+
+                            &:last-child
+                                h4
+                                    color: $app-text-color
+                                    opacity: 1
+
+                                    span
+                                        color: $app-text-color-primary-secondary
+                                        
+
+                            h4
+                                font-size: 14px
+                                font-weight: 600
+                                color: $app-text-color-primary-secondary
+                                white-space: nowrap
+                            
+                            img
+                                width: 11px
+                                height: 11px
+                                margin-left: 4px
+                    
+                    .info 
+                        margin-top: 10px
+                        p
+                            font-size: 13px
+                            font-weight: 400
+                            opacity: 0.6
+
+                .other-list
+                    .gifts
+                        display: flex
+                        width: fit-content
+                        white-space: nowrap
+                        align-items: center
+                        background: rgba($app-background-blue-secondary, 0.1) !important
+                        padding: 4px 9px
+                        border-radius: 50px
+
+                        img
+                            width: 11px
+                            height: 11px
+                            margin-left: 4px
 
             &.holders
                 transform: translateX(0%)
@@ -813,6 +910,25 @@
                             border-radius: 50%
                             padding: 4px 8px
                             font-size: 0.8rem
+
+                        .gift
+                            position: absolute
+                            top: -14px
+                            right: -12px
+                            // background: rgba($app-background-secondary, 0.8)
+                            color: black
+                            font-weight: 600
+                            border-radius: 50%
+                            width: 45px
+                            height: 45px
+                            font-size: 0.8rem
+                            display: flex
+                            align-items: center
+                            justify-content: center
+
+                            img
+                                width: 41px
+                                height: 41px
                     
                     .name
                         margin-top: 0.5rem
@@ -868,6 +984,19 @@
                         font-size: 14px
                         font-weight: 600
                         color: $app-text-color
+                    
+                    .gift
+                        position: relative
+                        width: 30px
+                        height: 30px
+                        display: flex
+                        justify-content: center
+                        align-items: center
+
+                        img
+                            width: 36px
+                            height: 36px
+                            margin-left: 4px
                     
                     .info
                         flex: 1

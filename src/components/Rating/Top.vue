@@ -90,6 +90,9 @@
 
     <div v-else class="_content">
       <div class="sections">
+        <div class="section" :class="{ active: selectedSection === 'contest' }" @click="selectedSection = 'contest'">
+          <h4>{{ $t('rating.section0') }}</h4>
+        </div>
         <div class="section" :class="{ active: selectedSection === 'holders' }" @click="selectedSection = 'holders'">
           <h4>{{ $t('rating.section1') }}</h4>
         </div>
@@ -98,7 +101,95 @@
         </div>
       </div>
 
-      <div class="topFlexed">
+      <div v-if="selectedSection === 'contest'" class="topFlexed">
+        <div class="top contest">
+          <div class="top-three">
+            <div
+              v-for="(leader, index) in TopContestThree"
+              @click="routeUser(leader.tld)"
+              :key="leader?.tld || index"
+              :class="`place-${leader?.rank ?? 'x'}`"
+              class="top-user"
+            >
+              <div class="avatar-wrapper">
+                <img 
+                  v-if="leader && leader?.photo"
+                  :src="leader?.photo || ''"
+                  alt="avatar"
+                  class="avatar"
+                />
+                <div v-else class="avatar avatar_null">
+                  <h4 v-if="leader?.name">{{ leader?.name[0] }}</h4>
+                  <h4 v-else>N</h4>
+                </div>
+                <div class="gift">
+                  <img v-if="leader?.rank && leader?.rank === 1" src="https://storage.googleapis.com/portals-market/gifts/astralshard/models/png/muffin.png" alt="ton" />
+                  <img v-if="leader?.rank && leader?.rank === 2" src="https://storage.googleapis.com/portals-market/gifts/toybear/models/png/bluedandy.png" alt="ton" />
+                  <img v-if="leader?.rank && leader?.rank === 3" src="https://storage.googleapis.com/portals-market/gifts/ionicdryer/models/png/cyberprism.png" alt="ton" />
+                </div>
+              </div>
+              <div class="name">{{ cleanString(leader?.name) || 'No Name' }}</div>
+              <div class="gifts">
+                <p>{{ cutNumberNano(leader?.sum_volume_nano) }}</p>
+                <img src="/profile/ton.svg" alt="">
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-contest">
+            <div class="progressed-texts">
+              <div class="title">
+                <h4>{{ topContest.progress_to_20000_ton_percent }}%</h4>
+              </div>
+              <div class="title">
+                <h4><span>{{ topContest.total_sum_volume_ton }}</span> / 20 000</h4>
+                <img src="/profile/ton.svg" alt="ton" />
+              </div>
+            </div>
+            <div class="progress-contest-lined">
+              <div class="progress-contest-line" :style="{ width: topContest.progress_to_20000_ton_percent + '%' }"></div>
+            </div>
+            <div class="info">
+              <p>{{ $t('rating.contestDescr') }}</p>
+            </div>
+          </div>
+
+          <div class="other-list">
+            <div
+              v-for="(leader, index) in TopContestOther"
+              @click="routeUser(leader.tld)"
+              :key="leader?.tld || index"
+              :class="`place-${leader?.rank ?? 'x'}`"
+              class="other-user"
+            >
+              <div v-if="leader?.rank && leader?.rank > 10" class="rank">{{ leader?.rank ?? 'x' }}</div>
+              <div v-if="leader?.rank && leader?.rank < 11" class="gift">
+                <img v-if="leader?.rank && leader?.rank === 4" src="https://storage.googleapis.com/portals-market/gifts/stellarrocket/models/png/spaceveggie.png" alt="ton" />
+                <img v-if="leader?.rank && leader?.rank >= 5 && leader?.rank <= 10" src="https://storage.googleapis.com/portals-market/gifts/freshsocks/models/png/gunkfight.png" alt="ton" />
+              </div>
+              <div class="info">
+                <div class="name" v-if="cleanString(leader.name) && cleanString(leader.name).trim()">{{ cleanString(leader.name) }}</div>
+                <div class="name" v-else>No Name</div>
+                <div class="gifts">
+                  <p>{{ cutNumberNano(leader?.sum_volume_nano) }}</p>
+                  <img src="/profile/ton.svg" alt="">
+                </div>
+              </div>
+              <img 
+                v-if="leader.photo"
+                :src="leader.photo || ''"
+                alt="avatar"
+                class="small-avatar"
+              />
+              <div v-else class="small-avatar avatar_null">
+                <h4>{{ leader.name[0] }}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="selectedSection !== 'contest'" class="topFlexed">
         <div class="top holders" :class="{ hide: selectedSection === 'others' }">
           <div class="top-three">
             <div
@@ -242,6 +333,7 @@ import { Icon } from '../Icon';
 import { cleanString, pluralizeReferrals } from '../../utils/useApp';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { pluralizeGift } from '../../utils/useGift';
+import { cutNumberNano } from '../../utils/useTon';
 
 import * as nftsApi from '../../api/nftApi';
 
@@ -267,7 +359,8 @@ export default {
       ratingAppLimit: 20,
       isFetchingMore: false,
 
-      selectedSection: 'holders',
+      selectedSection: 'contest',
+      topContest: [],
       topRefs: [],
 
       topThree: [
@@ -281,6 +374,7 @@ export default {
       cleanString,
       pluralizeGift,
       pluralizeReferrals,
+      cutNumberNano,
     };
   },
 
@@ -290,6 +384,7 @@ export default {
     this.storeCache.RatingApp = [];
     this.fetchMoreIfNeeded();
     this.getTopRefs();
+    this.getTopContest();
     this.$watch(
       () => this.storeCache.RatingApp,
       () => {
@@ -323,6 +418,17 @@ export default {
     },
     TopRefsOther() {
       return this.topRefs.slice(3).filter(user => user && user.rankNumber !== undefined);
+    },
+    TopContestThree() {
+      if (!this.topContest.top) return [];
+      const topThree = this.topContest.top.slice(0, 3);
+      const center = topThree.find(user => user.rank === 1);
+      const sides = topThree.filter(user => user.rank !== 1); 
+      return [sides[0], center, sides[1]];
+    },
+    TopContestOther() {
+      if (!this.topContest.top) return [];
+      return this.topContest.top.slice(3).filter(user => user && user.rank !== undefined);
     },
   },
 
@@ -406,6 +512,14 @@ export default {
       } catch (err) {} finally {
         this.isFetchingMore = false;
       }
+    },
+
+    async getTopContest() {
+      try {
+        const res = await nftsApi.getTopContest();
+        if (!res) return;
+        this.topContest = res;
+      } catch (error) {}
     },
 
     async getTopRefs() {

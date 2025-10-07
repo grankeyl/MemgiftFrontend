@@ -410,6 +410,20 @@ export const getRating = async (
     }
 };
 
+export const getTopContest = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/top-volume`,
+            { headers: { "X-Init-Data": tokenBearer } }
+        );
+        const count = response.data;
+        return count;
+    } catch (error) {
+        return false;
+    }
+};
+
 export const getTopRefs = async () => {
     try {
         const tokenBearer = Cookies.get("token");

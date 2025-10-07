@@ -3,91 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="theme-color" content="#1C1C1C">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Memgift - Mini App</title>
+
     <link rel="stylesheet" href="/src/assets/styles/fonts.css">
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+
+    <!-- GA: сначала подключаем библиотеку, потом config -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CJMFXZXVHZ"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag(){ dataLayer.push(arguments); }
       gtag('js', new Date());
-
       gtag('config', 'G-CJMFXZXVHZ');
     </script>
 
+    <!-- Telegram SDK: defer, чтобы не блокировать парсинг -->
+    <script src="https://telegram.org/js/telegram-web-app.js?56" defer></script>
+
     <script>
-      // Set up a mutation observer to wait for WebApp to be available
-      const initWebApp = () => {
-        const FULLSCREEN_ALLOWED_PLATFORMS = ['ios', 'android']
-        const webApp = window?.Telegram?.WebApp
-
-        if (webApp) {
-          webApp.expand()
-
-          const withFullScreen =
-            Number(webApp.version) >= 8 &&
-            webApp.requestFullscreen &&
-            FULLSCREEN_ALLOWED_PLATFORMS.includes(webApp.platform)
-
-          if (withFullScreen) {
-            webApp.requestFullscreen()
-          }
-
-          webApp.disableVerticalSwipes()
-
-          return true
-        }
-        return false
+      // безопасная инициализация Telegram WebApp после загрузки DOM и SDK
+      function initWebAppSafe() {
+        const wa = window?.Telegram?.WebApp;
+        if (!wa) return;                        // SDK ещё не готов — просто выходим
+        try {
+          wa.expand?.();
+          const allowFs = Number(wa.version || 0) >= 8
+            && typeof wa.requestFullscreen === 'function'
+            && ['ios','android'].includes(wa.platform);
+          if (allowFs) wa.requestFullscreen();
+          wa.disableVerticalSwipes?.();
+        } catch (e) { console.debug('TG init skipped:', e); }
       }
 
-      // Try to initialize immediately
-      if (!initWebApp()) {
-        // If not available, set up an observer to check when it becomes available
-        const observer = new MutationObserver(() => {
-          if (initWebApp()) {
-            observer.disconnect()
-          }
-        })
-
-        // Start observing the document for changes
-        observer.observe(document, {
-          childList: true,
-          subtree: true
-        })
-
-        // Also try again after a short delay as a fallback
-        setTimeout(() => {
-          initWebApp()
-          observer.disconnect()
-        }, 1000)
-      }
+      // Инициализируем после DOM, а также после загрузки TG SDK
+      document.addEventListener('DOMContentLoaded', initWebAppSafe);
+      window.addEventListener('load', initWebAppSafe);
     </script>
 
     <script>
+      // Полайфилл для View Transitions — не мешаем первому рендеру
       try {
-        const originalStartViewTransition = document.startViewTransition
-        if (originalStartViewTransition) {
-          document.startViewTransition = function (callback) {
-            const transition = originalStartViewTransition.call(document, callback)
-            transition.finished.then(() => {
-              document.body.removeAttribute('data-transition')
-            })
-            return transition
-          }
+        const orig = document.startViewTransition;
+        if (orig) {
+          document.startViewTransition = (cb) => {
+            const t = orig.call(document, cb);
+            t.finished.then(() => document.body.removeAttribute('data-transition'));
+            return t;
+          };
         }
-      } catch (error) {
-        console.error('View transitions setup failed:', error)
-      }
+      } catch (e) { console.debug('VT setup failed:', e); }
     </script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script> -->
+
+    <style> html { background:#1C1C1C; } </style>
   </head>
   <body>
     <div id="app"></div>
+    <!-- ВАЖНО: модульный бандл монтирует Vue в #app -->
     <script type="module" src="/src/main.ts"></script>
-    <style>
-      html { background: #1C1C1C; }
-    </style>
   </body>
 </html>
