@@ -154,6 +154,35 @@
             </div>
           </div>
 
+          <div v-if="topContest.me" class="other-list my">
+            <div
+              class="other-user"
+            >
+              <div class="info">
+                <div v-if="topContest.me" class="name">
+                  <h4>{{ topContest.me.name }}</h4>
+                  <span>#{{ topContest.me.rank }}</span>
+                </div>
+                <div v-else class="name">
+                  <h4>{{ topContest.me.name }}</h4>
+                </div>
+                <div class="gifts" v-if="topContest.me">
+                  <p>My volume: {{ cutNumberNano(topContest.me.sum_volume_nano) }}</p>
+                  <img src="/profile/ton.svg" alt="">
+                </div>
+              </div>
+              <img 
+                v-if="topContest.me && topContest.me.photo"
+                :src="topContest.me.photo"
+                alt="avatar"
+                class="small-avatar"
+              />
+              <div v-else class="small-avatar avatar_null">
+                <h4>h</h4>
+              </div>
+            </div>
+          </div>
+
           <div class="other-list">
             <div
               v-for="(leader, index) in TopContestOther"

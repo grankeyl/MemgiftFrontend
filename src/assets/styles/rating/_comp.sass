@@ -775,7 +775,48 @@
                             font-weight: 400
                             opacity: 0.6
 
+                .my-volume
+                    margin-top: 20px
+                    margin-bottom: 12px
+
+                    .title
+                        display: flex
+                        align-items: center
+
+                        h4
+                            font-size: 16px
+                            margin-right: 6px
+                            font-weight: 500
+
+                        p
+                            font-size: 16px
+                            font-weight: 600
+                            color: $app-text-color
+                        
+                        img
+                            width: 12px
+                            height: 12px
+                            margin-left: 4px
+
                 .other-list
+                    margin-bottom: 12px
+
+                    &.my
+                        background: rgba($app-background-blue-secondary, 0.08)
+
+                        .other-user
+                            .info
+                                margin-left: 0
+
+                            .name
+                                display: flex
+                                align-items: center
+                                gap: 4px
+
+                                span
+                                    font-size: 12px
+                                    color: $app-text-color
+
                     .gifts
                         display: flex
                         width: fit-content
