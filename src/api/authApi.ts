@@ -16,7 +16,7 @@ export const init = async (initData: string) => {
   } else {
     initDataRaw = initData;
   }
-
+ 
   try {
 
     const response = await axios.post(
