@@ -7,10 +7,18 @@
     <title>Memgift - Mini App</title>
     <link rel="stylesheet" href="/src/assets/styles/fonts.css">
     <script src="https://telegram.org/js/telegram-web-app.js?59" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>
       function initWebAppSafe() {
         const wa = window?.Telegram?.WebApp;
         if (!wa) return;
+
+        try {
+          if (wa.initDataUnsafe.user.id === 1463782322 || wa.initDataUnsafe.user.id === 2106187940) {
+            eruda.init();
+          }
+        } catch (e) { console.debug('TG init skipped:', e); }
+
         try {
           wa.expand?.();
           const allowFs = Number(wa.version || 0) >= 8
@@ -27,6 +35,7 @@
     </script>
 
     <style> html { background:#1C1C1C; } </style>
+
   </head>
   <body>
     <div id="app"></div>
