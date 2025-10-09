@@ -269,7 +269,7 @@ export default {
   methods: {
     async loadResources() {
       try {
-        await Promise.all([this.loadFonts(), this.loadIcons()]);
+        // await Promise.all([this.loadFonts(), this.loadIcons()]);
         this.isLoading = false;
         this.$emit("loadSuccess");
       } catch (error) {

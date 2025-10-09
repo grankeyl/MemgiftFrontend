@@ -62,7 +62,7 @@ export default {
   },
 
   setup() {
-    let initDataRaw = import.meta.env.VITE_APP_INIT_DATA as any;
+    let initDataRaw = window?.Telegram?.WebApp?.initData || import.meta.env.VITE_APP_INIT_DATA;
     const miniAppTesting = import.meta.env.VITE_APP_TEST as any;
     const route = useRoute();
     const router = useRouter();
@@ -81,11 +81,11 @@ export default {
     watch(() => route.fullPath, runSafeEffects)
 
     if (miniAppTesting === 'production') {
-      if (window.Telegram?.WebApp?.initData) { 
+      if (window.Telegram) { 
         initDataRaw = window.Telegram.WebApp.initData; 
       }
     } else {
-      if (window.Telegram?.WebApp?.initData) {
+      if (window.Telegram) {
         initDataRaw = window.Telegram.WebApp.initData;
       }
     }

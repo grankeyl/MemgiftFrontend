@@ -60,6 +60,122 @@
     </div>
     <div v-else class="_content">
       <div 
+        v-for="(gift, index) in [
+          {
+            UKey: 'xz',
+            Rarity: 'author',
+            Media: 'lottie',
+            Key: 'nft_bless_god',
+            soldOut: true,
+            Locked: true,
+            Price: 2222,
+          },
+          {
+            UKey: 'xz',
+            Rarity: 'author',
+            Media: 'lottie',
+            Key: 'nft_bless_god',
+            soldOut: true,
+            Price: 1299,
+          },
+          {
+            UKey: 'xz',
+            Rarity: 'author',
+            Media: 'lottie',
+            Key: 'nft_bless_god',
+            soldOut: true,
+            Price: 599,
+          },
+          {
+            UKey: 'xz',
+            Rarity: 'author',
+            Media: 'lottie',
+            Key: 'nft_bless_god',
+            soldOut: true,
+            Price: 129,
+          },
+          {
+            UKey: 'xz',
+            Rarity: 'author',
+            Media: 'lottie',
+            Key: 'nft_bless_god',
+            soldOut: true,
+            Price: 55,
+          },
+        ]" 
+        :key="gift.UKey"
+        @click="openCollection(gift.UKey)"
+        class="_gift"
+        :class="{ 
+          [gift.Rarity]: true, 
+          ['giftNew_' + gift.New]: true
+        }"
+      >
+        <div v-if="gift.New" class="nftNewMark">
+          <p>{{ $t('home.giftNew') }}</p>
+        </div>
+        <div v-if="gift.Locked" class="nftLocked">
+          <p>Locked</p>
+        </div>
+        <div class="_symbols">
+          <img :src="Image_giftBg" />
+        </div>
+        <div v-if="gift.soldOut" class="_rarity">
+          <div class="_image">
+            <img :src="checkRarityImage('soldout')" />
+          </div>
+          <div class="_text">
+            <span>{{ checkRarity('soldout') }}</span>
+          </div>
+        </div>
+        <div v-else class="_rarity">
+          <div class="_image">
+            <img :src="checkRarityImage(gift.Rarity)" />
+          </div>
+          <div class="_text">
+            <span>{{ checkRarity(gift.Rarity) }}</span>
+          </div>
+        </div>
+
+        <div v-if="gift.Media === 'svg'" class="_nft" :class="{ nftLoading: gift.nftOnLoading }">
+          <img 
+            @load="giftOnLoad(gift)"
+            @error="giftOnError(gift)"
+            :src="gift.ImageMain"
+            v-bind:class="{ nftLoading: gift.nftOnLoading }"
+          />
+          <div class="loader-icon" :class="{ active: gift.nftOnLoading }"></div>
+        </div>
+
+        <div v-if="gift.Media === 'lottie'" class="_nft _lottie">
+          <GiftLottie
+            class="lt nftLoading"
+            :path="`/gifts/lottie/${gift.Key}.json`"
+            :loop="false"
+            width="25"
+            height="25"
+            renderer="svg"
+          />
+        </div>
+        
+        <div v-if="!gift.Locked" class="_buy">
+          <button v-if="gift.Price">
+            <p>{{ checkPriceNumber(gift.Price) }}</p>
+            <img class="starsSmall" :src="Image_starsPng" alt="stars" />
+          </button>
+          <button v-else>
+            <p>{{ $t('app.price_free') }}</p>
+          </button>
+        </div>
+        
+        <div v-if="gift.Locked" class="_buy">
+          <button v-if="gift.Price">
+            <p>0 / 5</p>
+          </button>
+        </div>
+      </div>
+
+      <div 
         v-for="(gift, index) in filteredNfts" 
         :key="gift.UKey"
         @click="openCollection(gift.UKey)"
