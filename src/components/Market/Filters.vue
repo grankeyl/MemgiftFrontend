@@ -1,8 +1,6 @@
 <template>
   <div class="_direction _comp _item filters">
-      <div v-if="isLoading" class="_skeleton">
-      </div>
-      <div class="_content" :class="{ hide: isLoading }">
+      <div class="_content">
         <div class="cont">
           <div class="items">
             <div class="item" @click="openSortModal">
@@ -269,7 +267,7 @@ export default {
   methods: {
     async loadResources() {
       try {
-        // await Promise.all([this.loadFonts(), this.loadIcons()]);
+        await Promise.all([this.loadFonts(), this.loadIcons()]);
         this.isLoading = false;
         this.$emit("loadSuccess");
       } catch (error) {
