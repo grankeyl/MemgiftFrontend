@@ -6,12 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Memgift - Mini App</title>
     <link rel="stylesheet" href="/src/assets/styles/fonts.css">
-    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+    <script src="https://telegram.org/js/telegram-web-app.js?59" defer></script>
     <script>
-      // безопасная инициализация Telegram WebApp после загрузки DOM и SDK
       function initWebAppSafe() {
         const wa = window?.Telegram?.WebApp;
-        if (!wa) return;                        // SDK ещё не готов — просто выходим
+        if (!wa) return;
         try {
           wa.expand?.();
           const allowFs = Number(wa.version || 0) >= 8
