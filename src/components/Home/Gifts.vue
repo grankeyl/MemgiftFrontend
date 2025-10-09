@@ -59,7 +59,7 @@
       <div class="_gift"></div>
     </div>
     <div v-else class="_content">
-      <div 
+      <!-- <div 
         v-for="(gift, index) in [
           {
             UKey: 'xz',
@@ -173,7 +173,7 @@
             <p>0 / 5</p>
           </button>
         </div>
-      </div>
+      </div> -->
 
       <div 
         v-for="(gift, index) in filteredNfts" 
