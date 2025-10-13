@@ -481,6 +481,7 @@ export default {
         },
         
         async fetchNftsStacks() {
+            console.log('1234567')
             if (this.GiftsComp.Searching) return;
             this.GiftsComp.Searching = true;
 
@@ -590,7 +591,6 @@ export default {
 
         applyModels(models: any) {
             this.ModalModelComp.ModelsSelected = models;
-            this.fetchNftsStacks();
         },
 
         applyGiftModels(models: any) {
@@ -599,7 +599,6 @@ export default {
 
         applySort(sort: any) {
             this.ModalSortComp.SortSelected = sort;
-            this.fetchNftsStacks();
         },
 
         applyStatus(status: any) {
@@ -608,12 +607,10 @@ export default {
 
         applySymbols(symbols: any) {
             this.SymbolModelComp.SymbolsSelected = symbols;
-            this.fetchNftsStacks();
         },
 
         applyBackdrops(backdrops: any) {
             this.BackdropModelComp.BackdropsSelected = backdrops;
-            this.fetchNftsStacks();
         },
 
         clearAll() {

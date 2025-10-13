@@ -4,6 +4,7 @@
       <div class="sections">
         <div class="section"></div>
         <div class="section"></div>
+        <div class="section"></div>
       </div>
 
       <div class="topFlexed">
