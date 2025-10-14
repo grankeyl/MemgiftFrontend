@@ -2,8 +2,8 @@
   <div class="_direction _comp _item filters">
       <div class="_content">
         <div class="cont">
-          <div class="items">
-            <div class="item" @click="openSortModal">
+          <div class="filtersItems">
+            <div class="filtersItemsItem" @click="openSortModal">
               <div class="circle" v-if="hasSort"></div>
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.Sort"></div>
@@ -15,7 +15,7 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <div class="item" @click="openStatusModal" v-if="ActiveTab === 'listings'">
+            <div class="filtersItemsItem" @click="openStatusModal" v-if="ActiveTab === 'listings'">
               <div class="circle" v-if="hasStatus"></div>
               <div class="icon pen">
                 <div class="kit-icon" v-html="Icon.Pen"></div>
@@ -27,7 +27,7 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <div class="item" @click="openModelModal">
+            <div class="filtersItemsItem" @click="openModelModal">
               <div class="circle" v-if="hasModels"></div>
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.Blocks"></div>
@@ -39,7 +39,7 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <div class="item" @click="openGiftModelsModal" :class="{ disabled: !hasModels }">
+            <div class="filtersItemsItem" @click="openGiftModelsModal" :class="{ disabled: !hasModels }">
               <div class="circle" v-if="hasGiftModels"></div>
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.GiftOth"></div>
@@ -51,7 +51,7 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <div class="item" @click="openSymbolModal">
+            <div class="filtersItemsItem" @click="openSymbolModal">
               <div class="circle" v-if="hasSymbols"></div>
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.Symbol"></div>
@@ -63,7 +63,7 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <div class="item" @click="openBackdropModal">
+            <div class="filtersItemsItem" @click="openBackdropModal">
               <div class="circle" v-if="hasBackdrops"></div>
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.Backdrop"></div>
@@ -75,7 +75,7 @@
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <!-- <div class="item">
+            <!-- <div class="filtersItemsItem">
               <div class="icon">
                 <div class="kit-icon" v-html="Icon.Range"></div>
               </div>
