@@ -47,17 +47,19 @@
         opacity: 1 !important
         pointer-events: all !important
         gap: 12px
+        position: relative !important
         
         .cont
             display: flex
             flex-direction: column
             gap: 20px
+            position: relative !important
 
             .filtersItems
                 display: grid
                 grid-template-columns: repeat(3, auto)
                 align-items: center
-                position: relative
+                position: relative !important
                 gap: 24px
                 overflow-x: scroll
                 overflow-y: hidden
@@ -78,6 +80,7 @@
                     gap: 6px
                     position: relative
                     overflow: auto
+                    position: relative !important
 
                     &.disabled
                         pointer-events: none
