@@ -1,0 +1,77 @@
+@startuml
+title Онлайн-заказ еды — Диаграмма компонентов
+
+' ==== Клиентские приложения ====
+package "Клиенты" {
+  [Web/Mobile UI] as UI
+  [Партнёрский портал ресторана] as PartnerUI
+  [Админ-панель] as AdminUI
+}
+
+' ==== Шина/вход ====
+[API Gateway] as APIGW
+
+' ==== Сервисы домена ====
+[Auth Service] as Auth
+[User/Profile Service] as Profile
+[Catalog Service] as Catalog
+[Order Service] as Order
+[Payment Service] as Payment
+[Delivery/Logistics Service] as Delivery
+[Notification Service] as Notify
+[Reporting/Analytics] as Reporting
+
+' ==== Хранилища ====
+database "UsersDB" as UsersDB
+database "CatalogDB" as CatalogDB
+database "OrdersDB" as OrdersDB
+database "PaymentsDB" as PaymentsDB
+database "Logs/Events" as EventsDB
+
+' ==== Внешние интеграции ====
+cloud "Payment Provider" as ExtPay
+cloud "Maps/Geocoding" as ExtMaps
+cloud "Push/SMS/Email" as ExtMsg
+
+' ==== Клиенты -> API ====
+UI --> APIGW : REST/GraphQL
+PartnerUI --> APIGW : REST/GraphQL
+AdminUI --> APIGW : REST/GraphQL
+
+' ==== API -> Сервисы ====
+APIGW --> Auth
+APIGW --> Profile
+APIGW --> Catalog
+APIGW --> Order
+APIGW --> Payment
+APIGW --> Delivery
+APIGW --> Notify
+APIGW --> Reporting
+
+' ==== Взаимодействия между сервисами ====
+Order --> Catalog : проверка меню/цен
+Order --> Payment : инициировать оплату
+Order --> Delivery : создать доставку/трек
+Order <- Notify : вебхуки/события заказа
+Payment --> Notify : статус оплаты
+Delivery --> Notify : статус курьера
+Auth --> Profile : выдача userId
+
+' ==== Данные ====
+Profile --> UsersDB
+Catalog --> CatalogDB
+Order --> OrdersDB
+Payment --> PaymentsDB
+Reporting --> EventsDB
+
+' ==== Внешние ====
+Payment --> ExtPay : SDK/Webhook
+Delivery --> ExtMaps : маршрутизация/ETA
+Notify --> ExtMsg : пуш/SMS/email
+
+' ==== Админ/Партнёры ====
+PartnerUI --> Catalog : управление меню
+AdminUI --> Reporting : отчёты/метрики
+AdminUI --> Catalog : модерация
+AdminUI --> Delivery : курьеры/зоны
+@enduml

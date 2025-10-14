@@ -105,7 +105,8 @@
       <div v-if="selectedSection === 'contest'" class="topFlexed">
         <div class="top contest">
           <div class="top-three">
-            <div
+            <div  
+              v-if="TopContestThree && TopContestThree.length > 0"
               v-for="(leader, index) in TopContestThree"
               @click="routeUser(leader.tld)"
               :key="leader?.tld || index"
@@ -135,9 +136,25 @@
                 <img src="/profile/ton.svg" alt="">
               </div>
             </div>
+            <div v-else class="sk-block">
+            </div>
           </div>
 
           <div class="progress-contest">
+            <div class="progressed-texts">
+              <div class="title">
+                <h4>100%</h4>
+              </div>
+              <div class="title">
+                <h4><span>Contest cancelled</span></h4>
+              </div>
+            </div>
+            <div class="progress-contest-lined">
+              <div class="progress-contest-line" :style="{ width: 100 + '%' }"></div>
+            </div>
+          </div>
+
+          <!-- <div class="progress-contest">
             <div class="progressed-texts">
               <div class="title">
                 <h4>{{ topContest.progress_to_20000_ton_percent }}%</h4>
@@ -153,7 +170,7 @@
             <div class="info">
               <p>{{ $t('rating.contestDescr') }}</p>
             </div>
-          </div>
+          </div> -->
 
           <div v-if="topContest.me" class="other-list my">
             <div
@@ -186,6 +203,7 @@
 
           <div class="other-list">
             <div
+              v-if="TopContestOther && TopContestOther.length > 0"
               v-for="(leader, index) in TopContestOther"
               @click="routeUser(leader.tld)"
               :key="leader?.tld || index"
@@ -215,6 +233,7 @@
                 <h4>{{ leader.name[0] }}</h4>
               </div>
             </div>
+            <div v-else class="sk-block"></div>
           </div>
         </div>
       </div>

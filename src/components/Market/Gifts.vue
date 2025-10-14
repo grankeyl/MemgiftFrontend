@@ -287,6 +287,6 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 @use "./Gifts.sass"
 </style>
