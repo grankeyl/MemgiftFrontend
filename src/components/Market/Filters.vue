@@ -1,5 +1,5 @@
 <template>
-  <div class="_direction _comp _item filters">
+  <div class="_direction _comp _item _filters">
       <div class="_content">
         <div class="cont">
           <div class="filtersItems">
