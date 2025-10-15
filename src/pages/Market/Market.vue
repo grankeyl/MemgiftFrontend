@@ -53,7 +53,6 @@
                     :Tabs="Tabs"
                 />
                 <Filters
-                    @loadMore="fetchNftsStacks"
                     @loadSuccess="handleLoadSuccess"
                     @openModelModal="ModalModelComp.ModalActive = true"
                     @openGiftModelsModal="openModelGiftModal"
@@ -69,8 +68,6 @@
                     @clearSymbols="clearSymbols"
                     @clearBackdrops="clearBackdrops"
 
-                    :Skeleton="isPageLoading"
-                    :SkeletonTime="configApp.skeletonTime"
                     :GiftsList="GiftsComp.List"
                     :ActiveTab="Tabs.Active"
                     :GiftsLoading="GiftsComp.Loading"

@@ -136,14 +136,6 @@ import Lottie from '../Lottie.vue';
 
 export default {
   props: {
-    Skeleton: {
-      type: Boolean,
-      required: true,
-    },
-    SkeletonTime: {
-      type: Number,
-      required: true,
-    },
     GiftsList: {
       type: Array,
       required: true,
@@ -204,7 +196,7 @@ export default {
 
   data() {
     return {
-      isLoading: this.Skeleton,
+      isLoading: false,
 
       Icon,
     };
@@ -266,13 +258,7 @@ export default {
 
   methods: {
     async loadResources() {
-      try {
-        await Promise.all([this.loadFonts(), this.loadIcons()]);
-        this.isLoading = false;
-        this.$emit("loadSuccess");
-      } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
-      }
+      this.$emit("loadSuccess");
     },
 
     loadFonts() {
