@@ -1,41 +1,43 @@
 import { defineConfig } from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-
-import mkcert from 'vite-plugin-mkcert'
 import vue from '@vitejs/plugin-vue';
-import { nodePolyfills } from 'vite-plugin-node-polyfills' // ⬅️ именованный импорт
-
-// @ts-ignore
+import mkcert from 'vite-plugin-mkcert';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'; // актуальный, на sharp
+import viteCompression from 'vite-plugin-compression';            // gzip/brotli
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';     // svgo для svg-спрайта
 import path from 'path';
 
 export default defineConfig({
   plugins: [
     vue(),
-    viteStaticCopy({
-      targets: [
-        { src: 'src/assets/animations/*.json', dest: 'lottie' },
-        { src: 'src/assets/gifts/posts/*.jpg', dest: 'posts' },
-        { src: 'src/assets/fonts/*.{woff,woff2}', dest: 'assets/styles/fonts' },
-        { src: 'src/assets/fonts/*.ttf', dest: 'assets' },
-        { src: 'src/assets/gifts/*.svg', dest: 'gifts' },
-        { src: 'src/assets/gifts/png/*.png', dest: 'gifts/png' },
-      ],
+    // 1) КАРТИНКИ: сжимает jpg/png/svg + генерит webp/avif
+    ViteImageOptimizer({
+      png: { quality: 80, effort: 5 },
+      jpeg: { quality: 78, mozjpeg: true },
+      gif: { optimizationLevel: 3 },
+      svg: { multipass: true },         // внутри — SVGO
+      webp: { quality: 78 },
+      avif: { quality: 50 },
+      // автоматически создаст .webp/.avif для импортируемых файлов
     }),
+
+    // 2) SVG-спрайт (опционально). Кладёшь иконки в src/assets/icons
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
+      symbolId: 'i-[name]',
+      svgoOptions: { multipass: true }
+    }),
+
+    // 3) PRECOMPRESS: создаёт .br и .gz — отдаются сервером мгновенно
+    viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
+    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
+
     mkcert(),
-    nodePolyfills({ protocolImports: true }), // ← добавь это
+    nodePolyfills({ protocolImports: true }),
   ],
 
   server: {
-    // https: true,
-    host: true,
-    strictPort: true,
     port: 3000,
-    hmr: {
-      protocol: 'wss',      // при https нужен wss
-      host: 'localhost',
-      clientPort: 3000,
-    },
-    watch: { usePolling: true, interval: 300 },
   },
 
   resolve: {
@@ -49,21 +51,17 @@ export default defineConfig({
 
   optimizeDeps: {
     include: ['buffer', 'process', '@ton/core', '@ton/crypto'],
-    esbuildOptions: {
-      define: { global: 'globalThis' },
-    },
+    esbuildOptions: { define: { global: 'globalThis' } },
   },
 
-  define: {
-    'process.env': {}, // чтобы пакеты не падали в браузере
-  },
+  define: { 'process.env': {} },
 
   build: {
     target: 'es2019',
     sourcemap: false,
     minify: 'esbuild',
     assetsDir: 'assets',
-    chunkSizeWarningLimit: 1000,
     cssCodeSplit: true,
-  }
+    chunkSizeWarningLimit: 1000,
+  },
 });
