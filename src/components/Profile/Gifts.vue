@@ -390,6 +390,7 @@ export default {
       tabViewNFTs: "blocks",
       observer: null,
       _ioBusy: false,
+      _ioLock: false,
 
       CategoriesList: [
         { id: 1, Key: 'received' },
@@ -622,25 +623,42 @@ export default {
       return null;
     },
 
+    // замените initObserver / resetObserver на это
     initObserver() {
-      if (this.observer) return;
-      const sentinel = this.$refs.sentinel;
-      if (!sentinel) return;
+      this.destroyObserver();
 
-      const rootEl = this.findScrollRoot(this.$el) || null; // fallback — окно
+      // sentinel может ещё не дорендериться — подождём DOM
+      this.$nextTick(() => {
+        const sentinel = this.$refs.sentinel;
+        if (!sentinel) return; // появится — вотчеры ниже дёрнут повторно
 
-      this.observer = new IntersectionObserver(
-        (entries) => {
-          const [entry] = entries;
-          if (!entry?.isIntersecting || this.Searching || !this.hasMore || this._ioBusy) return;
-          this._ioBusy = true;
-          this.requestMore();
-          setTimeout(() => (this._ioBusy = false), 400);
-        },
-        { root: rootEl, rootMargin: '0px 0px 100px 0px', threshold: 0.01 }
-      );
+        // 1) определяем корректный root
+        const rootEl = this.findScrollRoot(this.$el) || null; // null = окно
 
-      this.observer.observe(sentinel);
+        this.observer = new IntersectionObserver(
+          (entries) => {
+            const e = entries[0];
+            if (!e?.isIntersecting) return;
+            if (this.Searching || !this.hasMore || this._ioLock) return;
+
+            this._ioLock = true;
+            Promise.resolve(this.requestMore())
+              .catch(() => {}) // проглотим, лог уже есть снаружи
+              .finally(() => { this._ioLock = false; });
+          },
+          {
+            root: rootEl,
+            // чуть «жирнее» маргин, чтобы триггерилось пораньше
+            rootMargin: '0px 0px 200px 0px',
+            threshold: 0,
+          }
+        );
+
+        this.observer.observe(sentinel);
+
+        // 3) если контента мало — «продреним» вручную
+        this.autoDrainIfShort(rootEl);
+      });
     },
 
     destroyObserver() {
@@ -651,8 +669,29 @@ export default {
     },
 
     resetObserver() {
-      this.destroyObserver();
       this.initObserver();
+    },
+
+    autoDrainIfShort(rootEl) {
+      const tryDrain = () => {
+        if (this.Searching || !this.hasMore || this._ioLock) return;
+        const viewportH = rootEl
+          ? (rootEl).clientHeight
+          : window.innerHeight;
+        const contentH = this.$el.getBoundingClientRect().height;
+
+        if (contentH < viewportH && this.hasMore) {
+          this._ioLock = true;
+          Promise.resolve(this.requestMore())
+            .finally(() => {
+              this._ioLock = false;
+              // подождём дорендер и проверим снова
+              this.$nextTick(() => requestAnimationFrame(tryDrain));
+            });
+        }
+      };
+
+      this.$nextTick(() => requestAnimationFrame(tryDrain));
     },
 
     requestMore() {

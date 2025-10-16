@@ -41,21 +41,24 @@ export const createInvoiceNftTransfer = async (
     }
 };
 
-export const createInvoiceNftUpgrade = async (
-    UUID: string,
-) => {
-    try {
-        const tokenBearer = Cookies.get("token");
-        const response = await axios.post(
-            `${API_URL}/payments/upgrade`,
-            { UUID },
-            { headers: { Authorization: `${tokenBearer}` } }
-        );  
-        const invoiceLinkNft = response.data;
-        return invoiceLinkNft;
-    } catch (error) {
-        return false;
+export const createInvoiceNftUpgrade = async (UUID: string) => {
+  try {
+    const tokenBearer = Cookies.get("token");
+    const response = await axios.post(
+      `${API_URL}/payments/upgrade`,
+      { UUID },
+      { headers: { Authorization: `${tokenBearer}` } }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return {
+        status: error.response?.status || 500,
+        ...error.response?.data,
+      };
     }
+    return { status: 500, message: "Unexpected error" };
+  }
 };
 
 export const createInvoiceNftToken = async (

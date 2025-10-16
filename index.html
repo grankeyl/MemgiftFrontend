@@ -7,17 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Memgift - Mini App</title>
     <link rel="stylesheet" href="/src/assets/styles/fonts.css">
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
     <script>
       function initWebAppSafe() {
         const wa = window?.Telegram?.WebApp;
         if (!wa) return;
 
-        try {
-          if (wa.initDataUnsafe.user.id === 1463782322 || wa.initDataUnsafe.user.id === 2106187940 || wa.initDataUnsafe.user.id === 7043179135) {
-            eruda.init();
-          }
-        } catch (e) { console.debug('TG init skipped:', e); }
+        // try {
+        //   if (wa.initDataUnsafe.user.id === 1463782322 || wa.initDataUnsafe.user.id === 2106187940 || wa.initDataUnsafe.user.id === 7043179135) {
+        //     eruda.init();
+        //   }
+        // } catch (e) { console.debug('TG init skipped:', e); }
 
         try {
           wa.expand?.();
