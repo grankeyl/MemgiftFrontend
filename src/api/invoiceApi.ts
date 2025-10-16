@@ -51,13 +51,7 @@ export const createInvoiceNftUpgrade = async (UUID: string) => {
     );
     return response.data;
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      return {
-        status: error.response?.status || 500,
-        ...error.response?.data,
-      };
-    }
-    return { status: 500, message: "Unexpected error" };
+    return error;
   }
 };
 

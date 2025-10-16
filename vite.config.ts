@@ -1,11 +1,15 @@
-import { defineConfig } from 'vite';
+import viteCompression from 'vite-plugin-compression';
+import mkcert from 'vite-plugin-mkcert'
 import vue from '@vitejs/plugin-vue';
-import mkcert from 'vite-plugin-mkcert';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+
+import { defineConfig } from 'vite';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'; // актуальный, на sharp
-import viteCompression from 'vite-plugin-compression';            // gzip/brotli
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';     // svgo для svg-спрайта
+import { nodePolyfills } from 'vite-plugin-node-polyfills' // ⬅️ именованный импорт
+
+// @ts-ignore
 import path from 'path';
+
 
 export default defineConfig({
   plugins: [
@@ -37,7 +41,15 @@ export default defineConfig({
   ],
 
   server: {
+    host: true,
+    strictPort: true,
     port: 3000,
+    hmr: {
+      protocol: 'wss',
+      host: 'localhost',
+      clientPort: 3000,
+    },
+    watch: { usePolling: true, interval: 300 },
   },
 
   resolve: {
@@ -51,17 +63,21 @@ export default defineConfig({
 
   optimizeDeps: {
     include: ['buffer', 'process', '@ton/core', '@ton/crypto'],
-    esbuildOptions: { define: { global: 'globalThis' } },
+    esbuildOptions: {
+      define: { global: 'globalThis' },
+    },
   },
 
-  define: { 'process.env': {} },
+  define: {
+    'process.env': {}, // чтобы пакеты не падали в браузере
+  },
 
   build: {
     target: 'es2019',
     sourcemap: false,
     minify: 'esbuild',
     assetsDir: 'assets',
-    cssCodeSplit: true,
     chunkSizeWarningLimit: 1000,
-  },
+    cssCodeSplit: true,
+  }
 });
