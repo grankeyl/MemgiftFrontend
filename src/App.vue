@@ -143,52 +143,55 @@ export default {
     };
 
     onMounted(async () => {
-      const isAuthenticated = await authenticate() as any;
+      try {
+        const isAuthenticated = await authenticate() as any;
+        if (!isAuthenticated?.[0]) return;
 
-      if (isAuthenticated && isAuthenticated[0]) {
-        const nftsApp = await giftsApi.getAll();
+        if (isAuthenticated && isAuthenticated[0]) {
+          const nftsApp = await giftsApi.getAll();
 
-        if (nftsApp) {
-          const initData = TelegramModule.initData();
-          
-          if (miniAppTesting !== 'production') {
-            storeCache.TelegramData = { ...TelegramModule.parseQueryToJSON(import.meta.env.VITE_APP_INIT_DATA) };
-          } else {
-            storeCache.TelegramData = { ...initData };
-          }
-
-          if (storeCache.TelegramData) {
-            if (storeCache.TelegramData.user.id && storeCache.TelegramData.user.id === 7578281292) {
-              return;
+          if (nftsApp) {
+            const initData = TelegramModule.initData();
+            
+            if (miniAppTesting !== 'production') {
+              storeCache.TelegramData = { ...TelegramModule.parseQueryToJSON(import.meta.env.VITE_APP_INIT_DATA) };
+            } else {
+              storeCache.TelegramData = { ...initData };
             }
 
-            storeCache.TelegramData.user.firstName = cleanString(storeCache.TelegramData.user.first_name);
-            storeCache.TelegramData.user.lastName = cleanString(storeCache.TelegramData.user.last_name);
-            storeCache.TelegramData.user.language = miniAppLang;
-          }
-          
-          storeCache.NftsApp = nftsApp.items;
-          storeCache.NftsAppData = nftsApp.items;
+            if (storeCache.TelegramData) {
+              storeCache.TelegramData.user.firstName = cleanString(storeCache.TelegramData.user.first_name);
+              storeCache.TelegramData.user.lastName = cleanString(storeCache.TelegramData.user.last_name);
+              storeCache.TelegramData.user.language = miniAppLang;
+            }
+            
+            storeCache.NftsApp = nftsApp.items;
+            storeCache.NftsAppData = nftsApp.items;
 
-          storeCache.UserData = { ...isAuthenticated[1] };
-          if (storeCache.UserData.user.Language) {
-            const lang = storeCache.UserData.user.Language;
-            i18next.changeLanguage(lang);
-          }
-          initStartApp(TelegramModule.initData()?.start_param);
+            storeCache.UserData = { ...isAuthenticated[1] };
+            if (storeCache.UserData.user.Language) {
+              const lang = storeCache.UserData.user.Language;
+              i18next.changeLanguage(lang);
+            }
+            initStartApp(TelegramModule.initData()?.start_param);
 
-          const tasksGet = await taskApi.getAll();
-          const historyGet = await historyApi.getAll();
-          const balance = await MarketBalanceApi.get(storeCache.UserData.user.ID);
-          if (balance && balance.balance_ton) {
-            storeCache.UserData.user.Balance = balance;
-            storeCache.UserData.user.Balance.balance_ton = cutNumber(balance.balance_ton);
-          }
+            const tasksGet = await taskApi.getAll();
+            const historyGet = await historyApi.getAll();
+            const balance = await MarketBalanceApi.get(storeCache.UserData.user.ID);
+            if (balance && balance.balance_ton) {
+              storeCache.UserData.user.Balance = balance;
+              storeCache.UserData.user.Balance.balance_ton = cutNumber(balance.balance_ton);
+            }
 
-          storeCache.UserData.user_full_name = cleanString(storeCache.UserData.user_full_name);
-          storeCache.TasksApp = tasksGet;
-          storeCache.HistoryApp = historyGet;
+            storeCache.UserData.user_full_name = cleanString(storeCache.UserData.user_full_name);
+            storeCache.TasksApp = tasksGet;
+            storeCache.HistoryApp = historyGet;
+          }
         }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (!miniAppMounted.value) mountMiniApp();
       }
     });
 
