@@ -962,6 +962,50 @@ export default {
       const invoice = await invoiceApi.createInvoiceNftUpgrade(this.ModalComp.NftUuid);
       const paymentId = invoice.payment_upgrade_id;
 
+      if (!invoice.success) {
+          const webSocketLink = import.meta.env.VITE_APP_SOCKET_URL;
+          const idDontSuccess = invoice?.payment_upgrade_id || invoice?.UUID;
+          if (!idDontSuccess) return;
+
+          const socket = new WebSocket(`${webSocketLink}/payments/ws/${idDontSuccess}`);
+
+          socket.onopen = () => {};
+          socket.onmessage = async (event) => {
+            const data = JSON.parse(event.data);
+            if (!data.nft_id) return;
+            if (data.nft_id === this.ModalComp.NftUuid && data.actual_amount === this.ModalComp.NftUpgradePrice) {
+              const upgrade = await nftApi.upgrade(idDontSuccess);
+              if (!upgrade) return;
+              if (upgrade.ok) {
+                const upgradeData = upgrade.data;
+                this.$emit("UPGRADE", { 
+                  GiftUuid: this.ModalComp.NftId,
+                  GiftMedia: this.ModalComp.NftMedia,
+                  ...upgradeData
+                });
+
+                setTimeout(() => {
+                  this.isLoadingUpgrade = false;
+                  this.isLoadingUpgradeImage = false;
+                  this.isUpgraded = true;
+                  this.ModalComp.NftUpgraded = true;
+                  this.$emit(
+                    'upgradedNftModal', 
+                    this.ModalComp.NftId, 
+                    this.UpgradedNft.ModelName, 
+                    this.UpgradedNft.SymbolName, 
+                    this.UpgradedNft.BackgroundName,
+                    this.UpgradedNft.ModelNumber
+                  );
+                  fireFromBottom();
+                }, 400);
+              }
+            }
+          };
+          socket.onclose = () => { console.log("❌ WebSocket closed"); };
+          socket.onerror = (err) => { console.error("⚠️ WebSocket error:", err); };
+      }
+
       TelegramModule.useInvoice(
         invoice.link, 
         async () => {

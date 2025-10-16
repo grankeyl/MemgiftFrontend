@@ -49,9 +49,9 @@ export const createInvoiceNftUpgrade = async (UUID: string) => {
       { UUID },
       { headers: { Authorization: `${tokenBearer}` } }
     );
-    return response.data;
+    return { success: true, ...response.data };
   } catch (error: any) {
-    return error;
+    return { success: false, ...error };
   }
 };
 
