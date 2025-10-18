@@ -18,17 +18,16 @@ import VueToast from 'vue-toast-notification'
 import 'vue-toast-notification/dist/theme-bootstrap.css'
 import { Confirm } from 'notiflix'
 
-Confirm.init({ backgroundColor: 'transparent', zindex: 2000 })
+// Confirm.init({ backgroundColor: 'transparent', zindex: 2000 })
+Confirm.init({ zindex: 2000 })
 
 const app = createApp(AppVue)
 const pinia = createPinia()
 
 app.config.warnHandler = () => {}
 
-// ВАЖНО: сначала pinia
 app.use(pinia)
 
-// потом всё остальное
 app.use(I18NextVue, { i18next })
 app.use(createRedux(store))
 app.use(Router)

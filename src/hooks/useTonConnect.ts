@@ -1,7 +1,7 @@
 import { TonConnectUI, THEME } from '@tonconnect/ui';
 
 export const tonConnectUI = new TonConnectUI({
-  manifestUrl: 'https://memgifts.s3.us-east-1.amazonaws.com/tonconnect-manifest.json',
+  manifestUrl: 'https://memgift.codes/tonconnect-manifest.json',
 });
 
 tonConnectUI.uiOptions = {
