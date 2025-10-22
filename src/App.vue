@@ -64,7 +64,6 @@ export default {
   },
 
   setup() {
-    let initDataRaw = window?.Telegram?.WebApp?.initData || import.meta.env.VITE_APP_INIT_DATA;
     const miniAppTesting = import.meta.env.VITE_APP_TEST as any;
     const route = useRoute();
     const router = useRouter();
@@ -81,16 +80,6 @@ export default {
 
     onMounted(runSafeEffects)
     watch(() => route.fullPath, runSafeEffects)
-
-    if (miniAppTesting === 'production') {
-      if (window.Telegram) { 
-        initDataRaw = window.Telegram.WebApp.initData; 
-      }
-    } else {
-      if (window.Telegram) {
-        initDataRaw = window.Telegram.WebApp.initData;
-      }
-    }
 
     function scrollTopSmooth() {
       const scroller = document.getElementById('scroller') as HTMLElement | null;

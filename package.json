@@ -56,6 +56,7 @@
     "process": "^0.11.10",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
+    "sharp": "^0.34.4",
     "structured-clone-polyfill": "^0.0.2",
     "swiper": "^11.2.1",
     "ton-ui-vue": "^0.1.5",

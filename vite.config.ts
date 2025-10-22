@@ -18,7 +18,6 @@ export default defineConfig({
     ViteImageOptimizer({
       png: { quality: 80, effort: 5 },
       jpeg: { quality: 78, mozjpeg: true },
-      gif: { optimizationLevel: 3 },
       svg: { multipass: true },         // внутри — SVGO
       webp: { quality: 78 },
       avif: { quality: 50 },
