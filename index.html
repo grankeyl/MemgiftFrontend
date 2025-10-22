@@ -1,37 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <script src="https://memgift.codes/s3/telegram-web-app.js"></script>
     <meta charset="UTF-8" />
     <meta name="theme-color" content="#1C1C1C">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Memgift - Mini App</title>
     <link rel="stylesheet" href="/src/assets/styles/fonts.css">
-    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
+    <script src="https://memgift.codes/s3/telegram-web-app.js"></script>
     <script>
-      function initWebAppSafe() {
-        const wa = window?.Telegram?.WebApp;
-        if (!wa) return;
-
-        // try {
-        //   if (wa.initDataUnsafe.user.id === 1463782322 || wa.initDataUnsafe.user.id === 2106187940 || wa.initDataUnsafe.user.id === 7043179135) {
-        //     eruda.init();
-        //   }
-        // } catch (e) { console.debug('TG init skipped:', e); }
-
-        try {
-          wa.expand?.();
-          const allowFs = Number(wa.version || 0) >= 8
-            && typeof wa.requestFullscreen === 'function'
-            && ['ios','android'].includes(wa.platform);
-          if (allowFs) wa.requestFullscreen();
-          wa.disableVerticalSwipes?.();
-        } catch (e) { console.debug('TG init skipped:', e); }
-      }
-
-      // Инициализируем после DOM, а также после загрузки TG SDK
-      document.addEventListener('DOMContentLoaded', initWebAppSafe);
-      window.addEventListener('load', initWebAppSafe);
     </script>
 
     <style> html { background:#1C1C1C; } </style>
