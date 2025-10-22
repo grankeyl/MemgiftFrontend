@@ -51,7 +51,7 @@ export const createInvoiceNftUpgrade = async (UUID: string) => {
     );
     return { success: true, ...response.data };
   } catch (error: any) {
-    return { success: false, ...error };
+    return { success: false, ...error.response.data };
   }
 };
 

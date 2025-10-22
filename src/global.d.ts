@@ -1,7 +1,10 @@
 declare global {
   interface Window {
-      Telegram?: {
-        WebApp: {
+    Telegram?: {
+      WebApp: {
+          version?: string;
+          platform?: 'ios'|'android'|'tdesktop'|'web'|'macos'|'unknown'|string;
+          disableVerticalSwipes?: () => void;
           ready: () => void;
           expand: () => void;
           close: () => void;
@@ -63,7 +66,7 @@ declare global {
         };
         WebView?: { postEvent?: (event: string, data?: unknown) => void };
       };
-    }
   }
+}
   
-  export {};
+export {};

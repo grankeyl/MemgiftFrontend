@@ -29,13 +29,16 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCacheStore } from './stores/pinia/piniaStore';
 import { getUserLanguage, cleanString } from './utils/useApp';
 import { miniApp } from '@telegram-apps/sdk';
 import { Icon } from './components/Icon';
 import { getConfig } from './config';
+import { waitForTelegramWebApp } from './hooks/useTelegramReady';
+import { cutNumber } from './utils/useTon';
+import { nextTick } from 'vue';
 
 import * as authApi from "./api/authApi";
 import * as giftsApi from "./api/giftsApi";
@@ -52,7 +55,6 @@ import Menu from './components/Menu/Menu.vue';
 import Lottie from './components/Lottie.vue';
 import Toast from './components/Toast/Toast.vue';
 import i18next from 'i18next';
-import { cutNumber } from './utils/useTon';
 
 export default {
   components: {
@@ -89,63 +91,70 @@ export default {
         initDataRaw = window.Telegram.WebApp.initData;
       }
     }
-    
-    const authenticate = async () => {
-      const data = await authApi.init(initDataRaw);
-      if (data) { pageSuccess.value = true; return [true, data.user]; }
-      return [false, null];
-    };
 
-    const miniAppTransport = (dtx: any) => {
-      if (dtx && dtx !== 'debug') {
-        if (dtx.startsWith('cln_')) { 
-          const collectionKey = dtx.split('cln_')[1];
+    function scrollTopSmooth() {
+      const scroller = document.getElementById('scroller') as HTMLElement | null;
+      const target: any = scroller ?? document.scrollingElement ?? document.documentElement;
 
-          if (storeCache.NftsAppData[collectionKey]) {
-            router.push(`/collection/${collectionKey}`);
-          }
-        }
-        if (dtx.startsWith('gift_')) {
-          const giftId = dtx.split('gift_')[1];
-          router.push(`/gift/${giftId}`);
-        }
-        if (dtx.startsWith('u_')) {
-          const userId = dtx.split('u_')[1];
-          router.push(`/view/${userId}`);
-        }
-        if (dtx === 'profile') { router.push('/profile'); }
-        if (dtx === 'tickets') { router.push('/tickets'); }
-        if (dtx === 'market') { router.push('/m'); }
-        if (dtx === 'referrals') { router.push('/referrals'); }
-
-        mountMiniApp();
+      try {
+        target.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      } catch {
+        target.scrollTop = 0;
       }
     }
 
-    const initStartApp = async (startParam?: string) => {
-      if (!startParam) {
-        mountMiniApp();
-        return;
-      }
+    let removeHook: (() => void) | undefined;
 
-      const [startApp, startAppType] = startParam.split('_');
+    onMounted(() => {
+      removeHook = router.afterEach(async () => {
+        await nextTick();
+        requestAnimationFrame(scrollTopSmooth);
+      });
+      requestAnimationFrame(scrollTopSmooth);
+    });
 
-      switch (startAppType) {
-        case 'check':
-          await initStartAppCheck(startApp);
-          break;
-        case 'multicheck':
-          await initStartAppMulticheck(startApp);
-          break;
-        default:
-          miniAppTransport(startParam);
-      }
-    };
+    onBeforeUnmount(() => {
+      removeHook?.();
+    });
 
     onMounted(async () => {
+      const webApp = await waitForTelegramWebApp();
+
+      if (webApp) {
+        try {
+          webApp.ready?.();
+          webApp.expand?.();
+          const v = Number((webApp as any).version || 0);
+          const platform = (webApp as any).platform || 'unknown';
+          const isMobile = platform === 'ios' || platform === 'android';
+          if (v >= 8 && isMobile && webApp.requestFullscreen) {
+            webApp.requestFullscreen();
+          }
+          (webApp as any).disableVerticalSwipes?.();
+          webApp.setBackgroundColor?.('#000000');
+          webApp.setHeaderColor?.('#000000');
+        } catch (e) { console.error('Init WebApp error:', e); }
+      } else {
+        console.warn('Telegram WebApp недоступен: работаем без интеграции');
+      }
+
+      const resolvedInitData =
+        (webApp?.initData && miniAppTesting === 'production')
+          ? webApp.initData
+          : (window?.Telegram?.WebApp?.initData || import.meta.env.VITE_APP_INIT_DATA);
+
+      const authenticateWith = async (initDataRaw: string) => {
+        const data = await authApi.init(initDataRaw);
+        if (data) { pageSuccess.value = true; return [true, data.user] as const; }
+        return [false, null] as const;
+      };
+
       try {
-        const isAuthenticated = await authenticate() as any;
-        if (!isAuthenticated?.[0]) return;
+        const isAuthenticated = await authenticateWith(resolvedInitData) as any;
+        if (!isAuthenticated?.[0]) {
+          if (!miniAppMounted.value) mountMiniApp();
+          return;
+        }
 
         if (isAuthenticated && isAuthenticated[0]) {
           const nftsApp = await giftsApi.getAll();
@@ -195,13 +204,56 @@ export default {
       }
     });
 
-    const isMe = async (userId: string) => {
-      if (Number(userId) === Number(storeCache.TelegramData.user.id)) {
-        return true;
+    const miniAppTransport = (dtx: any) => {
+      if (dtx && dtx !== 'debug') {
+        if (dtx.startsWith('cln_')) { 
+          const collectionKey = dtx.split('cln_')[1];
+
+          if (storeCache.NftsAppData[collectionKey]) {
+            router.push(`/collection/${collectionKey}`);
+          }
+        }
+        if (dtx.startsWith('gift_')) {
+          const giftId = dtx.split('gift_')[1];
+          router.push(`/gift/${giftId}`);
+        }
+        if (dtx.startsWith('u_')) {
+          const userId = dtx.split('u_')[1];
+          router.push(`/view/${userId}`);
+        }
+        if (dtx === 'profile') { router.push('/profile'); }
+        if (dtx === 'tickets') { router.push('/tickets'); }
+        if (dtx === 'market') { router.push('/m'); }
+        if (dtx === 'referrals') { router.push('/referrals'); }
+
+        mountMiniApp();
+      }
+    }
+
+    const initStartApp = async (startParam?: string) => {
+      if (!startParam) {
+        mountMiniApp();
+        return;
       }
 
-      return false;
-    }
+      const [startApp, startAppType = ''] = (startParam ?? '').split('_');
+
+      switch (startAppType) {
+        case 'check':
+          await initStartAppCheck(startApp);
+          break;
+        case 'multicheck':
+          await initStartAppMulticheck(startApp);
+          break;
+        default:
+          miniAppTransport(startParam);
+      }
+    };
+
+    const isMe = async (userId: string) => {
+      const meId = storeCache.TelegramData?.user?.id;
+      return Number(userId) === Number(meId);
+    };
 
     const initStartAppCheck = async (startApp: any) => {
       const getNft = await nftsApi.getUuid(startApp);
@@ -338,10 +390,9 @@ export default {
     }
 
     const checkMulticheckUser = async (userId: string, userIds: string) => {
-      if (userIds === '') return false;
-      const checkUser = userIds.split(',').includes(userId.toString());
-      return checkUser;
-    }
+      if (!userIds) return false;
+      return userIds.split(',').includes(String(userId));
+    };
 
     return {
       miniAppLang,

@@ -952,9 +952,9 @@ export default {
     },
 
     async upgradeNft(NftId) {
-      if (this.isLoadingUpgrade) return;
-      if (!this.ModalComp.NftUpgradeSupport) return;
-      if (!this.ModalComp.NftUuid || !this.ModalComp.NftUpgradePrice) return;
+      // if (this.isLoadingUpgrade) return;
+      // if (!this.ModalComp.NftUpgradeSupport) return;
+      // if (!this.ModalComp.NftUuid || !this.ModalComp.NftUpgradePrice) return;
 
       this.isUpgraded = false;
       this.isLoadingUpgrade = true;
@@ -967,43 +967,34 @@ export default {
           const idDontSuccess = invoice?.payment_upgrade_id || invoice?.UUID;
           if (!idDontSuccess) return;
 
-          const socket = new WebSocket(`${webSocketLink}/payments/ws/${idDontSuccess}`);
+          const upgrade = await nftApi.upgrade(idDontSuccess);
+          if (!upgrade) return;
+          if (upgrade.ok) {
+            const upgradeData = upgrade.data;
+            this.$emit("UPGRADE", { 
+            GiftUuid: this.ModalComp.NftId,
+            GiftMedia: this.ModalComp.NftMedia,
+            ...upgradeData
+          });
 
-          socket.onopen = () => {};
-          socket.onmessage = async (event) => {
-            const data = JSON.parse(event.data);
-            if (!data.nft_id) return;
-            if (data.nft_id === this.ModalComp.NftUuid && data.actual_amount === this.ModalComp.NftUpgradePrice) {
-              const upgrade = await nftApi.upgrade(idDontSuccess);
-              if (!upgrade) return;
-              if (upgrade.ok) {
-                const upgradeData = upgrade.data;
-                this.$emit("UPGRADE", { 
-                  GiftUuid: this.ModalComp.NftId,
-                  GiftMedia: this.ModalComp.NftMedia,
-                  ...upgradeData
-                });
-
-                setTimeout(() => {
-                  this.isLoadingUpgrade = false;
-                  this.isLoadingUpgradeImage = false;
-                  this.isUpgraded = true;
-                  this.ModalComp.NftUpgraded = true;
-                  this.$emit(
-                    'upgradedNftModal', 
-                    this.ModalComp.NftId, 
-                    this.UpgradedNft.ModelName, 
-                    this.UpgradedNft.SymbolName, 
-                    this.UpgradedNft.BackgroundName,
-                    this.UpgradedNft.ModelNumber
-                  );
-                  fireFromBottom();
-                }, 400);
-              }
-            }
-          };
-          socket.onclose = () => { console.log("❌ WebSocket closed"); };
-          socket.onerror = (err) => { console.error("⚠️ WebSocket error:", err); };
+          setTimeout(() => {
+            this.isLoadingUpgrade = false;
+            this.isLoadingUpgradeImage = false;
+            this.isUpgraded = true;
+            this.ModalComp.NftUpgraded = true;
+            this.$emit(
+              'upgradedNftModal', 
+              this.ModalComp.NftId, 
+              this.UpgradedNft.ModelName, 
+              this.UpgradedNft.SymbolName, 
+              this.UpgradedNft.BackgroundName,
+              this.UpgradedNft.ModelNumber
+            );
+            fireFromBottom();
+          }, 400);
+          
+          return;
+        }
       }
 
       TelegramModule.useInvoice(
