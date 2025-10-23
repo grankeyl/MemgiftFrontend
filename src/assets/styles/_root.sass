@@ -9,12 +9,10 @@
     box-sizing: border-box
 
 #confetti-canvas
-  background: transparent !important
-  -webkit-backdrop-filter: blur(0) !important
-  backdrop-filter: blur(0) !important
-  fill: transparent !important
-  stroke: transparent !important
-  color: transparent !important
+  background: transparent !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  backdrop-filter: none !important;
 
 .fade-in
   opacity: 0
@@ -31,6 +29,7 @@ html
     background: $app-background
 
 html, body
+    isolation: isolate;
     scroll-behavior: smooth
 
     --tg-theme-subtitle-text-color: #b1c3d5

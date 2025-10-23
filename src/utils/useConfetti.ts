@@ -12,7 +12,7 @@ const createFullScreenCanvas = () => {
   canvas.setAttribute('id', 'confetti-canvas');
   document.body.appendChild(canvas);
   return canvas;
-};
+}; 
 
 let existingCanvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
 if (!existingCanvas) {
@@ -41,20 +41,16 @@ const defaults = {
   colors: ['#FFE400', '#FFBD00', '#E89400', '#FFCA6C', '#FDFFB8']
 };
 
-function shootConfetti() {
-  customConfetti({
-    ...defaults,
-    particleCount: 40,
-    scalar: 1.2,
-    shapes: ['star']
-  });
+existingCanvas.style.visibility = 'hidden';
 
-  customConfetti({
-    ...defaults,
-    particleCount: 10,
-    scalar: 0.75,
-    shapes: ['circle']
-  });
+const show = () => (existingCanvas.style.visibility = 'visible');
+const hide = () => (existingCanvas.style.visibility = 'hidden');
+
+async function shootConfetti() {
+  show();
+  await customConfetti({ ...defaults, particleCount: 40, scalar: 1.2, shapes: ['star'] });
+  await customConfetti({ ...defaults, particleCount: 10, scalar: 0.75, shapes: ['circle'] });
+  hide();
 }
 
 const fireCircle = () => {
