@@ -12,15 +12,16 @@
 // } 
 
 export async function setupEruda(force = false, id: any) {
-  const enable = force
-    || /(?:\?|&)debug=1\b/.test(location.search)
-    || localStorage.getItem('eruda') === '1';
-  if (!enable) return;
+    console.log(force)
+//   const enable = force
+//     || /(?:\?|&)debug=1\b/.test(location.search)
+//     || localStorage.getItem('eruda') === '1';
+//   if (!enable) return;
 
   const mod = await import('eruda');
   const e: any = (mod as any).default ?? mod; // ВАЖНО: .default в ESM
 
-  if (id === '1463782322' || id === '2106187940') {
+  if (id === 1463782322 || id === 2106187940) {
     if ((window as any).eruda?._inited) return;
     (window as any).eruda = e;
     e.init();
