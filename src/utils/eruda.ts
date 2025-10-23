@@ -1,5 +1,3 @@
-import eruda from 'eruda';
-
 // export async function setupEruda(id: any) {
 //     console.log("SETUP:" + id);
 //   const enable =
