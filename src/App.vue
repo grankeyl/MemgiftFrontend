@@ -38,6 +38,7 @@ import { getConfig } from './config';
 import { waitForTelegramWebApp } from './hooks/useTelegramReady';
 import { cutNumber } from './utils/useTon';
 import { nextTick } from 'vue';
+import { setupEruda } from './utils/eruda';
 
 import * as authApi from "./api/authApi";
 import * as giftsApi from "./api/giftsApi";
@@ -110,17 +111,27 @@ export default {
 
       if (webApp) {
         try {
+          setupEruda(webApp.initDataUnsafe.user.id);
+
           webApp.ready?.();
+
+          console.log("READY:" + webApp);
+
           webApp.expand?.();
+
+          console.log("EXPAND:" + webApp);
+
           const v = Number((webApp as any).version || 0);
           const platform = (webApp as any).platform || 'unknown';
           const isMobile = platform === 'ios' || platform === 'android';
+
           if (v >= 8 && isMobile && webApp.requestFullscreen) {
             webApp.requestFullscreen();
           }
-          (webApp as any).disableVerticalSwipes?.();
-          webApp.setBackgroundColor?.('#000000');
-          webApp.setHeaderColor?.('#000000');
+
+          webApp.setBackgroundColor?.('#1C1C1C');
+          webApp.setHeaderColor?.('#1C1C1C');
+
         } catch (e) { console.error('Init WebApp error:', e); }
       } else {
         console.warn('Telegram WebApp недоступен: работаем без интеграции');

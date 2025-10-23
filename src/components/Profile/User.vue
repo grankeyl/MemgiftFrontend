@@ -96,29 +96,6 @@
       </div>
   </div>
 
-  <!-- <div class="_direction _comp _item _defer">
-    <div v-if="isLoading" class="_content">
-      <div class="_wallet"></div>
-    </div>
-
-    <div v-if="!isLoading" class="_content">
-      <div class="_wallet">
-        <div class="_walletLeft">
-          <img src="/profile/ton.svg" alt="tonconnect" />
-          <span>0.0</span>
-        </div>
-        <div class="_walletRight">
-          <span @click="withdraw" class="_walletRightWithdraw">
-            <img src="/profile/withdraw.svg" alt="withdraw" />
-          </span>
-          <span @click="deposit" class="_walletRightDeposit">
-            <img src="/profile/deposit.svg" alt="deposit" />
-          </span>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
   <div class="_direction _comp _item _funcers">
     <Funcs
       @click="openReferrals"
