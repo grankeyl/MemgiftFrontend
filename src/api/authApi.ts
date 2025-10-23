@@ -13,7 +13,6 @@ export const init = async (initData: string) => {
   }
  
   try {
-
     const response = await axios.post(
       `${API_URL}/users/init`,
       {},
