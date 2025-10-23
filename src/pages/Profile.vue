@@ -442,7 +442,7 @@ export default defineComponent({
       if (typeof GiftsComp.value.NFTsCount === 'number' && GiftsComp.value.NFTsCount > 0) {
         GiftsComp.value.NFTsCount -= 1;
       }
-
+ 
       // 2) Чистим во всех кэш-бакетах
       const cache = storeCache.UserNFTs || {};
       for (const key of Object.keys(cache)) {
