@@ -111,15 +111,15 @@ export default {
 
       if (webApp) {
         try {
-          setupEruda(webApp.initDataUnsafe.user.id);
+          setupEruda(false, webApp.initDataUnsafe.user.id);
 
           webApp.ready?.();
 
-          console.log("READY:" + webApp);
+          console.log("READY:" + JSON.stringify(webApp));
 
           webApp.expand?.();
 
-          console.log("EXPAND:" + webApp);
+          console.log("EXPAND:" + JSON.stringify(webApp));
 
           const v = Number((webApp as any).version || 0);
           const platform = (webApp as any).platform || 'unknown';
