@@ -115,7 +115,7 @@ export default {
 
           webApp.ready?.();
 
-          console.log("READY:" + JSON.stringify(webApp));
+          console.log("READY: " + JSON.stringify(webApp));
 
           webApp.expand?.();
 
