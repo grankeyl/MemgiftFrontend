@@ -33,7 +33,6 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCacheStore } from './stores/pinia/piniaStore';
 import { getUserLanguage, cleanString } from './utils/useApp';
-import { miniApp } from '@telegram-apps/sdk';
 import { Icon } from './components/Icon';
 import { getConfig } from './config';
 import { waitForTelegramWebApp } from './hooks/useTelegramReady';
@@ -291,9 +290,8 @@ export default {
     }
 
     const mountMiniApp = () => {
-      if (miniApp.mount.isAvailable()) {
-        miniApp.mount();
-        miniAppMounted.value = miniApp.isMounted();
+      if (miniAppLang) {
+        miniAppMounted.value = true;
         setTimeout(() => { miniAppLoading.value = false; }, getConfig().skeletonTime);
       } else {
         miniAppMounted.value = true;
@@ -392,7 +390,6 @@ export default {
       pageSuccess,
 
       Icon,
-      miniApp,
       miniAppLoading,
     };
   },
