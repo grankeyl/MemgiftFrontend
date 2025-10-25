@@ -38,7 +38,7 @@ import { getConfig } from './config';
 import { waitForTelegramWebApp } from './hooks/useTelegramReady';
 import { cutNumber } from './utils/useTon';
 import { nextTick } from 'vue';
-import { setupEruda } from './utils/eruda';
+// import { setupEruda } from './utils/eruda';
 
 import * as authApi from "./api/authApi";
 import * as giftsApi from "./api/giftsApi";
