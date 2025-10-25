@@ -109,47 +109,43 @@ export default {
     onMounted(async () => {
       const webApp = await waitForTelegramWebApp();
 
+      const initDataRaw =
+        (webApp?.initData && miniAppTesting === 'production')
+          ? webApp.initData
+          : (window?.Telegram?.WebApp?.initData || import.meta.env.VITE_APP_INIT_DATA || '');
+
       if (webApp) {
         try {
-          setupEruda(false, webApp.initDataUnsafe.user.id);
+          // setupEruda(false, webApp.initDataUnsafe?.user?.id ?? 0);
 
           webApp.ready?.();
-
-          console.log("READY: " + JSON.stringify(webApp));
-
           webApp.expand?.();
-
-          console.log("EXPAND:" + JSON.stringify(webApp));
 
           const v = Number((webApp as any).version || 0);
           const platform = (webApp as any).platform || 'unknown';
           const isMobile = platform === 'ios' || platform === 'android';
 
-          if (v >= 8 && isMobile && webApp.requestFullscreen) {
+          if (v >= 8 && isMobile && typeof webApp.requestFullscreen === 'function') {
             webApp.requestFullscreen();
           }
 
           webApp.setBackgroundColor?.('#1C1C1C');
           webApp.setHeaderColor?.('#1C1C1C');
-
-        } catch (e) { console.error('Init WebApp error:', e); }
+        } catch (e) {
+          console.error('Init WebApp error:', e);
+        }
       } else {
-        console.warn('Telegram WebApp недоступен: работаем без интеграции');
+        console.warn('Telegram WebApp не валиден или недоступен — запускаем без интеграции');
       }
 
-      const resolvedInitData =
-        (webApp?.initData && miniAppTesting === 'production')
-          ? webApp.initData
-          : (window?.Telegram?.WebApp?.initData || import.meta.env.VITE_APP_INIT_DATA);
-
-      const authenticateWith = async (initDataRaw: string) => {
-        const data = await authApi.init(initDataRaw);
-        if (data) { pageSuccess.value = true; return [true, data.user] as const; }
-        return [false, null] as const;
+      // --- Аутентификация и запуск ---
+      const authenticateWith = async (raw: string) => {
+        const data = await authApi.init(raw);
+        return data ? ([true, data.user] as const) : ([false, null] as const);
       };
 
       try {
-        const isAuthenticated = await authenticateWith(resolvedInitData) as any;
+        const isAuthenticated = await authenticateWith(initDataRaw) as any;
         if (!isAuthenticated?.[0]) {
           if (!miniAppMounted.value) mountMiniApp();
           return;
@@ -301,11 +297,13 @@ export default {
     }
 
     const mountMiniApp = () => {
-      if (miniAppLang) {
+      if (1 === 1) {
         miniAppMounted.value = true;
+        pageSuccess.value = true;
         setTimeout(() => { miniAppLoading.value = false; }, getConfig().skeletonTime);
       } else {
         miniAppMounted.value = true;
+        pageSuccess.value = true;
         setTimeout(() => { miniAppLoading.value = false; }, getConfig().skeletonTime);
       }
     }

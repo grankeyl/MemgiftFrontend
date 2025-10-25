@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    Telegram?: {
+    Telegram: {
       WebApp: {
           version?: string;
           platform?: 'ios'|'android'|'tdesktop'|'web'|'macos'|'unknown'|string;

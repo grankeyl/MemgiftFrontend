@@ -222,7 +222,7 @@
           <GiftLottie
             class="lt nftLoading"
             :path="`/gifts/lottie/${gift.Key}.json`"
-            :loop="true"
+            :loop="false"
             width="25"
             height="25"
             renderer="svg"

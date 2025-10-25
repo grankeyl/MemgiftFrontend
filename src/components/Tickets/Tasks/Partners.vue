@@ -107,7 +107,6 @@ import TelegramModule from '@/hooks/useTelegram';
 
 import { Icon } from '@/components/Icon';
 import { useCacheStore } from '@/stores/pinia/piniaStore';
-import { fireCircle } from '@/utils/useConfetti';
 
 import * as nftApi from '@/api/nftApi';
 import * as telegramApi from '@/api/telegramApi';
@@ -118,6 +117,7 @@ import Image_Avatar from '@/assets/images/avatar.png';
 import Image_Ticket from '@/assets/images/ticket.svg';
 import Image_TicketImage from '@/assets/images/tickets-image.png';
 import Image_Cap from '@/assets/gifts/nft_best_cap.svg';
+import { shootConfetti } from '../../../utils/useConfetti';
 
 export default {
   props: {
@@ -259,7 +259,7 @@ export default {
           task.isClaimed = isClaimedConst;
           task.isDone = isDoneConst;
           TelegramModule.useMediumHaptic();
-          fireCircle();
+          shootConfetti();
 
           if (createTask.status === 'done') {
             this.storeCache.UserData.user.Tickets += createTask.tickets;
@@ -389,7 +389,7 @@ export default {
       if (response && response.status === 'completed') {
         task.user_status = response.status;
         TelegramModule.useMediumHaptic();
-        fireCircle();
+        shootConfetti();
 
         if (task.rewards[0].type === 'tickets') {
           this.storeCache.UserData.user.Tickets += response.awarded;
