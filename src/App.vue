@@ -35,7 +35,7 @@ import { useCacheStore } from './stores/pinia/piniaStore';
 import { getUserLanguage, cleanString } from './utils/useApp';
 import { Icon } from './components/Icon';
 import { getConfig } from './config';
-import { waitForTelegramWebApp } from './hooks/useTelegramReady';
+import { hasAPIs, pickInitData, waitForTelegramWebApp } from './hooks/useTelegramReady';
 import { cutNumber } from './utils/useTon';
 import { nextTick } from 'vue';
 // import { setupEruda } from './utils/eruda';
@@ -109,15 +109,14 @@ export default {
     onMounted(async () => {
       const webApp = await waitForTelegramWebApp();
 
+      // initData теперь получаем независимо от валидности
       const initDataRaw =
-        (webApp?.initData && miniAppTesting === 'production')
-          ? webApp.initData
-          : (window?.Telegram?.WebApp?.initData || import.meta.env.VITE_APP_INIT_DATA || '');
+        (webApp && import.meta.env.VITE_APP_MODE === 'production')
+          ? pickInitData(webApp)
+          : pickInitData(webApp);
 
-      if (webApp) {
+      if (webApp && hasAPIs(webApp)) {
         try {
-          // setupEruda(false, webApp.initDataUnsafe?.user?.id ?? 0);
-
           webApp.ready?.();
           webApp.expand?.();
 
@@ -125,17 +124,24 @@ export default {
           const platform = (webApp as any).platform || 'unknown';
           const isMobile = platform === 'ios' || platform === 'android';
 
-          if (v >= 8 && isMobile && typeof webApp.requestFullscreen === 'function') {
-            webApp.requestFullscreen();
+          if (v >= 8 && isMobile && typeof (webApp as any).requestFullscreen === 'function') {
+            (webApp as any).requestFullscreen();
           }
 
           webApp.setBackgroundColor?.('#1C1C1C');
           webApp.setHeaderColor?.('#1C1C1C');
+
+          console.debug('[TG] OK', { platform, v, hasInit: !!pickInitData(webApp) });
         } catch (e) {
           console.error('Init WebApp error:', e);
         }
       } else {
-        console.warn('Telegram WebApp не валиден или недоступен — запускаем без интеграции');
+        console.warn('Telegram WebApp API не найден — запускаем без интеграции', {
+          tg: !!window?.Telegram,
+          hasAPIs: hasAPIs(window?.Telegram?.WebApp),
+          initFromUrl: !!new URL(window.location.href).searchParams.get('tgWebAppData'),
+          envInit: !!import.meta.env.VITE_APP_INIT_DATA,
+        });
       }
 
       // --- Аутентификация и запуск ---
