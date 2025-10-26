@@ -136,12 +136,7 @@ export default {
           console.error('Init WebApp error:', e);
         }
       } else {
-        console.warn('Telegram WebApp API не найден — запускаем без интеграции', {
-          tg: !!window?.Telegram,
-          hasAPIs: hasAPIs(window?.Telegram?.WebApp),
-          initFromUrl: !!new URL(window.location.href).searchParams.get('tgWebAppData'),
-          envInit: !!import.meta.env.VITE_APP_INIT_DATA,
-        });
+        location.reload();
       }
 
       // --- Аутентификация и запуск ---
