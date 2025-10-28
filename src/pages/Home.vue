@@ -136,7 +136,7 @@ export default {
           Title: this.$t('home.slider_5'),
           Button: "Author",
           ButtonText: this.$t('home.slider_button_5'),
-          ButtonKey: "WhorGirl",
+          ButtonKey: "HungryDog",
           ButtonSlide: "first",
           ImageContent: "/home/banner-5-image.png",
           BgImage: "/home/banner-5.png",

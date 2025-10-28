@@ -89,7 +89,7 @@
                 </div>
               </div>
 
-              <div v-if="!NftSaleSupport" class="_item _itemUseTickets">
+              <div v-if="!NftSaleSupport && !NftLocked" class="_item _itemUseTickets">
                 <div class="_itemUseTicketsInner">
                   <div class="title">
                     <h4>{{ $t('collection.saleNotSupport') }}</h4>
@@ -97,7 +97,7 @@
                 </div>
               </div>
 
-              <div class="_item _itemCalc">
+              <div v-if="!NftLocked" class="_item _itemCalc">
                 <div class="_calc">
                   <div @click="useBuyCountMinus(1)" class="_calc_minus">
                     <div class="kit-icon" v-html="Icon.Minus"></div>
@@ -184,6 +184,10 @@
         required: true,
       },
       NftSaleSupport: {
+        type: Boolean,
+        required: true,
+      },
+      NftLocked: {
         type: Boolean,
         required: true,
       },

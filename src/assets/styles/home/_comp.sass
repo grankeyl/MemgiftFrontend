@@ -802,6 +802,20 @@
                             margin-left: -3px
 
 
+
+.event
+    width: 100%
+    height: fit-content
+    margin-bottom: 15px
+    margin-left: 19px
+
+    h4
+        width: 100%
+        height: auto
+        font-size: 17px
+        font-weight: 600        
+        color: $app-text-color
+
     
 ._comp._item._gifts
     width: 100%
@@ -1065,6 +1079,15 @@
                 left: 50%
                 transform: translateX(-50%)
                 z-index: 10
+
+                &.locked
+                    button
+                        svg
+                            width: 15px
+                            height: 15px
+                            transform: translateY(1.4px) translateX(1.4px)
+                            path
+                                stroke: #FFB61D
 
                 & button
                     background: $app-button-background-blur

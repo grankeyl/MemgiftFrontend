@@ -1,5 +1,6 @@
 <template>
     <Button
+        v-if="!NftData?.Locked"
         @loadSuccess="handleLoadSuccess"
         @checkNftFree="checkNftFree"
         
@@ -12,6 +13,25 @@
         :NftPriceCurrent="NftData?.NftPriceCurrent"
         :NftFree="NftData?.Price === 0"
         :Terms="Terms"
+
+        :isUseTickets="isUseTickets"
+        :useTicketsCount="useTicketsCount"
+    />
+
+    <ButtonLocked
+        v-if="NftData?.Locked"
+        @loadSuccess="handleLoadSuccess"
+        @checkNftFree="checkNftFree"
+        
+        :Skeleton="isPageLoading"
+        :SkeletonTime="configApp.skeletonTime"
+
+        :NftUniqueKey="NftUniqueKey"
+        :NftData="NftData"
+        :NftBuyCount="NftBuyCount"
+        :NftPriceCurrent="NftData?.NftPriceCurrent"
+        :NftLocked="NftData?.Locked"
+        :Terms="TermsLocked"
 
         :isUseTickets="isUseTickets"
         :useTicketsCount="useTicketsCount"
@@ -54,10 +74,11 @@
                     :NftBuyCount="NftBuyCount"
                     :NftSaleSupport="NftData?.SaleSupport"
                     :NftCustomEmoji="NftData?.Emoji"
+                    :NftLocked="NftData?.Locked"
                 />
             </div>
 
-            <div v-if="!NftData?.Price" class="_second">
+            <div v-if="!NftData?.Price && !NftData?.Locked" class="_second">
                 <div class="_title">
                     <h4>{{ $t('collection.terms.termsTitle') }}</h4>
                 </div>
@@ -71,6 +92,23 @@
                     :NftKey="NftData?.Key"
                     :NftGetFree="NftData?.NftGetFree"
                     :Terms="Terms"
+                />
+            </div>
+
+            <div v-if="NftData?.Locked" class="_second">
+                <div class="_title">
+                    <h4>{{ $t('collection.terms.termsTitle') }}</h4>
+                </div>
+
+                <TermsLocked
+                    @loadSuccess="handleLoadSuccess"
+                    @completeTerm="completeTerm"
+
+                    :Skeleton="isPageLoading"
+                    :SkeletonTime="configApp.skeletonTime"
+                    :NftKey="NftData?.Key"
+                    :NftGetFree="NftData?.NftGetFree"
+                    :Terms="TermsLocked.items"
                 />
             </div>
 
@@ -105,6 +143,7 @@
   
 <script lang="ts">
 import * as giftsApi from '../api/giftsApi';
+import * as nftApi from '../api/nftApi';
 
 import { useCacheStore } from '../stores/pinia/piniaStore';
 import { getConfig } from '../config';
@@ -116,9 +155,11 @@ import TelegramModule from '../hooks/useTelegram';
 import Image_GiftBg from '../assets/gifts/png/gift_bg.png';
 
 import Button from '../components/Collection/Button.vue';
+import ButtonLocked from '../components/Collection/ButtonLocked.vue';
 import Gift from '../components/Collection/Gift.vue';
 import Context from '../components/Collection/Context.vue';
 import Terms from '../components/Collection/Terms.vue';
+import TermsLocked from '../components/Collection/TermsLocked.vue';
 import Recent from '../components/Collection/Recent.vue';
 import Ads from '../components/Collection/Ads.vue';
 
@@ -132,9 +173,11 @@ export default {
 
     components: {
         Button,
+        ButtonLocked,
         Gift,
         Context,
         Terms,
+        TermsLocked,
         Recent,
         Ads,
     },
@@ -169,6 +212,32 @@ export default {
                 SubscribedChannel: false,
             },
 
+            TermsLocked: {
+                items: {
+                    hungry_dog: {
+                        title: 'HungryDog',
+                        image: 'https://memgift.codes/s3/soda/HungryDog.svg',
+                        success: false,
+                    },
+                    burning_panties: {
+                        title: 'BurningPanties',
+                        image: 'https://memgift.codes/s3/soda/BurningPanties.svg',
+                        success: false,
+                    },
+                    soda: {
+                        title: 'Soda',
+                        image: 'https://memgift.codes/s3/soda/Soda.svg',
+                        success: false,
+                    },
+                    hot_dog: {
+                        title: 'HotDog',
+                        image: 'https://memgift.codes/s3/soda/HotDog.svg',
+                        success: false,
+                    },
+                },
+                all_success: false,
+            } as any,
+
             IntervalCheckGifts: null as any,
 
             RecentList: [],
@@ -186,14 +255,17 @@ export default {
         );
 
         this.checkNft();
+        this.checkLockedTerms();
         this.getNftData();
         
         this.checkCurrentSupply();
+        this.checkLockedTerms();
         this.scheduleCheckSupply();
 
         this.$watch(() => this.storeCache.NftsAppData, () => {
             this.getNftData();
             this.checkCurrentSupply();
+            this.checkLockedTerms();
         });
 
         this.Terms.InviteFriendsCount = this.storeCache.UserData.RefCount;
@@ -202,6 +274,13 @@ export default {
             () => {
                 this.Terms.InviteFriendsCount = this.storeCache.UserData.RefCount;
                 this.Terms.InviteFriendsCountNeed = this.Terms.InviteFriendsCount;
+            }
+        );
+
+        this.$watch(
+            () => this.TermsLocked,
+            () => {
+                this.TermsLocked.all_success = Object.values(this.TermsLocked).every((t: any) => t.success);
             }
         );
     },
@@ -234,6 +313,16 @@ export default {
             this.NftUniqueKey = nft as string;
 
             return nft;
+        },
+
+        async checkLockedTerms() {
+            const res = await nftApi.sodaLocked();
+            if (!res) return;
+
+            for (const key in res) {
+                const item = res[key];
+                this.TermsLocked.items[key].success = item;
+            }
         },
 
         async getNftData() {

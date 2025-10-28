@@ -48,7 +48,7 @@ i18next.init({
                 slider_2: "Affiliate program",
                 slider_3: "Project Roadmap",
                 slider_4: "Meme-tickets",
-                slider_5: "Summer Collection",
+                slider_5: "Soda Luv Collaboration",
 
                 slider_button_0: "Go",
                 slider_button_5: "Buy",

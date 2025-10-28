@@ -511,3 +511,17 @@ export const giftFree = async () => {
         return false;
     }
 };
+
+export const sodaLocked = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/soda_locked`,
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        const data = response.data;
+        return data;
+    } catch (error) {
+        return false;
+    }
+};
