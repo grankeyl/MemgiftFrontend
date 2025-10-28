@@ -64,7 +64,7 @@
     </div>
     <div v-else class="_content">
       <div 
-        v-for="(gift, index) in filteredNfts" 
+        v-for="(gift, index) in eventGifts" 
         v-show="gift.UKey === 'Swipee' || gift.UKey === 'HotDog' || gift.UKey === 'BurningPanties' || gift.UKey === 'HungryDog' || gift.UKey === 'Soda'"
         :key="gift.UKey"
         @click="openCollection(gift.UKey)"
@@ -109,15 +109,18 @@
 
         <div v-if="gift.Media === 'lottie'" class="_nft _lottie">
           <GiftLottie
-            class="lt nftLoading"
+            ref="eventLottieRefs"
+            class="lt"
             :path="`/gifts/lottie/${gift.Key}.json`"
             :loop="false"
+            :autoplay="false"
             width="25"
             height="25"
             renderer="svg"
+            @complete="onEventComplete"
           />
         </div>
-        
+              
         <div v-if="!gift.Locked" class="_buy">
           <button v-if="gift.Price">
             <p>{{ checkPriceNumber(gift.Price) }}</p>
@@ -151,7 +154,7 @@
     </div>
     <div v-else class="_content">
       <div 
-        v-for="(gift, index) in filteredNfts" 
+        v-for="(gift, index) in otherGifts" 
         v-show="gift.UKey !== 'Swipee' && gift.UKey !== 'HotDog' && gift.UKey !== 'BurningPanties' && gift.UKey !== 'HungryDog' && gift.UKey !== 'Soda'"
         :key="gift.UKey"
         @click="openCollection(gift.UKey)"
@@ -196,12 +199,15 @@
 
         <div v-if="gift.Media === 'lottie'" class="_nft _lottie">
           <GiftLottie
-            class="lt nftLoading"
+            ref="otherLottieRefs"
+            class="lt"
             :path="`/gifts/lottie/${gift.Key}.json`"
             :loop="false"
+            :autoplay="false"
             width="25"
             height="25"
             renderer="svg"
+            @complete="onOtherComplete"
           />
         </div>
         
@@ -287,6 +293,9 @@ export default {
 
   data() {
     return {
+      currentEventIdx: 0,
+      currentOtherIdx: 0,
+
       storeCache: useCacheStore(),
       storeNftsApp: {},
 
@@ -329,7 +338,39 @@ export default {
     };
   },
 
+  watch: {
+    eventGifts() { this.currentEventIdx = 0; this.$nextTick(this.startEventQueue); },
+    otherGifts() { this.currentOtherIdx = 0; this.$nextTick(this.startOtherQueue); },
+  },
+
   computed: {
+    eventGifts() {
+      return this.filteredNfts.filter(g =>
+        ['Swipee','HotDog','BurningPanties','HungryDog','Soda'].includes(g.UKey)
+      );
+    },
+    otherGifts() {
+      return this.filteredNfts.filter(g =>
+        !['Swipee','HotDog','BurningPanties','HungryDog','Soda'].includes(g.UKey)
+      );
+    },
+
+    // только лотти
+    eventLottieGifts() {
+      return this.eventGifts.filter(g => g.Media === 'lottie');
+    },
+    otherLottieGifts() {
+      return this.otherGifts.filter(g => g.Media === 'lottie');
+    },
+
+    // текущие ключи для монтирования
+    currentEventLottieUKey() {
+      return this.eventLottieGifts[this.currentLottieIndexEvent]?.UKey || null;
+    },
+    currentOtherLottieUKey() {
+      return this.otherLottieGifts[this.currentLottieIndexOthers]?.UKey || null;
+    },
+      
     isLoading() {
       return this.Skeleton;
     },
@@ -408,6 +449,11 @@ export default {
     this.loadFiltersFromLocalStorage();
     this.storeNftsApp = this.storeCache.NftsApp;
     this.loadResources();
+      
+    this.$nextTick(() => {
+      this.startEventQueue();
+      this.startOtherQueue();
+    });
 
     this.$watch(() => this.storeCache.NftsApp, () => {
       this.storeNftsApp = this.storeCache.NftsApp;
@@ -416,6 +462,35 @@ export default {
   },
 
   methods: {
+    _eventRefs() { return (this.$refs.eventLottieRefs || []).filter(Boolean); },
+    _otherRefs() { return (this.$refs.otherLottieRefs || []).filter(Boolean); },
+
+    startEventQueue() {
+      const refs = this._eventRefs();
+      if (!refs.length) return;
+      refs.forEach(r => { r.stop?.(); r.goToStart?.(); });
+      refs[this.currentEventIdx]?.play?.();
+    },
+    onEventComplete() {
+      const refs = this._eventRefs();
+      if (!refs.length) return;
+      this.currentEventIdx = (this.currentEventIdx + 1) % refs.length;
+      this.startEventQueue();
+    },
+
+    startOtherQueue() {
+      const refs = this._otherRefs();
+      if (!refs.length) return;
+      refs.forEach(r => { r.stop?.(); r.goToStart?.(); });
+      refs[this.currentOtherIdx]?.play?.();
+    },
+    onOtherComplete() {
+      const refs = this._otherRefs();
+      if (!refs.length) return;
+      this.currentOtherIdx = (this.currentOtherIdx + 1) % refs.length;
+      this.startOtherQueue();
+    },
+
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadImages()]);

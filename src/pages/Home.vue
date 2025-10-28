@@ -97,6 +97,8 @@ import Slider from '../components/Home/Slider.vue';
 import Funcs from '../components/Home/Funcs.vue';
 import Gifts from '../components/Home/Gifts.vue';
 
+import Banner5 from '../assets/images/banner-5.png';
+
 export default {
   props: {
     success: {
@@ -139,7 +141,7 @@ export default {
           ButtonKey: "HungryDog",
           ButtonSlide: "first",
           ImageContent: "/home/banner-5-image.png",
-          BgImage: "/home/banner-5.png",
+          BgImage: Banner5,
           ButtonLink: typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_AFFILIATE
           ? import.meta.env.VITE_APP_AFFILIATE
           : null,

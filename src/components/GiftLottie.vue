@@ -28,6 +28,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  autoplay: {
+    type: Boolean,
+    default: true,
+    required: false,
+  },
   renderer: {
     type: String,
     required: false,
@@ -56,7 +61,7 @@ const loadAnimation = async () => {
       container: giftLottieContainer.value,
       renderer: rendererType,
       loop: props.loop,
-      autoplay: true,
+      autoplay: props.autoplay,
       animationData: animationJson,
     });
   } catch (error) {
