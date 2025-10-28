@@ -2,7 +2,7 @@
   <div :class="['_direction _comp _item _leaderboard', Key]">
     <div v-if="isLoading" class="_skeleton">
       <div class="sections">
-        <div class="section"></div>
+        <!-- <div class="section"></div> -->
         <div class="section"></div>
         <div class="section"></div>
       </div>
@@ -91,9 +91,9 @@
 
     <div v-else class="_content">
       <div class="sections">
-        <div class="section" :class="{ active: selectedSection === 'contest' }" @click="selectedSection = 'contest'">
+        <!-- <div class="section" :class="{ active: selectedSection === 'contest' }" @click="selectedSection = 'contest'">
           <h4>{{ $t('rating.section0') }}</h4>
-        </div>
+        </div> -->
         <div class="section" :class="{ active: selectedSection === 'holders' }" @click="selectedSection = 'holders'">
           <h4>{{ $t('rating.section1') }}</h4>
         </div>
@@ -408,7 +408,7 @@ export default {
       ratingAppLimit: 20,
       isFetchingMore: false,
 
-      selectedSection: 'contest',
+      selectedSection: 'holders',
       topContest: [],
       topRefs: [],
 
