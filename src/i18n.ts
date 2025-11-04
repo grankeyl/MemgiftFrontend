@@ -394,6 +394,8 @@ i18next.init({
                 notifyBuyed: "Gifts successfully purchased and added to Profile",
                 notifyBuyedButton: "Go to Profile",
 
+                searchNumber: "Search by Number",
+
                 basket: {
                     title: "Basket",
                     gifts: "gifts",
@@ -822,6 +824,8 @@ i18next.init({
 
                 symbolModalTitle: "Символ",
                 backdropModalTitle: "Фон",
+
+                searchNumber: "Поиск по номеру",
 
                 basket: {
                     title: "Корзина",

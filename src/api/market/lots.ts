@@ -10,7 +10,8 @@ export const lots = async (
   backdrop: string,
   sort: string,
   offset: number,
-  limit: number
+  limit: number,
+  searchNumber: string
 ) => {
   try {
     const tokenBearer = Cookies.get("token");
@@ -20,7 +21,8 @@ export const lots = async (
       `&symbol=${symbol}` +
       `&background=${backdrop}` +
       `&sort=${sort}` +
-      `&page=${offset}&limit=${limit}`,
+      `&page=${offset}&limit=${limit}` +
+      `&number=${searchNumber}`,
       { headers: { "X-Init-Data": tokenBearer || "", } }
     );
     return response.data;

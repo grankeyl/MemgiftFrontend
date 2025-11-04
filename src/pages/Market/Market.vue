@@ -42,6 +42,7 @@
                 </div>
             </div>
 
+
             <div class="display">
                 <div class="logotype">
                     <img :src="LogotypeImg" alt="logotype" />
@@ -67,6 +68,7 @@
                     @clearStatus="clearStatus"
                     @clearSymbols="clearSymbols"
                     @clearBackdrops="clearBackdrops"
+                    @searchNumber="searchNumber = $event"
 
                     :GiftsList="GiftsComp.List"
                     :ActiveTab="Tabs.Active"
@@ -80,6 +82,7 @@
                     :SortItems="ModalSortComp.SortItems"
                     :StatusItems="ModalStatusComp.SortItems"
                     :HasMore="GiftsComp.HasMore"
+                    :SearchNumber="searchNumber"
                 />
                 <Gifts
                     v-if="Tabs.Active === 'gifts'"
@@ -241,6 +244,8 @@ export default {
             propsSuccess: this.$props.success,
             isPageLoading: true,
 
+            searchNumber: '',
+
             Tabs: {
                 Active: 'gifts',
                 List: [
@@ -335,7 +340,7 @@ export default {
         this.fetchNftsStacks();
         this.loadBasketFromLS();
 
-        watch([this.Tabs, () => this.ModalSortComp.SortSelected, () => this.ModalStatusComp.SortSelected, () => this.ModalModelComp.ModelsSelected.join(','), () => this.ModalGiftModelsComp.ModelsSelected.join(','), () => this.SymbolModelComp.SymbolsSelected, () => this.BackdropModelComp.BackdropsSelected], async () => {
+        watch([this.Tabs, () => this.searchNumber, () => this.ModalSortComp.SortSelected, () => this.ModalStatusComp.SortSelected, () => this.ModalModelComp.ModelsSelected.join(','), () => this.ModalGiftModelsComp.ModelsSelected.join(','), () => this.SymbolModelComp.SymbolsSelected, () => this.BackdropModelComp.BackdropsSelected], async () => {
             let sortListing = null;
             if (this.Tabs.Active === 'listings') {
                 this.ListingsComp.List = [];
@@ -375,7 +380,8 @@ export default {
                 const modelsGift = this.ModalGiftModelsComp.ModelsSelected;
                 const symbols = this.SymbolModelComp.SymbolsSelected;
                 const backdrops = this.BackdropModelComp.BackdropsSelected;
-                const cacheKey = this.keyFor(tab, sort, models, modelsGift, symbols, backdrops);
+                const searchNumber = this.searchNumber;
+                const cacheKey = this.keyFor(tab, sort, models, modelsGift, symbols, backdrops, searchNumber);
                 const bucket = this.storeCache.UserNFTs[cacheKey];
                 if (bucket) {
                     this.GiftsComp.List = bucket.items.slice(0, this.GiftsComp.Limit);
@@ -473,12 +479,11 @@ export default {
             }
         },
 
-        keyFor(tab: string, sort: string, models: string[], modelsGift: string[], symbols: string[], backdrops: string[]) {
-            return `${tab}|${sort}|${models.join(',')}|${modelsGift.join(',')}|${symbols.join(',')}|${backdrops.join(',')}`;
+        keyFor(tab: string, sort: string, models: string[], modelsGift: string[], symbols: string[], backdrops: string[], searchNumber: string) {
+            return `${tab}|${sort}|${models.join(',')}|${modelsGift.join(',')}|${symbols.join(',')}|${backdrops.join(',')}|${searchNumber}`;
         },
         
         async fetchNftsStacks() {
-            console.log('1234567')
             if (this.GiftsComp.Searching) return;
             this.GiftsComp.Searching = true;
 
@@ -488,7 +493,8 @@ export default {
             const modelsGiftCsv = this.ModalGiftModelsComp.ModelsSelected;
             const symbolsCsv = this.SymbolModelComp.SymbolsSelected;
             const backdropsCsv = this.BackdropModelComp.BackdropsSelected;
-            const cacheKey = this.keyFor(tab, sort, modelsCsv, modelsGiftCsv, symbolsCsv, backdropsCsv);
+            const searchNumber = this.searchNumber;
+            const cacheKey = this.keyFor(tab, sort, modelsCsv, modelsGiftCsv, symbolsCsv, backdropsCsv, searchNumber);
 
             if (!this.storeCache.UserNFTs[cacheKey]) {
                 this.storeCache.UserNFTs[cacheKey] = { items: [], count: 0, fullyLoaded: false };
@@ -522,7 +528,8 @@ export default {
                     this.BackdropModelComp.BackdropsSelected.join(','),
                     this.ModalSortComp.SortSelected,
                     offset,
-                    this.GiftsComp.Limit
+                    this.GiftsComp.Limit,
+                    this.searchNumber
                 );
                 if (gifts) {
                     bucket.items.push(...gifts.items);

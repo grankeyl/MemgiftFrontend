@@ -88,6 +88,22 @@
             </div> -->
           </div>
 
+          <div v-if="ActiveTab === 'gifts'" class="filtersSearch">
+            <div class="number">
+              <div class="hash">
+                <h4>#</h4>
+              </div>
+              <input
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                autocomplete="off"
+                :placeholder="$t('market.searchNumber')"
+                @input="onInputSearchNumber"
+              />
+            </div>
+          </div>
+
           <div v-if="!isEmptyFilter" class="cheaps">
             <div class="cheap clear" @click="clearAll">
               <h4>{{ $t('profile.clearAll') }}</h4>
@@ -188,6 +204,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    SearchNumber: {
+      type: String,
+      required: true,
+    },
   },
 
   components: {
@@ -198,11 +218,16 @@ export default {
     return {
       isLoading: false,
 
+      searchNumber: this.SearchNumber,
+      _searchTimeout: null,
+
       Icon,
     };
   },
 
   mounted() {
+    this.searchNumber = this.SearchNumber;
+
     this.loadResources();
   },
 
@@ -259,6 +284,17 @@ export default {
   methods: {
     async loadResources() {
       this.$emit("loadSuccess");
+    },
+
+    onInputSearchNumber(e) {
+      const onlyDigits = e.target.value.replace(/\D/g, '')
+      e.target.value = onlyDigits
+      this.searchNumber = onlyDigits
+
+      clearTimeout(this._searchTimeout)
+      this._searchTimeout = setTimeout(() => {
+        this.$emit('searchNumber', this.searchNumber)
+      }, 1500)
     },
 
     loadFonts() {

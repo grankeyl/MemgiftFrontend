@@ -217,8 +217,7 @@ export default {
     // ====== TON Wallet ======
     openTonWallet() {
       tonConnectUI.openModal();
-      // Если есть TelegramModule — можно дернуть haptic:
-      // TelegramModule?.useMediumHaptic?.();
+      TelegramModule?.useMediumHaptic?.();
     },
     checkTonWallet() {
       this.walletConnected = !!tonConnectUI.connected;

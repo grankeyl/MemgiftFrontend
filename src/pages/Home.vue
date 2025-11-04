@@ -130,7 +130,7 @@ export default {
       propsSuccess: this.$props.success,
       isPageLoading: true,
 
-      PremiumGiftKey: "TonWheel",
+      PremiumGiftKey: "HungryDog",
  
       SlidesList: [
         {

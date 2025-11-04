@@ -271,7 +271,7 @@ export default {
                 this.storeCache.Market.Basket.Count = 0;
                 this.saveBasketToLS();
                 this.$router.push('/m');
-            }, 5200);
+            }, 400);
         },
 
         openWallet() {

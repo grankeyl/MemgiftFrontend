@@ -129,7 +129,87 @@
                             width: fit-content
                             height: fit-content
                             margin-top: 3px
-                            
+
+            .filtersSearch
+                width: 100%
+                height: 100%
+                display: flex
+                align-items: center
+                justify-content: center
+                position: relative
+
+                .number
+                    width: 100%
+                    height: fit-content
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    position: relative
+                    background: $app-background-secondary
+                    border-radius: 14px
+
+                    & .hash
+                        width: fit-content
+                        height: fit-content
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        position: relative
+                        margin-left: 15px
+
+                        & h4
+                            width: fit-content
+                            height: fit-content
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            position: relative
+                            font-size: 21px
+                            font-weight: 600
+                            color: $app-text-color
+
+                    & .kit-icon
+                        width: fit-content
+                        height: fit-content
+                        margin-top: 3px
+
+                    & input
+                        width: 100%
+                        height: 44px
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        position: relative
+                        background: $app-background-secondary
+                        border-radius: 14px
+                        border: none
+                        padding: 0 10px
+                        font-size: 15px
+                        outline: none
+                        font-weight: 600
+                        color: $app-text-color
+                        white-space: nowrap
+
+                        @media screen and (max-width: 430px)
+                            font-size: 14px
+
+                        @media screen and (max-width: 387px)
+                            font-size: 12px
+
+                        &::placeholder
+                            color: $app-text-color-descr-primary
+                            opacity: .6
+                            font-size: 15px
+                            font-weight: 600
+                            white-space: nowrap
+
+                            @media screen and (max-width: 430px)
+                                font-size: 14px
+
+                            @media screen and (max-width: 387px)
+                                font-size: 12px
+
+
             .righted
                 width: fit-content
                 height: 100%
