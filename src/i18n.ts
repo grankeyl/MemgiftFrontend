@@ -235,6 +235,7 @@ i18next.init({
                     items: {
                         latest: "Latest",
                         oldest: "Oldest",
+                        on_market: "On Market",
                         price_high: "Price: High to Low",
                         price_low: "Price: Low to High",
                         upgraded: "Upgraded",
@@ -669,6 +670,7 @@ i18next.init({
                     items: {
                         latest: "Последние",
                         oldest: "Старые",
+                        on_market: "На продаже",
                         price_high: "Цена: Высокая к Низкой",
                         price_low: "Цена: Низкая к Высокой",
                         upgraded: "Улучшенные",

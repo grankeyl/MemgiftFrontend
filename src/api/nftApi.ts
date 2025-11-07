@@ -59,8 +59,11 @@ export const getGifts = async (
     status: string,
     filter: string,
     gift_ukey: string,
+    nftName: string,
+    nftSymbol: string,
+    nftBackdrop: string,
     offset: number,
-    limit: number
+    limit: number,
 ) => {
     try {
         const tokenBearer = Cookies.get("token");
@@ -69,6 +72,9 @@ export const getGifts = async (
             `${API_URL}/nft/m_u?status=${status}` +
             `&filter=${filter}` +
             `&gift_ukey=${gift_ukey}` +
+            `&nft_name=${nftName}` +
+            `&symbol=${nftSymbol}` +
+            `&backdrop=${nftBackdrop}` +
             `&offset=${offset}&limit=${limit}`,
             { headers: { Authorization: `${tokenBearer}` } }
         );

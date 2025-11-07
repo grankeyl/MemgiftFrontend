@@ -5,6 +5,9 @@
   <div class="overlay" :class="{ 'is-open is-dark': ModalSellComp.ModalActive }" @click="ModalSellComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open': ModalComp.ModalTransferActive }" @click="ModalComp.ModalTransferActive = false" />
   <div class="overlay" :class="{ 'is-open': ModalDisconnectWalletComp.ModalActive }" @click="ModalDisconnectWalletComp.ModalActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': ModalGiftModelsComp.ModalActive }" @click="ModalGiftModelsComp.ModalActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': SymbolModelComp.SymbolsActive }" @click="SymbolModelComp.SymbolsActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': BackdropModelComp.BackdropsActive }" @click="BackdropModelComp.BackdropsActive = false" />
 
   <div 
     class="_wrap _profile flex-grow-scroll" 
@@ -37,9 +40,16 @@
           @useTab="setActiveTab"
           @openModelModal="ModalModelComp.ModalActive = true"
           @openSortModal="ModalSortComp.ModalActive = true"
+          @openGiftModelsModal="openGiftModelsModal"
+          @openSymbolModal="openSymbolModal"
+          @openBackdropModal="openBackdropModal"
+
           @clearAll="clearAll"
           @clearModels="clearModels"
           @clearSort="clearSort"
+          @clearGiftModels="clearGiftModels"
+          @clearSymbols="clearSymbols"
+          @clearBackdrops="clearBackdrops"
 
           :Skeleton="isPageLoading"
           :SkeletonTime="configApp.skeletonTime"
@@ -49,6 +59,9 @@
           :ActiveTab="ActiveTab"
           :SelectedModels="ModalModelComp.ModelsSelected"
           :SelectedSort="ModalSortComp.SortSelected"
+          :SelectedGiftModels="ModalGiftModelsComp.ModelsSelected"
+          :SelectedSymbols="SymbolModelComp.SymbolsSelected"
+          :SelectedBackdrops="BackdropModelComp.BackdropsSelected"
           :SortItems="ModalSortComp.SortItems"
           :Searching="GiftsComp.Searching"
           :HasMore="GiftsComp.HasMore"
@@ -110,6 +123,40 @@
         :Selected="ModalSortComp.SortSelected"
       />
 
+
+            <ModelModalGift
+                @closeModal="() => { ModalGiftModelsComp.ModalActive = false }"
+                @apply="applyGiftModels"
+
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
+                :ModalActive="ModalGiftModelsComp.ModalActive"
+                :GiftsList="ModalGiftModelsComp.ModelsList"
+                :Selected="ModalGiftModelsComp.ModelsSelected"
+            />
+
+            <SymbolModal
+                @closeModal="() => { SymbolModelComp.SymbolsActive = false }"
+                @apply="applySymbols"
+
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
+                :ModalActive="SymbolModelComp.SymbolsActive"
+                :GiftsList="SymbolModelComp.SymbolsList"
+                :Selected="SymbolModelComp.SymbolsSelected"
+            />
+
+            <BackdropModal
+                @closeModal="() => { BackdropModelComp.BackdropsActive = false }"
+                @apply="applyBackdrops"
+
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
+                :ModalActive="BackdropModelComp.BackdropsActive"
+                :GiftsList="BackdropModelComp.BackdropsList"
+                :Selected="BackdropModelComp.BackdropsSelected"
+            />
+
       <Notify
         :Title="`Подарок выставлен на продажу`"
         :Button="`Go to Market`"
@@ -141,6 +188,8 @@ import { unixToDefault } from '../utils/useApp';
 import { clearBackgroundName } from '../utils/useGift';
 
 import * as nftApi from '../api/nftApi';
+import * as MarketNftApi from '../api/market/nft';
+import * as MarketLotsApi from '../api/market/lots';
 
 import User from '../components/Profile/User.vue';
 import Gifts from '../components/Profile/Gifts.vue';
@@ -150,6 +199,9 @@ import DisconnectModal from '../components/Profile/DisconnectModal.vue';
 import ModelModal from '../components/Profile/ModelModal.vue';
 import SortModal from '../components/Profile/SortModal.vue';
 import SellModal from '../components/Profile/SellModal.vue';
+import ModelModalGift from '../components/Profile/ModelModalGift.vue';
+import SymbolModal from '../components/Profile/SymbolModal.vue';
+import BackdropModal from '../components/Profile/BackdropModal.vue';
 import Notify from '../components/Notify/Notify.vue';
 
 import i18next from 'i18next';
@@ -167,6 +219,9 @@ export default defineComponent({
     ModelModal,
     SortModal,
     SellModal,
+    ModelModalGift,
+    SymbolModal,
+    BackdropModal,
     Notify,
   },
 
@@ -256,6 +311,7 @@ export default defineComponent({
       SortItems: {
         latest: { id: 'latest', Title: 'Latest' },
         oldest: { id: 'oldest', Title: 'Oldest' },
+        on_market: { id: 'on_market', Title: 'On Market' },
         price_low: { id: 'price_low', Title: 'Price: Low to High' },
         price_high: { id: 'price_high', Title: 'Price: High to Low' },
         upgraded: { id: 'upgraded', Title: 'Upgraded' },
@@ -285,6 +341,24 @@ export default defineComponent({
         user_full_name: 0,
         user_photo: 0,
       },
+    });
+
+    const ModalGiftModelsComp = ref({
+      ModalActive: false,
+      ModelsList: [] as any[],
+      ModelsSelected: [],
+    });
+
+    const SymbolModelComp = ref({
+      SymbolsActive: false,
+      SymbolsList: [] as any[],
+      SymbolsSelected: [],
+    });
+
+    const BackdropModelComp = ref({
+      BackdropsActive: false,
+      BackdropsList: [] as any[],
+      BackdropsSelected: [],
     });
 
     const GiftPurchasedOffset = ref(10);
@@ -555,8 +629,8 @@ export default defineComponent({
       ModalDisconnectWalletComp.value.ModalActive = false;
     };
 
-    const keyFor = (tab: string, sort: string, models: string[]) =>
-      `${tab}|${sort}|${models.join(',')}`;
+    const keyFor = (tab: string, sort: string, models: string[], modelsGift: string[], symbols: string[], backdrops: string[]) =>
+      `${tab}|${sort}|${models.join(',')}|${modelsGift.join(',')}|${symbols.join(',')}|${backdrops.join(',')}`;
       
     const fetchNftsStacks = async () => {
       if (GiftsComp.value.Searching) return;
@@ -565,7 +639,10 @@ export default defineComponent({
       const tab = ActiveTab.value;
       const sort = ModalSortComp.value.SortSelected || 'latest';
       const modelsCsv = ModalModelComp.value.ModelsSelected;
-      const cacheKey = keyFor(tab, sort, modelsCsv);
+      const modelsGiftCsv = ModalGiftModelsComp.value.ModelsSelected;
+      const symbolsCsv = SymbolModelComp.value.SymbolsSelected;
+      const backdropsCsv = BackdropModelComp.value.BackdropsSelected;
+      const cacheKey = keyFor(tab, sort, modelsCsv, modelsGiftCsv, symbolsCsv, backdropsCsv);
 
       if (!storeCache.UserNFTs[cacheKey]) {
         storeCache.UserNFTs[cacheKey] = { items: [], count: 0, fullyLoaded: false };
@@ -597,6 +674,9 @@ export default defineComponent({
           tab,
           sort,
           modelsCsv.join(','),
+          modelsGiftCsv.join(','),
+          symbolsCsv.join(','),
+          backdropsCsv.join(','),
           offset,
           GiftsComp.value.Limit
         );
@@ -631,11 +711,21 @@ export default defineComponent({
     fetchNftsStacks();
 
     /** Смена фильтров/таба — просто меняем ключ; если кэша нет, первая загрузка начнётся с сервера */
-    watch([ActiveTab, () => ModalSortComp.value.SortSelected, () => ModalModelComp.value.ModelsSelected.join(',')], () => {
+    watch([
+      ActiveTab, 
+      () => ModalSortComp.value.SortSelected, 
+      () => ModalModelComp.value.ModelsSelected.join(','), 
+      () => ModalGiftModelsComp.value.ModelsSelected.join(','), 
+      () => SymbolModelComp.value.SymbolsSelected.join(','), 
+      () => BackdropModelComp.value.BackdropsSelected.join(',')
+    ], () => {
       const tab = ActiveTab.value;
       const sort = ModalSortComp.value.SortSelected || 'latest';
       const models = ModalModelComp.value.ModelsSelected;
-      const cacheKey = keyFor(tab, sort, models);
+      const modelsGift = ModalGiftModelsComp.value.ModelsSelected;
+      const symbols = SymbolModelComp.value.SymbolsSelected;
+      const backdrops = BackdropModelComp.value.BackdropsSelected;
+      const cacheKey = keyFor(tab, sort, models, modelsGift, symbols, backdrops);
 
       const bucket = storeCache.UserNFTs[cacheKey];
       if (bucket) {
@@ -658,6 +748,21 @@ export default defineComponent({
       fetchNftsStacks();
     }
 
+    const applyGiftModels = (models: any) => {
+      ModalGiftModelsComp.value.ModelsSelected = models;
+      fetchNftsStacks();
+    }
+
+    const applySymbols = (symbols: any) => {
+      SymbolModelComp.value.SymbolsSelected = symbols;
+      fetchNftsStacks();
+    }
+
+    const applyBackdrops = (backdrops: any) => {
+      BackdropModelComp.value.BackdropsSelected = backdrops;
+      fetchNftsStacks();
+    }
+
     const applySell = (item: any) => {
       NotifySellComp.value.NotifySellActive = true;
       ModalSellComp.value.ModalActive = false;
@@ -666,10 +771,39 @@ export default defineComponent({
       if (!nft) return;
       nft.market = { price_ton: item.price_ton, lot_id: item.lot_id };
     }
+    
+    const openGiftModelsModal = async () => {
+      ModalGiftModelsComp.value.ModelsList = [];
+      ModalGiftModelsComp.value.ModalActive = true;
+      for (const model of ModalModelComp.value.ModelsSelected) {
+        const modelName = await MarketNftApi.modelsName(model);
+        if (!modelName) return;
+        modelName.items.forEach((item: any) => {
+          ModalGiftModelsComp.value.ModelsList.push(item);
+        });
+      }
+    }
+
+    const openSymbolModal = async () => {
+      SymbolModelComp.value.SymbolsActive = true;
+      const symbols = await MarketLotsApi.symbols();
+      if (!symbols) return;
+      SymbolModelComp.value.SymbolsList = symbols;
+    }
+
+    const openBackdropModal = async () => {
+      BackdropModelComp.value.BackdropsActive = true;
+      const backdrops = await MarketLotsApi.backdrops();
+      if (!backdrops) return;
+      BackdropModelComp.value.BackdropsList = backdrops;
+    }
 
     const clearAll = () => {
       ModalModelComp.value.ModelsSelected = [];
       ModalSortComp.value.SortSelected = '';
+      ModalGiftModelsComp.value.ModelsSelected = [];
+      SymbolModelComp.value.SymbolsSelected = [];
+      BackdropModelComp.value.BackdropsSelected = [];
       fetchNftsStacks();
     }
 
@@ -680,6 +814,21 @@ export default defineComponent({
 
     const clearSort = () => {
       ModalSortComp.value.SortSelected = '';
+      fetchNftsStacks();
+    }
+
+    const clearGiftModels = () => {
+      ModalGiftModelsComp.value.ModelsSelected = [];
+      fetchNftsStacks();
+    }
+
+    const clearSymbols = () => {
+      SymbolModelComp.value.SymbolsSelected = [];
+      fetchNftsStacks();
+    }
+
+    const clearBackdrops = () => {
+      BackdropModelComp.value.BackdropsSelected = [];
       fetchNftsStacks();
     }
 
@@ -794,6 +943,23 @@ export default defineComponent({
       clearSort,
 
       removeGiftLot,
+
+      ModalGiftModelsComp,
+      applyGiftModels,
+
+      SymbolModelComp,
+      applySymbols,
+
+      BackdropModelComp,
+      applyBackdrops,
+
+      clearGiftModels,
+      clearSymbols,
+      clearBackdrops,
+
+      openSymbolModal,
+      openBackdropModal,
+      openGiftModelsModal,
 
       UPGRADE,
     };

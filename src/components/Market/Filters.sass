@@ -37,20 +37,33 @@
                 align-items: center
                 position: relative !important
                 opacity: 1 !important
-                gap: 24px
+                gap: 10px
                 overflow-x: none
                 overflow-y: scroll
                 
                 .filtersItemsItem
-                    width: fit-content
+                    width: 100%
                     height: fit-content
                     display: flex
+                    justify-content: space-between
                     align-items: center
                     gap: 6px
                     position: relative
-                    overflow: auto
-                    position: relative !important
-                    opacity: 1 !important
+                    overflow: hidden
+                    position: relative
+                    opacity: 1
+                    padding: 8px 10px
+                    background: rgba($app-background-secondary, 0.6)
+                    -webkit-backdrop-filter: blur(20px)
+                    backdrop-filter: blur(20px)
+                    border-radius: 14px
+
+                    .flexer
+                        width: 100%
+                        height: 100%
+                        display: block
+                        align-items: center
+                        gap: 6px
 
                     &.disabled
                         pointer-events: none
@@ -62,8 +75,8 @@
                         border-radius: 50%
                         background: $app-background-blue-secondary
                         position: absolute
-                        top: 4px
-                        right: -1px
+                        top: 6px
+                        right: 7px
                         z-index: 1
                     
                     .icon
@@ -108,6 +121,7 @@
                         font-weight: 600
                         color: $app-text-color-descr-primary
                         white-space: nowrap
+                        margin-top: 4px
 
                         @media screen and (max-width: 430px)
                             font-size: 14px
@@ -118,17 +132,107 @@
                     .dropdown
                         width: 19px
                         height: 19px
+                        min-width: 19px
                         display: flex
                         justify-content: center
                         align-items: center
                         position: relative
-                        background: $app-background-secondary
+                        background: rgba($app-mark-background, 0.8)
                         border-radius: 50px
 
                         & .kit-icon
                             width: fit-content
                             height: fit-content
                             margin-top: 3px
+                
+                // .filtersItemsItem
+                //     width: fit-content
+                //     height: fit-content
+                //     display: flex
+                //     align-items: center
+                //     gap: 6px
+                //     position: relative
+                //     overflow: auto
+                //     position: relative !important
+                //     opacity: 1 !important
+
+                //     &.disabled
+                //         pointer-events: none
+                //         opacity: .5
+
+                //     .circle
+                //         width: 6px
+                //         height: 6px
+                //         border-radius: 50%
+                //         background: $app-background-blue-secondary
+                //         position: absolute
+                //         top: 4px
+                //         right: -1px
+                //         z-index: 1
+                    
+                //     .icon
+                //         width: fit-content
+                //         height: fit-content
+                //         display: flex
+                //         justify-content: center
+                //         align-items: center
+                //         position: relative
+
+                //         &.pen
+                //             & .kit-icon
+                //                 width: 16px
+                //                 height: 16px
+
+                //                 & svg
+                //                     width: 100%
+                //                     height: 100%
+
+                //                     & path
+                //                         fill: $app-text-color-descr-primary
+                        
+                //         & .kit-icon
+                //             width: 18px
+                //             height: 18px
+
+                //             & :deep(svg)
+                //                 width: 100%
+                //                 height: 100%
+
+                //                 path
+                //                     fill: $app-text-color-descr-primary
+                            
+                //     .title
+                //         width: fit-content
+                //         height: fit-content
+                //         display: flex
+                //         justify-content: center
+                //         align-items: center
+                //         position: relative
+                //         font-size: 16px
+                //         font-weight: 600
+                //         color: $app-text-color-descr-primary
+                //         white-space: nowrap
+
+                //         @media screen and (max-width: 430px)
+                //             font-size: 14px
+
+                //         @media screen and (max-width: 387px)
+                //             font-size: 12px
+                    
+                //     .dropdown
+                //         width: 19px
+                //         height: 19px
+                //         display: flex
+                //         justify-content: center
+                //         align-items: center
+                //         position: relative
+                //         background: $app-background-secondary
+                //         border-radius: 50px
+
+                //         & .kit-icon
+                //             width: fit-content
+                //             height: fit-content
+                //             margin-top: 3px
 
             .filtersSearch
                 width: 100%
@@ -281,7 +385,7 @@
                         .kit-icon
                             width: fit-content
                             height: fit-content
-                            svg
+                            :deep(svg)
                                 opacity: 1
                                 path
                                     stroke: $app-background-blue-secondary
@@ -300,17 +404,17 @@
                         height: fit-content
 
                         &:first-child
-                            & svg 
+                            & :deep(svg)
                                 opacity: 1
                                 path
                                     stroke: $app-text-color
                         
                         &:last-child
-                            & svg 
+                            & :deep(svg) 
                                 width: 11px
                                 height: 11px
 
-                        & svg
+                        & :deep(svg)
                             width: 14px
                             height: 14px
                             opacity: .6

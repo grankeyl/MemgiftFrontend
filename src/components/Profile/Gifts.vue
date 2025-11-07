@@ -24,37 +24,75 @@
       <div v-if="!isLoading" class="_content">
         <div class="cont">
           <div class="lefted">
-            <div class="item" @click="openModelModal">
-              <div v-if="hasModels" class="circle"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Gift"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.model') }}
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
             <div class="item" @click="openSortModal">
               <div v-if="hasSort" class="circle"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Sort"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.sort') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Sort"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.sort') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-          </div>
-          <div class="righted">
-            <div v-if="tabViewNFTs === 'blocks'" class="display" @click="setTabViewNFTs('lists')">
-              <div class="kit-icon" v-html="Icon.List"></div>
+            <div class="item" @click="openModelModal">
+              <div v-if="hasModels" class="circle"></div>
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Blocks"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.collection') }}
+                </div>
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
             </div>
-            <div v-if="tabViewNFTs === 'lists'" class="display" @click="setTabViewNFTs('blocks')">
-              <div class="kit-icon" v-html="Icon.Blocks"></div>
+            <div class="item" @click="openGiftModelsModal" :class="{ disabled: !hasModelsUpgraded }">
+              <div class="circle" v-if="hasGiftModels"></div>
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.GiftOth"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.model') }}
+                </div>
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
+            </div>
+            <div class="item" @click="openSymbolModal">
+              <div class="circle" v-if="hasSymbols"></div>
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Symbol"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.symbol') }}
+                </div>
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
+            </div>
+            <div class="item" @click="openBackdropModal">
+              <div class="circle" v-if="hasBackdrops"></div>
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Backdrop"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.backdrop') }}
+                </div>
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -69,6 +107,14 @@
               ) }}
             </h5>
           </div>
+          <div class="righted">
+            <div v-if="tabViewNFTs === 'blocks'" class="display" @click="setTabViewNFTs('lists')">
+              <div class="kit-icon" v-html="Icon.List"></div>
+            </div>
+            <div v-if="tabViewNFTs === 'lists'" class="display" @click="setTabViewNFTs('blocks')">
+              <div class="kit-icon" v-html="Icon.Blocks"></div>
+            </div>
+          </div>
         </div>
         <div v-if="!isEmptyFilter" class="cheaps">
           <div class="cheap clear" @click="clearAll">
@@ -76,13 +122,28 @@
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
           <div v-if="hasModels" class="cheap model" @click="clearModels">
-            <div class="kit-icon" v-html="Icon.Gift"></div>
+            <div class="kit-icon" v-html="Icon.Blocks"></div>
             <h4>{{ modelsCount === 1 ? `Model: ${SelectedModels[0]}` : `${modelsCount} Models` }}</h4>
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
           <div v-if="hasSort" class="cheap sort" @click="clearSort">
             <div class="kit-icon" v-html="Icon.Sort"></div>
             <h4>{{ sortTitle }}</h4>
+            <div class="kit-icon" v-html="Icon.Close"></div>
+          </div>
+          <div v-if="hasGiftModels" class="cheap model" @click="clearGiftModels">
+            <div class="kit-icon" v-html="Icon.Gift"></div>
+            <h4>{{ giftModelsCount === 1 ? `Model: ${SelectedGiftModels[0]}` : `${giftModelsCount} Models` }}</h4>
+            <div class="kit-icon" v-html="Icon.Close"></div>
+          </div>
+          <div v-if="hasSymbols" class="cheap symbol" @click="clearSymbols">
+            <div class="kit-icon" v-html="Icon.Symbol"></div>
+            <h4>{{ symbolsCount === 1 ? `Symbol: ${SelectedSymbols[0]}` : `${symbolsCount} Symbols` }}</h4>
+            <div class="kit-icon" v-html="Icon.Close"></div>
+          </div>
+          <div v-if="hasBackdrops" class="cheap backdrop" @click="clearBackdrops">
+            <div class="kit-icon" v-html="Icon.Backdrop"></div>
+            <h4>{{ backdropsCount === 1 ? `Backdrop: ${SelectedBackdrops[0]}` : `${backdropsCount} Backdrops` }}</h4>
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
@@ -346,6 +407,18 @@ export default {
       type: String,
       required: true,
     },
+    SelectedGiftModels: {
+      type: Array,
+      required: true,
+    },
+    SelectedSymbols: {
+      type: Array,
+      required: true,
+    },
+     SelectedBackdrops: {
+      type: Array,
+      required: true,
+    },
     SortItems: {
       type: Object,
       required: true,
@@ -453,11 +526,28 @@ export default {
     hasModels() {
       return this.modelsCount > 0 
     },
+    hasModelsUpgraded() {
+      for (const model of this.SelectedModels) {
+        console.log(model, this.storeCache.NftsAppData[model]);
+        const modelName = this.storeCache.NftsAppData[model];
+        if (modelName?.UpgradeSupport) return true;
+      }
+      return false;
+    },
     hasSort() {
       return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort] 
     },
+    hasGiftModels() {
+      return this.giftModelsCount > 0 
+    },
+    hasSymbols() {
+      return this.symbolsCount > 0 
+    },
+    hasBackdrops() {
+      return this.backdropsCount > 0 
+    },
     isEmptyFilter() {
-      return !(this.hasModels || this.hasSort) 
+      return !(this.hasModels || this.hasGiftModels || this.hasSort || this.hasStatus || this.hasSymbols || this.hasBackdrops)
     },
     sortTitle() {
       if (this.hasSort) {
@@ -474,6 +564,16 @@ export default {
       const last = this.GiftsList?.[this.GiftsList.length - 1];
       // выбери, чем пагинироваться: uuid или created_at
       return last ? { uuid: last.uuid, created_at: last.created_at } : null;
+    },
+
+    giftModelsCount() {
+      return this.SelectedGiftModels?.length ?? 0 
+    },
+    symbolsCount() {
+      return this.SelectedSymbols?.length ?? 0 
+    },
+    backdropsCount() {
+      return this.SelectedBackdrops?.length ?? 0 
     },
   },
 
@@ -721,6 +821,18 @@ export default {
       this.$emit('openSortModal');
     },
 
+    openGiftModelsModal() {
+      this.$emit('openGiftModelsModal');
+    },
+
+    openSymbolModal() {
+      this.$emit('openSymbolModal');
+    },
+
+    openBackdropModal() {
+      this.$emit('openBackdropModal');
+    },
+
     clearAll() {
       this.$emit('clearAll');
     },
@@ -735,6 +847,18 @@ export default {
 
     openStore() {
       this.$router.push('/m');
+    },
+
+    clearSymbols() {
+      this.$emit('clearSymbols');
+    },
+
+    clearBackdrops() {
+      this.$emit('clearBackdrops');
+    },
+
+    clearGiftModels() {
+      this.$emit('clearGiftModels');
     },
   },
 };

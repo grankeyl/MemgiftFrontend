@@ -2806,25 +2806,47 @@
         gap: 12px
 
         .cont
-            display: flex
+            display: block
             align-items: center
             justify-content: space-between
 
             .lefted
-                width: fit-content
-                height: 100%
-                display: flex
+                display: grid
+                grid-template-columns: repeat(3, auto)
                 align-items: center
-                gap: 14px
-                position: relative
+                position: relative !important
+                opacity: 1 !important
+                gap: 10px
+                overflow-x: none
+                overflow-y: scroll
                 
                 .item
-                    width: fit-content
-                    height: 100%
+                    width: 100%
+                    height: fit-content
                     display: flex
+                    justify-content: space-between
                     align-items: center
                     gap: 6px
                     position: relative
+                    overflow: hidden
+                    position: relative
+                    opacity: 1
+                    padding: 8px 10px
+                    background: rgba($app-background-secondary, 0.6)
+                    -webkit-backdrop-filter: blur(20px)
+                    backdrop-filter: blur(20px)
+                    border-radius: 14px
+
+                    &.disabled
+                        pointer-events: none
+                        opacity: .5
+
+                    .flexer
+                        width: 100%
+                        height: 100%
+                        display: block
+                        align-items: center
+                        gap: 6px
 
                     .circle
                         width: 6px
@@ -2832,8 +2854,8 @@
                         border-radius: 50%
                         background: $app-background-blue-secondary
                         position: absolute
-                        top: 4px
-                        right: -1px
+                        top: 6px
+                        right: 7px
                         z-index: 1
                     
                     .icon
@@ -2843,6 +2865,18 @@
                         justify-content: center
                         align-items: center
                         position: relative
+
+                        &.pen
+                            & .kit-icon
+                                width: 16px
+                                height: 16px
+
+                                & svg
+                                    width: 100%
+                                    height: 100%
+
+                                    & path
+                                        fill: $app-text-color-descr-primary
                         
                         & .kit-icon
                             width: 18px
@@ -2852,8 +2886,8 @@
                                 width: 100%
                                 height: 100%
 
-                                & path
-                                    stroke: $app-text-color-descr-primary
+                                path
+                                    fill: $app-text-color-descr-primary
                             
                     .title
                         width: fit-content
@@ -2865,15 +2899,24 @@
                         font-size: 16px
                         font-weight: 600
                         color: $app-text-color-descr-primary
+                        white-space: nowrap
+                        margin-top: 4px
+
+                        @media screen and (max-width: 430px)
+                            font-size: 14px
+
+                        @media screen and (max-width: 387px)
+                            font-size: 12px
                     
                     .dropdown
                         width: 19px
                         height: 19px
+                        min-width: 19px
                         display: flex
                         justify-content: center
                         align-items: center
                         position: relative
-                        background: $app-background-secondary
+                        background: rgba($app-mark-background, 0.8)
                         border-radius: 50px
 
                         & .kit-icon
@@ -2928,6 +2971,7 @@
             width: 100%
             height: 100%
             display: flex
+            justify-content: space-between
             align-items: center
                 
             .gifts
@@ -2956,12 +3000,14 @@
             align-items: center
             justify-content: start
             position: relative
+            overflow-x: scroll
+            overflow-y: hidden
             gap: 8px
 
             .cheap
                 width: fit-content
                 height: 29px
-                padding: 6px 8px 6px 6px
+                padding: 6px 13px 6px 8px
                 background: $app-mark-background
                 border-radius: 30px
                 display: flex
@@ -2981,9 +3027,13 @@
                                 stroke: $app-background-blue-secondary
 
                 h4
-                    font-size: 14px
-                    font-weight: 600
-                    color: $app-text-color
+                        font-size: 14px
+                        font-weight: 600
+                        color: $app-text-color
+                        max-width: 170px
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        white-space: nowrap
 
                 & .kit-icon
                     width: fit-content
@@ -3000,6 +3050,41 @@
                         height: 11px
                         opacity: .6
 
+
+                    &.symbol
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+
+                            &:first-child
+                                & svg 
+                                    opacity: 1
+                                    path
+                                        fill: $app-text-color
+
+                    &.backdrop
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+
+                            &:first-child
+                                & svg 
+                                    opacity: 1
+                                    path
+                                        fill: $app-text-color
+                                        stroke: transparent
+
+                    &.price
+                        & .kit-icon
+                            width: fit-content
+                            height: fit-content
+
+                            &:first-child
+                                & svg 
+                                    opacity: 1
+                                    path
+                                        fill: $app-text-color
+                                        stroke: $app-text-color-descr
 
 ._comp._item._nfts
     width: 100%

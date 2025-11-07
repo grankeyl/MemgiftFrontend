@@ -5,11 +5,13 @@
           <div class="filtersItems">
             <div class="filtersItemsItem" @click="openSortModal">
               <div class="circle" v-if="hasSort"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Sort"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.sort') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Sort"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.sort') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
@@ -17,11 +19,13 @@
             </div>
             <div class="filtersItemsItem" @click="openStatusModal" v-if="ActiveTab === 'listings'">
               <div class="circle" v-if="hasStatus"></div>
-              <div class="icon pen">
-                <div class="kit-icon" v-html="Icon.Pen"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.status') }}
+              <div class="flexer">
+                <div class="icon pen">
+                  <div class="kit-icon" v-html="Icon.Pen"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.status') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
@@ -29,11 +33,13 @@
             </div>
             <div class="filtersItemsItem" @click="openModelModal">
               <div class="circle" v-if="hasModels"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Blocks"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.collection') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Blocks"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.collection') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
@@ -41,11 +47,13 @@
             </div>
             <div class="filtersItemsItem" @click="openGiftModelsModal" :class="{ disabled: !hasModels }">
               <div class="circle" v-if="hasGiftModels"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.GiftOth"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.model') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.GiftOth"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.model') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
@@ -53,11 +61,13 @@
             </div>
             <div class="filtersItemsItem" @click="openSymbolModal">
               <div class="circle" v-if="hasSymbols"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Symbol"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.symbol') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Symbol"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.symbol') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
@@ -65,11 +75,13 @@
             </div>
             <div class="filtersItemsItem" @click="openBackdropModal">
               <div class="circle" v-if="hasBackdrops"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Backdrop"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.backdrop') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Backdrop"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.backdrop') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
@@ -110,7 +122,7 @@
               <div class="kit-icon" v-html="Icon.Close"></div>
             </div>
             <div v-if="hasModels" class="cheap model" @click="clearModels">
-              <div class="kit-icon" v-html="Icon.Gift"></div>
+              <div class="kit-icon" v-html="Icon.Blocks"></div>
               <h4>{{ modelsCount === 1 ? `Collection: ${SelectedModels[0]}` : `${modelsCount} Collections` }}</h4>
               <div class="kit-icon" v-html="Icon.Close"></div>
             </div>
