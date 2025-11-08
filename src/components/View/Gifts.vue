@@ -23,37 +23,33 @@
       <div v-if="!isLoading" class="_content">
         <div class="cont">
           <div class="lefted">
-            <div class="item" @click="openModelModal">
-              <div v-if="hasModels" class="circle"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Gift"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.model') }}
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
             <div class="item" @click="openSortModal">
               <div v-if="hasSort" class="circle"></div>
-              <div class="icon">
-                <div class="kit-icon" v-html="Icon.Sort"></div>
-              </div>
-              <div class="title">
-                {{ $t('profile.profileFilters.sort') }}
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Sort"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.sort') }}
+                </div>
               </div>
               <div class="dropdown">
                 <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-          </div>
-          <div class="righted">
-            <div v-if="tabViewNFTs === 'blocks'" class="display" @click="setTabViewNFTs('lists')">
-              <div class="kit-icon" v-html="Icon.List"></div>
-            </div>
-            <div v-if="tabViewNFTs === 'lists'" class="display" @click="setTabViewNFTs('blocks')">
-              <div class="kit-icon" v-html="Icon.Blocks"></div>
+            <div class="item" @click="openModelModal">
+              <div v-if="hasModels" class="circle"></div>
+              <div class="flexer">
+                <div class="icon">
+                  <div class="kit-icon" v-html="Icon.Blocks"></div>
+                </div>
+                <div class="title">
+                  {{ $t('profile.profileFilters.collection') }}
+                </div>
+              </div>
+              <div class="dropdown">
+                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -67,6 +63,14 @@
                 storeCache.TelegramData.user.language
               ) }}
             </h5>
+          </div>
+          <div class="righted">
+            <div v-if="tabViewNFTs === 'blocks'" class="display" @click="setTabViewNFTs('lists')">
+              <div class="kit-icon" v-html="Icon.List"></div>
+            </div>
+            <div v-if="tabViewNFTs === 'lists'" class="display" @click="setTabViewNFTs('blocks')">
+              <div class="kit-icon" v-html="Icon.Blocks"></div>
+            </div>
           </div>
         </div>
         <div v-if="!isEmptyFilter" class="cheaps">

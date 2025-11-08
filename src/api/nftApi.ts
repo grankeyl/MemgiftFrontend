@@ -74,7 +74,7 @@ export const getGifts = async (
             `&gift_ukey=${gift_ukey}` +
             `&nft_name=${nftName}` +
             `&symbol=${nftSymbol}` +
-            `&backdrop=${nftBackdrop}` +
+            `&background=${nftBackdrop}` +
             `&offset=${offset}&limit=${limit}`,
             { headers: { Authorization: `${tokenBearer}` } }
         );
