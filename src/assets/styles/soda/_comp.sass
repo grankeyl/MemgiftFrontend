@@ -9,6 +9,14 @@
     opacity: 1
     transform: translateY(0px) scale(1)
 
+@keyframes leaving-animation
+  0%
+    transform: scale(1)
+  50% 
+    transform: scale(0.98)
+  100%
+    transform: scale(1)
+
 ._skeleton
     animation: fadeIn 0.72s
 
@@ -85,6 +93,7 @@
         .center
             width: fit-content
             margin-top: -5px
+            animation: leaving-animation 2.4s linear infinite
 
             & img
                 width: fit-content

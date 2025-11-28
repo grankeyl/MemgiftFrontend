@@ -41,7 +41,7 @@ import { useCacheStore } from '../../stores/pinia/piniaStore';
 import Image_Ticket from '@/assets/images/soda-ticket.svg';
 import HeadImage from '@/assets/images/soda/head.png';
 
-const START_TS = 1764349688;           // от этого момента
+const START_TS = 1764354554;           // от этого момента
 const WEEK_SEC = 7 * 24 * 60 * 60;    // неделя
 
 export default {

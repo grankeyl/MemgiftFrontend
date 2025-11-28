@@ -53,7 +53,7 @@
 
   <div class="event">
     <h4>Soda Luv Event</h4>
-    <!-- <div class="tickets" @click="openSodaEvent">
+    <div class="tickets" @click="openSodaEvent">
       <div class="flexer">
         <div class="context">
           <p>{{ $t('home.sodaEvent.title') }}</p>
@@ -64,7 +64,7 @@
           <img :src="Image_TicketSodaSvg" alt="tickets" />
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 
   <div ref="giftsContainer" :class="['_direction', '_comp', '_item', '_gifts', '_lefting', Key]">
