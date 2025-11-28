@@ -201,7 +201,7 @@ export default {
     },
 
     async useTask() {
-      TelegramModule.useShareStory('https://memgift.codes/s3/soda/sodaluv.png');
+      TelegramModule.useShareStorySoda('https://memgift.codes/s3/soda/sodaluv.png');
 
       setTimeout(async () => {
         const res = await nftApi.sodaEventConfirm();

@@ -92,6 +92,7 @@ i18next.init({
                 sodaEvent: {
                     title: "Giveaway car!",
                     more: "More",
+                    giveawayParticipant: "Enter the car giveaway 🛻",
                 }
             },
             collection: {
@@ -543,6 +544,7 @@ i18next.init({
                 sodaEvent: {
                     title: "Розыгрыш автомобиля!",
                     more: "Подробнее",
+                    giveawayParticipant: "Учавствуй в розыгрыше на автомобиль 🛻",
                 }
             },
             collection: {

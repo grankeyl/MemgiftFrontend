@@ -145,6 +145,19 @@ const TelegramModule = {
       
       return true;
     },
+
+    async useShareStorySoda(storyMedia: string) {
+      WebApp.shareToStory(storyMedia, {
+        text: t('home.sodaEvent.giveawayParticipant') + ' '
+        + import.meta.env.VITE_APP_MINI_APP_USERNAME,
+        widget_link: {
+          url: import.meta.env.VITE_APP_MINI_APP_LINK,
+          name: import.meta.env.VITE_APP_MINI_APP_USERNAME,
+        },
+    });
+      
+      return true;
+    },
 };
 
 export default TelegramModule;
