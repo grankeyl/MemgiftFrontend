@@ -8,6 +8,7 @@ export const useCacheStore = defineStore('cache', {
     TelegramData: {},
     UserData: {},
     UserNFTs: {} as Record<string, { items: Gift[]; count: number; fullyLoaded: boolean }>,
+    UserSodaEvent: {},
     NftsApp: {},
     NftsAppData: {},
     RatingApp: [],

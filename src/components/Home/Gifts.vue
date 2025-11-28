@@ -53,6 +53,18 @@
 
   <div class="event">
     <h4>Soda Luv Event</h4>
+    <!-- <div class="tickets" @click="openSodaEvent">
+      <div class="flexer">
+        <div class="context">
+          <p>{{ $t('home.sodaEvent.title') }}</p>
+          <span>{{ $t('home.sodaEvent.more') }} ›</span>
+        </div>
+        <div class="mark">
+          <p>{{ sodaEvent.tickets || 0 }}</p>
+          <img :src="Image_TicketSodaSvg" alt="tickets" />
+        </div>
+      </div>
+    </div> -->
   </div>
 
   <div ref="giftsContainer" :class="['_direction', '_comp', '_item', '_gifts', '_lefting', Key]">
@@ -259,10 +271,13 @@ import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { checkRarityImage, checkRarity, checkPriceNumber } from '../../utils/useGift';
 import { Icon } from '../Icon';
 
+import * as nftApi from '../../api/nftApi';
+
 import TelegramModule from '../../hooks/useTelegram';
 
 import Image_giftBg from '@/assets/gifts/png/gift_bg.png';
 import Image_starsPng from '@/assets/images/stars.png';
+import Image_TicketSodaSvg from '@/assets/images/soda-ticket.svg';
 
 import Button from '../Button.vue';
 import Lottie from '../Lottie.vue';
@@ -326,6 +341,8 @@ export default {
         { value: 'supply_low_to_high', label: this.$t('home.sortby_7') },
       ],
 
+      sodaEvent: {},
+
       checkboxHideSoldOut: true,
 
       checkRarityImage,
@@ -335,6 +352,7 @@ export default {
       Icon,
       Image_giftBg,
       Image_starsPng,
+      Image_TicketSodaSvg,
     };
   },
 
@@ -449,6 +467,7 @@ export default {
     this.loadFiltersFromLocalStorage();
     this.storeNftsApp = this.storeCache.NftsApp;
     this.loadResources();
+    this.getSodaEvent();
       
     this.$nextTick(() => {
       this.startEventQueue();
@@ -458,6 +477,7 @@ export default {
     this.$watch(() => this.storeCache.NftsApp, () => {
       this.storeNftsApp = this.storeCache.NftsApp;
       this.loadResources();
+      this.getSodaEvent();
     });
   },
 
@@ -604,6 +624,17 @@ export default {
         this.checkboxHideSoldOut = filters.checkboxHideSoldOut !== false;
         this.activeCategory = this.selectRarityValue === 'all_gifts' ? 'all' : this.selectRarityValue;
       }
+    },
+
+    async getSodaEvent() {
+      const sodaEvent = await nftApi.sodaEvent();
+      if (!sodaEvent) return;
+
+      this.sodaEvent = sodaEvent;
+    },
+
+    openSodaEvent() {
+      this.$router.push({ name: 'soda' });
     },
   },
 

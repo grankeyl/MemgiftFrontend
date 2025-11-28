@@ -221,6 +221,7 @@ export default {
         if (dtx === 'tickets') { router.push('/tickets'); }
         if (dtx === 'market') { router.push('/m'); }
         if (dtx === 'referrals') { router.push('/referrals'); }
+        if (dtx === 'soda') { router.push('/soda'); }
 
         mountMiniApp();
       }

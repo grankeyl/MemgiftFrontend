@@ -531,3 +531,32 @@ export const sodaLocked = async () => {
         return false;
     }
 };
+
+export const sodaEvent = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/sodaEvent`,
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        const data = response.data;
+        return data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const sodaEventConfirm = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/sodaEvent/confirm`,
+            { },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        const data = response.data;
+        return data;
+    } catch (error) {
+        return false;
+    }
+};

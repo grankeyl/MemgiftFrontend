@@ -35,3 +35,4 @@ export const claim = async (
     );
     return response.data;
 }
+

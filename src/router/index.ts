@@ -19,6 +19,7 @@ import PrivateDeal from '../pages/PrivateDeal.vue'
 import ActivateMulticheck from '../pages/Activate/Multicheck.vue'
 import Referral from '../pages/Referral.vue'
 import Wallet from '../pages/Wallet.vue'
+import Soda from '../pages/Soda.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +43,7 @@ const router = createRouter({
     { path: '/deal', name: 'deal', component: Deal },
     { path: '/private-deal', name: 'private-deal', component: PrivateDeal },
     { path: '/referral', name: 'referral', component: Referral },
+    { path: '/soda', name: 'soda', component: Soda },
     // {
     //   path: '/:pathMatch(.*)*',
     //   name: 'NotFound',

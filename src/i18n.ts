@@ -88,6 +88,11 @@ i18next.init({
                 nullGiftsTitle: "No gifts",
                 nullGiftsDescr: "Edit gift rarity or reset",
                 nullGiftsButton: "Reset",
+
+                sodaEvent: {
+                    title: "Giveaway car!",
+                    more: "More",
+                }
             },
             collection: {
                 giftCollectable: "Collectible",
@@ -439,6 +444,21 @@ i18next.init({
                     orderSuccess: "Withdraw order created!",
                     orderFailed: "Withdraw order failed!",
                 },
+            },
+            soda: {
+                head: {
+                    timer: "The end of {{timer}}",
+                    giveawayCancel: "Giveaway canceled",
+                },
+                block: {
+                    getTickets: "Get tickets for repost",
+                    getTicket: "Get {{ticket}}",
+                },
+                button: {
+                    back: "Back",
+                    youAreNotParticipant: "You are not participant",
+                    youParticipated: "You participated",
+                },
             }
         }
     },
@@ -519,6 +539,11 @@ i18next.init({
                 nullGiftsTitle: "Нет подарков",
                 nullGiftsDescr: "Установите редкость подарка или сбросите",
                 nullGiftsButton: "Сбросить",
+
+                sodaEvent: {
+                    title: "Розыгрыш автомобиля!",
+                    more: "Подробнее",
+                }
             },
             collection: {
                 giftCollectable: "Коллекционный",
@@ -870,6 +895,21 @@ i18next.init({
                     info: "Вывод на кошелек с TAG/MEMO не поддерживается!",
                     orderSuccess: "Заявка на вывод создана!",
                     orderFailed: "Ошибка вывода!",
+                },
+            },
+            soda: {
+                head: {
+                    timer: "До конца: {{timer}}",
+                    giveawayCancel: "Розыгрыш завершён",
+                },
+                block: {
+                    getTickets: "Получите тикеты за репост",
+                    getTicket: "Get {{ticket}}",
+                },
+                button: {
+                    back: "Назад",
+                    youAreNotParticipant: "Вы не учавствуете",
+                    youParticipated: "Вы учавствуете",
                 },
             }
         }
