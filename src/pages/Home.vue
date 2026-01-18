@@ -97,8 +97,6 @@ import Slider from '../components/Home/Slider.vue';
 import Funcs from '../components/Home/Funcs.vue';
 import Gifts from '../components/Home/Gifts.vue';
 
-import Banner5 from '../assets/images/banner-5.png';
-
 export default {
   props: {
     success: {
@@ -133,19 +131,6 @@ export default {
       PremiumGiftKey: "HungryDog",
  
       SlidesList: [
-        {
-          id: 0,
-          Title: this.$t('home.slider_5'),
-          Button: "Author",
-          ButtonText: this.$t('home.slider_button_5'),
-          ButtonKey: "HungryDog",
-          ButtonSlide: "first",
-          ImageContent: "/home/banner-5-image.png",
-          BgImage: Banner5,
-          ButtonLink: typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_AFFILIATE
-          ? import.meta.env.VITE_APP_AFFILIATE
-          : null,
-        },
         {
           id: 1,
           Title: this.$t('home.slider_1'),
@@ -183,7 +168,7 @@ export default {
     TelegramModule.hideBackButton();
 
     this.SlidesList.forEach((slide, index) => {
-      if (index === 1) {
+      if (index === 0) {
         try {
           slide.ButtonKey = this.PremiumGiftKey;
           slide.ButtonText = this.storeCache.NftsAppData[this.PremiumGiftKey].Price;
@@ -199,7 +184,7 @@ export default {
       (newValue) => {
         if (newValue) {
           this.SlidesList.forEach((slide, index) => {
-            if (index === 1) {
+            if (index === 0) {
               try {
                 slide.ButtonKey = this.PremiumGiftKey;
                 slide.ButtonText = newValue[this.PremiumGiftKey].Price;

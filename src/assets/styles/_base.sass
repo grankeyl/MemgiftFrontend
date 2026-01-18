@@ -10,8 +10,10 @@
 ._pageLoad
     position: fixed
     top: 0
-    left: 0
+    left: 50%
+    transform: translateX(-50%)
     width: 100%
+    max-width: $app-max-preview-width
     height: 100%
     z-index: 100
     background: $app-background
@@ -57,15 +59,15 @@
         transition: 0.25s ease-out
 
     & .kit-icon
-        width: 42px
-        height: 42px
+        width: 36px
+        height: 36px
         opacity: 1
         margin: auto
 
         & svg
             width: 100%
             height: 100%
-            animation: spin 0.77s linear infinite
+            animation: spin 0.67s linear infinite
 
 ._showMenu
     padding-bottom: $app-menu-height

@@ -4,157 +4,56 @@
       <div class="_select skeleton-box"></div>
     </div>
     <div v-else class="_content">
-      <div class="_select custom-select" @click="toggleSelectRarityDropdown">
-        <span class="selected">
-          {{ selectedRarityLabel || 'Выберите вариант' }}
-        </span>
-        <div class="kit-icon" v-html="Icon.Chevrone"></div>
-        <div class="dropdown" :class="{ open: selectRarityOpened }">
-          <div class="dropdown-scroll">
-            <div
-              v-for="option in selectRarityOptions"
-              :key="option.value"
-              class="dropdown-option"
-              :class="{ active: option.value === selectRarityValue }"
-              @click.stop="selectRarityOption(option)"
-            >
-              <span>{{ option.label }}</span>
-              <div v-if="option.value === selectRarityValue" class="kit-icon" v-html="Icon.Done"></div>
+      <div class="flexed">
+        <div class="_select custom-select" @click="toggleSelectRarityDropdown">
+          <span class="selected">
+            {{ selectedRarityLabel || 'Выберите вариант' }}
+          </span>
+          <div class="kit-icon" v-html="Icon.Chevrone"></div>
+        </div>
+        <div class="_select custom-select" @click="toggleSelectSortbyDropdown">
+          <span class="selected">
+            {{ selectedSortbyLabel || 'Выберите вариант' }}
+          </span>
+          <div class="kit-icon" v-html="Icon.Chevrone"></div>
+        </div>
+
+          <div class="dropdown" :class="{ open: selectRarityOpened }">
+            <div class="dropdown-scroll">
+              <div
+                v-for="option in selectRarityOptions"
+                :key="option.value"
+                class="dropdown-option"
+                :class="{ active: option.value === selectRarityValue }"
+                @click.stop="selectRarityOption(option)"
+              >
+                <span>{{ option.label }}</span>
+                <div v-if="option.value === selectRarityValue" class="kit-icon" v-html="Icon.Done"></div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="_select custom-select" @click="toggleSelectSortbyDropdown">
-        <span class="selected">
-          {{ selectedSortbyLabel || 'Выберите вариант' }}
-        </span>
-        <div class="kit-icon" v-html="Icon.Chevrone"></div>
-        <div class="dropdown" :class="{ open: selectSortbyOpened }">
-          <div class="dropdown-scroll">
-            <div
-              v-for="option in selectSortbyOptions"
-              :key="option.value"
-              class="dropdown-option"
-              :class="{ active: option.value === selectSortbyValue }"
-              @click.stop="selectSortbyOption(option)"
-            >
-              <span>{{ option.label }}</span>
-              <div v-if="option.value === selectSortbyValue" class="kit-icon" v-html="Icon.Done"></div>
+
+          <div class="dropdown" :class="{ open: selectSortbyOpened }">
+            <div class="dropdown-scroll">
+              <div
+                v-for="option in selectSortbyOptions"
+                :key="option.value"
+                class="dropdown-option"
+                :class="{ active: option.value === selectSortbyValue }"
+                @click.stop="selectSortbyOption(option)"
+              >
+                <span>{{ option.label }}</span>
+                <div v-if="option.value === selectSortbyValue" class="kit-icon" v-html="Icon.Done"></div>
+              </div>
             </div>
           </div>
-        </div>
+          
       </div>
       <div class="_checkbox custom-checkbox" @click="toggleHideSoldOut">
         <div class="custom-checkbox-box" :class="{ checked: checkboxHideSoldOut }"></div>
         <div class="custom-checkbox-label">{{ $t('home.hideGifts') }}</div>
       </div>
     </div>
-  </div>
-
-  <div class="event">
-    <h4>Soda Luv Event</h4>
-    <div class="tickets" @click="openSodaEvent">
-      <div class="flexer">
-        <div class="context">
-          <p>{{ $t('home.sodaEvent.title') }}</p>
-          <span>{{ $t('home.sodaEvent.more') }} ›</span>
-        </div>
-        <div class="mark">
-          <p>{{ sodaEvent.tickets || 0 }}</p>
-          <img :src="Image_TicketSodaSvg" alt="tickets" />
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div ref="giftsContainer" :class="['_direction', '_comp', '_item', '_gifts', '_lefting', Key]">
-    <div v-if="isLoading || isEmptyStore" class="_skeleton">
-      <div class="_gift"></div>
-      <div class="_gift"></div>
-      <div class="_gift"></div>
-      <div class="_gift"></div>
-    </div>
-    <div v-else class="_content">
-      <div 
-        v-for="(gift, index) in eventGifts" 
-        v-show="gift.UKey === 'Swipee' || gift.UKey === 'HotDog' || gift.UKey === 'BurningPanties' || gift.UKey === 'HungryDog' || gift.UKey === 'Soda'"
-        :key="gift.UKey"
-        @click="openCollection(gift.UKey)"
-        class="_gift"
-        :class="{ 
-          [gift.Rarity]: true, 
-          ['giftNew_' + gift.New]: true
-        }"
-      >
-        <div v-if="gift.New" class="nftNewMark">
-          <p>{{ $t('home.giftNew') }}</p>
-        </div>
-        <div class="_symbols">
-          <img :src="Image_giftBg" />
-        </div>
-        <div v-if="gift.soldOut" class="_rarity">
-          <div class="_image">
-            <img :src="checkRarityImage('soldout')" />
-          </div>
-          <div class="_text">
-            <span>{{ checkRarity('soldout') }}</span>
-          </div>
-        </div>
-        <div v-else class="_rarity">
-          <div class="_image">
-            <img :src="checkRarityImage(gift.Rarity)" />
-          </div>
-          <div class="_text">
-            <span>{{ checkRarity(gift.Rarity) }}</span>
-          </div>
-        </div>
-
-        <div v-if="gift.Media === 'svg'" class="_nft" :class="{ nftLoading: gift.nftOnLoading }">
-          <img 
-            @load="giftOnLoad(gift)"
-            @error="giftOnError(gift)"
-            :src="gift.ImageMain"
-            v-bind:class="{ nftLoading: gift.nftOnLoading }"
-          />
-          <div class="loader-icon" :class="{ active: gift.nftOnLoading }"></div>
-        </div>
-
-        <div v-if="gift.Media === 'lottie'" class="_nft _lottie">
-          <GiftLottie
-            ref="eventLottieRefs"
-            class="lt"
-            :path="`/gifts/lottie/${gift.Key}.json`"
-            :loop="false"
-            :autoplay="false"
-            width="25"
-            height="25"
-            renderer="svg"
-            @complete="onEventComplete"
-          />
-        </div>
-              
-        <div v-if="!gift.Locked" class="_buy">
-          <button v-if="gift.Price">
-            <p>{{ checkPriceNumber(gift.Price) }}</p>
-            <img class="starsSmall" :src="Image_starsPng" alt="stars" />
-          </button>
-          <button v-else>
-            <p>{{ $t('app.price_free') }}</p>
-          </button>
-        </div>
-        
-        <div v-if="gift.Locked" class="_buy locked">
-          <button v-if="gift.Price">
-            <p>Locked</p>
-            <div class="kit-icon" v-html="Icon.Lock"></div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="event">
-    <h4>Others</h4>
   </div>
 
   <div ref="giftsContainer" :class="['_direction', '_comp', '_item', '_gifts', '_lefting', Key]">
@@ -167,7 +66,6 @@
     <div v-else class="_content">
       <div 
         v-for="(gift, index) in otherGifts" 
-        v-show="gift.UKey !== 'Swipee' && gift.UKey !== 'HotDog' && gift.UKey !== 'BurningPanties' && gift.UKey !== 'HungryDog' && gift.UKey !== 'Soda'"
         :key="gift.UKey"
         @click="openCollection(gift.UKey)"
         class="_gift"
@@ -368,9 +266,7 @@ export default {
       );
     },
     otherGifts() {
-      return this.filteredNfts.filter(g =>
-        !['Swipee','HotDog','BurningPanties','HungryDog','Soda'].includes(g.UKey)
-      );
+      return this.filteredNfts;
     },
 
     // только лотти

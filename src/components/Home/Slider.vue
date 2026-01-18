@@ -11,22 +11,22 @@
         <swiper-slide v-for="(slide, index) in slides" :key="index">
           <div v-if="index === 0" @click="handleButtonClick(slide)" :style="{ backgroundImage: `url(${slide.BgImage})`, width: '110%', }" class="slideBg">
             <div class="_left">
-              <!-- <div class="_title">
+              <div class="_title">
                 <h1>{{ slide.Title }}</h1>
-              </div> -->
-              <!-- <div class="_button">
+              </div>
+              <div class="_button">
                 <button @click="handleButtonClick(slide)" :class="slide.Button.toLowerCase()">
                   <img v-if="slide.Button === 'Buy'" src="/src/assets/images/stars.png" alt="stars" />
                   <p>{{ slide.ButtonText }}</p>
                   <div v-if="slide.Button === 'Reading'" class="kit-icon" v-html="slide.ButtonIcon"></div>
                 </button>
-              </div> -->
+              </div>
             </div>
-            <!-- <div class="_right">
-              <div v-if="slide.ImageContent" :class="['_image', { '_first-slide': index === 1 }]" :style="{ marginLeft: index === 1 ? '-15%' : '0' }">
+            <div class="_right">
+              <div v-if="slide.ImageContent" :class="['_image', { '_first-slide': index === 0 }]" :style="{ marginLeft: index === 0 ? '-25%' : '0' }">
                 <img :src="slide.ImageContent" alt="content-image" />
               </div>
-            </div> -->
+            </div>
           </div>
 
           <div v-else :style="{ backgroundImage: `url(${slide.BgImage})` }" class="slideBg">
@@ -75,7 +75,7 @@ export default {
       swiperOptions: {
         modules: [Autoplay],
         slidesPerView: 'auto',
-        spaceBetween: 10,
+        spaceBetween: 12,
         centeredSlidesBounds: true,
         initialSlide: 0,
         autoplay: {

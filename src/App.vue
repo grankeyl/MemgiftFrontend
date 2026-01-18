@@ -147,11 +147,6 @@ export default {
 
       try {
         const isAuthenticated = await authenticateWith(initDataRaw) as any;
-        if (!isAuthenticated?.[0]) {
-          if (!miniAppMounted.value) mountMiniApp();
-          return;
-        }
-
         if (isAuthenticated && isAuthenticated[0]) {
           const nftsApp = await giftsApi.getAll();
 
@@ -195,9 +190,7 @@ export default {
         }
       } catch (e) {
         console.error(e);
-      } finally {
-        if (!miniAppMounted.value) mountMiniApp();
-      }
+      } finally {}
     });
 
     const miniAppTransport = (dtx: any) => {
