@@ -1,60 +1,56 @@
 <template>
   <div class="_direction _comp _item _othersTasks" :class="Key">
       <div v-if="isLoading" class="_skeleton">
-        <div class="_block">
+        <div class="_list-skel">
+          <div class="_row-skel"></div>
         </div>
       </div>
       <div v-else class="_content">
-        <div class="_block">
-          <div class="_blockHead">
-            <div class="_blockHeadTitle">
-              <h4>{{ $t('tickets.othersTitle') }}</h4>
-            </div>
-          </div>
-          <div v-for="(task, index) in TasksData" class="_task">
-            <div class="_taskSpan">
+        <div class="_section-head">
+          <h4>{{ $t('tickets.othersTitle') }}</h4>
+        </div>
+
+        <div class="_task-list">
+          <div v-for="(task, index) in TasksData" :key="index" class="_task-row">
+            <div class="_task-avatar">
               <div class="kit-icon" v-html="Icon.Gift"></div>
             </div>
-            <div class="_taskContext">
-              <div class="_taskContextTitle">
-                <h4>
-                  {{ $t('app.sendGift') }}
-                  {{ task.config.SendCount }} 
-                  {{ pluralizeGift(
-                    $t('app.sendGiftText'),
-                    task.config.SendCount, 
-                    storeCache.TelegramData.user.language
-                  ) }}
-                </h4>
-              </div>
-              <div class="_taskContextTickets">
+            <div class="_task-info">
+              <h4>
+                {{ $t('app.sendGift') }}
+                {{ task.config.SendCount }} 
+                {{ pluralizeGift(
+                  $t('app.sendGiftText'),
+                  task.config.SendCount, 
+                  storeCache.TelegramData.user.language
+                ) }}
+              </h4>
+              <div class="_task-reward">
                 <img :src="Image_Ticket" alt="tickets" />
                 <p>+{{ task?.rewards?.[0]?.amount }}</p>
               </div>
+              <div v-if="task.user_status !== 'completed'" class="_task-progress">
+                <div class="_task-progress-bar">
+                  <div class="_task-progress-fill" :style="{ width: progressPercent(task) + '%' }"></div>
+                </div>
+                <span class="_task-progress-text">{{ progressCurrent(task) }}/{{ task.config.SendCount }}</span>
+              </div>
             </div>
 
-            <div v-if="task.type === 'send_gift'" class="_taskButton">
-              <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading && !SendGiftTaskCheck(task)" @click="openProfile()" class="count">
-                <span>{{ SendGiftTaskButton(task) }}</span>
+            <div v-if="task.type === 'send_gift'" class="_task-action">
+              <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading && !SendGiftTaskCheck(task)" @click="openProfile()" class="_btn _count">
+                <span>{{ $t('tickets.taskButtonStart') }}</span>
               </button>
-              <button v-if="task.user_status !== 'completed' && SendGiftTaskCheck(task) && !task.isLoading" @click="clickTask(task)" class="claim">
+              <button v-if="task.user_status !== 'completed' && SendGiftTaskCheck(task) && !task.isLoading" @click="clickTask(task)" class="_btn _claim">
                 <span>{{ $t('tickets.taskButtonClaim') }}</span>
               </button>
-              <button v-if="task.user_status === 'completed' && !task.isLoading" class="done">
-                <span>{{ $t('tickets.taskButtonDone') }}</span>
+              <button v-if="task.user_status === 'completed' && !task.isLoading" class="_btn _done">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
               </button>
-              <button v-if="task.user_status === 'in_progress' || task.isLoading" class="process">
-                <Lottie
-                  class="lt"
-                  slug="loading-spin"
-                  :loop="true"
-                  width="25"
-                  height="25"
-                  renderer="svg"
-                />
+              <button v-if="task.user_status === 'in_progress' || task.isLoading" class="_btn _loading">
+                <Lottie class="lt" slug="loading-spin" :loop="true" width="25" height="25" renderer="svg" />
               </button>
             </div>
-
           </div>
         </div>
       </div>
@@ -153,25 +149,20 @@ export default {
       return Promise.all([...staticImages]);
     },
 
-    learnMore() {
-      const link = import.meta.env.VITE_APP_MEMTICKETS;
-      TelegramModule.useLink(link);
+    progressCurrent(task) {
+      if (!task.config) return 0;
+      return Math.min(this.storeCache.UserData.sent_user || 0, task.config.SendCount);
+    },
+
+    progressPercent(task) {
+      if (!task.config || !task.config.SendCount) return 0;
+      const current = this.storeCache.UserData.sent_user || 0;
+      return Math.min(100, (current / task.config.SendCount) * 100);
     },
 
     SendGiftTaskCheck(task) {
       if (!task.rewards) return false;
-      return this.storeCache.UserData.sent_user >= task.rewards[0].amount
-    },
-
-    SendGiftTaskButton(task) {
-      if (!task.rewards) return false;
-      return `${Math.max(
-        0, 
-        Math.min(
-          this.storeCache.UserData.sent_user,
-          task.rewards[0].amount
-        )
-      )} / ${task.rewards[0].amount}`;
+      return this.storeCache.UserData.sent_user >= task.config.SendCount;
     },
 
     async useTask(task) {

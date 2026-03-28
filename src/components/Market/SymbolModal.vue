@@ -8,7 +8,14 @@
         class="_skeleton"
         :class="{ hide: !ModalActive }"
       >
-        <div @click="closeModal" class="close"></div>
+        <div class="modal-skel__handle"></div>
+        <div class="modal-skel__head"></div>
+        <div class="modal-skel__item" v-for="n in 5" :key="'sk-' + n">
+          <div class="modal-skel__circle"></div>
+          <div class="modal-skel__text" :style="{ width: 25 + n * 10 + '%' }"></div>
+          <div class="modal-skel__check"></div>
+        </div>
+        <div class="modal-skel__btns"><div></div><div></div></div>
       </div>
       <div 
         v-if="!isLoading" 
@@ -24,27 +31,44 @@
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
-        <div class="items">
-          <div 
-            v-for="(item, index) in GiftsList" 
-            :key="index"
-            @click="applyModel(item.unique_name)"
-            class="item"
-          >
-            <div
-              class="symbol"
-            >
-              <img :src="item.image" alt="symbol">
-            </div>
-            <div class="left">
-              <h5>{{ item.unique_name }}</h5>
-              <span>{{ item.drop_rate }}%</span>
-            </div>
-            <div class="checkbox" :class="{ active: localSelectedSymbols.includes(item.unique_name) }">
-              <div class="kit-icon" v-html="Icon.Done"></div>
+        <template v-if="isListLoading">
+          <div class="items-skeleton">
+            <div class="items-skeleton__row" v-for="n in 5" :key="'isl-' + n">
+              <div class="items-skeleton__circle"></div>
+              <div class="items-skeleton__line" :style="{ width: 25 + n * 10 + '%' }"></div>
+              <div class="items-skeleton__box"></div>
             </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <div class="modal-search">
+            <input 
+              v-model="searchQuery" 
+              type="text" 
+              :placeholder="$t('market.searchPlaceholder')" 
+            />
+            <span v-if="localSelectedSymbols.length" class="modal-search__count">{{ localSelectedSymbols.length }}</span>
+          </div>
+          <div class="items">
+            <div 
+              v-for="(item, index) in filteredList" 
+              :key="index"
+              @click="applyModel(item.unique_name)"
+              class="item"
+            >
+              <div class="symbol">
+                <img :src="item.image" alt="symbol">
+              </div>
+              <div class="left">
+                <h5>{{ item.unique_name }}</h5>
+                <span>{{ item.drop_rate }}%</span>
+              </div>
+              <div class="checkbox" :class="{ active: localSelectedSymbols.includes(item.unique_name) }">
+                <div class="kit-icon" v-html="Icon.Done"></div>
+              </div>
+            </div>
+          </div>
+        </template>
         <div class="buttons">
           <button @click="cancel">
             <h4>{{ $t('profile.profileModelModal.cancel') }}</h4>
@@ -84,6 +108,7 @@ export default {
       storeCache: useCacheStore(),
       isLoadingModalImage: true,
       localSelectedSymbols: [],
+      searchQuery: '',
 
       OwnerImage: true,
       ActiveButton: false,
@@ -98,7 +123,10 @@ export default {
 
   watch: {
     ModalActive(val) {
-      if (val) this.localSelectedSymbols = [...this.Selected];
+      if (val) {
+        this.localSelectedSymbols = [...this.Selected];
+        this.searchQuery = '';
+      }
     },
   },
 
@@ -109,7 +137,15 @@ export default {
   computed: {
     isSkeleton() {
       return this.Skeleton;
-    }
+    },
+    isListLoading() {
+      return this.ModalActive && (!this.GiftsList || this.GiftsList.length === 0);
+    },
+    filteredList() {
+      if (!this.searchQuery) return this.GiftsList;
+      const q = this.searchQuery.toLowerCase();
+      return this.GiftsList.filter(i => (i.unique_name || '').toLowerCase().includes(q));
+    },
   },
   
   methods: {

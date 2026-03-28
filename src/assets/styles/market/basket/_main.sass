@@ -249,3 +249,95 @@
                         & img
                             width: 12px                    
                             height: 12px
+
+            // ===== EMPTY STATE =====
+            .bsk-empty
+                width: 100%
+                display: flex
+                flex-direction: column
+                align-items: center
+                justify-content: center
+                padding: 60px 32px
+                text-align: center
+                animation: bskFadeIn 0.35s ease
+
+                &__icon
+                    width: 56px
+                    height: 56px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    border-radius: 16px
+                    background: rgba($app-text-color, 0.06)
+                    margin-bottom: 16px
+
+                    img
+                        width: 28px
+                        height: 28px
+                        opacity: 0.4
+
+                &__title
+                    font-size: 20px
+                    font-weight: 700
+                    color: $app-text-color
+                    margin-bottom: 6px
+
+                &__descr
+                    font-size: 13px
+                    font-weight: 500
+                    color: $app-text-color-descr-primary
+                    line-height: 1.4
+                    max-width: 260px
+                    margin-bottom: 20px
+
+                &__btn
+                    width: auto !important
+                    height: 44px !important
+                    padding: 0 28px !important
+                    background: $app-background-blue-secondary !important
+                    border-radius: 12px !important
+                    font-size: 14px
+                    font-weight: 600
+                    color: #fff !important
+                    cursor: pointer
+                    transition: transform 0.15s ease
+
+                    &:active
+                        transform: scale(0.96)
+
+            @keyframes bskFadeIn
+                from
+                    opacity: 0
+                    transform: translateY(8px)
+                to
+                    opacity: 1
+                    transform: translateY(0)
+
+            // ===== SUMMARY CARD =====
+            .bsk-summary
+                width: 100%
+                padding: 12px 14px
+                border-radius: 14px
+                background: rgba($app-text-color, 0.04)
+                display: flex
+                flex-direction: column
+                gap: 8px
+                animation: bskFadeIn 0.25s ease
+
+                &__row
+                    display: flex
+                    align-items: center
+                    justify-content: space-between
+
+                &__label
+                    font-size: 12px
+                    font-weight: 500
+                    color: $app-text-color-descr-primary
+
+                &__val
+                    font-size: 13px
+                    font-weight: 600
+                    color: $app-text-color
+
+                    &--accent
+                        color: $app-background-blue-secondary

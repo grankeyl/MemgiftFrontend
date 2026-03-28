@@ -84,6 +84,7 @@ import { showToast } from '../../utils/toastManager';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { cutNumber } from '../../utils/useTon';
 import { beginCell, toNano, Address } from '@ton/core';
+import { t } from 'i18next';
 
 import * as MarketBalanceApi from '../../api/market/balance';
 
@@ -245,7 +246,10 @@ export default {
 
       try {
         const response = await MarketBalanceApi.deposit(Number(nano));
-        if (!response) return;
+        if (!response) {
+          showToast(t('wallet.depositModal.orderFailed'), 'error');
+          return;
+        }
         await this.sendPayment(response.address, response.memo);
         this.$emit('deposit', parseFloat(this.amountStr));
         showToast(t('wallet.depositModal.orderSuccess'), 'success');

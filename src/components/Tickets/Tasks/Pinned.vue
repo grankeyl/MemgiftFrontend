@@ -1,33 +1,37 @@
 <template>
   <div class="_direction _comp _item _tasksPinned" :class="Key">
       <div v-if="isLoading" class="_skeleton">
-        <div class="_block">
-            <div class="_task"></div>
-            <div class="_task"></div>
+        <div class="_row">
+            <div class="_card-skel"></div>
+            <div class="_card-skel"></div>
         </div>
       </div>
       <div v-else class="_content">
+        <div class="_head">
+          <h4>{{ $t('tickets.pinnedTitle') }}</h4>
+          <span class="_done-count" v-if="completedCount > 0">{{ completedCount }}/{{ totalCount }}</span>
+        </div>
         <div 
           v-if="TasksData"
-          class="_block"
+          class="_row"
           :class="{ disabled: !storeCache.TelegramData.user.is_premium }"
         >
             <div 
               v-for="(task, index) in TasksData"
+              :key="index"
               @click="clickTask(task)"
-              class="_task"
+              class="_card"
+              :class="{ _done: task.user_status === 'completed' }"
             >
-              <div class="_taskSpan" :class="{ done: task.user_status === 'completed' }">
-                <div class="kit-icon done" v-html="Icon.Done"></div>
-                <div v-if="task.user_status !== 'completed' && task.type === 'create_story'"
-                class="kit-icon" v-html="Icon.Photo"></div>
-                <div v-if="task.user_status !== 'completed' && task.type === 'set_emoji'"
-                class="kit-icon" v-html="Icon.Love"></div>
+              <div class="_card-icon" :class="{ _done: task.user_status === 'completed' }">
+                <svg v-if="task.user_status === 'completed'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                <div v-else-if="task.type === 'create_story'" class="kit-icon" v-html="Icon.Photo"></div>
+                <div v-else-if="task.type === 'set_emoji'" class="kit-icon" v-html="Icon.Love"></div>
               </div>
-              <div class="_taskTitle">
+              <div class="_card-title">
                 <h4>{{ taskName(task.type) }}</h4>
               </div>
-              <div v-if="task.user_status !== 'completed'" class="_taskTickets">
+              <div v-if="task.user_status !== 'completed'" class="_card-reward">
                 <img :src="Image_Ticket" alt="tickets" />
                 <p>+{{ task?.rewards?.[0]?.amount }}</p>
               </div>
@@ -97,7 +101,14 @@ export default {
     },
     TasksData() {
       return this.$props.TasksData;
-    }
+    },
+    completedCount() {
+      if (!this.TasksData) return 0;
+      return this.TasksData.filter(t => t.user_status === 'completed').length;
+    },
+    totalCount() {
+      return this.TasksData ? this.TasksData.length : 0;
+    },
   },
   
   methods: {
@@ -163,13 +174,13 @@ export default {
       if (task.status === 'completed') {
         if (task.type === 'create_story') {
           const storyMedia = task.config.StoryMedia;
-          const shareStory = TelegramModule.useShareStory(storyMedia)
+          TelegramModule.useShareStory(storyMedia);
         }
 
         if (task.type === 'set_emoji') {
           const emojiIds = task.config.EmojiIds;
           const randomEmoji = emojiIds[Math.floor(Math.random() * emojiIds.length)];
-          const setEmoji = TelegramModule.useSetEmoji(randomEmoji)
+          TelegramModule.useSetEmoji(randomEmoji);
         }
 
         return;
@@ -177,7 +188,7 @@ export default {
 
       if (task.type === 'create_story') {
         const storyMedia = task.config.StoryMedia;
-        const shareStory = TelegramModule.useShareStory(storyMedia)
+        TelegramModule.useShareStory(storyMedia)
           .then(async (status) => {
             if (status) {
               this.useTask(task);
@@ -194,7 +205,7 @@ export default {
       if (task.type === 'set_emoji') {
         const emojiIds = task.config.EmojiIds;
         const randomEmoji = emojiIds[Math.floor(Math.random() * emojiIds.length)];
-        const setEmoji = TelegramModule.useSetEmoji(randomEmoji)
+        TelegramModule.useSetEmoji(randomEmoji)
           .then(async () => {
             const use = await this.useTask(task);
             if (use) {

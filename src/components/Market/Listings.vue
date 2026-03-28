@@ -1,8 +1,15 @@
 <template>
-  <div class="_direction _comp _item listings">
-      <div v-if="isLoading" class="_skeleton">
+  <div class="_direction _comp _item listings" v-if="showSkeleton || (ListingsList && ListingsList.length > 0) || Searching">
+      <div v-if="showSkeleton" class="_skeleton">
+        <div class="skel-item" v-for="n in 6" :key="'sk-' + n">
+          <div class="skel-nft"></div>
+          <div class="skel-ctx">
+            <div class="skel-line skel-wide"></div>
+            <div class="skel-line skel-short"></div>
+          </div>
+        </div>
       </div>
-      <div class="_content" :class="{ hide: isLoading }">
+      <div v-else class="_content">
         <div class="items">
           <div 
             v-for="(item, index) in ListingsList" 
@@ -92,12 +99,10 @@
         </div>
 
         <div
-          v-if="Searching || ListingsList.length === 0"
-          class="_direction _comp _item _loads"
+          v-if="Searching && ListingsList.length > 0"
+          class="load-more"
         >
-          <div class="null">
-            <div class="load-icon"></div>
-          </div>
+          <div class="load-icon"></div>
         </div>
         
         <div v-show="HasMore" ref="sentinel" style="height: 1px;"></div>
@@ -173,6 +178,9 @@ export default {
   },
 
   computed: {
+    showSkeleton() {
+      return this.isLoading || (this.Searching && (!this.ListingsList || this.ListingsList.length === 0));
+    },
   },
 
   methods: {

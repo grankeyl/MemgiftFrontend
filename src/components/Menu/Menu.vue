@@ -36,22 +36,20 @@ onMounted(() => {
 </script>
 
 <template>
-      <div v-if="!prohibitedRoutes.includes($route.path)" class="menu">
-        <div class="menu_inner">
-            <div class="menu_routes">
-                <div 
-                  v-for="route in MenuJson" 
-                  :class="{ active: $route.path === route.Route, disable: route.Disable }"
-                  class="menuRoute"
-                >
-                    <div @click="openRoute(route.Route)" class="menu_route">
-                        <div class="kit-icon" v-html="route.Icon"></div>
-                        <p>{{ $t(`menu.${route.Key}`) }}</p>
-                    </div>
-                  </div>
-            </div>
-        </div>
+  <nav v-if="!prohibitedRoutes.includes($route.path)" class="menu">
+    <div class="menu_pill">
+      <div
+        v-for="route in MenuJson"
+        :key="route.Key"
+        :class="{ active: $route.path === route.Route, disable: route.Disable }"
+        class="menu_tab"
+        @click="openRoute(route.Route)"
+      >
+        <div class="menu_tab_icon" v-html="route.Icon"></div>
+        <span class="menu_tab_label">{{ $t(`menu.${route.Key}`) }}</span>
+      </div>
     </div>
+  </nav>
 </template>
 
 <style scoped>

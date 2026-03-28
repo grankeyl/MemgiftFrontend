@@ -45,8 +45,15 @@ export default defineConfig({
     port: 3000,
     hmr: {
       protocol: 'wss',
-      host: 'localhost',
+      host: '192.168.0.198',
       clientPort: 3000,
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4090',
+        changeOrigin: true,
+        secure: false,
+      },
     },
     watch: { usePolling: true, interval: 300 },
   },

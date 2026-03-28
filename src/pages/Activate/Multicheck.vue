@@ -22,7 +22,7 @@
                 :SkeletonTime="configApp.skeletonTime"
 
                 :Background="Image_ReceivedGift"
-                :NftImage="NftData?.nftImages?.imageMain"
+                :NftImage="NftData?.ImageMain || NftData?.nftImages?.imageMain || ''"
                 :Text="$t('receiveMulticheck.sendedText')"
                 :Descr="$t('receiveMulticheck.sendedDescr')"
             />
@@ -36,9 +36,9 @@
                 :SkeletonTime="configApp.skeletonTime"
 
                 :Background="Image_ReceivedGift"
-                :NftImage="NftData?.nftImages?.imageMain"
+                :NftImage="NftData?.ImageMain || NftData?.nftImages?.imageMain || ''"
                 :Text="$t('receiveMulticheck.receivedText')"
-                :Descr="NftData?.nftName + ' ' + $t('receiveMulticheck.receivedDescr')"
+                :Descr="$t('receiveMulticheck.receivedDescr')"
             />
 
             <Notfound
@@ -50,7 +50,7 @@
                 :SkeletonTime="configApp.skeletonTime"
 
                 :Background="Image_ReceivedGift"
-                :NftImage="NftData?.nftImages?.imageMain"
+                :NftImage="NftData?.ImageMain || NftData?.nftImages?.imageMain || ''"
                 :Text="$t('receiveMulticheck.notfoundText')"
                 :Descr="$t('receiveMulticheck.notfoundDescr')"
             />
@@ -64,7 +64,7 @@
                 :SkeletonTime="configApp.skeletonTime"
 
                 :Background="Image_ReceivedGift"
-                :NftImage="NftData?.nftImages?.imageMain"
+                :NftImage="NftData?.ImageMain || NftData?.nftImages?.imageMain || ''"
                 :Text="$t('receiveMulticheck.selfedText')"
                 :Descr="$t('receiveMulticheck.selfedDescr')"
             />

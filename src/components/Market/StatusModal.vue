@@ -8,7 +8,13 @@
         class="_skeleton"
         :class="{ hide: !ModalActive }"
       >
-        <div @click="closeModal" class="close"></div>
+        <div class="modal-skel__handle"></div>
+        <div class="modal-skel__head"></div>
+        <div class="modal-skel__item" v-for="n in 3" :key="'sk-' + n">
+          <div class="modal-skel__text" :style="{ width: 35 + n * 12 + '%' }"></div>
+          <div class="modal-skel__check"></div>
+        </div>
+        <div class="modal-skel__btns"><div></div><div></div></div>
       </div>
       <div 
         v-if="!isLoading" 

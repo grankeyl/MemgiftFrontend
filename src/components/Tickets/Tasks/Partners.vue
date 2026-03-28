@@ -1,101 +1,81 @@
 <template>
   <div class="_direction _comp _item _partnersTasks" :class="Key">
       <div v-if="isLoading" class="_skeleton">
-        <div class="_block">
+        <div class="_list-skel">
+          <div class="_row-skel"></div>
+          <div class="_row-skel"></div>
+          <div class="_row-skel"></div>
         </div>
       </div>
       <div v-else class="_content">
-        <div class="_block">
-          
-          <div class="_blockHead">
-            <div class="_blockHeadTitle">
-              <h4>{{ $t('tickets.partnersTitle') }}</h4>
-            </div>
-            <div @click="becomePartner()" class="_blockHeadSpan">
-              <span>{{ $t('tickets.partnersSpan') }}</span>
-              <div class="kit-icon" v-html="Icon.ChevroneRight"></div>
-            </div>
-          </div>
+        <div class="_section-head">
+          <h4>{{ $t('tickets.partnersTitle') }}</h4>
+          <span @click="becomePartner()">
+            {{ $t('tickets.partnersSpan') }}
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </span>
+        </div>
 
-          <div v-for="(task, index) in TasksData" class="_tasksBlocker" :key="index">
-            <div v-if="task.type === 'subscribe_channel'" class="_task">
-              <div class="_taskSpan">
-                <img :src="task.config.ChannelAvatar" alt="partners" />
+        <div class="_task-list">
+          <div v-for="(task, index) in TasksData" :key="index" class="_task-row">
+            <template v-if="task.type === 'subscribe_channel'">
+              <div class="_task-avatar">
+                <img :src="task.config.ChannelAvatar" alt="" />
               </div>
-              <div class="_taskContext">
-                <div class="_taskContextTitle">
-                  <h4>{{ task.config.ChannelName }}</h4>
-                </div>
-                <div class="_taskContextTickets">
+              <div class="_task-info">
+                <h4>{{ task.config.ChannelName }}</h4>
+                <div class="_task-reward">
                   <img :src="Image_Ticket" alt="tickets" />
                   <p>+{{ task?.rewards?.[0]?.amount }}</p>
                 </div>
               </div>
-              <div class="_taskButton">
-                <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading" @click="clickTask(task)" class="start">
+              <div class="_task-action">
+                <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading" @click="clickTask(task)" class="_btn _start">
                   <span>{{ $t('tickets.taskButtonStart') }}</span>
                 </button>
-                <button v-if="task.user_status === 'in_review' && !task.isLoading" @click="claimTask(task)" class="claim">
+                <button v-if="task.user_status === 'in_review' && !task.isLoading" @click="claimTask(task)" class="_btn _claim">
                   <span>{{ $t('tickets.taskButtonClaim') }}</span>
                 </button>
-                <button v-if="task.user_status === 'completed' && !task.isLoading" class="done">
-                  <span>{{ $t('tickets.taskButtonDone') }}</span>
+                <button v-if="task.user_status === 'completed' && !task.isLoading" class="_btn _done">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                 </button>
-                <button v-if="task.user_status === 'in_progress' || task.isLoading" class="process">
-                  <Lottie
-                    class="lt"
-                    slug="loading-spin"
-                    :loop="true"
-                    width="25"
-                    height="25"
-                    renderer="svg"
-                  />
+                <button v-if="task.user_status === 'in_progress' || task.isLoading" class="_btn _loading">
+                  <Lottie class="lt" slug="loading-spin" :loop="true" width="25" height="25" renderer="svg" />
                 </button>
               </div>
-            </div>
-            <div v-if="task.type === 'join_mini_app'" class="_task">
-              <div class="_taskSpan">
-                <img :src="task.config.MiniAppAvatar" alt="partners" />
+            </template>
+
+            <template v-if="task.type === 'join_mini_app'">
+              <div class="_task-avatar">
+                <img :src="task.config.MiniAppAvatar" alt="" />
               </div>
-              <div v-if="task.rewards && task.rewards[0].type === 'gifts'" class="_taskContext">
-                <div class="_taskContextTitle">
-                  <h4>{{ task.config.MiniAppName }}</h4>
-                </div>
-                <div class="_taskContextTickets">
-                  <b>{{ $t('tickets.stickerGift', { count: 1 }) }}</b>
-                </div>
-              </div>
-              <div v-if="task.rewards && task.rewards[0].type === 'tickets'" class="_taskContext">
-                <div class="_taskContextTitle">
-                  <h4>{{ task.config.MiniAppName }}</h4>
-                </div>
-                <div class="_taskContextTickets">
-                  <img :src="Image_Ticket" alt="tickets" />
-                  <p>+{{ task?.rewards?.[0]?.amount }}</p>
+              <div class="_task-info">
+                <h4>{{ task.config.MiniAppName }}</h4>
+                <div class="_task-reward">
+                  <template v-if="task.rewards && task.rewards[0].type === 'gifts'">
+                    <b>{{ $t('tickets.stickerGift', { count: 1 }) }}</b>
+                  </template>
+                  <template v-else>
+                    <img :src="Image_Ticket" alt="tickets" />
+                    <p>+{{ task?.rewards?.[0]?.amount }}</p>
+                  </template>
                 </div>
               </div>
-              <div class="_taskButton">
-                <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading" @click="clickTask(task)" class="start">
+              <div class="_task-action">
+                <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading" @click="clickTask(task)" class="_btn _start">
                   <span>{{ $t('tickets.taskButtonStart') }}</span>
                 </button>
-                <button v-if="task.user_status === 'in_review' && !task.isLoading" @click="claimTask(task)" class="claim">
+                <button v-if="task.user_status === 'in_review' && !task.isLoading" @click="claimTask(task)" class="_btn _claim">
                   <span>{{ $t('tickets.taskButtonClaim') }}</span>
                 </button>
-                <button v-if="task.user_status === 'completed' && !task.isLoading" class="done">
-                  <span>{{ $t('tickets.taskButtonDone') }}</span>
+                <button v-if="task.user_status === 'completed' && !task.isLoading" class="_btn _done">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                 </button>
-                <button v-if="task.user_status === 'in_progress' || task.isLoading" class="process">
-                  <Lottie
-                    class="lt"
-                    slug="loading-spin"
-                    :loop="true"
-                    width="25"
-                    height="25"
-                    renderer="svg"
-                  />
+                <button v-if="task.user_status === 'in_progress' || task.isLoading" class="_btn _loading">
+                  <Lottie class="lt" slug="loading-spin" :loop="true" width="25" height="25" renderer="svg" />
                 </button>
               </div>
-            </div>
+            </template>
           </div>
         </div>
       </div>

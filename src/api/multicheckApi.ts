@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_APP_API_URL;
 export const create = async (
     userId: string,
     nftUniqueKey: string,
-    nftsIds: string,
+    nftsIds: string[],
     nftsCount: number
 ) => {
     try {
@@ -15,46 +15,82 @@ export const create = async (
         const response = await axios.post(
             `${API_URL}/multicheck/create`,
             { user_id: userId, nftUniqueKey: nftUniqueKey, nftsIds: nftsIds, nftsCount: nftsCount },
-            { headers: { Authorization: `Bearer ${tokenBearer}` } }
+            { headers: { Authorization: `${tokenBearer}` } }
         );
-        const data = response.data;
-        return data;
+        return response.data;
     } catch (error) {
         return false;
     }
 };
 
-export const update = async (
-    uuid: string,
-    userIds: string,
-    nftsIds: string
-) => {
-    try {
-        const tokenBearer = Cookies.get("token");
-        const response = await axios.post(
-            `${API_URL}/multicheck/update`,
-            { uuid, userIds, nftsIds },
-            { headers: { Authorization: `Bearer ${tokenBearer}` } }
-        );
-        const data = response.data;
-        return data;
-    } catch (error) {
-        return false;
-    }
-};
-
-export const getUuid = async (
-    uuid: string
-) => {
+export const getUuid = async (uuid: string) => {
     try {
         const tokenBearer = Cookies.get("token");
         const response = await axios.post(
             `${API_URL}/multicheck/get/uuid`,
             { uuid },
-            { headers: { Authorization: `Bearer ${tokenBearer}` } }
+            { headers: { Authorization: `${tokenBearer}` } }
         );
-        const data = response.data;
-        return data;
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const activate = async (uuid: string) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/multicheck/activate`,
+            { uuid },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const cancel = async (uuid: string) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/multicheck/cancel`,
+            { uuid },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const confirmPayment = async (uuid: string) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/multicheck/confirm-payment`,
+            { uuid },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const createMulticheckInvoice = async (
+    multicheckUuid: string,
+    nftsCount: number
+) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/payments/create-multicheck`,
+            { multicheck_uuid: multicheckUuid, nfts_count: nftsCount },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
     } catch (error) {
         return false;
     }

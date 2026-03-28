@@ -170,7 +170,7 @@
       },
 
       async cycleHistory() {
-        const historyGet = await historyApi.getHistory();
+        const historyGet = await historyApi.getAll();
         if (!historyGet) return;
         this.storeCache.HistoryApp = historyGet;
       },

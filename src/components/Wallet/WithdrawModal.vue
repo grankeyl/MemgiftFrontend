@@ -160,7 +160,7 @@ export default {
     },
     checkBalanceAndPrice() {
       if (!this.amountNum) return false;
-      if (this.amountNum < 0.2) return false;
+      if (this.amountNum < 0.05) return false;
       if (this.amountNum > 15000) return false;
       if (!this.storeCache.UserData.user.Balance) return false;
       const clearBalance = parseFloat(this.storeCache.UserData.user.Balance.balance_ton);
@@ -263,15 +263,24 @@ export default {
 
       try {
         const response = await MarketBalanceApi.withdraw(this.amountStr, Number(nano));
-        if (!response) return;
-        
+        if (!response) {
+          showToast(t('wallet.withdrawModal.orderFailed'), 'error');
+          this.loadingButton = false;
+          return;
+        }
+
         this.storeCache.UserData.user.Balance.balance_ton = response.new_balance_ton;
-        this.loadingButton = false;
         showToast(t('wallet.withdrawModal.orderSuccess'), 'success');
         this.$emit('closeModal');
+        this.$emit('withdraw', {
+          amount: this.amountNum,
+          new_balance: response.new_balance_ton,
+        });
       } catch (e) {
         showToast(t('wallet.withdrawModal.orderFailed'), 'error');
         console.error(e);
+      } finally {
+        this.loadingButton = false;
       }
     },
   },

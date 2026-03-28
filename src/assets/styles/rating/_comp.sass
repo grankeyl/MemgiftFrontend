@@ -1,24 +1,54 @@
 @use "./../_variables" as *
 
-
+// ===== ANIMATIONS =====
 @keyframes fadeIn
   0%
     opacity: 0
   100%
     opacity: 1
 
+@keyframes podiumRise
+  0%
+    opacity: 0
+    transform: translateY(40px) scale(0.85)
+  60%
+    opacity: 1
+    transform: translateY(-6px) scale(1.02)
+  100%
+    opacity: 1
+    transform: translateY(0) scale(1)
+
+@keyframes rowSlideIn
+  0%
+    opacity: 0
+    transform: translateX(-12px)
+  100%
+    opacity: 1
+    transform: translateX(0)
+
+@keyframes glowPulse
+  0%, 100%
+    box-shadow: 0 0 14px rgba($app-leaderboard-background-one, 0.35)
+  50%
+    box-shadow: 0 0 28px rgba($app-leaderboard-background-one, 0.6)
+
+@keyframes crownBob
+  0%, 100%
+    transform: translateY(0) rotate(-2deg)
+  50%
+    transform: translateY(-3px) rotate(2deg)
 
 ._skeleton
     animation: fadeIn 0.72s
 
 ._content
     animation: fadeIn 0.32s
-    
 
+// ===== CONTEXT HEADER =====
 ._comp._item._contextRating
     width: 100%
     height: fit-content
-    margin-bottom: 14px
+    margin-bottom: 16px
     padding: 0px 22px
 
     ._skeleton
@@ -36,56 +66,42 @@
             gap: 6px
 
             ._title
-                width: 100%
-                height: 20px
+                width: 60%
+                height: 24px
                 border-radius: 10px
-
-                & h4
-                    font-size: 24px
-                    font-weight: 700
-                    color: $app-text-color
+                background: rgba($app-text-color, 0.06)
 
             ._descr
-                width: 100%
-
-                & p
-                    font-size: 15px
-                    font-weight: 500
-                    color: $app-text-color
-                    opacity: .5
-                    max-width: 250px
+                width: 80%
+                height: 14px
+                border-radius: 8px
+                background: rgba($app-text-color, 0.04)
 
     ._content
-        width: fit-content
+        width: 100%
         display: flex
         flex-direction: column
-        align-items: center
         gap: 4px
 
         ._block
             width: 100%
             display: flex
             flex-direction: column
-            gap: 6px
+            gap: 4px
 
-            ._title
-                width: 100%
-                margin-bottom: 3px
+        .rt-title
+            font-size: 28px
+            font-weight: 800
+            color: $app-text-color
+            letter-spacing: -0.5px
+            margin-bottom: 4px
 
-                & h4
-                    font-size: 24px
-                    font-weight: 700
-                    color: $app-text-color
-
-            ._descr
-                width: 100%
-
-                & p
-                    font-size: 15px
-                    font-weight: 500
-                    color: $app-text-color
-                    opacity: .5
-                    max-width: 250px
+        .rt-descr
+            font-size: 14px
+            font-weight: 500
+            color: $app-text-color-descr-primary
+            max-width: 280px
+            line-height: 1.35
     
 
 ._comp._item._yourTop
@@ -647,42 +663,65 @@
     ._content
         width: 100%
         height: 100%
-            
-        .sections
-            width: 100%
-            height: fit-content
+
+        // ===== ANIMATED TABS =====
+        .rt-tabs
+            width: fit-content
+            height: 42px
             display: flex
             align-items: center
-            overflow: hidden
-            gap: 8px
-            margin-bottom: 13px
-            padding: 0px 22px
+            position: relative
+            border-radius: 12px
+            background: rgba($app-text-color, 0.05)
+            padding: 3px
+            margin: 0 16px 18px
+            gap: 0
 
-            .section
-                width: fit-content
-                height: 40px
-                background: rgba($app-span-gray-background, 0.5)
+            &__item
+                position: relative
+                z-index: 1
+                height: 100%
                 display: flex
                 align-items: center
                 justify-content: center
-                gap: 10px
-                border-radius: 50px
-                padding: 0 16px
-                transition: background 0.22s ease
-                will-change: background
+                padding: 0 20px
+                font-size: 14px
+                font-weight: 600
+                color: $app-text-color-descr-primary
                 cursor: pointer
-
-                @media screen and (max-width: 363px)
-                    height: 34px
-                    padding: 0 12px
+                transition: color 0.2s ease
+                white-space: nowrap
 
                 &.active
-                    background: $app-span-gray-background
-                    
-                & h4
-                    font-size: 16px
-                    font-weight: 600
                     color: $app-text-color
+
+            &__bg
+                position: absolute
+                top: 3px
+                left: 3px
+                width: calc(50% - 3px)
+                height: calc(100% - 6px)
+                border-radius: 9px
+                background: rgba($app-text-color, 0.1)
+                transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)
+
+                &.right
+                    transform: translateX(100%)
+
+        // ===== ANIMATION CLASSES =====
+        .rt-podium
+            animation: podiumRise 0.5s ease both
+
+            &.place-1
+                .avatar-wrapper .avatar
+                    animation: glowPulse 2.5s ease-in-out infinite
+                    border-radius: 50%
+
+                .avatar-wrapper .avatar_null
+                    animation: glowPulse 2.5s ease-in-out infinite
+
+        .rt-row
+            animation: rowSlideIn 0.3s ease both
 
         .topFlexed
             width: 100%
@@ -876,74 +915,79 @@
 
             .top-three
                 display: flex
-                justify-content: space-around
-                align-items: end
-                margin-top: 1.8rem
-                margin-bottom: 1.8rem
-                padding: 0px 14px
+                justify-content: center
+                align-items: flex-end
+                gap: 6px
+                margin-top: 20px
+                margin-bottom: 24px
+                padding: 0 10px
                 width: 100%
                 z-index: 5
-
-                @media screen and (max-width: 356px)
-                    justify-content: space-between
 
                 .top-user
                     display: flex
                     flex-direction: column
                     align-items: center
-                    gap: 6px
+                    gap: 4px
+                    flex: 1
+                    max-width: 120px
+                    cursor: pointer
 
                     &.place-1
-                        .avatar-wrapper 
-                            width: 80px
-                            height: 80px
+                        order: 2
+                        padding-bottom: 14px
+
+                        .avatar-wrapper
+                            width: 84px
+                            height: 84px
 
                             .avatar
-                                width: 80px
-                                height: 80px
-                                border: 2px solid $app-leaderboard-background-one
-                            
+                                border: 2.5px solid $app-leaderboard-background-one
+
                             .rank-badge
                                 background: $app-leaderboard-background-one
-                    
+                                width: 24px
+                                height: 24px
+                                font-size: 12px
+
                     &.place-2
-                        .avatar-wrapper 
-                            width: 60px
-                            height: 60px
-                            
+                        order: 1
+
+                        .avatar-wrapper
+                            width: 64px
+                            height: 64px
+
                             .avatar
-                                width: 60px
-                                height: 60px
                                 border: 2px solid rgba($app-leaderboard-background-two, 0.7)
-                            
+
                             .rank-badge
                                 background: $app-leaderboard-background-two
-                    
+
                     &.place-3
-                        .avatar-wrapper 
-                            width: 60px
-                            height: 60px
-                            
+                        order: 3
+
+                        .avatar-wrapper
+                            width: 64px
+                            height: 64px
+
                             .avatar
-                                width: 60px
-                                height: 60px
                                 border: 2px solid rgba($app-leaderboard-background-three, 0.6)
-                            
+
                             .rank-badge
                                 background: $app-leaderboard-background-three
 
                     .avatar-wrapper
                         position: relative
-                        width: 70px
-                        height: 70px
+                        width: 64px
+                        height: 64px
 
                         .avatar
                             width: 100%
                             height: 100%
                             border-radius: 50%
                             object-fit: cover
-                        
-                        & .avatar_null
+
+                        .avatar_null
                             width: 100%
                             height: 100%
                             border-radius: 50%
@@ -951,157 +995,147 @@
                             display: flex
                             justify-content: center
                             align-items: center
-                                
-                            & h4
-                                margin-top: -2px
+
+                            h4
                                 font-size: 1em
                                 font-weight: 700
                                 color: $app-text-color
 
                         .rank-badge
                             position: absolute
-                            top: -4px
-                            right: -4px
+                            bottom: -6px
+                            left: 50%
+                            transform: translateX(-50%)
+                            width: 20px
+                            height: 20px
+                            display: flex
+                            align-items: center
+                            justify-content: center
                             background: $app-leaderboard-background-one
-                            color: black
-                            font-weight: 600
+                            color: #000
+                            font-weight: 700
+                            font-size: 11px
                             border-radius: 50%
-                            padding: 4px 8px
-                            font-size: 0.8rem
 
                         .gift
                             position: absolute
-                            top: -14px
-                            right: -12px
-                            // background: rgba($app-background-secondary, 0.8)
-                            color: black
-                            font-weight: 600
-                            border-radius: 50%
-                            width: 45px
-                            height: 45px
-                            font-size: 0.8rem
+                            top: -10px
+                            right: -10px
+                            width: 38px
+                            height: 38px
                             display: flex
                             align-items: center
                             justify-content: center
 
                             img
-                                width: 41px
-                                height: 41px
-                    
+                                width: 34px
+                                height: 34px
+
                     .name
-                        margin-top: 0.5rem
+                        margin-top: 8px
+                        font-size: 13px
                         font-weight: 600
-                        max-width: 130px
+                        color: $app-text-color
+                        max-width: 100px
                         overflow: hidden
                         text-overflow: ellipsis
                         white-space: nowrap
-                    
-                        @media screen and (max-width: 356px)
-                            font-size: 13px
+                        text-align: center
 
                     .gifts
-                        font-size: 0.9rem
-                        color: $app-button-text-color
-                        background: $app-button-background-blur
-                        border-radius: 50px
-                        padding: 6px 12px
-                        margin-top: 0.3rem
+                        font-size: 12px
+                        font-weight: 600
+                        color: $app-text-color-descr-primary
                         white-space: nowrap
-                        width: fit-content
-
-                        @media screen and (max-width: 356px)
-                            font-size: 0.7rem
-                            padding: 4px 8px
             
             .other-list
                 display: flex
-                height: 100%
                 flex-direction: column
-                padding: 0px 16px
+                padding: 4px 14px
                 background: $app-background-secondary
-                box-shadow: 0px 0px 35px rgba($app-preview, 0.2)
-                border-radius: 24px
+                border-radius: 20px
                 z-index: 10
 
                 .other-user
-                    height: 80px
+                    height: 62px
                     display: flex
                     align-items: center
-                    justify-content: space-between
-                    border-bottom: 1px solid rgba($app-input-background, 0.5)
+                    gap: 12px
+                    border-bottom: 1px solid rgba($app-input-background, 0.35)
+                    cursor: pointer
 
                     &:last-child
                         border-bottom: none
 
                     .rank
-                        width: 26px
-                        height: 30px
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        font-size: 14px
-                        font-weight: 600
-                        color: $app-text-color
-                    
+                        width: 24px
+                        flex-shrink: 0
+                        text-align: center
+                        font-size: 13px
+                        font-weight: 700
+                        color: rgba($app-text-color, 0.45)
+
                     .gift
                         position: relative
-                        width: 30px
-                        height: 30px
+                        width: 28px
+                        height: 28px
+                        flex-shrink: 0
                         display: flex
-                        justify-content: center
                         align-items: center
+                        justify-content: center
 
                         img
-                            width: 36px
-                            height: 36px
-                            margin-left: 4px
-                    
+                            width: 32px
+                            height: 32px
+
                     .info
                         flex: 1
-                        margin-left: 1rem
+                        min-width: 0
                         display: flex
                         flex-direction: column
-                        gap: 0.4rem
-                    
+                        gap: 2px
+
                         .name
+                            font-size: 14px
                             font-weight: 600
                             color: $app-text-color
-                        
+                            white-space: nowrap
+                            overflow: hidden
+                            text-overflow: ellipsis
+
                         .gifts
-                            font-size: 0.9rem
-                            color: $app-text-color-phiolete
+                            font-size: 12px
+                            font-weight: 500
+                            color: $app-text-color-descr-primary
                             margin-bottom: 0
-                    
+
                     .small-avatar
-                        width: 46px
-                        height: 46px
+                        width: 40px
+                        height: 40px
+                        flex-shrink: 0
                         border-radius: 50%
                         object-fit: cover
                         background: $app-span-gray-background
                         display: flex
                         justify-content: center
                         align-items: center
-                        
-                        & h4
-                            font-size: 0.9em
+
+                        h4
+                            font-size: 0.85em
                             font-weight: 700
-                    
+
                     .hold
-                        width: fit-content
-                        height: 100%
                         display: flex
                         align-items: center
-                        justify-content: space-between
-                        gap: 7px
-                        position: relative
-                        
-                        & p
-                            font-size: 1.05em
+                        gap: 8px
+
+                        p
+                            font-size: 15px
                             font-weight: 700
                             color: $app-text-color
-                            
-                        & img
-                            width: 42px
-                            height: 42px
+
+                        img
+                            width: 40px
+                            height: 40px
                             border-radius: 50%
                             object-fit: cover

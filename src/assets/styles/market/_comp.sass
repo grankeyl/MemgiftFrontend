@@ -1,0 +1,457 @@
+@use "./../_variables" as *
+
+@keyframes shimmer
+    0%
+        background-position: -200% 0
+    100%
+        background-position: 200% 0
+
+@keyframes modalSlideUp
+    from
+        opacity: 0
+        transform: translate(-50%, 12px)
+    to
+        opacity: 1
+        transform: translate(-50%, 0%)
+
+// ========= FILTER / SELECTION MODALS =========
+._comp._item._modelModal
+    width: 100%
+    height: fit-content
+    max-width: $app-max-width
+
+    &.sell
+        ._content
+            height: 60%
+
+            & .buttons
+                height: fit-content
+                position: fixed
+                bottom: 40px
+                left: 0
+                padding: 0px 16px
+
+    // ------ SKELETON ------
+    ._skeleton
+        max-width: $app-max-preview-width
+        width: 100%
+        position: fixed
+        overflow: hidden
+        background: $app-background
+        z-index: 10000
+        bottom: 0
+        left: 50%
+        transform: translate(-50%, 0%)
+        border-radius: 24px 24px 0 0
+        padding: 0 16px 32px
+        transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1)
+
+        &.hide
+            transform: translate(-50%, 100%)
+            transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1)
+
+        .modal-skel__handle
+            width: 100%
+            height: 24px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            &::after
+                content: ''
+                width: 36px
+                height: 4px
+                background: rgba($app-text-color, 0.12)
+                border-radius: 2px
+
+        .modal-skel__head
+            width: 40%
+            height: 16px
+            border-radius: 8px
+            margin: 8px auto 16px
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        .modal-skel__item
+            width: 100%
+            height: 48px
+            display: flex
+            align-items: center
+            gap: 10px
+            padding: 0 4px
+            border-bottom: 1px solid rgba($app-text-color, 0.03)
+
+            &:last-child
+                border-bottom: none
+
+            .modal-skel__circle
+                width: 36px
+                min-width: 36px
+                height: 36px
+                border-radius: 10px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            .modal-skel__text
+                flex: 1
+                height: 14px
+                border-radius: 7px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            .modal-skel__check
+                width: 20px
+                height: 20px
+                border-radius: 5px
+                background: $app-background-secondary
+
+        .modal-skel__btns
+            display: flex
+            gap: 10px
+            margin-top: 16px
+
+            div
+                flex: 1
+                height: 50px
+                border-radius: 14px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+    // ------ CONTENT ------
+    ._content
+        max-width: $app-max-preview-width
+        width: 100%
+        height: auto
+        max-height: 72vh
+        position: fixed
+        overflow-y: auto
+        background: $app-background
+        z-index: 10000
+        bottom: 0
+        left: 50%
+        transform: translate(-50%, 0%)
+        border-radius: 24px 24px 0 0
+        padding: 0 16px 32px
+        transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1)
+        animation: modalSlideUp 0.2s ease
+
+        &.hide
+            transform: translate(-50%, 100%)
+            transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1)
+
+        // Handle bar
+        &::before
+            content: ''
+            display: block
+            width: 36px
+            height: 4px
+            background: rgba($app-text-color, 0.12)
+            border-radius: 2px
+            margin: 10px auto 0
+
+        .head
+            width: 100%
+            height: 48px
+            display: flex
+            align-items: center
+            justify-content: space-between
+            margin-bottom: 4px
+
+            .centered
+                width: fit-content
+                margin: auto
+                display: flex
+                align-items: center
+                gap: 6px
+
+                h4
+                    font-size: 15px
+                    font-weight: 600
+                    color: $app-text-color-descr-primary
+
+                .kit-icon
+                    width: fit-content
+                    height: fit-content
+
+                    svg
+                        width: 14px
+                        height: 14px
+                        margin-top: 2px
+
+                        path
+                            stroke: $app-text-color-descr-primary
+
+            .close
+                width: 32px
+                height: 32px
+                display: flex
+                align-items: center
+                justify-content: center
+                position: absolute
+                top: 14px
+                right: 0
+                border-radius: 50%
+                background: rgba($app-text-color, 0.06)
+                cursor: pointer
+                transition: transform 0.15s ease
+
+                &:active
+                    transform: scale(0.9)
+
+                .kit-icon
+                    opacity: 0.5
+
+                    svg
+                        width: 12px
+                        height: 12px
+
+                        path
+                            fill: $app-text-color
+
+        // Inline skeleton while API data loads
+        .items-skeleton
+            width: 100%
+            display: flex
+            flex-direction: column
+            padding: 4px 0
+
+            &__row
+                width: 100%
+                height: 50px
+                display: flex
+                align-items: center
+                gap: 10px
+                padding: 0 4px
+                border-bottom: 1px solid rgba($app-text-color, 0.03)
+
+                &:last-child
+                    border-bottom: none
+
+            &__circle
+                width: 36px
+                min-width: 36px
+                height: 36px
+                border-radius: 10px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            &__line
+                height: 14px
+                border-radius: 7px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            &__box
+                width: 22px
+                min-width: 22px
+                height: 22px
+                border-radius: 6px
+                margin-left: auto
+                background: $app-background-secondary
+
+        // Search inside modal
+        .modal-search
+            width: 100%
+            display: flex
+            align-items: center
+            gap: 8px
+            margin-bottom: 8px
+            position: relative
+
+            input
+                width: 100%
+                height: 40px
+                background: rgba($app-text-color, 0.05)
+                border: none
+                border-radius: 12px
+                padding: 0 12px
+                font-size: 14px
+                font-weight: 500
+                color: $app-text-color
+                font-family: $app-fontface
+
+                &::placeholder
+                    color: $app-text-color-descr
+                    font-weight: 400
+
+                &:focus
+                    background: rgba($app-text-color, 0.08)
+
+            &__count
+                position: absolute
+                right: 10px
+                top: 50%
+                transform: translateY(-50%)
+                background: $app-background-blue-secondary
+                color: $app-text-color
+                font-size: 11px
+                font-weight: 700
+                min-width: 20px
+                height: 20px
+                display: flex
+                align-items: center
+                justify-content: center
+                border-radius: 50px
+                padding: 0 6px
+
+        // Items list
+        .items
+            width: 100%
+            display: flex
+            flex-direction: column
+            max-height: 340px
+            overflow-y: auto
+            margin-bottom: 8px
+
+            .item
+                width: 100%
+                height: 50px
+                min-height: 50px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 10px
+                cursor: pointer
+                border-radius: 12px
+                transition: background 0.15s ease
+                padding: 0 4px
+
+                &:active
+                    background: rgba($app-text-color, 0.03)
+
+                .left
+                    display: flex
+                    align-items: center
+                    gap: 8px
+
+                    img
+                        width: 36px
+                        height: 36px
+                        border-radius: 10px
+
+                    h5
+                        font-size: 15px
+                        font-weight: 600
+                        color: $app-text-color
+
+                    p, span
+                        font-size: 12px
+                        font-weight: 500
+                        color: $app-text-color-descr-primary
+
+                // Checkbox (multi-select)
+                .checkbox
+                    width: 22px
+                    height: 22px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    border: 2px solid rgba($app-text-color, 0.12)
+                    border-radius: 6px
+                    transition: all 0.15s ease
+
+                    &.active
+                        background: $app-background-blue-secondary
+                        border-color: $app-background-blue-secondary
+
+                        .kit-icon
+                            display: block
+
+                    .kit-icon
+                        display: none
+
+                        svg
+                            width: 12px
+                            height: 12px
+
+                            path
+                                stroke: $app-text-color
+
+                // Radio (single-select)
+                .select
+                    width: 22px
+                    height: 22px
+                    border: 2px solid rgba($app-text-color, 0.15)
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    border-radius: 50%
+                    transition: border-color 0.15s ease
+
+                    .circle
+                        display: none
+
+                    &.active
+                        border-color: $app-button-blue-light-text-color
+
+                        .circle
+                            display: block
+                            width: 10px
+                            height: 10px
+                            border-radius: 50%
+                            background: $app-button-blue-light-text-color
+
+        // Action buttons
+        .buttons
+            display: flex
+            gap: 8px
+            margin-top: 8px
+
+            button
+                flex: 1
+                height: 50px
+                display: flex
+                align-items: center
+                justify-content: center
+                background: $app-background-secondary
+                border-radius: 14px
+                cursor: pointer
+                transition: transform 0.15s ease
+
+                &:active
+                    transform: scale(0.96)
+
+                &:disabled
+                    opacity: 0.45
+                    pointer-events: none
+
+                &:last-child
+                    background: $app-background-blue-secondary
+
+                h4
+                    font-size: 15px
+                    font-weight: 600
+                    color: $app-text-color
+                    white-space: nowrap
+
+        // Loading spinner for lazy-loaded lists
+        .load
+            width: 100%
+            height: 80px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            .load-icon
+                width: 20px
+                height: 20px
+                border: 2px solid rgba($app-text-color, 0.1)
+                border-top-color: rgba($app-text-color, 0.5)
+                border-radius: 50%
+                animation: spinner 0.8s linear infinite
+
+@keyframes spinner
+    to
+        transform: rotate(360deg)

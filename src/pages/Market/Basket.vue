@@ -14,7 +14,6 @@
                     @loadSuccess="handleLoadSuccess"
                     @closeModal="ModalConfirmActive = false"
                     @deleteLots="deleteLots"
-
                     @BUYED="BUYED"
 
                     :Skeleton="isPageLoading"
@@ -26,56 +25,91 @@
 
                 <div class="balance" @click="openWallet">
                     <div class="context">
-                    <h4>{{ cutNumber(getBalance.toString()) }}</h4>
-                    <img :src="TonImg" alt="ton" />
+                        <h4>{{ cutNumber(getBalance.toString()) }}</h4>
+                        <img :src="TonImg" alt="ton" />
                     </div>
                     <div class="button">
-                    <img :src="PlusImg" alt="plus" />
+                        <img :src="PlusImg" alt="plus" />
                     </div>
                 </div>
 
-                <div class="block">
-                    <Head
-                        @selectAll="selectAll"
-                        @unselectAll="unselectAll"
-
-                        :Skeleton="isPageLoading"
-                        :SkeletonTime="configApp.skeletonTime"
-                        :GiftsCount="itemsBasketCount"
-                        :Selected="SelectedItems"
-                    />
-                    <Items
-                        @select="selectItem"
-                        @deleteItem="deleteItem"
-                        :Skeleton="isPageLoading"
-                        :SkeletonTime="configApp.skeletonTime"
-                        :Items="getBasketItems"
-                        :Selected="SelectedItems"
-                    />
-                </div>
-                <div class="fixed">
-                    <div class="clear" @click="clearAll">
-                        <p>{{ $t('market.basket.clearAll') }}</p>
-                        <img :src="DeletePrimaryImg" alt="delete" />
+                <!-- Empty state -->
+                <div v-if="!isPageLoading && itemsBasketCount === 0" class="bsk-empty">
+                    <div class="bsk-empty__icon">
+                        <img :src="BasketWhiteImg" alt="basket" />
                     </div>
-                    <div class="footer" :class="{ error: !checkBalanceAndPrice }">
-                        <div class="inner">
-                            <div class="label">
-                                <p>{{ $t('market.basket.insufficientBalance') }}</p>
-                            </div>
-                            <div class="button" @click="openModalConfirm">
-                                <button :disabled="!checkBalanceAndPrice">
-                                    <h4>{{ $t('market.basket.buyFor') }} {{ cutNumber(summaryTonF) }}</h4>
-                                    <img :src="TonWhiteImg" alt="ton" />
-                                </button>
-                            </div>
-                            <div class="info">
-                                <p>{{ itemsBasketCount }}</p>
-                                <img :src="GiftImg" alt="gift" />
+                    <h3 class="bsk-empty__title">{{ $t('market.basket.emptyTitle') }}</h3>
+                    <p class="bsk-empty__descr">{{ $t('market.basket.emptyDescr') }}</p>
+                    <button class="bsk-empty__btn" @click="$router.push('/m')">
+                        {{ $t('market.basket.emptyButton') }}
+                    </button>
+                </div>
+
+                <!-- Filled state -->
+                <template v-if="itemsBasketCount > 0">
+                    <div class="block">
+                        <Head
+                            @selectAll="selectAll"
+                            @unselectAll="unselectAll"
+                            :Skeleton="isPageLoading"
+                            :SkeletonTime="configApp.skeletonTime"
+                            :GiftsCount="itemsBasketCount"
+                            :Selected="SelectedItems"
+                        />
+                        <Items
+                            @select="selectItem"
+                            @deleteItem="deleteItem"
+                            :Skeleton="isPageLoading"
+                            :SkeletonTime="configApp.skeletonTime"
+                            :Items="getBasketItems"
+                            :Selected="SelectedItems"
+                        />
+                    </div>
+
+                    <!-- Summary card -->
+                    <div v-if="!isPageLoading && SelectedItems.length > 0" class="bsk-summary">
+                        <div class="bsk-summary__row">
+                            <span class="bsk-summary__label">{{ $t('market.basket.selected') }}</span>
+                            <span class="bsk-summary__val">{{ SelectedItems.length }} / {{ itemsBasketCount }}</span>
+                        </div>
+                        <div class="bsk-summary__row">
+                            <span class="bsk-summary__label">{{ $t('market.basket.totalSelected') }}</span>
+                            <span class="bsk-summary__val bsk-summary__val--accent">{{ cutNumber(selectedTotal.toString()) }} TON</span>
+                        </div>
+                        <div class="bsk-summary__row" v-if="SelectedItems.length > 1">
+                            <span class="bsk-summary__label">{{ $t('market.basket.avgPrice') }}</span>
+                            <span class="bsk-summary__val">~{{ cutNumber(selectedAvg.toString()) }} TON</span>
+                        </div>
+                        <div class="bsk-summary__row">
+                            <span class="bsk-summary__label">{{ $t('market.basket.cheapest') }}</span>
+                            <span class="bsk-summary__val">{{ cutNumber(selectedCheapest.toString()) }} TON</span>
+                        </div>
+                    </div>
+
+                    <div class="fixed">
+                        <div class="clear" @click="clearAll">
+                            <p>{{ $t('market.basket.clearAll') }}</p>
+                            <img :src="DeletePrimaryImg" alt="delete" />
+                        </div>
+                        <div class="footer" :class="{ error: !checkBalanceAndPrice }">
+                            <div class="inner">
+                                <div class="label">
+                                    <p>{{ $t('market.basket.insufficientBalance') }}</p>
+                                </div>
+                                <div class="button" @click="openModalConfirm">
+                                    <button :disabled="!checkBalanceAndPrice || SelectedItems.length === 0">
+                                        <h4>{{ $t('market.basket.buyFor') }} {{ cutNumber(selectedTotal.toString()) }}</h4>
+                                        <img :src="TonWhiteImg" alt="ton" />
+                                    </button>
+                                </div>
+                                <div class="info">
+                                    <p>{{ SelectedItems.length }}</p>
+                                    <img :src="GiftImg" alt="gift" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </template>
             </div>
         </div>
     </div>
@@ -95,12 +129,12 @@ import Items from '../../components/Market/Basket/Items.vue';
 import Notify from '../../components/Notify/Notify.vue';
 import ModalConfirm from '../../components/Market/Basket/ModalConfirm.vue';
 
-// Images
 import TonImg from '@/assets/images/market/ton.svg';
 import PlusImg from '@/assets/images/market/plus.svg';
 import DeletePrimaryImg from '@/assets/images/market/delete-primary.svg';
 import TonWhiteImg from '@/assets/images/market/ton-white.svg';
 import GiftImg from '@/assets/images/market/gift.svg';
+import BasketWhiteImg from '@/assets/images/market/basket-white.svg';
 
 const LS_KEY = 'market_basket_v1';
 
@@ -126,6 +160,7 @@ export default {
             DeletePrimaryImg,
             TonWhiteImg,
             GiftImg,
+            BasketWhiteImg,
 
             storeCache: useCacheStore() as any,
             configApp: getConfig(),
@@ -166,9 +201,23 @@ export default {
             const items = this.storeCache?.Market?.Basket?.Items ?? [];
             return items.reduce((sum: number, it: any) => sum + (Number(it?.price_ton) || 0), 0);
         },
+        selectedItems() {
+            return this.storeCache.Market.Basket.Items.filter((it: any) => this.SelectedItems.includes(it.id));
+        },
+        selectedTotal(): number {
+            return this.selectedItems.reduce((sum: number, it: any) => sum + (Number(it?.price_ton) || 0), 0);
+        },
+        selectedAvg(): number {
+            if (!this.SelectedItems.length) return 0;
+            return this.selectedTotal / this.SelectedItems.length;
+        },
+        selectedCheapest(): number {
+            if (!this.selectedItems.length) return 0;
+            return Math.min(...this.selectedItems.map((it: any) => Number(it?.price_ton) || 0));
+        },
         checkBalanceAndPrice(): boolean {
             const balance = this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
-            return balance >= this.summaryTon;
+            return balance >= this.selectedTotal;
         },
         getBalance(): number {
             return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
@@ -218,6 +267,7 @@ export default {
         },
 
         openModalConfirm() {
+            if (this.SelectedItems.length === 0) return;
             this.ModalConfirmActive = true;
         },
 
@@ -229,8 +279,8 @@ export default {
         clearAll() {
             this.storeCache.Market.Basket.Items = [];
             this.storeCache.Market.Basket.Count = 0;
+            this.SelectedItems = [];
             this.saveBasketToLS();
-            this.$router.push('/m');
         },
 
         selectItem(item: any) {
@@ -242,6 +292,7 @@ export default {
         },
 
         selectAll() {
+            this.SelectedItems = [];
             this.storeCache.Market.Basket.Items.forEach((item: any) => {
                 this.SelectedItems.push(item.id);
             });
@@ -269,6 +320,7 @@ export default {
             setTimeout(() => {
                 this.storeCache.Market.Basket.Items = [];
                 this.storeCache.Market.Basket.Count = 0;
+                this.SelectedItems = [];
                 this.saveBasketToLS();
                 this.$router.push('/m');
             }, 400);

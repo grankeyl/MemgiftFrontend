@@ -6,9 +6,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted, onBeforeUnmount, defineProps } from 'vue';
 import { giftsMap } from './Gifts';
-import lottie from 'lottie-web';
+import lottie, { type AnimationItem } from 'lottie-web';
 
 const props = defineProps({
   slug: {
@@ -34,6 +34,7 @@ const props = defineProps({
 });
 
 const lottieContainer = ref<HTMLElement | null>(null);
+let animInstance: AnimationItem | null = null;
 const animationData = giftsMap[props.slug];
 const animationWidth = ref(props.width);
 const animationHeight = ref(props.height);
@@ -57,7 +58,7 @@ onMounted(() => {
       ? animationData.replace('/src/assets/animations', '/lottie/')
       : animationData;
 
-    lottie.loadAnimation({
+    animInstance = lottie.loadAnimation({
       container: lottieContainer.value,
       renderer: rendererType.value === 'svg' ? 'svg' : 'canvas',
       loop: props.loop,
@@ -65,5 +66,10 @@ onMounted(() => {
       path: animationPath
     });
   }
+});
+
+onBeforeUnmount(() => {
+  animInstance?.destroy();
+  animInstance = null;
 });
 </script>

@@ -15,9 +15,14 @@
   >
     <div class="_view">
       <div class="stylish">
-        <div class="starsed">
-          <img src="/profile/stylish.svg" alt="stars" />
-        </div>
+        <div class="_prof-orb _prof-orb--1"></div>
+        <div class="_prof-orb _prof-orb--2"></div>
+        <div class="_prof-orb _prof-orb--3"></div>
+        <div class="_prof-particle _prof-particle--1"></div>
+        <div class="_prof-particle _prof-particle--2"></div>
+        <div class="_prof-particle _prof-particle--3"></div>
+        <div class="_prof-particle _prof-particle--4"></div>
+        <div class="_prof-particle _prof-particle--5"></div>
       </div>
 
       <div class="fixed">

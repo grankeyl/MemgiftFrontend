@@ -24,6 +24,8 @@ export const useCacheStore = defineStore('cache', {
         Count: 0,
         FullyLoaded: false,
       },
-    }
+    },
+
+    LastMulticheckSummary: [] as Array<{ name: string; image: string; count: number }>,
   }),
 });

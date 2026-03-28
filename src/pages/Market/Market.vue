@@ -8,7 +8,11 @@
     
     <div class="_wrap _market" :class="{ desktop: isDesktop() }">
         <div class="_view">
-            <div class="bg"></div>
+            <div class="bg">
+                <div class="_mkt-orb _mkt-orb--1"></div>
+                <div class="_mkt-orb _mkt-orb--2"></div>
+                <div class="_mkt-orb _mkt-orb--3"></div>
+            </div>
             <Notify
                 @unVisible="unVisibleNotifyBuyed"
                 :Title="$t('market.notifyBuyed')"
@@ -83,6 +87,11 @@
                     :StatusItems="ModalStatusComp.SortItems"
                     :HasMore="GiftsComp.HasMore"
                     :SearchNumber="searchNumber"
+                />
+                <BulkBar
+                    v-if="Tabs.Active === 'gifts' && !isPageLoading && GiftsComp.List.length > 1"
+                    :GiftsList="GiftsComp.List"
+                    @bought="onBulkBought"
                 />
                 <Gifts
                     v-if="Tabs.Active === 'gifts'"
@@ -174,6 +183,7 @@
                 :GiftsList="BackdropModelComp.BackdropsList"
                 :Selected="BackdropModelComp.BackdropsSelected"
             />
+
         </div>
     </div>
 </template>
@@ -202,6 +212,7 @@ import SortModal from '../../components/Market/SortModal.vue';
 import StatusModal from '../../components/Market/StatusModal.vue';
 import SymbolModal from '../../components/Market/SymbolModal.vue';
 import BackdropModal from '../../components/Market/BackdropModal.vue';
+import BulkBar from '../../components/Market/BulkBar.vue';
 import Notify from '../../components/Notify/Notify.vue';
 
 // Images
@@ -230,6 +241,7 @@ export default {
         StatusModal,
         SymbolModal,
         BackdropModal,
+        BulkBar,
         Notify,
     },
 
@@ -687,6 +699,11 @@ export default {
             this.GiftsComp.List = this.GiftsComp.List.filter((item: any) => item.id !== id);
             this.NotifyBuyedVisible = true;
             this.ModalComp.ModalActive = false;
+        },
+
+        onBulkBought(ids: string[]) {
+            this.GiftsComp.List = this.GiftsComp.List.filter((item: any) => !ids.includes(item.id));
+            this.NotifyBuyedVisible = true;
         },
     },
 };

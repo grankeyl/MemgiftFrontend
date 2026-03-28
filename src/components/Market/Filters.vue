@@ -2,7 +2,14 @@
   <div class="_direction _comp _item _filters">
       <div class="_content">
         <div class="cont">
-          <div class="filtersItems">
+          <div
+            class="filtersItems"
+            ref="filtersScroll"
+            @mousedown="onDragStart"
+            @mousemove="onDragMove"
+            @mouseup="onDragEnd"
+            @mouseleave="onDragEnd"
+          >
             <div class="filtersItemsItem" @click="openSortModal">
               <div class="circle" v-if="hasSort"></div>
               <div class="flexer">
@@ -233,6 +240,10 @@ export default {
       searchNumber: this.SearchNumber,
       _searchTimeout: null,
 
+      _isDragging: false,
+      _dragStartX: 0,
+      _dragScrollLeft: 0,
+
       Icon,
     };
   },
@@ -395,6 +406,28 @@ export default {
 
     clearBackdrops() {
       this.$emit('clearBackdrops');
+    },
+
+    onDragStart(e) {
+      const el = this.$refs.filtersScroll;
+      if (!el) return;
+      this._isDragging = true;
+      this._dragStartX = e.pageX - el.offsetLeft;
+      this._dragScrollLeft = el.scrollLeft;
+      el.style.cursor = 'grabbing';
+    },
+    onDragMove(e) {
+      if (!this._isDragging) return;
+      e.preventDefault();
+      const el = this.$refs.filtersScroll;
+      if (!el) return;
+      const x = e.pageX - el.offsetLeft;
+      el.scrollLeft = this._dragScrollLeft - (x - this._dragStartX);
+    },
+    onDragEnd() {
+      this._isDragging = false;
+      const el = this.$refs.filtersScroll;
+      if (el) el.style.cursor = '';
     },
   },
 };

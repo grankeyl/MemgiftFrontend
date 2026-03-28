@@ -6,17 +6,12 @@
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_button" @click="useButton">
-            <button @click="openShop" :class="{ _loading: isLoadingButtonSended }">
-              <h4>{{ $t('receive.okButton') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
+          <div class="_button">
+            <button @click="openMulticheck" class="default">
+              <h4>{{ $t('receiveMulticheck.createAnother') }}</h4>
+            </button>
+            <button @click="openProfile">
+              <h4>{{ $t('receive.openProfile') }}</h4>
             </button>
           </div>
         </div>
@@ -238,29 +233,20 @@
 
       openProfile() {
         if (this.$props.ButtonType === 'received') {
-          this.$router.push({ 
-            name: 'profile', 
-            hash: '#received' 
-          });
-        }
-
-        if (this.$props.ButtonType === 'purchased') {
-          this.$router.push({ 
-            name: 'profile', 
-            hash: '#purchased' 
-          });
-        }
-
-        if (this.$props.ButtonType === 'selfed') {
-          this.$router.push({ 
-            name: 'profile', 
-            hash: '#received' 
-          });
+          this.$router.push({ name: 'profile', hash: '#received' });
+        } else if (this.$props.ButtonType === 'purchased') {
+          this.$router.push({ name: 'profile', hash: '#purchased' });
+        } else {
+          this.$router.push({ name: 'profile' });
         }
       },
 
       openShop() {
         this.$router.push('/');
+      },
+
+      openMulticheck() {
+        this.$router.push('/multicheck');
       },
 
       async useButton() {

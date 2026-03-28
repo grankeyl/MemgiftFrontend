@@ -44,6 +44,9 @@
                 <div class="load-icon"></div>
               </div>
               <div class="_rig">
+                <div @click="toggleFavorite" class="_fav-btn" :class="{ active: isFavorite }">
+                  <svg width="20" height="20" viewBox="0 0 24 24" :fill="isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
                 <div @click="useEmoji(NftCustomEmoji)">
                   <Icon class="kit-icon" v-html="Icon.Emoji"></Icon>
                 </div>
@@ -51,6 +54,11 @@
                   <Icon class="kit-icon" v-html="Icon.Reply"></Icon>
                 </div>
               </div>
+            </div>
+
+            <div v-if="NftSupplyMax" class="_item _avail-line">
+              <span class="_avail-left">{{ remainingFormatted }} {{ $t('collection.left') }}</span>
+              <span v-if="supplyPercent >= 70" class="_avail-hot">{{ $t('collection.sellingFast') }}</span>
             </div>
 
             <div v-if="NftPrice" class="checker">
@@ -221,6 +229,22 @@
       isTicketsNotNull() {
         return this.storeCache.UserData.user.Tickets > 0;
       },
+      supplyPercent() {
+        if (!this.NftSupplyMax || this.NftSupplyMax <= 0) return 0;
+        const sold = this.NftSupplyMax - Math.max(this.NftSupply || 0, 0);
+        return Math.min(100, Math.round((sold / this.NftSupplyMax) * 100));
+      },
+      remainingFormatted() {
+        const r = Math.max(this.NftSupply || 0, 0);
+        if (r >= 1000) return (r / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+        return r.toLocaleString();
+      },
+      isFavorite() {
+        try {
+          const favs = JSON.parse(localStorage.getItem('giftFavorites') || '[]');
+          return favs.includes(this.NftName);
+        } catch { return false; }
+      },
     },
 
     methods: {
@@ -291,6 +315,21 @@
         const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=cln_${this.NftName.replaceAll(' ', '')}`;
         const message = `Check out the "${this.NftName}" collection!`;
         TelegramModule.useShare(url, message);
+      },
+
+      toggleFavorite() {
+        TelegramModule.useMediumHaptic();
+        try {
+          let favs = JSON.parse(localStorage.getItem('giftFavorites') || '[]');
+          const idx = favs.indexOf(this.NftName);
+          if (idx >= 0) {
+            favs.splice(idx, 1);
+          } else {
+            favs.push(this.NftName);
+          }
+          localStorage.setItem('giftFavorites', JSON.stringify(favs));
+          this.$forceUpdate();
+        } catch {}
       },
     }
   };

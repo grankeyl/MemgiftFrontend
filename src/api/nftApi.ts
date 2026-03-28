@@ -325,17 +325,17 @@ export const getAllPurchased = async (
 };
 
 export const getPurchasedMulticheck = async (
-    userId: string
+    userId: string,
+    status: string = 'purchased'
 ) => {
     try {
         const tokenBearer = Cookies.get("token");
         const response = await axios.post(
             `${API_URL}/nft/get/purchased/multicheck`,
-            { userId },
-            { headers: { Authorization: `Bearer ${tokenBearer}` } }
+            { userId, status },
+            { headers: { Authorization: `${tokenBearer}` } }
         );
-        const count = response.data;
-        return count;
+        return response.data;
     } catch (error) {
         return false;
     }
@@ -513,6 +513,47 @@ export const giftFree = async () => {
         );
         const data = response.data;
         return data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const giftFreeScooby = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/gift/free/scooby`,
+            { },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const checkFreeScooby = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/gift/free/scooby/check`,
+            { },
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const checkScoobyVpn = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/gift/free/scooby/vpn`,
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
     } catch (error) {
         return false;
     }

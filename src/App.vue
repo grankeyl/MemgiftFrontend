@@ -1,15 +1,24 @@
 <template>
-  <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
-    <div class="background">
-      <img src="/bg-load.jpg" alt="background" />
-    </div>
-    <div class="centered">
-      <div class="logotype">
-        <img src="/logotype.svg" alt="logotype" />
+  <Transition name="loader-fade">
+    <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
+      <div class="_load-bg">
+        <div class="_load-glow _load-glow--1"></div>
+        <div class="_load-glow _load-glow--2"></div>
+        <div class="_load-glow _load-glow--3"></div>
       </div>
-      <div class="kit-icon" v-html="Icon.Load"></div>
+      <div class="_load-center">
+        <div class="_load-logo">
+          <img src="/logotype.svg" alt="Memgift" />
+        </div>
+        <div class="_load-spinner">
+          <svg viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="17" />
+          </svg>
+        </div>
+        <p class="_load-hint">{{ $t('app.loadingHint') }}</p>
+      </div>
     </div>
-  </div>
+  </Transition>
 
   <RouterView v-slot="{ Component, route }">
     <template v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
@@ -20,10 +29,12 @@
 
       <component v-else :is="Component" />
 
-      <Menu
-        v-if="!route.meta.noLayout"
-        @loaded="onMenuLoaded"
-      />
+      <Transition name="menu-slide" appear>
+        <Menu
+          v-if="!route.meta.noLayout"
+          @loaded="onMenuLoaded"
+        />
+      </Transition>
     </template>
   </RouterView>
 </template>
@@ -34,12 +45,12 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCacheStore } from './stores/pinia/piniaStore';
 import { getUserLanguage, cleanString } from './utils/useApp';
 import { Icon } from './components/Icon';
-import { getConfig } from './config';
 import { hasAPIs, pickInitData, waitForTelegramWebApp } from './hooks/useTelegramReady';
 import { cutNumber } from './utils/useTon';
 import { nextTick } from 'vue';
 // import { setupEruda } from './utils/eruda';
 
+import axios from "axios";
 import * as authApi from "./api/authApi";
 import * as giftsApi from "./api/giftsApi";
 import * as nftsApi from "./api/nftApi";
@@ -52,14 +63,12 @@ import * as MarketBalanceApi from "./api/market/balance";
 
 import TelegramModule from './hooks/useTelegram';
 import Menu from './components/Menu/Menu.vue';
-import Lottie from './components/Lottie.vue';
 import Toast from './components/Toast/Toast.vue';
 import i18next from 'i18next';
 
 export default {
   components: {
     Menu,
-    Lottie,
     Toast,
   },
 
@@ -107,6 +116,15 @@ export default {
     });
 
     onMounted(async () => {
+      if (miniAppLang === 'ar') {
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.setAttribute('lang', 'ar');
+        document.body.classList.add('rtl');
+      } else {
+        document.documentElement.setAttribute('dir', 'ltr');
+        document.documentElement.setAttribute('lang', miniAppLang);
+      }
+
       const webApp = await waitForTelegramWebApp();
 
       // initData теперь получаем независимо от валидности
@@ -131,13 +149,45 @@ export default {
           webApp.setBackgroundColor?.('#1C1C1C');
           webApp.setHeaderColor?.('#1C1C1C');
 
+          const applySafeArea = () => {
+            const sa = (webApp as any).safeAreaInset;
+            const csa = (webApp as any).contentSafeAreaInset;
+            const root = document.documentElement;
+            if (sa) {
+              root.style.setProperty('--tg-safe-area-inset-top', sa.top + 'px');
+              root.style.setProperty('--tg-safe-area-inset-bottom', sa.bottom + 'px');
+              root.style.setProperty('--tg-safe-area-inset-left', sa.left + 'px');
+              root.style.setProperty('--tg-safe-area-inset-right', sa.right + 'px');
+            }
+            if (csa) {
+              root.style.setProperty('--tg-content-safe-area-inset-top', csa.top + 'px');
+              root.style.setProperty('--tg-content-safe-area-inset-bottom', csa.bottom + 'px');
+              root.style.setProperty('--tg-content-safe-area-inset-left', csa.left + 'px');
+              root.style.setProperty('--tg-content-safe-area-inset-right', csa.right + 'px');
+            }
+          };
+          applySafeArea();
+          webApp.onEvent?.('safeAreaChanged', applySafeArea);
+          webApp.onEvent?.('contentSafeAreaChanged', applySafeArea);
+
           console.debug('[TG] OK', { platform, v, hasInit: !!pickInitData(webApp) });
         } catch (e) {
           console.error('Init WebApp error:', e);
         }
-      } else {
+      } else if (import.meta.env.VITE_APP_ENV !== 'development') {
         location.reload();
       }
+
+      // --- Проверяем тех. работы ---
+      try {
+        const maintResp = await axios.get(`${import.meta.env.VITE_APP_API_URL}/maintenance`);
+        if (maintResp.data?.maintenance === true) {
+          miniAppLoading.value = false;
+          miniAppMounted.value = true;
+          router.replace('/maintenance');
+          return;
+        }
+      } catch {}
 
       // --- Аутентификация и запуск ---
       const authenticateWith = async (raw: string) => {
@@ -152,11 +202,12 @@ export default {
 
           if (nftsApp) {
             const initData = TelegramModule.initData();
+            const hasRealInitData = initData && initData.user && initData.user.id;
             
-            if (miniAppTesting !== 'production') {
-              storeCache.TelegramData = { ...TelegramModule.parseQueryToJSON(import.meta.env.VITE_APP_INIT_DATA) };
-            } else {
+            if (hasRealInitData) {
               storeCache.TelegramData = { ...initData };
+            } else if (import.meta.env.VITE_APP_INIT_DATA) {
+              storeCache.TelegramData = { ...TelegramModule.parseQueryToJSON(import.meta.env.VITE_APP_INIT_DATA) };
             }
 
             if (storeCache.TelegramData) {
@@ -215,6 +266,10 @@ export default {
         if (dtx === 'market') { router.push('/m'); }
         if (dtx === 'referrals') { router.push('/referrals'); }
         if (dtx === 'soda') { router.push('/soda'); }
+        if (dtx.startsWith('deal_')) {
+          const dealId = dtx.split('deal_')[1];
+          router.push(`/private-deal/${dealId}`);
+        }
 
         mountMiniApp();
       }
@@ -262,45 +317,51 @@ export default {
 
     const initStartAppMulticheck = async (startApp: any) => {
       const getMulticheck = await multicheckApi.getUuid(startApp);
-      if (!getMulticheck) return;
+      if (!getMulticheck) {
+        mountMiniApp();
+        return;
+      }
+
+      const saveSummary = () => {
+        if (getMulticheck.gifts_summary && getMulticheck.gifts_summary.length) {
+          storeCache.LastMulticheckSummary = getMulticheck.gifts_summary.map((g: any) => ({
+            name: g.name, image: g.image, count: g.count,
+          }));
+        }
+      };
 
       if (getMulticheck.status === 'active') {
-        const checkUser = await checkMulticheckUser(storeCache.TelegramData.user.id, getMulticheck.userIds);
-        
-        if (checkUser) {
+        if (Number(getMulticheck.user_tld) === Number(storeCache.TelegramData.user.id)) {
+          saveSummary();
           openReceive(getMulticheck.nftUniqueKey, 'selfed', 'multicheck');
           return;
         }
 
-        const userIdsArray = getMulticheck.userIds ? getMulticheck.userIds.split(',') : [];
-        const nftsIdsArray = Array.isArray(getMulticheck.nftsIds)
-          ? getMulticheck.nftsIds
-          : JSON.parse(getMulticheck.nftsIds);
-        const nftIdNew = nftsIdsArray.shift();
+        const result = await multicheckApi.activate(getMulticheck.uuid);
+        if (!result) {
+          openReceive(getMulticheck.nftUniqueKey, 'notfound', 'multicheck');
+          return;
+        }
 
-        setOwnerMulticheckNft(
-          nftIdNew, 
-          getMulticheck.user_id, 
-          'multicheck',
-          getMulticheck.uuid,
-          userIdsArray.join(','),
-          nftsIdsArray
-        );
+        saveSummary();
+        mountMiniApp();
+        openReceive(getMulticheck.nftUniqueKey, 'received', 'multicheck');
+      } else if (getMulticheck.status === 'claimed') {
+        openReceive(getMulticheck.nftUniqueKey, 'notfound', 'multicheck');
       } else {
         openReceive(getMulticheck.nftUniqueKey, 'notfound', 'multicheck');
       }
     }
 
+    const appStartTime = Date.now();
+    const MIN_LOADER_MS = 2800;
+
     const mountMiniApp = () => {
-      if (1 === 1) {
-        miniAppMounted.value = true;
-        pageSuccess.value = true;
-        setTimeout(() => { miniAppLoading.value = false; }, getConfig().skeletonTime);
-      } else {
-        miniAppMounted.value = true;
-        pageSuccess.value = true;
-        setTimeout(() => { miniAppLoading.value = false; }, getConfig().skeletonTime);
-      }
+      miniAppMounted.value = true;
+      pageSuccess.value = true;
+      const elapsed = Date.now() - appStartTime;
+      const remaining = Math.max(MIN_LOADER_MS - elapsed, 0);
+      setTimeout(() => { miniAppLoading.value = false; }, remaining);
     }
 
     const setOwnerNft = async (getNft: any, checkType: string = 'check') => {
@@ -322,46 +383,7 @@ export default {
       openReceive(getNft.nft_unique_key, 'received', checkType);
     }
 
-    const setOwnerMulticheckNft = async (
-      getNft: any, 
-      multicheckOwnerId: string, 
-      checkType: string = 'check',
-      multicheckUuid: string = '',
-      multicheckUserIds: string = '',
-      multicheckNftsIdsArray: string = ''
-    ) => {
-      const findNft = await nftsApi.getUuid(getNft);
-
-      if (!findNft) {
-        openReceive(getNft, 'notfound', checkType);
-        return; 
-      }
-
-      if (findNft.user_id !== multicheckOwnerId) {
-        openReceive(getNft, 'notfound', checkType);
-        return; 
-      }
-
-      const updateNft = await nftsApi.updateUuidToStatus(
-        getNft,
-        storeCache.TelegramData.user.id,
-        'received'
-      );
-
-      if (!updateNft) {
-        openReceive(getNft, 'selfed', checkType);
-        return;
-      };
-
-      multicheckUserIds += ',' + storeCache.TelegramData.user.id;
-
-      const updateMulticheck = await multicheckApi.update(multicheckUuid, multicheckUserIds, JSON.stringify(multicheckNftsIdsArray));
-      if (!updateMulticheck) return;
-
-      await telegramApi.updateShareMessageMulticheck(multicheckOwnerId, updateNft.uuid, checkType);
-
-      openReceive(updateNft.nft_unique_key, 'received', checkType);
-    }
+    
     
     const openReceive = async (nft: any, nftType: string, checkType: string = 'check') => {
       let name = 'receive';
@@ -380,10 +402,7 @@ export default {
       });
     }
 
-    const checkMulticheckUser = async (userId: string, userIds: string) => {
-      if (!userIds) return false;
-      return userIds.split(',').includes(String(userId));
-    };
+    
 
     return {
       miniAppLang,

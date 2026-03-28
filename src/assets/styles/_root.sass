@@ -7,6 +7,7 @@
     margin: 0
     padding: 0
     box-sizing: border-box
+    outline: none
 
 #confetti-canvas
   background: transparent !important;
@@ -27,6 +28,16 @@
 
 html
     background: $app-background
+
+html
+    --tg-safe-area-inset-top: env(safe-area-inset-top, 0px)
+    --tg-safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)
+    --tg-safe-area-inset-left: env(safe-area-inset-left, 0px)
+    --tg-safe-area-inset-right: env(safe-area-inset-right, 0px)
+    --tg-content-safe-area-inset-top: 0px
+    --tg-content-safe-area-inset-bottom: 0px
+    --tg-content-safe-area-inset-left: 0px
+    --tg-content-safe-area-inset-right: 0px
 
 html, body
     isolation: isolate;
@@ -49,21 +60,7 @@ html, body
     --tg-theme-text-color: #ffffff 
     --tg-theme-accent-text-color: #2ea6ff 
     --tg-viewport-height: 100vh 
-    --tg-viewport-stable-height: 100vh 
-    --tg-content-safe-area-inset-top: 0px 
-    --tg-content-safe-area-inset-bottom: 0px 
-    --tg-content-safe-area-inset-left: 0px 
-    --tg-content-safe-area-inset-right: 0px
-    
-    --tg-safe-area-inset-top: env(safe-area-inset-top, 0px)
-    --tg-safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)
-    --tg-safe-area-inset-left: env(safe-area-inset-left, 0px)
-    --tg-safe-area-inset-right: env(safe-area-inset-right, 0px)
-
-    --tg-content-safe-area-inset-top: env(safe-area-inset-top, 0px)
-    --tg-content-safe-area-inset-bottom: env(safe-area-inset-bottom, 0px)
-    --tg-content-safe-area-inset-left: env(safe-area-inset-left, 0px)
-    --tg-content-safe-area-inset-right: env(safe-area-inset-right, 0px)
+    --tg-viewport-stable-height: 100vh
 
     &::-webkit-scrollbar
         display: none
@@ -99,11 +96,10 @@ body
 @keyframes page-in
     0%
         opacity: 0
-        transform: scale(0.99)
-
+        transform: translateY(4px)
     to
         opacity: 1
-        transform: scale(1.00)
+        transform: translateY(0)
 
 
 p, span, h1, h2, h3, h4, h5, h6, a, 
@@ -185,3 +181,103 @@ button.clicked
   color: $app-text-color-descr !important
   font-weight: 600 !important
   font-size: 16px !important
+
+
+// ─── Menu slide-up entrance ───────────────────────────────────────────────────
+
+.menu-slide-enter-active
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)
+
+.menu-slide-leave-active
+    transition: opacity 0.18s ease, transform 0.18s ease
+
+.menu-slide-enter-from
+    opacity: 0
+    transform: translateX(-50%) translateY(24px) !important
+
+.menu-slide-leave-to
+    opacity: 0
+    transform: translateX(-50%) translateY(24px) !important
+
+
+// ─── Staggered appear for child elements ──────────────────────────────────────
+
+@keyframes stagger-fade-up
+    0%
+        opacity: 0
+        transform: translateY(12px)
+    100%
+        opacity: 1
+        transform: translateY(0)
+
+._anim-stagger
+    > *
+        animation: stagger-fade-up 0.35s ease both
+
+    @for $i from 1 through 12
+        > *:nth-child(#{$i})
+            animation-delay: #{$i * 0.04}s
+
+
+// ─── Card press effect ────────────────────────────────────────────────────────
+
+._anim-press
+    transition: transform 0.15s ease
+    will-change: transform
+
+    &:active
+        transform: scale(0.96)
+
+
+// ─── Subtle float for decorative elements ─────────────────────────────────────
+
+@keyframes subtle-float
+    0%, 100%
+        transform: translateY(0)
+    50%
+        transform: translateY(-3px)
+
+._anim-float
+    animation: subtle-float 3s ease-in-out infinite
+
+
+// ─── Shimmer for loading states ───────────────────────────────────────────────
+
+@keyframes shimmer
+    0%
+        background-position: -200% 0
+    100%
+        background-position: 200% 0
+
+._anim-shimmer
+    background: linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.04) 50%, transparent 75%)
+    background-size: 200% 100%
+    animation: shimmer 1.8s ease-in-out infinite
+
+
+// ─── RTL (Arabic) ──────────────────────────────────────────────────────────────
+
+body.rtl
+    direction: rtl
+    text-align: right
+
+    .menu .menu_pill
+        flex-direction: row-reverse
+
+    ._direction
+        flex-direction: row-reverse
+
+    ._comp._item._lastActivity ._block
+        flex-direction: row-reverse
+
+    ._comp._item._tasksPinned ._content ._row
+        flex-direction: row
+
+    ._task-row
+        flex-direction: row-reverse
+
+    .profile_inner
+        direction: rtl
+
+    ._wrap ._view
+        direction: rtl

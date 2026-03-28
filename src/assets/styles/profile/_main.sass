@@ -12,30 +12,126 @@
 
         .stylish
             width: 100%
-            height: 279px
-            display: inline-flex
-            align-items: center
-            justify-content: center
-            margin-bottom: 15px
+            height: 300px
             position: fixed
             top: 0
             left: 0
             z-index: 0
-            padding: 54px 64px 86px 46px
-            background: radial-gradient(82.66% 82.66% at 50% 0%, #1E3AC6 0%, #2C2460 50%, #1C1C1E 100%);
+            overflow: hidden
+            background: radial-gradient(80% 80% at 50% -5%, #1A2F8A 0%, #1E1E5C 45%, $app-background 100%)
 
-            .starsed
-                width: fit-content
-                height: fit-content
-                display: flex
-                justify-content: center
-                align-items: center
+            ._prof-orb
                 position: absolute
-                top: 10px
+                border-radius: 50%
+                filter: blur(60px)
+                will-change: transform, opacity
+                opacity: 0
+                animation: prof-orb-in 1s ease forwards
 
-                & img
-                    width: 100%
-                    height: fit-content
-        
+            ._prof-orb--1
+                width: 160px
+                height: 160px
+                background: #3B5FE8
+                top: -20px
+                left: 15%
+                animation-delay: 0.2s
+                animation: prof-orb-in 1s ease 0.2s forwards, prof-drift-1 8s ease-in-out 1.2s infinite
+
+            ._prof-orb--2
+                width: 120px
+                height: 120px
+                background: #7C3AED
+                top: 30px
+                right: 10%
+                animation: prof-orb-in 1s ease 0.4s forwards, prof-drift-2 9s ease-in-out 1.4s infinite
+
+            ._prof-orb--3
+                width: 90px
+                height: 90px
+                background: #2563EB
+                top: 80px
+                left: 45%
+                animation: prof-orb-in 1s ease 0.6s forwards, prof-drift-3 7s ease-in-out 1.6s infinite
+
+            ._prof-particle
+                position: absolute
+                width: 3px
+                height: 3px
+                border-radius: 50%
+                background: rgba(255, 255, 255, 0.6)
+                opacity: 0
+                will-change: transform, opacity
+
+            ._prof-particle--1
+                top: 45px
+                left: 25%
+                animation: prof-sparkle 3s ease-in-out 0.5s infinite
+
+            ._prof-particle--2
+                top: 70px
+                right: 30%
+                animation: prof-sparkle 3.5s ease-in-out 1s infinite
+
+            ._prof-particle--3
+                top: 30px
+                left: 55%
+                animation: prof-sparkle 4s ease-in-out 0.2s infinite
+
+            ._prof-particle--4
+                top: 90px
+                left: 35%
+                animation: prof-sparkle 3.2s ease-in-out 1.5s infinite
+
+            ._prof-particle--5
+                top: 55px
+                right: 15%
+                animation: prof-sparkle 2.8s ease-in-out 0.8s infinite
+
+        @keyframes prof-orb-in
+            0%
+                opacity: 0
+                transform: scale(0.5)
+            100%
+                opacity: 0.45
+                transform: scale(1)
+
+        @keyframes prof-drift-1
+            0%, 100%
+                transform: translate(0, 0)
+                opacity: 0.45
+            50%
+                transform: translate(12px, -8px)
+                opacity: 0.55
+
+        @keyframes prof-drift-2
+            0%, 100%
+                transform: translate(0, 0)
+                opacity: 0.45
+            50%
+                transform: translate(-10px, 6px)
+                opacity: 0.5
+
+        @keyframes prof-drift-3
+            0%, 100%
+                transform: translate(0, 0)
+                opacity: 0.45
+            50%
+                transform: translate(6px, 10px)
+                opacity: 0.55
+
+        @keyframes prof-sparkle
+            0%, 100%
+                opacity: 0
+                transform: scale(0.5)
+            25%
+                opacity: 0.8
+                transform: scale(1.2)
+            50%
+                opacity: 0.3
+                transform: scale(0.8)
+            75%
+                opacity: 0.9
+                transform: scale(1)
+
         .fixed
             z-index: 1

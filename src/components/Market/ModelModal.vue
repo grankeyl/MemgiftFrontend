@@ -8,7 +8,14 @@
         class="_skeleton"
         :class="{ hide: !ModalActive }"
       >
-        <div @click="closeModal" class="close"></div>
+        <div class="modal-skel__handle"></div>
+        <div class="modal-skel__head"></div>
+        <div class="modal-skel__item" v-for="n in 5" :key="'sk-' + n">
+          <div class="modal-skel__circle"></div>
+          <div class="modal-skel__text" :style="{ width: 30 + n * 8 + '%' }"></div>
+          <div class="modal-skel__check"></div>
+        </div>
+        <div class="modal-skel__btns"><div></div><div></div></div>
       </div>
       <div 
         v-if="!isLoading" 
@@ -24,13 +31,20 @@
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
+        <div class="modal-search">
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            :placeholder="$t('market.searchPlaceholder')" 
+          />
+          <span v-if="localSelectedModels.length" class="modal-search__count">{{ localSelectedModels.length }}</span>
+        </div>
         <div class="items">
           <div 
-            v-for="(item, index) in GiftsList" 
+            v-for="(item, index) in filteredList" 
             :key="index"
             @click="applyModel(item.UKey)"
             class="item"
-            v-show="item.UpgradeSupport"
           >
             <div class="left">
               <img :src="item.ImageMain" alt="">
@@ -80,6 +94,7 @@ export default {
       storeCache: useCacheStore(),
       isLoadingModalImage: true,
       localSelectedModels: [],
+      searchQuery: '',
 
       OwnerImage: true,
       ActiveButton: false,
@@ -94,7 +109,10 @@ export default {
 
   watch: {
     ModalActive(val) {
-      if (val) this.localSelectedModels = [...this.Selected];
+      if (val) {
+        this.localSelectedModels = [...this.Selected];
+        this.searchQuery = '';
+      }
     },
   },
 
@@ -105,7 +123,14 @@ export default {
   computed: {
     isSkeleton() {
       return this.Skeleton;
-    }
+    },
+    filteredList() {
+      const arr = Array.isArray(this.GiftsList) ? this.GiftsList : Object.values(this.GiftsList || {});
+      const supported = arr.filter(i => i.UpgradeSupport);
+      if (!this.searchQuery) return supported;
+      const q = this.searchQuery.toLowerCase();
+      return supported.filter(i => (i.Name || '').toLowerCase().includes(q));
+    },
   },
   
   methods: {

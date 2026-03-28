@@ -5,56 +5,95 @@
         <div v-else class="_content">
           <div class="items">
 
-            <div class="item" @click="useTerm('InviteFriends')">
-              <div class="icon">
-                <Icon class="kit-icon" v-html="Icon.User"></Icon>
+            <!-- Scooby tasks -->
+            <template v-if="isScooby">
+              <div class="item" @click="useTerm('VpnSubscription')">
+                <div class="icon">
+                  <img src="/scooby_vpn.png" alt="ScoobyVPN" style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div class="info">
+                  <h4>Активировать подписку ScoobyVPN</h4>
+                  <p>Зайди в бот и активируй пробную подписку</p>
+                </div>
+                <div class="button">
+                  <button :class="{ done: vpnDone || !NftGetFree }">
+                    <div v-if="!vpnDone && NftGetFree && !vpnLoading" class="kit-icon" v-html="Icon.ChevroneRight"></div>
+                    <div v-if="(vpnDone || !NftGetFree) && !vpnLoading" class="kit-icon" v-html="Icon.Done"></div>
+                    <div v-if="vpnLoading" class="load-icon"></div>
+                  </button>
+                </div>
               </div>
-              <div class="info">
-                <h4>{{ $t('collection.terms.inviteFriends') }}</h4>
-                <p>{{ $t('collection.terms.inviteFriendsDesc') }}</p>
-              </div>
-              <div class="button">
-                <button :class="{ done: Terms.InviteFriends || !NftGetFree }">
-                  <span v-if="!Terms.InviteFriends && NftGetFree">
-                    {{ Terms.InviteFriendsCount }} / {{ Terms.InviteFriendsCountNeed }}
-                  </span>
-                  <div v-if="Terms.InviteFriends || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
-                </button>
-              </div>
-            </div>
 
-            <div class="item" @click="useTerm('SendChats')">
-              <div class="icon">
-                <Icon class="kit-icon" v-html="Icon.Link"></Icon>
+              <div class="item" @click="useTerm('SendChats')">
+                <div class="icon">
+                  <Icon class="kit-icon" v-html="Icon.Link"></Icon>
+                </div>
+                <div class="info">
+                  <h4>Поделиться в 2 чата</h4>
+                  <p>Отправьте ссылку друзьям</p>
+                </div>
+                <div class="button">
+                  <button :class="{ done: Terms.ShareChats || !NftGetFree }">
+                    <div v-if="!Terms.ShareChats && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
+                    <div v-if="Terms.ShareChats || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
+                  </button>
+                </div>
               </div>
-              <div class="info">
-                <h4>{{ $t('collection.terms.shareChats') }}</h4>
-                <p>{{ $t('collection.terms.shareChatsDesc') }}</p>
-              </div>
-              <div class="button">
-                <button :class="{ done: Terms.ShareChats || !NftGetFree }">
-                  <div v-if="!Terms.ShareChats && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                  <div v-if="Terms.ShareChats || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
-                </button>
-              </div>
-            </div>
+            </template>
 
-            <div class="item" @click="useTerm('SubscribedChannel')">
-              <div class="icon">
-                <Icon class="kit-icon" v-html="Icon.Love"></Icon>
+            <!-- Default tasks (FortuneBall etc) -->
+            <template v-else>
+              <div class="item" @click="useTerm('InviteFriends')">
+                <div class="icon">
+                  <Icon class="kit-icon" v-html="Icon.User"></Icon>
+                </div>
+                <div class="info">
+                  <h4>{{ $t('collection.terms.inviteFriends') }}</h4>
+                  <p>{{ $t('collection.terms.inviteFriendsDesc') }}</p>
+                </div>
+                <div class="button">
+                  <button :class="{ done: Terms.InviteFriends || !NftGetFree }">
+                    <span v-if="!Terms.InviteFriends && NftGetFree">
+                      {{ Terms.InviteFriendsCount }} / {{ Terms.InviteFriendsCountNeed }}
+                    </span>
+                    <div v-if="Terms.InviteFriends || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
+                  </button>
+                </div>
               </div>
-              <div class="info">
-                <h4>{{ $t('collection.terms.subscribedChannel') }}</h4>
-                <p>{{ $t('collection.terms.subscribedChannelDesc') }}</p>
+
+              <div class="item" @click="useTerm('SendChats')">
+                <div class="icon">
+                  <Icon class="kit-icon" v-html="Icon.Link"></Icon>
+                </div>
+                <div class="info">
+                  <h4>{{ $t('collection.terms.shareChats') }}</h4>
+                  <p>{{ $t('collection.terms.shareChatsDesc') }}</p>
+                </div>
+                <div class="button">
+                  <button :class="{ done: Terms.ShareChats || !NftGetFree }">
+                    <div v-if="!Terms.ShareChats && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
+                    <div v-if="Terms.ShareChats || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
+                  </button>
+                </div>
               </div>
-              <div class="button">
-                <button :class="{ done: doneSubscribeChannel || !NftGetFree }">
-                  <div v-if="!doneSubscribeChannel && NftGetFree && !loadingSubscribeChannel" class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                  <div v-if="(doneSubscribeChannel || !NftGetFree) && !loadingSubscribeChannel" class="kit-icon" v-html="Icon.Done"></div>
-                  <div v-if="loadingSubscribeChannel" class="load-icon"></div>
-                </button>
+
+              <div class="item" @click="useTerm('SubscribedChannel')">
+                <div class="icon">
+                  <Icon class="kit-icon" v-html="Icon.Love"></Icon>
+                </div>
+                <div class="info">
+                  <h4>{{ $t('collection.terms.subscribedChannel') }}</h4>
+                  <p>{{ $t('collection.terms.subscribedChannelDesc') }}</p>
+                </div>
+                <div class="button">
+                  <button :class="{ done: doneSubscribeChannel || !NftGetFree }">
+                    <div v-if="!doneSubscribeChannel && NftGetFree && !loadingSubscribeChannel" class="kit-icon" v-html="Icon.ChevroneRight"></div>
+                    <div v-if="(doneSubscribeChannel || !NftGetFree) && !loadingSubscribeChannel" class="kit-icon" v-html="Icon.Done"></div>
+                    <div v-if="loadingSubscribeChannel" class="load-icon"></div>
+                  </button>
+                </div>
               </div>
-            </div>
+            </template>
 
           </div>
         </div>
@@ -73,6 +112,7 @@
   import * as telegramApi from '../../api/telegramApi';
   import * as historyApi from '../../api/historyApi';
   import * as taskApi from '@/api/taskApi';
+  import * as nftApi from '@/api/nftApi';
 
   import Image_Stars from '@/assets/images/stars.png';
 
@@ -118,6 +158,10 @@
         useCheckInterval: false,
         useCheckTimeout: false,
 
+        vpnLoading: false,
+        vpnCheckInterval: null,
+        vpnDone: false,
+
         cleanString,
         
         checkPriceNumber,
@@ -130,10 +174,22 @@
   
     mounted() {
       this.loadResources();
-      this.getTaskSubscribeChannel();
+
+      if (this.isScooby) {
+        this.startVpnPolling();
+      } else {
+        this.getTaskSubscribeChannel();
+      }
+
+      // NftKey может прийти позже — отслеживаем
+      this.$watch(() => this.isScooby, (val) => {
+        if (val && !this.vpnDone && !this.vpnCheckInterval) {
+          this.startVpnPolling();
+        }
+      });
 
       this.$watch(() => this.storeCache.TasksApp, () => {
-        this.getTaskSubscribeChannel();
+        if (!this.isScooby) this.getTaskSubscribeChannel();
       });
 
       this.$watch(() => this.Terms.InviteFriendsCount, () => {
@@ -163,6 +219,9 @@
     },
 
     computed: {
+      isScooby() {
+        return this.NftKey === 'nft_scooby';
+      },
       isLoading() {
         return this.Skeleton;
       },
@@ -253,9 +312,48 @@
         this.isUseInterval = false;
       },
       
+      async checkVpnStatus() {
+        const data = await nftApi.checkScoobyVpn();
+        if (data && data.has_subscription) {
+          this.$emit('completeTerm', 'VpnSubscription');
+        }
+      },
+
+      async startVpnPolling() {
+        // сразу проверяем при заходе
+        const first = await nftApi.checkScoobyVpn();
+        if (first && first.has_subscription) {
+          this.vpnDone = true;
+          this.$emit('completeTerm', 'VpnSubscription');
+          return;
+        }
+
+        this.vpnLoading = true;
+        this.vpnCheckInterval = setInterval(async () => {
+          const data = await nftApi.checkScoobyVpn();
+          if (data && data.has_subscription) {
+            this.vpnLoading = false;
+            this.vpnDone = true;
+            clearInterval(this.vpnCheckInterval);
+            this.$emit('completeTerm', 'VpnSubscription');
+          }
+        }, 5000);
+      },
+
+      stopVpnPolling() {
+        if (this.vpnCheckInterval) clearInterval(this.vpnCheckInterval);
+        this.vpnLoading = false;
+      },
+
       async useTerm(type) {
         if (!type) return;
         TelegramModule.useMediumHaptic();
+
+        if (type === 'VpnSubscription') {
+          TelegramModule.useLink('https://t.me/ScoobyVpnBot?start=e81566f4');
+          this.startVpnPolling();
+          return;
+        }
 
         if (type === 'InviteFriends') {
           const link = import.meta.env.VITE_APP_MINI_APP_LINK + `=ref_${this.storeCache.UserData.user.Code}`;

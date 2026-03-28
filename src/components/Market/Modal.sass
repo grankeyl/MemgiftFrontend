@@ -1,1042 +1,441 @@
 @use "./../../assets/styles/_variables" as *
-        
-.balance
-            width: fit-content
-            height: 32px
-            display: flex
-            align-items: center
-            justify-content: space-between
-            gap: 6px
-            position: relative
-            padding: 0px 4px 0px 12px
-            background: $app-background-secondary
-            border-radius: 25px
-            cursor: pointer
-            position: absolute
-            top: 40px
-            left: 50%
-            transform: translateX(-50%)
-            z-index: 1001
 
-            & .context
-                width: 100%
-                height: 100%
-                display: flex
-                align-items: center
-                gap: 2px
-                position: relative
+@keyframes shimmer
+    0%
+        background-position: -200% 0
+    100%
+        background-position: 200% 0
 
-                & h4
-                    font-size: 12px
-                    font-weight: 600
-                    color: $app-text-color
+@keyframes fadeUp
+    from
+        opacity: 0
+        transform: translateY(8px)
+    to
+        opacity: 1
+        transform: translateY(0)
 
-                & img
-                    width: 18px
-                    height: 18px
+// Balance pill at top
+.mkt-balance
+    width: fit-content
+    height: 32px
+    display: flex
+    align-items: center
+    gap: 6px
+    padding: 0 4px 0 12px
+    background: $app-background-secondary
+    border-radius: 25px
+    cursor: pointer
+    position: fixed
+    top: 40px
+    left: 50%
+    transform: translateX(-50%)
+    z-index: 1001
 
-            & .button
-                width: 24px
-                height: 24px
-                min-width: 24px
-                min-height: 24px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                position: relative
-                border-radius: 50px
-                cursor: pointer
-                transform: scale(1)
-                transition: transform 0.22s ease
-                background: $app-background-blue-secondary
+    &__ctx
+        display: flex
+        align-items: center
+        gap: 2px
 
-                &:active
-                    transform: scale(0.94)
-                
-                & img
-                    width: 20px
-                    height: 20px
+        h4
+            font-size: 12px
+            font-weight: 600
+            color: $app-text-color
 
+        img
+            width: 18px
+            height: 18px
+
+    &__btn
+        width: 24px
+        height: 24px
+        min-width: 24px
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 50%
+        background: $app-background-blue-secondary
+        transition: transform 0.15s ease
+
+        &:active
+            transform: scale(0.9)
+
+        img
+            width: 20px
+            height: 20px
+
+// Main gift modal
 .giftModal
     width: 100%
     height: fit-content
     max-width: $app-max-width
     position: relative
 
-    ._skeleton
+.mkt-sheet
+    max-width: $app-max-preview-width
+    width: 100%
+    height: auto
+    max-height: 90vh
+    position: fixed
+    overflow-y: auto
+    overflow-x: hidden
+    background: $app-background
+    z-index: 1000
+    bottom: 0
+    left: 50%
+    transform: translate(-50%, 0%)
+    border-radius: 24px 24px 0 0
+    transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1)
+
+    &.hide
+        transform: translate(-50%, 100%)
+        transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1)
+
+    &__handle
         width: 100%
-        gap: 10px
-        height: 100%
-        position: fixed
-        overflow: auto
-        background: $app-background
-        max-width: $app-max-preview-width
-        z-index: 10000
-        right: 0
-        left: 0
-        opacity: 1
-        visibility: visible
-        pointer-events: all
-        bottom: 0%
-        border-radius: 20px 20px 0px 0px
-        padding: 0px 16px 42px 16px
-        transform: translateY(0)
-        transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1)
+        height: 20px
+        display: flex
+        align-items: center
+        justify-content: center
+        position: sticky
+        top: 0
+        z-index: 10
+        cursor: grab
 
-        &.hide
-            transform: translateY(100%)
-            transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1)
+    &__bar
+        width: 36px
+        height: 4px
+        background: rgba($app-text-color, 0.15)
+        border-radius: 2px
 
-        ._profileGiftModalClose
-            width: 33px
-            height: 33px
-            position: absolute
-            border-radius: 50px
-            top: 15px
-            right: 15px
-            z-index: 100
+    // ========= SKELETON =========
+    &__skel
+        padding: 0 16px 32px
+        animation: fadeUp 0.2s ease
+
+        .skel-hero
+            width: 100%
+            height: 220px
+            border-radius: 20px
+            margin-bottom: 16px
             background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
 
-        ._profileGiftModalContent
-            width: 100%
-            height: fit-content
+        .skel-lines
             display: flex
             flex-direction: column
-            align-items: center
-            gap: 30px
-            position: relative
+            gap: 10px
+            margin-bottom: 20px
 
-            ._profileGiftModalContentImage
-                width: 128px
-                height: 128px
-                background: $app-background-secondary
-                border-radius: 50%
-                display: flex
-                justify-content: center
-                align-items: center
-                margin: auto
-                margin-top: 50px
+        .skel-l
+            height: 16px
+            border-radius: 8px
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
 
-                img
-                    width: 100%
-                    height: 100%
-                
-                & .lt
-                    width: 30px
-                    height: 30px
+            &.skel-w60
+                width: 60%
 
-                    & svg
-                        width: 100%
-                        height: 100%
+            &.skel-w30
+                width: 30%
 
-            ._profileGiftModalContentTitle
-                width: 45%
-                height: 33px
-                background: $app-background-secondary
-                border-radius: 10px
-        
-        ._profileGiftModalTable
-            width: 100%
-            height: fit-content
+        .skel-table
             display: flex
             flex-direction: column
-            align-items: center
-            justify-content: center
-            gap: 30px
-            position: relative
-            margin-top: 35px
-            margin-bottom: 35px
+            gap: 8px
+            margin-bottom: 20px
 
-            ._profileGiftModalTableRow
-                width: 100%
-                height: 156px
-                display: flex
-                flex-direction: column
-                gap: 30px
-                border-radius: 16px
-                position: relative
-                background: $app-background-secondary
-            
-        ._profileGiftModalButtons
+        .skel-row
             width: 100%
-            height: fit-content
+            height: 44px
+            border-radius: 12px
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        .skel-btns
             display: flex
-            flex-direction: column
-            align-items: center
-            gap: 11px
+            gap: 8px
 
-            ._profileGiftModalButtonsCollectable
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                background: $app-background-secondary
-                padding: 0 15px
-                border-radius: 13px
-                cursor: pointer
-                transform: scale(1)
-                transition: transform 0.22s ease
+        .skel-btn
+            flex: 1
+            height: 52px
+            border-radius: 14px
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
 
-                & h4
-                    font-size: 16px
-                    font-weight: 600
-                    color: $app-big-button-text-color
-                    margin-right: 3px
+            &.skel-primary
+                flex: 1.5
 
-                & img
-                    width: 16px
-                    height: 16px
-                    margin-right: -3px
-                    
-                & p
-                    font-size: 16px
-                    font-weight: 700
-                    color: $app-big-button-text-color
+    // ========= BODY =========
+    &__body
+        animation: fadeUp 0.25s ease
 
-                & .lt
-                    display: none
+// ========= HERO =========
+.mkt-hero
+    width: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    position: relative
+    overflow: hidden
+    padding: 8px 0 20px
+    background: $app-rarity-background-rare
 
-                &._loading
-                    pointer-events: none
+    &__gradient
+        position: absolute
+        inset: 0
+        z-index: 0
+        opacity: 0
+        animation: fade-in-gradient 0.8s ease forwards
+        background: linear-gradient(180deg, var(--center-color) 0%, var(--around-color) 100%)
+        pointer-events: none
 
-                    & h4
-                        display: none
-                    
-                    & img
-                        display: none
-                    
-                    & p
-                        display: none
+    &__symbol
+        position: absolute
+        width: 80%
+        height: 80%
+        overflow: hidden
+        opacity: 0.25
+        z-index: 1
 
-                    & .lt
-                        width: 30px
-                        height: 30px
-                        pointer-events: none
-                        display: block
-
-                        svg
-                            width: 100%
-                            height: 100%
-
-            ._profileGiftModalButtonsSend
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                background: $app-big-button-background
-                padding: 0 15px
-                border-radius: 13px
-                cursor: pointer
-                transform: scale(1)
-                transition: transform 0.22s ease
-
-                & h4
-                    font-size: 16px
-                    font-weight: 600
-                    color: $app-big-button-text-color
-                    margin-right: 3px
-
-                & img
-                    width: 16px
-                    height: 16px
-                    margin-right: -3px
-
-    ._contentModal
-        max-width: $app-max-preview-width
-        width: 100%
-        gap: 10px
-        height: auto
-        max-height: 86vh
-        position: fixed
-        overflow-y: scroll
-        background: $app-background
-        z-index: 1000
-        opacity: 1
-        visibility: visible
-        pointer-events: all
-        bottom: 0%
-        border-radius: 20px 20px 0px 0px
-        padding: 0px 0px 42px 0px
-        left: 50%
-        transform: translate(-50%, 0%)
-        transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1) !important
-
-        &.hide
-            transform: translate(-50%, 100%)
-            transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1) !important
-
-        ._profileGiftModalClose
-            width: 33px
-            height: 33px
+        img
             position: absolute
-            border-radius: 50px
-            top: 15px
-            right: 15px
-            z-index: 100
-            background: rgba($app-preview, 0.25)
+            left: 50%
+            top: 50%
+            width: 100%
+            transform: translate(-50%, -55%)
+            object-fit: cover
+
+    &__badge
+        position: absolute
+        top: 10px
+        left: 14px
+        z-index: 5
+        background: rgba(0,0,0, 0.25)
+        -webkit-backdrop-filter: blur(16px)
+        backdrop-filter: blur(16px)
+        border-radius: 50px
+        padding: 4px 10px
+
+        span
+            font-size: 13px
+            font-weight: 600
+            color: $app-text-color
+            opacity: 0.85
+
+    &__img
+        width: 160px
+        height: 160px
+        display: flex
+        justify-content: center
+        align-items: center
+        z-index: 5
+
+        img
+            width: 155px
+            height: 155px
+            object-fit: cover
+
+    &__lottie
+        width: 155px
+        height: 155px
+
+    &__name
+        font-size: 20px
+        font-weight: 700
+        color: $app-text-color
+        z-index: 5
+        margin-top: -4px
+        letter-spacing: -0.3px
+
+    &__actions
+        display: flex
+        gap: 6px
+        margin-top: 12px
+        z-index: 5
+
+        button
+            width: 40px
+            height: 40px
             display: flex
-            justify-content: center
             align-items: center
+            justify-content: center
+            background: rgba($app-text-color, 0.12)
+            -webkit-backdrop-filter: blur(16px)
+            backdrop-filter: blur(16px)
+            border-radius: 12px
+            cursor: pointer
+            transition: transform 0.15s ease
 
             &:active
-                transform: scale(0.97)
+                transform: scale(0.9)
 
-            & .kit-icon
-                opacity: .5
-                
-                & svg
-                    width: 11px
-                    height: 11px
+            img
+                width: 18px
+                height: 18px
 
-        ._profileGiftModalContent
-            width: 100%
-            height: fit-content
-            display: flex
-            flex-direction: column
-            align-items: center
-            position: relative
-            background: $app-rarity-background-rare
-            overflow: hidden
-            transition: all 0.86s linear
+// ========= PRICE =========
+.mkt-price
+    padding: 16px 16px 0
+    display: flex
+    flex-direction: column
+    gap: 4px
 
-            ._profileGiftModalGradient
-                position: absolute
-                top: 0
-                left: 0
-                width: 100%
-                height: 100%
-                z-index: 0
-                opacity: 0
-                border-radius: 20px 20px 0px 0px
-                animation: fade-in-gradient 0.8s ease forwards
-                background: linear-gradient(
-                    180deg,
-                    var(--center-color) 0%,
-                    var(--around-color) 100%
-                )
-                pointer-events: none
-            
-            & ._symbols
-                position: absolute
-                width: 85%
-                height: 80%
-                overflow: hidden
-                opacity: .3
-                z-index: 1
+    &__main
+        display: flex
+        align-items: center
+        gap: 5px
 
-                & img
-                    position: absolute
-                    left: 50%
-                    top: 50%
-                    width: 100%
-                    transform: translate(-50%, -59%)
-                    z-index: -1
-                    object-fit: cover
-                    object-position: center
-                    opacity: 0
+        h2
+            font-size: 26px
+            font-weight: 700
+            color: $app-text-color
+            letter-spacing: -0.5px
 
-                    &._show
-                        animation: fadeIn 0.72s
-                        opacity: 1
+        img
+            width: 22px
+            height: 22px
 
-            &.rare
-                background: $app-rarity-background-rare
+    &__hint
+        font-size: 13px
+        font-weight: 500
+        color: $app-text-color-red
+        opacity: 0.85
 
-            &.veryrare
-                background: $app-rarity-background-very-rare
+// ========= INFO CHIPS =========
+.mkt-chips
+    display: flex
+    flex-direction: column
+    gap: 0
+    padding: 12px 16px 0
+    border-radius: 16px
+    margin: 12px 16px 0
+    background: $app-mark-bg
+    overflow: hidden
 
-            &.epic
-                background: $app-rarity-background-epic
+.mkt-chip
+    display: flex
+    align-items: center
+    padding: 11px 0
+    border-bottom: 1px solid rgba($app-text-color, 0.04)
+    gap: 8px
 
-            &.legend
-                background: $app-rarity-background-legendary
-            
-            &.author
-                background: $app-rarity-background-author
+    &:last-child
+        border-bottom: none
 
-            ._profileGiftModalContentImage
-                display: flex
-                justify-content: center
-                align-items: center
-                margin: auto
-                z-index: 5
-                width: 162px
-                height: 162px
-                padding-top: 12px
+    &__label
+        font-size: 13px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+        min-width: 80px
+        flex-shrink: 0
 
-                & ._lottie
-                    margin-bottom: 5px
+    &__val
+        font-size: 14px
+        font-weight: 600
+        color: $app-text-color
+        flex: 1
+        text-align: right
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
 
-                    &.upgraded
-                        width: 0
-                        height: 155px
-                        opacity: 0
-                        will-change: opacity, width, height
+    &__pct
+        font-size: 12px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+        background: rgba($app-text-color, 0.06)
+        padding: 2px 7px
+        border-radius: 50px
+        white-space: nowrap
 
-                        &._show
-                            opacity: 1
-                            width: 155px
-                            height: 155px
+// ========= BUTTONS =========
+.mkt-btns
+    display: flex
+    gap: 8px
+    padding: 16px 16px 32px
+    margin-top: 4px
 
-                    &._hide
-                        opacity: 0
-                        width: 0
-                        height: 155px
+    &__basket
+        flex: 1
+        height: 52px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 6px
+        background: $app-table-button
+        border-radius: 14px
+        cursor: pointer
+        transition: transform 0.15s ease, background 0.2s ease
 
-                & .lottie-gift
-                    width: 155px
-                    height: 155px
+        &:active
+            transform: scale(0.96)
 
-                & img
-                    width: 155px
-                    height: 155px
-                    object-fit: cover
+        &.added
+            background: rgba($app-background-green-secondary, 0.18)
 
-                    &.upgradedImage
-                        width: 0
-                        height: 155px
-                        opacity: 0
-                        transition: opacity 0.22s ease
-                        will-change: opacity, width, height
+            h4
+                color: $app-background-green-secondary
 
-                        &._show
-                            opacity: 1
-                            width: 175px
-                            height: 175px
-                    
-                    &._loading
-                        display: none
+        img
+            width: 18px
+            height: 18px
 
-                    &._hide
-                        opacity: 0
-                        width: 0
-                        height: 175px
-                        transition: opacity 0.22s ease
-                
-                & .lt
-                    width: 35px
-                    height: 75px
-                    object-fit: cover
+        h4
+            font-size: 14px
+            font-weight: 600
+            color: $app-text-color
+            white-space: nowrap
 
-            ._number
-                width: fit-content
-                height: 28px
-                position: absolute
-                top: 14px
-                left: 16px
-                text-align: center
-                background: rgba($app-background-secondary, 0.2)
-                border-radius: 50px
-                padding: 0 12px
-                display: flex
-                align-items: center
-                justify-content: center
-                z-index: 5
+            @media screen and (max-width: 370px)
+                font-size: 13px
 
-                & span
-                    font-size: 15px
-                    font-weight: 500
-                    color: $app-button-text-color
+    &__buy
+        flex: 1.4
+        height: 52px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 4px
+        background: $app-big-button-background
+        border-radius: 14px
+        cursor: pointer
+        transition: transform 0.15s ease
 
-            ._profileGiftModalContentTitle
-                width: fit-content
-                margin-top: -5px
-                margin-bottom: 25px 
-                z-index: 5
+        &:active
+            transform: scale(0.96)
 
-                & h4
-                    font-size: 22px
-                    font-weight: 600
-                    color: $app-text-color
-
-            ._profileGiftModalContentNumber
-                width: fit-content
-                margin-top: -18px
-                margin-bottom: 24px 
-                background: rgba(#393939, 0.22)
-                -webkit-backdrop-filter: blur(20px)
-                backdrop-filter: blur(20px)
-                border-radius: 50px
-                padding: 2px 8px
-                z-index: 5
-
-                & h4
-                    font-size: 14px
-                    font-weight: 600
-                    color: $app-text-color
-
-            ._profileGiftModalContentButtons
-                width: 100%
-                height: fit-content
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 8px
-                position: relative
-                margin-top: -10px
-                margin-bottom: 24px
-                padding: 0 20px
-                z-index: 2
-
-                & button
-                    width: 94px
-                    height: 56px
-                    display: flex
-                    flex-direction: column
-                    align-items: center
-                    justify-content: center
-                    gap: 2px
-                    background: rgba($app-text-color, 0.15);
-                    -webkit-backdrop-filter: blur(20px)
-                    backdrop-filter: blur(20px)
-                    padding: 14px 15px
-                    border-radius: 13px
-                    cursor: pointer
-                    transform: scale(1)
-                    transition: transform 0.22s ease
-
-                    &:disabled
-                        pointer-events: none
-                        opacity: .5
-
-                    &:active
-                        transform: scale(0.95)
-
-                    & .kit-icon
-                        width: fit-content
-                        height: fit-content
-                        margin-top: 2px
-
-                        & svg
-                            width: 20px
-                            height: 20px
-
-                            & path
-                                fill: $app-text-color
-                    
-                    img
-                        width: 20px
-                        height: 20px
-
-                    & span
-                        font-size: 14px
-                        font-weight: 600
-
-        ._profileGiftModalTable
-            width: 100%
-            height: fit-content
-            display: flex
-            flex-direction: column
-            align-items: center
-            justify-content: center
-            gap: 30px
-            position: relative
-            padding: 0px 16px
-            opacity: 0
-            height: 0
-            transform: scale(0.7)
+        &:disabled
+            opacity: 0.45
             pointer-events: none
-            transition: opacity 0.32s ease, transform 0.42s ease
 
-            &._show
-                margin-top: 16px
-                margin-bottom: 19px
-                opacity: 1
-                height: auto
-                transform: scale(1)
-                pointer-events: all
+        &._loading
+            pointer-events: none
 
-            ._profileGiftModalTableRow
-                    width: 100%
-                    height: fit-content
-                    display: flex
-                    flex-direction: column
-                    overflow: hidden
-                    border-radius: 16px
-                    position: relative
-                    background: $app-mark-bg
-                    border: 1px solid $app-table-border
+        h4
+            font-size: 15px
+            font-weight: 600
+            color: $app-big-button-text-color
+            white-space: nowrap
 
-                    & .profile_gift_preview_table_item
-                        width: 100%
-                        display: flex
-                        justify-content: space-between
-                        align-items: center
-                        cursor: pointer
+            @media screen and (max-width: 370px)
+                font-size: 14px
 
-                        & .profile_gift_preview_table_item_left
-                            display: flex
-                            width: 180px
-                            height: 44px
-                            justify-content: left
-                            align-items: center
-                            padding-left: 12px
-                            border-bottom: 1px solid $app-input-background
+        img
+            width: 18px
+            height: 18px
 
-                            &.last
-                                border-bottom: none
+    &__spinner
+        width: 28px
+        height: 28px
 
-                            & h4
-                                font-size: 14px
-                                font-weight: 600
-                                color: $app-table-h
-                                white-space: nowrap
-
-                        & .profile_gift_preview_table_item_right
-                            width: 100%
-                            display: flex
-                            height: 43px
-                            justify-content: left
-                            text-align: right
-                            white-space: nowrap
-                            align-items: center
-                            gap: 4px
-                            padding-right: 15px
-                            padding-left: 15px
-                            background: $app-background
-                            border-bottom: 1px solid $app-input-background
-
-                            &.last
-                                border-bottom: none
-
-                            & img
-                                height: fit-content
-                                border-radius: 50px
-
-                                &._avatar
-                                    width: 18px
-                                    height: 18px
-                                    border-radius: 50px
-
-                                &._stars
-                                    width: 16px
-                                    height: 15px
-                                    margin-top: -1px
-                            
-                            & .avatar_null
-                                width: 23px
-                                height: 23px
-                                border-radius: 50px
-                                background: $app-span-gray-background
-                                display: flex
-                                justify-content: center
-                                align-items: center
-                                
-                                & h4
-                                    font-size: 0.7em
-                                    font-weight: 700
-                                    color: $app-text-color
-                                
-                                & img
-                                    width: 100%
-                                    height: 100%
-                                    border-radius: 50%
-                                    object-fit: cover
-
-                            & span
-                                max-width: 170px
-                                overflow: hidden
-                                text-overflow: ellipsis
-                                height: fit-content
-                                font-size: 14px
-                                font-weight: 600
-                                color: $app-text-color-primary
-                            
-                            & p
-                                height: fit-content
-                                font-size: 14px
-                                font-weight: 600
-                                color: $app-text-color
-
-                            & b
-                                height: fit-content
-                                margin-left: auto
-                                font-size: 14px
-                                font-weight: 400
-                                padding: 5px 10px
-                                border-radius: 50px
-                                color: $app-button-blue-text-color
-                                background: $app-button-blue-background
-                                opacity: 0.55
-                                white-space: nowrap
-                                max-width: 118px
-                                overflow: hidden
-                                text-overflow: ellipsis
-
-        ._profileGiftModalGifts
-            width: fit-content
-            height: 34px
-            display: flex
-            align-items: center
-            gap: 10px
-            background: $app-background-secondary
-            border-radius: 50px
-            padding: 0 0 0 14px
-            margin-top: 22px
-            margin-left: 13px
-
-            & h4
-                width: 100%
-                height: fit-content
-                font-size: 16px
-                font-weight: 600
-                color: $app-text-color
-
-            & span
-                width: fit-content
-                height: 100%
-                display: flex
-                align-items: center
-                position: relative
-                background: $app-background-gray-secondary
-                padding: 0 8px 0 10px
-                border-radius: 50px
-
-                & img
-                    width: 24px
-                    height: 24px
-                    margin-top: 2px
-                
-                & span
-                    margin-left: -4px
-                    font-size: 14px
-                    font-weight: 600
-                    color: $app-text-color
-
-        ._profileGiftModalButtons
+        svg
             width: 100%
-            height: fit-content
-            display: flex
-            align-items: center
-            gap: 8px
-            padding: 0px 16px
-
-            ._profileGiftModalButtonsCollectable
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                border-radius: 13px
-                cursor: pointer
-                transform: scale(0.75)
-                opacity: 0
-                height: 0
-                transition: transform 0.22s ease, opacity 0.22s ease
-
-                &._show
-                    opacity: 1
-                    height: 53px
-                    margin-bottom: 11px
-                    transform: scale(1)
-
-                &:active
-                    transform: scale(0.97)
-
-                & button
-                    width: 100%
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    gap: 7px
-                    background: transparent
-                    border-radius: 13px
-                    cursor: pointer
-                    transform: scale(1)
-                    transition: transform 0.22s ease
-                    background: $app-background-secondary
-
-                    &:disabled
-                        pointer-events: none
-                        
-                        & .lt
-                            width: 30px
-                            height: 30px
-                            pointer-events: none
-                            display: block
-
-                            svg
-                                width: 100%
-                                height: 100%
-
-                        & h4
-                            display: none
-                        
-                        & span
-                            display: none
-                    
-                    & .lt
-                        display: none
-
-                    & h4
-                        font-size: 16px
-                        font-weight: 600
-                        margin-right: 3px
-                        white-space: nowrap
-
-                        @media screen and (max-width: 370px)
-                            font-size: 15px
-                    
-                    & span
-                        width: fit-content
-                        height: auto
-                        padding: 6px 12px
-                        background: $app-span-gray-background
-                        border-radius: 50px
-                        font-size: 14px
-                        font-weight: 500
-                        color: $app-span-gray-text-color
-                        opacity: .5
-                        display: flex
-                        align-items: center
-                        gap: 4px
-
-                        &.stars
-                            background: $app-button-background-blur
-                            opacity: 1
-
-                            & p
-                                font-size: 14px
-                                font-weight: 600
-                                color: $app-button-text-color
-
-                            & img
-                                width: 14px
-                                height: 14px
-
-            ._profileGiftModalButtonsTransfer
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                border-radius: 13px
-                cursor: pointer
-                transform: scale(1)
-                transition: transform 0.22s ease
-                margin-bottom: 11px
-
-                &:active
-                    transform: scale(0.97)
-
-                & button
-                    width: 100%
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    gap: 7px
-                    background: transparent
-                    border-radius: 13px
-                    cursor: pointer
-                    transform: scale(1)
-                    transition: transform 0.22s ease
-                    background: $app-button-blue-light-background
-
-                    &:disabled
-                        pointer-events: none
-                        opacity: .5
-
-                    & h4
-                        font-size: 16px
-                        font-weight: 600
-                        margin-right: 3px
-                        color: $app-button-blue-light-text-color
-                        white-space: nowrap
-
-                        @media screen and (max-width: 370px)
-                            font-size: 15px
-
-            ._profileGiftModalButtonsClose
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                border-radius: 13px
-                cursor: pointer
-                transform: scale(1)
-                transition: transform 0.22s ease
-                
-                & .stars
-                    width: fit-content
-                    height: auto
-                    display: flex
-                    align-items: center
-                    gap: 5px
-
-                &:active
-                    transform: scale(0.97)
-
-                & button
-                    width: 100%
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    gap: 4px
-                    background: transparent
-                    border-radius: 13px
-                    cursor: pointer
-                    transform: scale(1)
-                    transition: transform 0.22s ease
-                    background: $app-table-button
-
-                    &:disabled
-                        pointer-events: none
-                        opacity: .5
-
-                    &._loading
-                        pointer-events: none
-
-                        & h4
-                            display: none
-                        
-                        & .stars
-                            display: none
-                        
-                        & .lt
-                            width: 28px
-                            height: 28px
-                            pointer-events: none
-                            display: block
-
-                            svg
-                                width: 100%
-                                height: 100%
-
-                    & h4
-                        font-size: 16px
-                        font-weight: 600
-                        margin-right: 3px
-                        white-space: nowrap
-
-                        @media screen and (max-width: 370px)
-                            font-size: 15px
-
-                    & .lt
-                        display: none
-                    
-                    & p
-                        font-size: 16px
-                        font-weight: 700
-                        color: $app-big-button-text-color
-
-            ._profileGiftModalButtonsBuy
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                border-radius: 13px
-                cursor: pointer
-                transform: scale(1)
-                transition: transform 0.22s ease
-                
-                & .stars
-                    width: fit-content
-                    height: auto
-                    display: flex
-                    align-items: center
-                    gap: 5px
-
-                &:active
-                    transform: scale(0.97)
-
-                & button
-                    width: 100%
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    gap: 0px
-                    background: transparent
-                    border-radius: 13px
-                    cursor: pointer
-                    transform: scale(1)
-                    transition: transform 0.22s ease
-                    background: $app-big-button-background
-
-                    &:disabled
-                        pointer-events: none
-                        opacity: .5
-
-                    &._loading
-                        pointer-events: none
-
-                        & h4
-                            display: none
-                        
-                        & .stars
-                            display: none
-                        
-                        & .lt
-                            width: 28px
-                            height: 28px
-                            pointer-events: none
-                            display: block
-
-                            svg
-                                width: 100%
-                                height: 100%
-
-                    & .kit-icon
-                        width: fit-content
-                        height: fit-content
-                        margin-top: 2px
-                        margin-left: -1px
-
-                        & svg
-                            width: 18px
-                            height: 18px
-
-                    & h4
-                        font-size: 16px
-                        font-weight: 600
-                        margin-right: 3px
-                        white-space: nowrap
-
-                        @media screen and (max-width: 370px)
-                            font-size: 15px
-
-                    & .lt
-                        display: none
-                    
-                    & p
-                        font-size: 16px
-                        font-weight: 700
-                        color: $app-big-button-text-color
-
-                    .tickets
-                        width: fit-content
-                        height: 18px
-                        display: flex
-                        align-items: center
-                        gap: 4px
-                        position: relative
-                        background: rgba($app-text-color, 0.2)
-                        padding: 0 5px
-                        border-radius: 50px
-                        cursor: pointer
-                        position: absolute
-                        top: 7px
-                        right: 7px
-
-                        & p
-                            font-size: 12px
-                            font-weight: 600
-                            color: $app-big-button-text-color
-                        
-                        & img
-                            width: 12px
-                            height: 12px
+            height: 100%

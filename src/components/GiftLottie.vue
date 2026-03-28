@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, defineProps, onBeforeUnmount } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import lottie from 'lottie-web';
 import type { AnimationItem } from 'lottie-web';
 
@@ -45,17 +45,24 @@ const animationHeight = props.height === '0' ? '100%' : props.height;
 const rendererType = props.renderer === 'svg' ? 'svg' : 'canvas';
 
 let animationInstance: AnimationItem | null = null;
+let observer: IntersectionObserver | null = null;
+let jsonCache: Record<string, any> = {};
 
 const loadAnimation = async () => {
   if (!giftLottieContainer.value) return;
 
   if (animationInstance) {
-    animationInstance.destroy(); // Очищаем старую анимацию
+    animationInstance.destroy();
+    animationInstance = null;
   }
 
   try {
-    const res = await fetch(props.path);
-    const animationJson = await res.json();
+    let animationJson = jsonCache[props.path];
+    if (!animationJson) {
+      const res = await fetch(props.path);
+      animationJson = await res.json();
+      jsonCache[props.path] = animationJson;
+    }
 
     animationInstance = lottie.loadAnimation({
       container: giftLottieContainer.value,
@@ -64,20 +71,46 @@ const loadAnimation = async () => {
       autoplay: props.autoplay,
       animationData: animationJson,
     });
+
+    setupVisibilityObserver();
   } catch (error) {
     console.error('Ошибка загрузки анимации:', error);
   }
 };
 
+const setupVisibilityObserver = () => {
+  if (observer) observer.disconnect();
+  if (!giftLottieContainer.value || !animationInstance) return;
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (!animationInstance) return;
+      if (entry.isIntersecting) {
+        animationInstance.play();
+      } else {
+        animationInstance.pause();
+      }
+    },
+    { threshold: 0.1 }
+  );
+  observer.observe(giftLottieContainer.value);
+};
+
 onMounted(loadAnimation);
 
 watch(() => props.path, () => {
-  loadAnimation(); // Перезагружаем при изменении пути
+  loadAnimation();
 });
 
 onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+  }
   if (animationInstance) {
     animationInstance.destroy();
+    animationInstance = null;
   }
 });
 </script>

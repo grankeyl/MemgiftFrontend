@@ -141,13 +141,7 @@
 ._comp._item._purchased
     width: 100%
     max-width: $app-max-preview-width
-    margin: auto
-    height: fit-content
-    margin-bottom: 15px
-    position: absolute
-    top: 46.5%
-    left: 50%
-    transform: translate(-50%, -50%)
+    margin: 0 auto
     
     ._skeleton
         width: 100%
@@ -195,7 +189,6 @@
     
     ._content
         width: 100%
-        height: 30px
         display: flex
         align-items: center
         gap: 10px
@@ -212,7 +205,6 @@
 
         ._block
             width: 100%
-            height: 100%
             border-radius: 10px
             display: flex
             flex-direction: column
@@ -276,3 +268,178 @@
                     font-weight: 500
                     color: $app-text-color-descr
                     max-width: 245px
+
+            // ── Multicheck sent success ──
+            .mc-success
+                width: 100%
+                display: flex
+                flex-direction: column
+                align-items: center
+                animation: mcFadeUp 0.45s ease both
+
+                &__icon
+                    width: 80px
+                    height: 80px
+                    border-radius: 50%
+                    background: linear-gradient(135deg, #34C759, #30D158)
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    color: #fff
+                    margin-bottom: 20px
+                    position: relative
+                    animation: mcPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both
+
+                    svg
+                        position: relative
+                        z-index: 1
+
+                &__ring
+                    position: absolute
+                    inset: -6px
+                    border-radius: 50%
+                    border: 2px solid rgba(#34C759, 0.2)
+                    animation: mcRingPulse 2s ease-out infinite
+
+                &__gift
+                    width: 110px
+                    height: 110px
+                    border-radius: 22px
+                    overflow: hidden
+                    margin-bottom: 20px
+                    background: rgba($app-text-color, 0.04)
+                    animation: mcPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both
+
+                    img
+                        width: 100%
+                        height: 100%
+                        object-fit: cover
+
+                &__title
+                    font-size: 28px
+                    font-weight: 700
+                    color: $app-text-color
+                    margin-bottom: 20px
+                    text-align: center
+                    animation: mcFadeUp 0.4s ease 0.35s both
+
+                &__icon--gift
+                    background: linear-gradient(135deg, $app-text-color-phiolete, #9B59B6)
+                    box-shadow: 0 4px 24px rgba($app-text-color-phiolete, 0.35)
+
+                &__list
+                    width: 100%
+                    max-width: 300px
+                    display: flex
+                    flex-direction: column
+                    gap: 0
+                    border-radius: 14px
+                    background: rgba($app-text-color, 0.04)
+                    overflow: hidden
+                    margin-bottom: 16px
+                    animation: mcFadeUp 0.4s ease 0.35s both
+
+                &__item
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    padding: 10px 14px
+                    border-bottom: 1px solid rgba($app-text-color, 0.04)
+
+                    &:last-child
+                        border-bottom: none
+
+                    &-img
+                        width: 36px
+                        height: 36px
+                        border-radius: 8px
+                        overflow: hidden
+                        flex-shrink: 0
+                        background: rgba($app-text-color, 0.04)
+
+                        img
+                            width: 100%
+                            height: 100%
+                            object-fit: cover
+
+                    &-name
+                        flex: 1
+                        font-size: 14px
+                        font-weight: 600
+                        color: $app-text-color
+                        white-space: nowrap
+                        overflow: hidden
+                        text-overflow: ellipsis
+
+                    &-count
+                        font-size: 14px
+                        font-weight: 700
+                        color: $app-text-color-phiolete
+                        flex-shrink: 0
+
+                &__subtitle
+                    font-size: 14px
+                    font-weight: 500
+                    color: rgba($app-text-color, 0.45)
+                    text-align: center
+                    max-width: 260px
+                    line-height: 1.4
+                    animation: mcFadeUp 0.4s ease 0.5s both
+
+                &__card
+                    width: 100%
+                    max-width: 300px
+                    display: flex
+                    flex-direction: column
+                    gap: 0
+                    border-radius: 14px
+                    background: rgba($app-text-color, 0.04)
+                    overflow: hidden
+                    animation: mcFadeUp 0.4s ease 0.45s both
+
+                    &-row
+                        display: flex
+                        align-items: center
+                        gap: 10px
+                        padding: 13px 16px
+                        border-bottom: 1px solid rgba($app-text-color, 0.04)
+
+                        &:last-child
+                            border-bottom: none
+
+                        svg
+                            flex-shrink: 0
+                            color: rgba($app-text-color, 0.3)
+
+                        span
+                            font-size: 13px
+                            font-weight: 500
+                            color: rgba($app-text-color, 0.5)
+                            line-height: 1.35
+
+@keyframes mcFadeUp
+    0%
+        opacity: 0
+        transform: translateY(12px)
+    100%
+        opacity: 1
+        transform: translateY(0)
+
+@keyframes mcPop
+    0%
+        opacity: 0
+        transform: scale(0)
+    100%
+        opacity: 1
+        transform: scale(1)
+
+@keyframes mcRingPulse
+    0%
+        transform: scale(1)
+        opacity: 0.4
+    50%
+        transform: scale(1.15)
+        opacity: 0
+    100%
+        transform: scale(1)
+        opacity: 0

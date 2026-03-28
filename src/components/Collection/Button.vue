@@ -1,4 +1,33 @@
 <template>
+    <div class="overlay _confirm-overlay" :class="{ 'is-open is-dark': showConfirm }" @click="showConfirm = false" />
+
+    <div class="_confirm-sheet" :class="{ hide: !showConfirm }">
+      <div class="_confirm-handle" @click="showConfirm = false"></div>
+      <div class="_confirm-body">
+        <h4 class="_confirm-title">{{ $t('collection.confirm.title') }}</h4>
+        <div class="_confirm-row">
+          <span>{{ NftData?.Name }}</span>
+          <span>× {{ NftBuyCount }}</span>
+        </div>
+        <div class="_confirm-row _confirm-total">
+          <span>{{ $t('collection.confirm.total') }}</span>
+          <span class="_confirm-price">
+            <img src="/src/assets/images/stars-white.png" alt="stars" />
+            {{ buyGiftCount }}
+          </span>
+        </div>
+        <div class="_confirm-buttons">
+          <button class="_confirm-cancel" @click="showConfirm = false">
+            <h4>{{ $t('collection.confirm.cancel') }}</h4>
+          </button>
+          <button class="_confirm-buy" :class="{ _loading: isLoadingButton }" @click="confirmBuy">
+            <h4>{{ $t('collection.confirm.buy') }}</h4>
+            <Lottie class="lt" slug="loading-spin" :loop="true" width="75" height="75" renderer="svg" />
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
@@ -26,7 +55,7 @@
 
           <div v-if="!NftFree" class="checker">
             <div v-if="NftData?.nftSupplyCurrent && NftData?.nftSupplyCurrent > 0" class="_button">
-              <button v-if="!isMaxAmount" :class="{ _loading: isLoadingButton }" @click="useButton()">
+              <button v-if="!isMaxAmount" :class="{ _loading: isLoadingButton }" class="primary" @click="openConfirm">
                 <h4>{{ $t('collection.buttonBuy1') }} {{ NftBuyCount }} {{ $t('collection.buttonBuy2') }}</h4>
 
                 <img src="/src/assets/images/stars-white.png" alt="stars" />
@@ -111,6 +140,11 @@
         type: Boolean,
         required: true,
       },
+      NftKey: {
+        type: String,
+        required: false,
+        default: '',
+      },
       Terms: {
         type: Object,
         required: true,
@@ -137,6 +171,7 @@
         NftGetFree: false,
 
         isLoadingButton: false,
+        showConfirm: false,
       };
     },
   
@@ -150,7 +185,13 @@
     },
 
     computed: {
+      isScooby() {
+        return this.NftKey === 'nft_scooby';
+      },
       isTermsCompleted() {
+        if (this.isScooby) {
+          return this.Terms.VpnSubscription && this.Terms.ShareChats;
+        }
         return this.Terms.InviteFriends && this.Terms.ShareChats && this.Terms.SubscribedChannel;
       },
       isMaxAmount() {
@@ -281,6 +322,16 @@
         }
       },
 
+      openConfirm() {
+        TelegramModule.useSoftHaptic();
+        this.showConfirm = true;
+      },
+
+      async confirmBuy() {
+        this.showConfirm = false;
+        this.useButton();
+      },
+
       async useButton() {
         if (this.isLoadingButton) return;
         this.isLoadingButton = true;
@@ -351,8 +402,8 @@
 
       async checkNftFree() {
         if (!this.$props.NftData) return;
-        const NftData = this.$props.NftData;
-        const checkNftFree = await nftApi.checkFree();
+        const checkFn = this.isScooby ? nftApi.checkFreeScooby : nftApi.checkFree;
+        const checkNftFree = await checkFn();
         if (checkNftFree.ok && !checkNftFree.claimed) {
           this.NftGetFree = true;
           this.$emit('checkNftFree', true, this.Terms);
@@ -364,13 +415,14 @@
       },
 
       async createNftFree() {
-        const createNftFree = await nftApi.giftFree();
-        if (createNftFree) {
+        const claimFn = this.isScooby ? nftApi.giftFreeScooby : nftApi.giftFree;
+        const result = await claimFn();
+        if (result) {
           this.isLoadingButton = false;
-          this.$router.push({ 
-            name: 'receive', 
-            params: { 
-              nft: this.nftUniqueKey, 
+          this.$router.push({
+            name: 'receive',
+            params: {
+              nft: this.NftUniqueKey,
               nftType: 'purchased'
             }
           });

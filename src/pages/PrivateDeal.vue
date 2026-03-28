@@ -1,162 +1,176 @@
 <template>
   <section class="_wrap _privateDeal" :class="{ desktop: isDesktop() }">
     <div class="_view">
+      <div class="pd-bg">
+        <div class="pd-orb pd-orb--1"></div>
+        <div class="pd-orb pd-orb--2"></div>
+      </div>
 
-      <Title
-        class="_lefting"
+      <div class="display">
+        <div class="pd-header _lefting">
+          <button class="pd-header__back" @click.stop="goBack">
+            <svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.5 1.5L2 9L9.5 16.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <h2>{{ $t('privateDeal.title') }}</h2>
+        </div>
 
-        @loadSuccess="handleLoadSuccess"
+        <!-- Tabs -->
+        <div class="pd-tabs3 _lefting">
+          <button
+            class="pd-tabs3__btn"
+            :class="{ active: Section === 'Create' }"
+            @click="setSection('Create')"
+          >
+            {{ $t('privateDeal.tabCreate') }}
+          </button>
+          <button
+            class="pd-tabs3__btn"
+            :class="{ active: Section === 'Deals' }"
+            @click="setSection('Deals')"
+          >
+            {{ $t('privateDeal.tabDeals') }}
+            <span v-if="deals.length > 0" class="pd-tabs3__dot">{{ deals.length }}</span>
+          </button>
+        </div>
 
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
+        <Create
+          v-if="Section === 'Create'"
+          class="_lefting"
+          :storeCache="storeCache"
+          @createDeal="onCreateDeal"
+        />
 
-        :Text="$t('privateDeal.title')"
-        Key="_upcoming"
+        <Deals
+          v-if="Section === 'Deals'"
+          class="_lefting"
+          :deals="deals"
+          :loading="dealsLoading"
+          @cancelDeal="onCancelDeal"
+          @shareDeal="onShareDeal"
+          @openDeal="onOpenDeal"
+        />
+      </div>
 
-        :ImageShow="false"
+      <ShareOverlay
+        v-if="shareOverlay.active"
+        :deal="shareOverlay.deal"
+        @close="shareOverlay.active = false"
+        @copy="onCopyLink"
+        @share="onTelegramShare"
       />
-
-      <Description
-        class="_lefting"
-
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-
-        :Text="$t('privateDeal.description')"
-      />
-
-      <Sections
-        @loadSuccess="handleLoadSuccess"
-        @setSection="setSection"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :Section="Section"
-      />
-
-      <Create
-        v-if="Section === 'Create'"
-        
-        class="_lefting"
-
-        @loadSuccess="handleLoadSuccess"
-        @dataGift="dataGift"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-
-        :InputLabel="$t('privateDeal.label1')"
-        :InputImage="Image_Stars"
-        :InputPlaceholder="'1250'"
-      />
-
-      <Deals
-        v-if="Section === 'Deals'"
-
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-      />
-
-      <Button
-        v-if="Section === 'Create'"
-
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :CompDataGift="CompDataGift"
-      />
-          
     </div>
   </section>
 </template>
 
-<script lang="ts">
+<script>
 import TelegramModule from '../hooks/useTelegram';
-
 import { useCacheStore } from '../stores/pinia/piniaStore';
 import { isDesktop } from '../utils/checkDevice';
-import { Icon } from '../components/Icon';
-import { getConfig } from '../config';
+import { showToast } from '../utils/toastManager';
+import { t } from 'i18next';
 
-import Title from '../components/Root/Title.vue';
-import Description from '../components/Root/Description.vue';
-import Button from '../components/PrivateDeal/Button.vue'
-import Sections from '../components/PrivateDeal/Sections.vue'
-import Create from '../components/PrivateDeal/Create.vue'
-import Deals from '../components/PrivateDeal/Deals.vue'
+import * as privateDealApi from '../api/privateDealApi';
 
-import Image_Stars from '@/assets/images/stars.png';
+import Create from '../components/PrivateDeal/Create.vue';
+import Deals from '../components/PrivateDeal/Deals.vue';
+import ShareOverlay from '../components/PrivateDeal/ShareOverlay.vue';
 
 export default {
-  props: {
-    success: {
-      type: Boolean,
-      required: true,
-    },
-  },
-
-  components: {
-    Title,
-    Description,
-    Button,
-    Sections,
-    Create,
-    Deals,
-  },
+  components: { Create, Deals, ShareOverlay },
+  props: { success: { type: Boolean, default: true } },
 
   data() {
     return {
-      configApp: getConfig(),
-      storeCache: useCacheStore() as any,
-      
-      handleLoads: 0,
-      propsSuccess: this.$props.success,
-      isPageLoading: true,
-
-      Section: "Create",
-
-      CompDataGift: {
-        userId: null,
-        price: 0,
-        nftCount: 0,
-        nftIds: []
-      },
-
+      storeCache: useCacheStore(),
+      Section: 'Create',
+      deals: [],
+      dealsLoading: false,
+      shareOverlay: { active: false, deal: null },
       isDesktop,
-
-      Icon,
-      Image_Stars,
     };
   },
 
   mounted() {
-    TelegramModule.hideBackButton();
+    TelegramModule.useBackButton(() => this.$router.push('/profile'));
+    this.loadDeals();
+    this.$watch(
+      () => this.storeCache.TelegramData,
+      () => this.loadDeals(),
+    );
   },
 
   methods: {
-    handleLoadSuccess() {
-      this.handleLoads ++;
-
-      if (this.handleLoads >= 3) {
-        setTimeout(() => {
-          if (this.$props.success) {
-            this.isPageLoading = false;
-          }
-        }, this.configApp.skeletonTime);
-      };
+    goBack() {
+      this.$router.push('/profile');
     },
 
-    dataGift(data: any) {
-      this.CompDataGift = data;
+    setSection(s) {
+      this.Section = s;
+      if (s === 'Deals') this.loadDeals();
     },
 
-    setSection(section: string) {
-      this.Section = section;
+    async loadDeals() {
+      const userId = String(this.storeCache.TelegramData?.user?.id || '');
+      if (!userId) return;
+      this.dealsLoading = true;
+      try {
+        this.deals = await privateDealApi.getAll(userId);
+      } finally {
+        this.dealsLoading = false;
+      }
+    },
+
+    async onCreateDeal(data) {
+      const userId = String(this.storeCache.TelegramData.user.id);
+      const userName = this.storeCache.TelegramData.user.first_name || 'User';
+      const gifts = data.gifts;
+
+      const deal = await privateDealApi.create(userId, userName, gifts, data.priceNano);
+      if (!deal) {
+        showToast(t('privateDeal.createError'), 'error');
+        return;
+      }
+
+      showToast(t('privateDeal.createSuccess'), 'success');
+      TelegramModule.useMediumHaptic();
+
+      this.shareOverlay = { active: true, deal };
+      await this.loadDeals();
+    },
+
+    async onCancelDeal(dealId) {
+      await privateDealApi.cancel(dealId);
+      showToast(t('privateDeal.cancelSuccess'), 'success');
+      TelegramModule.useLightHaptic();
+      await this.loadDeals();
+    },
+
+    onShareDeal(deal) {
+      this.shareOverlay = { active: true, deal };
+    },
+
+    onOpenDeal(deal) {
+      this.$router.push(`/private-deal/${deal.id}?from=list`);
+    },
+
+    onCopyLink(deal) {
+      const url = privateDealApi.getDealShareUrl(deal.id);
+      navigator.clipboard.writeText(url).then(() => {
+        showToast(t('privateDeal.linkCopied'), 'success');
+        TelegramModule.useLightHaptic();
+      });
+    },
+
+    onTelegramShare(deal) {
+      const url = privateDealApi.getDealShareUrl(deal.id);
+      const priceTon = privateDealApi.nanoToTon(deal.price_nano || 0);
+      const msg = t('privateDeal.shareMessage', {
+        count: deal.gift_count,
+        price: priceTon,
+      });
+      TelegramModule.useShare(url, msg);
     },
   },
 };
@@ -165,4 +179,5 @@ export default {
 <style lang="sass">
 @use "@/assets/styles/private_deal/_main.sass"
 @use "@/assets/styles/private_deal/_comp.sass"
+@use "@/assets/styles/profile/_comp.sass" as profileComp
 </style>

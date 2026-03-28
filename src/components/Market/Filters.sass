@@ -8,66 +8,60 @@
     
     ._content
         width: 100%
-        display: flex
+        display: flex !important
         flex-direction: column
         gap: 12px
-        display: flex !important
-        opacity: 1 !important
-    
-    ._content
-        width: 100%
-        display: flex !important
-        height: fit-content
-        flex-direction: column
         opacity: 1 !important
         pointer-events: all !important
-        gap: 12px
         position: relative !important
         
         .cont
             display: flex
             flex-direction: column
-            gap: 20px
-            height: fit-content
+            gap: 12px
             position: relative !important
 
             .filtersItems
-                display: grid
-                grid-template-columns: repeat(3, auto)
+                display: flex
                 align-items: center
+                gap: 8px
+                overflow-x: auto
+                overflow-y: hidden
+                -webkit-overflow-scrolling: touch
+                scrollbar-width: none
+                -ms-overflow-style: none
                 position: relative !important
                 opacity: 1 !important
-                gap: 10px
-                overflow-x: none
-                overflow-y: scroll
+                touch-action: pan-x
+                padding-bottom: 2px
+                cursor: grab
+                user-select: none
+
+                &:active
+                    cursor: grabbing
+
+                &::-webkit-scrollbar
+                    display: none
                 
                 .filtersItemsItem
-                    width: 100%
-                    height: fit-content
+                    height: 36px
                     display: flex
-                    justify-content: space-between
                     align-items: center
                     gap: 6px
+                    padding: 0 12px
+                    background: rgba($app-text-color, 0.06)
+                    border-radius: 50px
+                    cursor: pointer
+                    flex-shrink: 0
                     position: relative
-                    overflow: hidden
-                    position: relative
-                    opacity: 1
-                    padding: 8px 10px
-                    background: rgba($app-background-secondary, 0.6)
-                    -webkit-backdrop-filter: blur(20px)
-                    backdrop-filter: blur(20px)
-                    border-radius: 14px
+                    transition: background 0.15s ease, transform 0.15s ease
 
-                    .flexer
-                        width: 100%
-                        height: 100%
-                        display: block
-                        align-items: center
-                        gap: 6px
+                    &:active
+                        transform: scale(0.95)
 
                     &.disabled
                         pointer-events: none
-                        opacity: .5
+                        opacity: 0.35
 
                     .circle
                         width: 6px
@@ -76,325 +70,136 @@
                         background: $app-background-blue-secondary
                         position: absolute
                         top: 6px
-                        right: 7px
+                        right: 8px
                         z-index: 1
+
+                    .flexer
+                        display: flex
+                        align-items: center
+                        gap: 6px
                     
                     .icon
-                        width: fit-content
-                        height: fit-content
                         display: flex
-                        justify-content: center
                         align-items: center
-                        position: relative
 
                         &.pen
                             & .kit-icon
-                                width: 16px
-                                height: 16px
+                                width: 14px
+                                height: 14px
 
                                 & svg
                                     width: 100%
                                     height: 100%
 
                                     & path
-                                        fill: $app-text-color-descr-primary
+                                        fill: $app-text-color
+                                        opacity: 0.5
                         
                         & .kit-icon
-                            width: 18px
-                            height: 18px
+                            width: 16px
+                            height: 16px
 
                             & :deep(svg)
                                 width: 100%
                                 height: 100%
 
                                 path
-                                    fill: $app-text-color-descr-primary
+                                    fill: $app-text-color
+                                    opacity: 0.5
                             
                     .title
-                        width: fit-content
-                        height: fit-content
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        font-size: 16px
-                        font-weight: 600
-                        color: $app-text-color-descr-primary
+                        font-size: 14px
+                        font-weight: 500
+                        color: $app-text-color
                         white-space: nowrap
-                        margin-top: 4px
-
-                        @media screen and (max-width: 430px)
-                            font-size: 14px
-
-                        @media screen and (max-width: 387px)
-                            font-size: 12px
+                        opacity: 0.7
                     
                     .dropdown
-                        width: 19px
-                        height: 19px
-                        min-width: 19px
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        background: rgba($app-mark-background, 0.8)
-                        border-radius: 50px
-
-                        & .kit-icon
-                            width: fit-content
-                            height: fit-content
-                            margin-top: 3px
-                
-                // .filtersItemsItem
-                //     width: fit-content
-                //     height: fit-content
-                //     display: flex
-                //     align-items: center
-                //     gap: 6px
-                //     position: relative
-                //     overflow: auto
-                //     position: relative !important
-                //     opacity: 1 !important
-
-                //     &.disabled
-                //         pointer-events: none
-                //         opacity: .5
-
-                //     .circle
-                //         width: 6px
-                //         height: 6px
-                //         border-radius: 50%
-                //         background: $app-background-blue-secondary
-                //         position: absolute
-                //         top: 4px
-                //         right: -1px
-                //         z-index: 1
-                    
-                //     .icon
-                //         width: fit-content
-                //         height: fit-content
-                //         display: flex
-                //         justify-content: center
-                //         align-items: center
-                //         position: relative
-
-                //         &.pen
-                //             & .kit-icon
-                //                 width: 16px
-                //                 height: 16px
-
-                //                 & svg
-                //                     width: 100%
-                //                     height: 100%
-
-                //                     & path
-                //                         fill: $app-text-color-descr-primary
-                        
-                //         & .kit-icon
-                //             width: 18px
-                //             height: 18px
-
-                //             & :deep(svg)
-                //                 width: 100%
-                //                 height: 100%
-
-                //                 path
-                //                     fill: $app-text-color-descr-primary
-                            
-                //     .title
-                //         width: fit-content
-                //         height: fit-content
-                //         display: flex
-                //         justify-content: center
-                //         align-items: center
-                //         position: relative
-                //         font-size: 16px
-                //         font-weight: 600
-                //         color: $app-text-color-descr-primary
-                //         white-space: nowrap
-
-                //         @media screen and (max-width: 430px)
-                //             font-size: 14px
-
-                //         @media screen and (max-width: 387px)
-                //             font-size: 12px
-                    
-                //     .dropdown
-                //         width: 19px
-                //         height: 19px
-                //         display: flex
-                //         justify-content: center
-                //         align-items: center
-                //         position: relative
-                //         background: $app-background-secondary
-                //         border-radius: 50px
-
-                //         & .kit-icon
-                //             width: fit-content
-                //             height: fit-content
-                //             margin-top: 3px
+                        display: none
 
             .filtersSearch
                 width: 100%
-                height: 100%
                 display: flex
                 align-items: center
-                justify-content: center
-                position: relative
 
                 .number
                     width: 100%
-                    height: fit-content
+                    height: 40px
                     display: flex
                     align-items: center
-                    justify-content: center
-                    position: relative
-                    background: $app-background-secondary
-                    border-radius: 14px
+                    background: rgba($app-text-color, 0.06)
+                    border-radius: 12px
 
                     & .hash
-                        width: fit-content
-                        height: fit-content
+                        margin-left: 14px
                         display: flex
                         align-items: center
-                        justify-content: center
-                        position: relative
-                        margin-left: 15px
 
                         & h4
-                            width: fit-content
-                            height: fit-content
-                            display: flex
-                            align-items: center
-                            justify-content: center
-                            position: relative
-                            font-size: 21px
+                            font-size: 16px
                             font-weight: 600
                             color: $app-text-color
-
-                    & .kit-icon
-                        width: fit-content
-                        height: fit-content
-                        margin-top: 3px
+                            opacity: 0.4
 
                     & input
                         width: 100%
-                        height: 44px
-                        display: flex
-                        align-items: center
-                        justify-content: center
-                        position: relative
-                        background: $app-background-secondary
-                        border-radius: 14px
+                        height: 100%
+                        background: transparent
                         border: none
                         padding: 0 10px
-                        font-size: 15px
-                        outline: none
-                        font-weight: 600
+                        font-size: 14px
+                        font-weight: 500
                         color: $app-text-color
-                        white-space: nowrap
-
-                        @media screen and (max-width: 430px)
-                            font-size: 14px
-
-                        @media screen and (max-width: 387px)
-                            font-size: 12px
 
                         &::placeholder
-                            color: $app-text-color-descr-primary
-                            opacity: .6
-                            font-size: 15px
-                            font-weight: 600
-                            white-space: nowrap
+                            color: $app-text-color
+                            opacity: 0.3
+                            font-size: 14px
+                            font-weight: 500
 
-                            @media screen and (max-width: 430px)
-                                font-size: 14px
-
-                            @media screen and (max-width: 387px)
-                                font-size: 12px
-
-
-            .righted
-                width: fit-content
-                height: 100%
-                display: flex
-                align-items: center
-                gap: 10px
-                position: relative
-                
-                .gifts
-                    width: fit-content
-                    height: fit-content
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    position: relative
-                    
-                    & h5
-                        width: fit-content
-                        height: fit-content
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        font-size: 16px
-                        font-weight: 600
-                        color: $app-text-color-descr-primary
-
-                .display
-                    width: fit-content
-                    height: fit-content
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    position: relative
-                    
-                    & .kit-icon
-                        width: 28px
-                        height: 28px
-
-                        & svg
-                            width: 100%
-                            height: 100%
-        
             .cheaps
                 width: 100%
-                height: 100%
                 display: flex
                 align-items: center
-                justify-content: start
-                position: relative
-                overflow-x: scroll
+                gap: 6px
+                overflow-x: auto
                 overflow-y: hidden
-                gap: 8px
+                -webkit-overflow-scrolling: touch
+                scrollbar-width: none
+                -ms-overflow-style: none
+                touch-action: pan-x
+
+                &::-webkit-scrollbar
+                    display: none
 
                 .cheap
-                    width: fit-content
-                    height: 29px
-                    padding: 6px 13px 6px 8px
-                    background: $app-mark-background
-                    border-radius: 30px
+                    height: 28px
+                    padding: 0 10px
+                    background: rgba($app-text-color, 0.06)
+                    border-radius: 50px
                     display: flex
                     align-items: center
-                    gap: 7px
+                    gap: 5px
+                    flex-shrink: 0
+                    cursor: pointer
 
                     &.clear
-                        background: rgba($app-background-blue-secondary, 0.2)
+                        background: rgba($app-background-blue-secondary, 0.15)
+
                         h4
                             color: $app-background-blue-secondary
+
                         .kit-icon
-                            width: fit-content
-                            height: fit-content
                             :deep(svg)
                                 opacity: 1
                                 path
                                     stroke: $app-background-blue-secondary
 
                     h4
-                        font-size: 14px
-                        font-weight: 600
+                        font-size: 13px
+                        font-weight: 500
                         color: $app-text-color
-                        max-width: 170px
+                        max-width: 150px
                         overflow: hidden
                         text-overflow: ellipsis
                         white-space: nowrap
@@ -405,53 +210,27 @@
 
                         &:first-child
                             & :deep(svg)
-                                opacity: 1
+                                opacity: 0.6
+                                width: 12px
+                                height: 12px
                                 path
                                     stroke: $app-text-color
                         
                         &:last-child
                             & :deep(svg) 
-                                width: 11px
-                                height: 11px
+                                width: 10px
+                                height: 10px
+                                opacity: 0.4
 
                         & :deep(svg)
-                            width: 14px
-                            height: 14px
-                            opacity: .6
-                            margin-right: -4px
-                            margin-top: 3px
+                            width: 12px
+                            height: 12px
+                            opacity: 0.5
 
-                    &.symbol
-                        & .kit-icon
-                            width: fit-content
-                            height: fit-content
-
-                            &:first-child
-                                & svg 
-                                    opacity: 1
-                                    path
-                                        fill: $app-text-color
-
-                    &.backdrop
-                        & .kit-icon
-                            width: fit-content
-                            height: fit-content
-
-                            &:first-child
-                                & svg 
-                                    opacity: 1
-                                    path
-                                        fill: $app-text-color
-                                        stroke: transparent
-
-                    &.price
-                        & .kit-icon
-                            width: fit-content
-                            height: fit-content
-
-                            &:first-child
-                                & svg 
-                                    opacity: 1
-                                    path
-                                        fill: $app-text-color
-                                        stroke: $app-text-color-descr
+                    &.symbol, &.backdrop
+                        & .kit-icon:first-child
+                            & svg 
+                                opacity: 0.6
+                                path
+                                    fill: $app-text-color
+                                    stroke: transparent

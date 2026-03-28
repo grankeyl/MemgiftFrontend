@@ -71,8 +71,13 @@ const checkMedia = (media: string) => {
     }
 }
 
+const isCyrillic = (s: string) => /[а-яёА-ЯЁ]/.test(s);
+const isNonLatin = (s: string) => /[\u0600-\u06ff\u4e00-\u9fff\u3400-\u4dbf]/.test(s);
+
 const pluralizeGift = (word: string, count: number, lang: string = 'en') => {
-    if (lang === "ru") return pluralizeRu(count, "подарок", "подарка", "подарков");
+    const isRu = (lang && lang.toLowerCase().startsWith('ru')) || isCyrillic(word);
+    if (isRu) return pluralizeRu(count, "подарок", "подарка", "подарков");
+    if (isNonLatin(word)) return word;
     return inflection.inflect(word, count);
 }
 

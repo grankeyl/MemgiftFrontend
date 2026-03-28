@@ -8,6 +8,9 @@
 
           :Skeleton="isPageLoading"
           :SkeletonTime="configApp.skeletonTime"
+
+          :completedTasks="completedTasks"
+          :totalTasks="totalTasks"
         />
 
         <TasksPinned
@@ -88,6 +91,21 @@ export default {
       Icon,
       isDesktop,
     };
+  },
+
+  computed: {
+    allTasks(): any[] {
+      const pinned = this.storeCache.TasksApp?.pinned || [];
+      const partners = this.storeCache.TasksApp?.partners || [];
+      const others = this.storeCache.TasksApp?.others || [];
+      return [...pinned, ...partners, ...others];
+    },
+    totalTasks(): number {
+      return this.allTasks.length;
+    },
+    completedTasks(): number {
+      return this.allTasks.filter((t: any) => t.user_status === 'completed').length;
+    },
   },
 
   mounted() {

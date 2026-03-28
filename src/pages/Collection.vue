@@ -12,7 +12,8 @@
         :NftBuyCount="NftBuyCount"
         :NftPriceCurrent="NftData?.NftPriceCurrent"
         :NftFree="NftData?.Price === 0"
-        :Terms="Terms"
+        :Terms="activeTerms"
+        :NftKey="NftData?.Key"
 
         :isUseTickets="isUseTickets"
         :useTicketsCount="useTicketsCount"
@@ -83,15 +84,15 @@
                     <h4>{{ $t('collection.terms.termsTitle') }}</h4>
                 </div>
 
-                <Terms 
+                <Terms
                     @loadSuccess="handleLoadSuccess"
                     @completeTerm="completeTerm"
 
                     :Skeleton="isPageLoading"
                     :SkeletonTime="configApp.skeletonTime"
-                    :NftKey="NftData?.Key"
+                    :NftKey="NftData?.Key || ('nft_' + NftUniqueKey.toLowerCase())"
                     :NftGetFree="NftData?.NftGetFree"
-                    :Terms="Terms"
+                    :Terms="activeTerms"
                 />
             </div>
 
@@ -118,6 +119,21 @@
 
                     :Skeleton="isPageLoading"
                     :SkeletonTime="configApp.skeletonTime"
+                />
+            </div>
+
+            <div v-if="similarGifts.length > 0" class="_second">
+                <div class="_title">
+                    <h4>{{ $t('collection.similarTitle') }}</h4>
+                </div>
+                <SimilarGifts
+                    @loadSuccess="handleLoadSuccess"
+
+                    :Skeleton="isPageLoading"
+                    :SkeletonTime="configApp.skeletonTime"
+
+                    :NftRarity="NftData?.Rarity"
+                    :NftKey="NftData?.Key"
                 />
             </div>
 
@@ -162,6 +178,7 @@ import Terms from '../components/Collection/Terms.vue';
 import TermsLocked from '../components/Collection/TermsLocked.vue';
 import Recent from '../components/Collection/Recent.vue';
 import Ads from '../components/Collection/Ads.vue';
+import SimilarGifts from '../components/Collection/SimilarGifts.vue';
 
 export default {
     props: {
@@ -180,6 +197,7 @@ export default {
         TermsLocked,
         Recent,
         Ads,
+        SimilarGifts,
     },
 
     data() {
@@ -190,6 +208,7 @@ export default {
             handleLoads: 0,
             propsSuccess: this.$props.success,
             isPageLoading: true,
+            isTabVisible: true,
 
             NftUniqueKey: '' as string,
             
@@ -210,6 +229,11 @@ export default {
                 InviteFriendsCountNeed: 5,
                 ShareChats: false,
                 SubscribedChannel: false,
+            },
+
+            TermsScooby: {
+                VpnSubscription: false,
+                ShareChats: false,
             },
 
             TermsLocked: {
@@ -239,6 +263,7 @@ export default {
             } as any,
 
             IntervalCheckGifts: null as any,
+            _onVisibilityChange: null as any,
 
             RecentList: [],
 
@@ -261,6 +286,29 @@ export default {
         this.checkCurrentSupply();
         this.checkLockedTerms();
         this.scheduleCheckSupply();
+
+        this.$watch(
+            () => this.$route.params.nft,
+            (newNft) => {
+                if (!newNft) return;
+                this.NftUniqueKey = newNft as string;
+                this.getNftData();
+                this.checkCurrentSupply();
+                this.checkLockedTerms();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        );
+
+        this._onVisibilityChange = () => {
+            this.isTabVisible = !document.hidden;
+            if (this.isTabVisible) {
+                this.checkCurrentSupply();
+                this.scheduleCheckSupply();
+            } else {
+                clearTimeout(this.IntervalCheckGifts);
+            }
+        };
+        document.addEventListener('visibilitychange', this._onVisibilityChange);
 
         this.$watch(() => this.storeCache.NftsAppData, () => {
             this.getNftData();
@@ -287,11 +335,26 @@ export default {
 
     beforeUnmount() {
         clearTimeout(this.IntervalCheckGifts);
+        if (this._onVisibilityChange) {
+            document.removeEventListener('visibilitychange', this._onVisibilityChange);
+        }
     },
 
     computed: {
+        isScoobyGift(): boolean {
+            return this.NftUniqueKey === 'Scooby' || this.NftData?.Key === 'nft_scooby';
+        },
+        activeTerms(): any {
+            return this.isScoobyGift ? this.TermsScooby : this.Terms;
+        },
         NftSupplyCurrent(): number {
             return (this.NftData?.Supply ?? 0) - (this.NftSupplyCurrent ?? 0);
+        },
+        similarGifts() {
+            const all = this.storeCache.NftsApp;
+            if (!all || !this.NftData?.Rarity) return [];
+            const arr = Array.isArray(all) ? all : Object.values(all);
+            return arr.filter((g: any) => g.Rarity === this.NftData.Rarity && g.Key !== this.NftData.Key && !g.soldOut).slice(0, 6);
         },
     },
 
@@ -348,7 +411,10 @@ export default {
         },
 
         scheduleCheckSupply() {
+            clearTimeout(this.IntervalCheckGifts);
+            if (!this.isTabVisible) return;
             this.IntervalCheckGifts = setTimeout(async () => {
+                if (!this.isTabVisible) return;
                 await this.checkCurrentSupply();
                 this.scheduleCheckSupply();
             }, 10000);
@@ -375,10 +441,15 @@ export default {
             this.useTicketsCount = summary;
         },
 
-        completeTerm(type: 'InviteFriends' | 'ShareChats' | 'SubscribedChannel') {
-            console.log(this.Terms);
+        completeTerm(type: string) {
             if (!type) return;
-            this.Terms[type] = true;
+            if (type === 'VpnSubscription') {
+                this.TermsScooby.VpnSubscription = true;
+            } else if (type === 'ShareChats' && this.isScoobyGift) {
+                this.TermsScooby.ShareChats = true;
+            } else {
+                this.Terms[type] = true;
+            }
         },
 
         checkNftFree(status: boolean, terms: any) {

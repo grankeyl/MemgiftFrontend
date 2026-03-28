@@ -9,8 +9,12 @@ import 'dayjs/locale/en';
 
 dayjs.extend(relativeTime);
  
-const getUserLanguage = (): 'ru' | 'en' => {
-  return navigator.language.startsWith('ru') ? 'ru' : 'en';
+const getUserLanguage = (): 'ru' | 'en' | 'zh' | 'ar' => {
+  const lang = navigator.language.toLowerCase();
+  if (lang.startsWith('ru')) return 'ru';
+  if (lang.startsWith('zh')) return 'zh';
+  if (lang.startsWith('ar')) return 'ar';
+  return 'en';
 };
 
 const unixToDefault = (unix: number) => {
@@ -44,7 +48,8 @@ const randomString = () => {
 
 const cleanString = (str: string) => {
   if (!str) return '';
-  return str.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s]/g, '');
+  // Allow Latin, Cyrillic, Arabic, CJK and digits
+  return str.replace(/[^a-zA-Zа-яА-ЯёЁ\u0600-\u06ff\u4e00-\u9fff\u3400-\u4dbf0-9\s]/g, '');
 }
 
 export const getImageUrl = (nftKey: string) => {
@@ -73,8 +78,13 @@ export const splitCamelCase = (name: string) => {
   return name.replace(/([a-z])([A-Z])/g, '$1 $2');
 };
 
+const isCyrillicStr = (s: string) => /[а-яёА-ЯЁ]/.test(s);
+const isNonLatinStr = (s: string) => /[\u0600-\u06ff\u4e00-\u9fff\u3400-\u4dbf]/.test(s);
+
 export const pluralizeReferrals = (word: string, count: number, lang: string = 'en') => {
-    if (lang === "ru") return pluralizeRu(count, "реферал", "реферала", "рефералов");
+    const isRu = (lang && lang.toLowerCase().startsWith('ru')) || isCyrillicStr(word);
+    if (isRu) return pluralizeRu(count, "реферал", "реферала", "рефералов");
+    if (isNonLatinStr(word)) return word;
     return inflection.inflect(word, count);
 };
 

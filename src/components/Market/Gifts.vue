@@ -1,8 +1,11 @@
 <template>
-  <div class="_direction _comp _item gifts" v-if="GiftsList && GiftsList.length > 0">
-      <div v-if="isLoading" class="_skeleton">
+  <div class="_direction _comp _item gifts" v-if="showSkeleton || (GiftsList && GiftsList.length > 0)">
+      <div v-if="showSkeleton" class="_skeleton">
+        <div class="items">
+          <div class="item" v-for="n in 6" :key="'sk-' + n"></div>
+        </div>
       </div>
-      <div class="_content" :class="{ hide: isLoading }">
+      <div v-else class="_content">
         <div class="items">
           <div
             v-for="(gift, index) in GiftsList"
@@ -216,6 +219,9 @@ export default {
   computed: {
     isEmptyList() {
        return !this.GiftsList || this.GiftsList.length === 0;
+    },
+    showSkeleton() {
+      return this.isLoading || (this.Searching && this.isEmptyList);
     },
   },
 

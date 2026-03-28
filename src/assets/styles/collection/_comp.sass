@@ -1,5 +1,137 @@
 @use "./../_variables" as *
 
+
+// ========== Confirm Sheet ==========
+
+._confirm-overlay
+    z-index: 9998 !important
+
+._confirm-sheet
+    position: fixed
+    bottom: 0
+    left: 50%
+    transform: translate(-50%, 0%)
+    width: 100%
+    max-width: $app-max-preview-width
+    z-index: 9999
+    background: $app-background
+    border-radius: 14px 14px 0 0
+    padding: 0 16px 40px 16px
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1)
+
+    &.hide
+        transform: translate(-50%, 100%)
+        pointer-events: none
+
+    ._confirm-handle
+        width: 36px
+        height: 4px
+        border-radius: 2px
+        background: rgba(255, 255, 255, 0.12)
+        margin: 10px auto 0
+
+    ._confirm-body
+        padding-top: 20px
+
+    ._confirm-title
+        font-size: 17px
+        font-weight: 600
+        color: $app-text-color
+        text-align: center
+        margin-bottom: 20px
+
+    ._confirm-row
+        display: flex
+        align-items: center
+        justify-content: space-between
+        padding: 12px 0
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05)
+
+        span
+            font-size: 15px
+            font-weight: 500
+            color: $app-text-color-descr
+
+            &:last-child
+                color: $app-text-color
+                font-weight: 600
+
+    ._confirm-total
+        border-bottom: none
+        padding-top: 14px
+
+        span:first-child
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+
+    ._confirm-price
+        display: flex
+        align-items: center
+        gap: 4px
+        font-size: 17px !important
+        font-weight: 700 !important
+        color: $app-text-color !important
+
+        img
+            width: 16px
+            height: 16px
+
+    ._confirm-buttons
+        display: flex
+        gap: 10px
+        margin-top: 20px
+
+        button
+            flex: 1
+            height: 50px
+            border-radius: 13px
+            display: flex
+            align-items: center
+            justify-content: center
+            cursor: pointer
+            transition: transform 0.15s ease
+            -webkit-tap-highlight-color: transparent
+
+            &:active
+                transform: scale(0.96)
+
+            h4
+                font-size: 16px
+                font-weight: 600
+                white-space: nowrap
+
+            .lt
+                display: none
+
+        ._confirm-cancel
+            background: $app-background-secondary
+
+            h4
+                color: $app-text-color
+
+        ._confirm-buy
+            background: $app-background-blue-secondary
+
+            h4
+                color: #fff
+
+            &._loading
+                pointer-events: none
+
+                h4
+                    display: none
+
+                .lt
+                    width: 30px
+                    height: 30px
+                    display: block
+
+                    svg
+                        width: 100%
+                        height: 100%
+
+
 @keyframes spinner
   to
     transform: rotate(360deg);
@@ -20,16 +152,10 @@
 
 
 @keyframes bumpNft
-  0%
-    transform: scale(0.77)
-  65%
-    transform: scale(0.77)
-  73%
-    transform: scale(0.79)
-  85%
-    transform: scale(0.77)
-  100%
-    transform: scale(0.77)
+  0%, 100%
+    transform: scale3d(0.77, 0.77, 1)
+  50%
+    transform: scale3d(0.80, 0.80, 1)
 
 
 ._skeleton
@@ -120,6 +246,9 @@
                 transform: scale(1)
                 transition: transform 0.22s ease
 
+                &.primary
+                    border-radius: 100px
+
                 &.uncofirmately
                     background: $app-background-secondary
 
@@ -173,6 +302,7 @@
     height: fit-content
     margin-bottom: 15px
     z-index: 1
+    contain: layout style
     
     ._skeleton
         width: 100%
@@ -193,7 +323,7 @@
         display: flex
         align-items: center
         gap: 10px
-        transition: all 0.22s forwards
+        transition: opacity 0.22s ease
 
         ._item
             width: 100%
@@ -201,6 +331,7 @@
             background: $app-span-gray-background
             border-radius: 20px
             position: relative
+            contain: layout style
 
             &.rare
                 background: $app-rarity-background-rare
@@ -245,12 +376,13 @@
                 display: flex
                 align-items: center
                 gap: 7px
-                background: #ffffff19
-                -webkit-backdrop-filter: blur(20px)
-                backdrop-filter: blur(20px)
+                background: rgba(255, 255, 255, 0.12)
+                -webkit-backdrop-filter: blur(10px)
+                backdrop-filter: blur(10px)
                 border-radius: 12px
                 padding: 0 12px
                 transition: opacity 0.06s ease
+                transform: translateZ(0)
 
                 & img
                     width: 24px
@@ -275,6 +407,7 @@
                 display: flex
                 text-align: center
                 align-items: center
+                transform: translateZ(0)
 
                 & span
                     font-size: 15px
@@ -301,6 +434,7 @@
                     margin: 0
                     text-align: center
                     z-index: 0
+                    contain: strict
 
                 & .lottie-gift
                     width: 60%
@@ -310,9 +444,10 @@
                 & img
                     width: 100%
                     height: 100%
-                    transform: scale(0.77)
-                    animation: bumpNft 2.85s linear infinite
+                    transform: scale3d(0.77, 0.77, 1)
+                    animation: bumpNft 3.5s ease-in-out infinite
                     object-fit: cover
+                    will-change: transform
                 
 
 ._comp._item._context
@@ -320,6 +455,7 @@
     height: fit-content
     margin-bottom: 15px
     z-index: 6
+    contain: layout style
     
     ._skeleton
         width: 100%
@@ -509,7 +645,7 @@
         display: flex
         align-items: center
         gap: 10px
-        transition: all 0.22s forwards
+        transition: opacity 0.22s ease
 
         ._items
             width: 100%
@@ -528,45 +664,46 @@
 
             ._item
                 width: 100%
-                height: 100%
                 display: flex
                 align-items: center
-                gap: 10px
+                gap: 8px
+                flex-wrap: wrap
 
                 ._title
                     display: flex
                     align-items: center
                     position: relative
-                    font-size: 23px
+                    font-size: 22px
                     font-weight: 700
                     color: $app-text-color
+                    letter-spacing: -0.3px
 
                     @media screen and (max-width: 404px)
-                        font-size: 20px
+                        font-size: 19px
 
                 ._supply
                     width: fit-content
-                    height: 30px
+                    height: 28px
                     background: $app-button-blue-background
-                    border-radius: 16px
+                    border-radius: 50px
                     display: flex
                     justify-content: center
                     align-items: center
                     position: relative
-                    padding: 0 11px
+                    padding: 0 10px
 
                     @media screen and (max-width: 404px)
-                        height: 28px
-                        padding: 0 10px
+                        height: 26px
+                        padding: 0 9px
 
                     p
-                        font-size: 15px
+                        font-size: 14px
                         font-weight: 500
                         white-space: nowrap
                         color: $app-button-blue-text-color
 
                         @media screen and (max-width: 404px)
-                            font-size: 14px
+                            font-size: 13px
                     
                     .load-icon
                         display: none
@@ -591,16 +728,26 @@
                 ._rig
                     width: fit-content
                     margin-left: auto
-                    gap: 6px
+                    gap: 4px
                     display: flex
+                    align-items: center
+
+                    & > div
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        width: 28px
+                        height: 28px
+                        cursor: pointer
+                        -webkit-tap-highlight-color: transparent
 
                     & .kit-icon
                         width: fit-content
                         height: fit-content
 
                         & svg
-                            width: 28px
-                            height: 100%
+                            width: 24px
+                            height: 24px
 
                             & path
                                 fill: $app-text-color-descr-primary
@@ -856,8 +1003,8 @@
             height: fit-content
             display: flex
             flex-direction: column
-            gap: 18px
-            padding-right: 3px
+            gap: 2px
+            padding-right: 0
 
             .item
                 width: 100%
@@ -865,10 +1012,17 @@
                 display: flex
                 justify-content: space-between
                 align-items: center
-                gap: 13px
+                gap: 14px
                 position: relative
-                border-radius: 13px
+                border-radius: 0
                 cursor: pointer
+                padding: 10px 0
+                background: transparent
+                border: none
+                transition: opacity 0.15s ease
+
+                &:active
+                    opacity: 0.6
 
                 &:nth-child(1)
                     .icon
@@ -883,16 +1037,17 @@
                         background: rgba($app-text-color-red, 0.8)
 
                 .icon
-                    width: 46px
-                    height: 46px
-                    min-width: 46px
-                    min-height: 46px
+                    width: 48px
+                    height: 48px
+                    min-width: 48px
+                    min-height: 48px
                     display: flex
                     justify-content: center
                     align-items: center
                     position: relative
                     background: $app-span-gray-background
-                    border-radius: 50px
+                    border-radius: 14px
+                    overflow: hidden
 
                     & .kit-icon
                         width: fit-content
@@ -930,55 +1085,59 @@
                     height: fit-content
                     display: flex
                     flex-direction: column
-                    gap: 7px
+                    gap: 4px
                     position: relative
 
                     & h4
-                        font-size: 16px
+                        font-size: 15px
                         font-weight: 600
                         color: $app-text-color
-                        max-width: 200px
-                        overflow: hidden
-                        text-overflow: ellipsis
+                        line-height: 1.3
 
                     & p
                         width: 100%
                         height: fit-content
-                        font-size: 15px
+                        font-size: 13px
                         font-weight: 500
                         color: $app-text-color-descr
+                        line-height: 1.3
 
                 .button
                     width: fit-content
-                    height: 42px
+                    height: 36px
                     display: flex
                     gap: 10px
                     position: relative
+                    flex-shrink: 0
 
                     & button
-                        width: fit-content
-                        height: 42px
+                        width: 32px
+                        height: 32px
                         display: flex
-                        flex-direction: column
                         align-items: center
                         justify-content: center
-                        background: rgba($app-input-background, 0.3)
-                        border-radius: 50px
+                        background: transparent
+                        border-radius: 50%
                         cursor: pointer
-                        padding: 0 15px
-                        transition: transform 0.22s ease
+                        padding: 0
+                        opacity: 0.35
+                        transition: all 0.3s ease
 
                         &.done
+                            width: 28px
+                            height: 28px
                             background: $app-big-button-background
+                            opacity: 1
 
                             & .kit-icon
-                                margin-left: -1px
+                                margin-left: 0
                                 & svg
-                                    width: 16px
-                                    height: 16px
+                                    width: 14px
+                                    height: 14px
 
                                     & path
-                                        stroke: $app-text-color
+                                        stroke: #fff
+                                        stroke-width: 3
                         
                         .load-icon
                             display: block
@@ -1162,116 +1321,205 @@
 ._comp._item._ads
     width: 100%
     height: fit-content
-    margin-bottom: 15px
+    margin-bottom: 8px
     
     ._skeleton
-        width: 100%
-        display: flex
-        align-items: center
-        gap: 10px
 
-        ._items
+        ._banner-skel
             width: 100%
-            height: 100%
-            display: flex
-            flex-direction: column
-            gap: 11px
-
-            ._item
-                width: 100%
-                height: 60px
-                background: $app-span-gray-background
-                border-radius: 16px
-                opacity: .2
+            height: 48px
+            background: $app-span-gray-background
+            border-radius: 12px
+            opacity: 0.15
     
     ._content
         width: 100%
-        height: 100%
-        display: flex
-        flex-direction: column
-        gap: 16px
 
-        ._items
+        ._banner
             width: 100%
-            height: 100%
             display: flex
-            flex-direction: column
+            align-items: center
+            justify-content: space-between
+            padding: 12px 14px
+            background: rgba(255, 255, 255, 0.04)
+            border-radius: 14px
+            cursor: pointer
+            -webkit-tap-highlight-color: transparent
+            transition: background 0.15s ease
 
-            ._item
-                width: 100%
-                height: 60px
+            &:active
+                background: rgba(255, 255, 255, 0.07)
+
+            ._banner-left
                 display: flex
                 align-items: center
-                justify-content: space-between
-                gap: 12px
+                gap: 8px
+                min-width: 0
 
-                ._avatar
-                    width: 46px
-                    height: 46px
-                    min-width: 46px
-                    min-height: 46px
-                    border-radius: 50%
-                    background: $app-span-gray-background
+                ._banner-star
+                    font-size: 16px
+                    flex-shrink: 0
+
+                ._banner-label
+                    font-size: 14px
+                    font-weight: 500
+                    color: $app-text-color
+                    white-space: nowrap
+                    overflow: hidden
+                    text-overflow: ellipsis
+
+            ._banner-btn
+                display: flex
+                align-items: center
+                gap: 3px
+                flex-shrink: 0
+                margin-left: 12px
+
+                span
+                    font-size: 13px
+                    font-weight: 600
+                    color: $app-text-color-primary
+
+                svg
+                    color: $app-text-color-primary
+
+
+// ========== Availability Line ==========
+
+._avail-line
+    gap: 0 !important
+    justify-content: space-between !important
+
+    ._avail-left
+        font-size: 13px
+        font-weight: 500
+        color: $app-text-color-descr
+
+    ._avail-hot
+        font-size: 12px
+        font-weight: 600
+        color: $app-text-color-red
+
+
+// ========== Favorite Button ==========
+
+._fav-btn
+    cursor: pointer
+    transition: transform 0.15s ease, color 0.15s ease
+    color: $app-text-color-descr-primary
+
+    &:active
+        transform: scale(0.8)
+
+    &.active
+        color: $app-text-color-red
+
+    svg
+        width: 20px
+        height: 20px
+
+
+// ========== Similar Gifts ==========
+
+._comp._item._similar
+    width: 100%
+    height: fit-content
+    margin-top: 8px
+    margin-bottom: 14px
+
+    ._skeleton
+        width: 100%
+
+        ._items
+            display: flex
+            gap: 10px
+            overflow: hidden
+
+            ._item
+                min-width: 105px
+                height: 140px
+                background: $app-span-gray-background
+                border-radius: 16px
+                opacity: 0.25
+
+    ._content
+        width: 100%
+
+        ._items
+            display: flex
+            gap: 10px
+            overflow-x: auto
+            scroll-snap-type: x mandatory
+            -webkit-overflow-scrolling: touch
+            padding-bottom: 6px
+            margin: 0 -2px
+
+            &::-webkit-scrollbar
+                display: none
+
+            ._item
+                min-width: 105px
+                max-width: 105px
+                scroll-snap-align: start
+                cursor: pointer
+                display: flex
+                flex-direction: column
+                align-items: center
+                gap: 8px
+                transition: transform 0.15s ease
+                -webkit-tap-highlight-color: transparent
+
+                &:active
+                    transform: scale(0.94)
+
+                ._preview
+                    width: 100%
+                    aspect-ratio: 1
+                    border-radius: 16px
                     display: flex
                     align-items: center
                     justify-content: center
                     overflow: hidden
+                    background: $app-span-gray-background
+                    position: relative
+
+                    &.rare
+                        background: $app-rarity-background-rare
+
+                    &.veryrare
+                        background: $app-rarity-background-very-rare
+
+                    &.epic
+                        background: $app-rarity-background-epic
+
+                    &.legend
+                        background: $app-rarity-background-legendary
+
+                    &.author
+                        background: $app-rarity-background-author
 
                     img
-                        width: 100%
-                        height: 100%
-                        object-fit: cover
-                
-                ._context
+                        width: 68%
+                        height: 68%
+                        object-fit: contain
+
+                ._info
                     width: 100%
-                    height: fit-content
-                    display: flex
-                    flex-direction: column
-                    gap: 6px
-                    margin-right: auto
+                    text-align: center
+                    padding: 0 2px
 
-                    ._title
-                        width: 100%
-                        height: fit-content
-                        display: flex
-                        align-items: center
-                        justify-content: space-between
-                        font-size: 16px
+                    h4
+                        font-size: 12px
+                        font-weight: 600
+                        color: $app-text-color
+                        white-space: nowrap
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        line-height: 1.3
 
-                        h4
-                            font-weight: 600
-                            color: $app-button-text-color
-                            white-space: nowrap
-                            max-width: 220px
-                            overflow: hidden
-                            text-overflow: ellipsis
-
-                            span
-                                color: $app-text-color-primary
-                                margin-right: 4px
-                                font-weight: 600
-                    
-                    ._descr
-                        width: 100%
-                        height: fit-content
-                        display: flex
-                        align-items: center
-                        justify-content: space-between
-                        gap: 4px
-
-                        p
-                            font-size: 15px
-                            color: $app-text-color-descr
-                
-                ._button
-                    width: fit-content
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    gap: 8px
-
-                    & button
-                        display: block
-                        width: fit-content
-                        height: 40px
-                        padding: 0 23px
+                    p
+                        font-size: 11px
+                        font-weight: 500
+                        color: $app-text-color-descr
+                        margin-top: 2px
+                        line-height: 1.3

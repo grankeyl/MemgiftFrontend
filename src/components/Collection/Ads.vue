@@ -1,34 +1,17 @@
 <template>
     <div class="_direction _comp _item _ads">
         <div v-if="isLoading" class="_skeleton">
-          <div class="_items">
-            <div class="_item"></div>
-            <div class="_item"></div>
-            <div class="_item"></div>
-          </div>
+          <div class="_banner-skel"></div>
         </div>
         <div v-else class="_content">
-          <div class="_items">
-            <div 
-             @click="buy"
-              class="_item"
-            >
-              <div class="_avatar">
-                <img src="https://i.ibb.co.com/qMthrKSw/telegram-peer-photo-size-2-5231298646912398621-1-0-0.jpg" />
-              </div>
-              <div class="_context">
-                <div class="_title">
-                  <h4>
-                    <span>Buy Telegram Stars</span>
-                  </h4>
-                </div>
-                <div class="_descr">
-                  <p>MemStar</p>
-                </div>
-              </div>
-              <div class="_button">
-                <button>Buy</button>
-              </div>
+          <div class="_banner" @click="buy">
+            <div class="_banner-left">
+              <span class="_banner-star">⭐</span>
+              <span class="_banner-label">{{ $t('collection.adsBanner.title') }}</span>
+            </div>
+            <div class="_banner-btn">
+              <span>{{ $t('collection.adsBanner.button') }}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </div>
           </div>
         </div>

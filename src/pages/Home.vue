@@ -2,8 +2,17 @@
   <section class="_wrap _home" :class="{ desktop: isDesktop() }">
     <div class="_view">
 
+      <div class="_home-glow">
+        <div class="_home-glow-orb _home-glow-orb--1"></div>
+        <div class="_home-glow-orb _home-glow-orb--2"></div>
+      </div>
+
       <div class="title">
         <img src="/logotype.svg" alt="logotype" />
+        <button class="_ratingBtn" @click="openRating">
+          <div class="kit-icon" v-html="Icon.Rating"></div>
+          <span>{{ $t('rating.title') }}</span>
+        </button>
       </div>
 
       <Slider
@@ -241,6 +250,11 @@ export default {
         name: 'activity', 
         params: { }
       });
+    },
+
+    openRating() {
+      TelegramModule.useSoftHaptic();
+      this.$router.push('/rating');
     },
 
     async initHistory() {

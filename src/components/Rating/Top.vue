@@ -90,16 +90,14 @@
     </div>
 
     <div v-else class="_content">
-      <div class="sections">
-        <!-- <div class="section" :class="{ active: selectedSection === 'contest' }" @click="selectedSection = 'contest'">
-          <h4>{{ $t('rating.section0') }}</h4>
-        </div> -->
-        <div class="section" :class="{ active: selectedSection === 'holders' }" @click="selectedSection = 'holders'">
-          <h4>{{ $t('rating.section1') }}</h4>
+      <div class="rt-tabs">
+        <div class="rt-tabs__item" :class="{ active: selectedSection === 'holders' }" @click="selectedSection = 'holders'">
+          {{ $t('rating.section1') }}
         </div>
-        <div class="section" :class="{ active: selectedSection === 'others' }" @click="selectedSection = 'others'">
-          <h4>{{ $t('rating.section2') }}</h4>
+        <div class="rt-tabs__item" :class="{ active: selectedSection === 'others' }" @click="selectedSection = 'others'">
+          {{ $t('rating.section2') }}
         </div>
+        <div class="rt-tabs__bg" :class="{ right: selectedSection === 'others' }"></div>
       </div>
 
       <div v-if="selectedSection === 'contest'" class="topFlexed">
@@ -246,7 +244,8 @@
               @click="routeUser(leader.user_id)"
               :key="leader?.user_id || index"
               :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="top-user"
+              class="top-user rt-podium"
+              :style="{ animationDelay: (index === 1 ? '0.1s' : index === 0 ? '0.25s' : '0.35s') }"
             >
               <div class="avatar-wrapper">
                 <img 
@@ -279,7 +278,8 @@
               @click="routeUser(leader.user_id)"
               :key="leader?.user_id || index"
               :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="other-user"
+              class="other-user rt-row"
+              :style="{ animationDelay: (index * 0.04) + 's' }"
             >
               <div class="rank">{{ leader?.rankNumber ?? 'x' }}</div>
               <div class="info">
@@ -314,7 +314,8 @@
               @click="routeUser(leader.tld)"
               :key="leader?.tld || index"
               :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="top-user"
+              class="top-user rt-podium"
+              :style="{ animationDelay: (index === 1 ? '0.1s' : index === 0 ? '0.25s' : '0.35s') }"
             >
               <div class="avatar-wrapper">
                 <img 
@@ -343,7 +344,8 @@
               @click="routeUser(leader.tld)"
               :key="leader?.tld || index"
               :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="other-user"
+              class="other-user rt-row"
+              :style="{ animationDelay: (index * 0.04) + 's' }"
             >
               <div class="rank">{{ leader?.rankNumber ?? 'x' }}</div>
               <div class="info">

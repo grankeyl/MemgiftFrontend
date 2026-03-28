@@ -1,17 +1,79 @@
 @use "./../_variables" as *
 
-._wrap._privateDeal
-    padding-top: calc($app-menu-height + 30px)
+._wrap._privateDeal,
+._wrap._privateDealView
+    padding-top: calc(var(--tg-content-safe-area-inset-top, 0px) + var(--tg-safe-area-inset-top, 0px) + 20px)
 
     &.desktop
-        padding-top: 30px
+        padding-top: 20px
 
     ._view
         height: auto !important
-        padding-bottom: calc($app-menu-height + 30%)
+        padding-bottom: 180px
         padding-left: 0
         padding-right: 0
+        position: relative
 
         ._lefting
             padding-left: $app-page-padding-left
             padding-right: $app-page-padding-right
+
+    .display
+        position: relative
+        z-index: 2
+
+    // Hide bottom navigation menu when on this page
+    & ~ .menu,
+    & + .menu
+        display: none !important
+
+// Also hide menu when private deal page is active
+body:has(._privateDeal) .menu,
+body:has(._privateDealView) .menu
+    display: none !important
+
+.pd-bg
+    position: fixed
+    top: 0
+    left: 50%
+    transform: translateX(-50%)
+    width: 100%
+    max-width: $app-max-preview-width
+    height: 100vh
+    pointer-events: none
+    overflow: hidden
+    z-index: 0
+
+.pd-orb
+    position: absolute
+    border-radius: 50%
+    filter: blur(80px)
+    opacity: 0.2
+
+    &--1
+        width: 200px
+        height: 200px
+        background: #6366f1
+        top: 40px
+        left: -40px
+        animation: pd-drift-1 12s ease-in-out infinite alternate
+
+    &--2
+        width: 160px
+        height: 160px
+        background: #3b82f6
+        top: 100px
+        right: -30px
+        animation: pd-drift-2 10s ease-in-out infinite alternate
+
+@keyframes pd-drift-1
+    0%
+        transform: translate(0, 0) scale(1)
+    100%
+        transform: translate(30px, 20px) scale(1.1)
+
+@keyframes pd-drift-2
+    0%
+        transform: translate(0, 0) scale(1)
+    100%
+        transform: translate(-20px, 30px) scale(0.9)

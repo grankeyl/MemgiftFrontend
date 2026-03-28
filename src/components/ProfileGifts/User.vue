@@ -101,13 +101,15 @@
     />
 
     <Funcs
+      @click="openPrivateDeal"
+
       :Skeleton="isLoading"
       :SkeletonTime="configApp.skeletonTime"
       :FuncsComp="[{ 
         Text: $t('profile.profileCreatePrivateDeal'), 
         TextMark: $t('app.newMark'), 
-        New: false,
-        Soon: true,
+        New: true,
+        Soon: false,
         First: true
       }]"
     />
@@ -316,6 +318,9 @@ export default {
 
     openMulticheck() {
       this.$router.push({ name: 'multicheck' });
+    },
+    openPrivateDeal() {
+      this.$router.push({ name: 'private-deal' });
     },
 
     async withdraw() {

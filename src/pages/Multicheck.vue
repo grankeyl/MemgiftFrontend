@@ -87,7 +87,9 @@ export default {
   },
 
   mounted() {
-    TelegramModule.hideBackButton();
+    TelegramModule.useBackButton(() => {
+      this.$router.push('/profile');
+    });
   },
 
   methods: {

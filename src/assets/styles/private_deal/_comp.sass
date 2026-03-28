@@ -1,432 +1,1083 @@
 @use "./../_variables" as *
 
+// ── Header ──
+.pd-header
+    display: flex
+    align-items: center
+    gap: 12px
+    margin-bottom: 20px
 
-@keyframes fadeIn
-  0%
-    opacity: 0
-  100%
-    opacity: 1
-
-@keyframes bubbleNft
-  0%
-    opacity: 0
-    transform: scale(0.65)
-  100%
-    opacity: 1
-    transform: scale(1)
-
-
-@keyframes bumping
-  0%
-    transform: scale(1.0)
-  50%
-    transform: scale(0.94)
-  100%
-    transform: scale(1.0)
-
-
-._skeleton
-    animation: fadeIn 0.72s
-
-._content
-    animation: fadeIn 0.32s
-    
-
-._comp._item._pageContent
-    width: 100%
-    height: fit-content
-    margin-bottom: 15px
-    
-    ._skeleton
-        width: 100%
+    &__back
+        width: 36px
+        height: 36px
+        min-width: 36px
+        max-width: 36px
+        min-height: 36px
+        max-height: 36px
+        border-radius: 50%
+        background: rgba(#fff, 0.06)
+        border: none
+        padding: 0
         display: flex
         align-items: center
-        gap: 10px
+        justify-content: center
+        cursor: pointer
+        color: $app-text-color
+        transition: all 0.12s ease
+        position: relative
+        z-index: 5
+        -webkit-tap-highlight-color: transparent
+        flex-shrink: 0
 
-        ._text
-            width: 25%
+        svg
+            display: block
+            pointer-events: none
 
-            & p
-                width: auto
-                height: 30px
-                background: $app-background-secondary
-                border-radius: 10px
+        &:active
+            transform: scale(0.9)
+            background: rgba(#fff, 0.1)
+
+    h2
+        font-size: 24px
+        font-weight: 700
+        color: $app-text-color
+
+.pd-desc
+    margin-bottom: 12px
+
+    p
+        font-size: 14px
+        font-weight: 400
+        color: $app-text-color-descr
+        line-height: 1.4
+
+// ── Bottom back button ──
+.pd-bottom
+    margin-top: 24px
+    padding-bottom: 20px
+
+    &__back
+        width: 100%
+        height: 50px
+        border-radius: 14px
+        background: $app-background-secondary
+        border: 1px solid rgba(#fff, 0.04)
+        color: $app-text-color
+        font-size: 15px
+        font-weight: 500
+        cursor: pointer
+        transition: all 0.12s ease
+
+        &:active
+            transform: scale(0.97)
+            background: #2e2e31
+
+// ── Tabs v3 (minimal) ──
+.pd-tabs3
+    display: flex
+    gap: 24px
+    margin-bottom: 20px
+    border-bottom: 1px solid rgba(#fff, 0.06)
+
+    &__btn
+        padding: 0 0 12px
+        border: none
+        background: transparent
+        color: $app-text-color-descr
+        font-size: 16px
+        font-weight: 500
+        cursor: pointer
+        position: relative
+        display: flex
+        align-items: center
+        gap: 8px
+        transition: color 0.15s ease
+        -webkit-tap-highlight-color: transparent
+
+        &.active
+            color: $app-text-color
+
+            &::after
+                content: ''
+                position: absolute
+                bottom: -1px
+                left: 0
+                right: 0
+                height: 2px
+                background: $app-big-button-background
+                border-radius: 2px
+
+        &:active
+            opacity: 0.7
+
+    &__dot
+        min-width: 20px
+        height: 20px
+        padding: 0 6px
+        border-radius: 10px
+        background: $app-big-button-background
+        color: #fff
+        display: inline-flex
+        align-items: center
+        justify-content: center
+        font-size: 12px
+        font-weight: 600
+
+// ── Create ──
+.pd-create
+    &__field
+        margin-bottom: 20px
+
+        label
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+            display: block
+            margin-bottom: 8px
+
+    &__field-head
+        display: flex
+        align-items: center
+        justify-content: space-between
+        margin-bottom: 8px
+
+        label
+            margin-bottom: 0
+
+    &__toggle
+        font-size: 14px
+        font-weight: 500
+        color: $app-text-color-primary-secondary
+        cursor: pointer
+        transition: opacity 0.15s ease
+
+        &:active
+            opacity: 0.6
+
+    &__input-wrap
+        position: relative
+
+        img
+            position: absolute
+            top: 50%
+            left: 14px
+            transform: translateY(-50%)
+            width: 20px
+            height: 20px
+            z-index: 2
+
+        input
+            width: 100%
+            height: 48px
+            background: $app-background-secondary
+            border-radius: 12px
+            border: none
+            padding: 0 16px 0 44px
+            font-size: 16px
+            font-weight: 500
+            color: $app-text-color
+            outline: none
+            transition: box-shadow 0.15s ease
+
+            &::placeholder
+                color: $app-text-color-descr
+
+            &:focus
+                box-shadow: 0 0 0 1.5px rgba($app-text-color-primary, 0.4)
+
+    &__empty
+        text-align: center
+        padding: 40px 0
+
+        p
+            font-size: 15px
+            color: $app-text-color-descr
+
+    &__bottom
+        position: fixed
+        bottom: 0
+        left: 50%
+        transform: translateX(-50%)
+        width: 100%
+        max-width: $app-max-preview-width
+        padding: 12px 16px calc(16px + env(safe-area-inset-bottom))
+        background: linear-gradient(0deg, $app-background 70%, transparent)
+        z-index: 10
+
+    &__btn
+        width: 100%
+        height: 52px
+        border-radius: 14px
+        border: none
+        font-size: 16px
+        font-weight: 600
+        cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 6px
+        transition: all 0.15s ease
+
+        &--active
+            background: $app-big-button-background
+            color: #fff
+
+            img
+                width: 18px
+                height: 18px
+
+            &:active
+                transform: scale(0.97)
+
+            &.loading
+                opacity: 0.6
+                pointer-events: none
+
+        &--off
+            background: transparent
+            border: 1px solid rgba(#fff, 0.06)
+            color: $app-text-color-descr
+            cursor: default
+
+// ── Tabs override for private deal ──
+.pd-cats
+    padding-left: 0 !important
+    padding-right: 0 !important
+
+// ── Info bar ──
+.pd-info
+    display: flex
+    align-items: center
+    justify-content: space-between
+    margin-bottom: 8px
+
+    &__count
+        font-size: 14px
+        color: $app-text-color-descr
+
+    &__sel
+        font-size: 14px
+        font-weight: 500
+        color: $app-text-color-primary
+
+// ── Nfts grid overrides for deal ──
+.pd-nfts
+    padding-left: 0 !important
+    padding-right: 0 !important
 
     ._content
         width: 100%
-        height: 30px
+
+    .items.blocks
+        padding-bottom: 90px
+        gap: 10px
+
+// ── Selection checkbox on gift cards ──
+.pd-check
+    position: absolute
+    bottom: 8px
+    right: 6px
+    z-index: 10
+
+    &__box
+        width: 22px
+        height: 22px
+        border-radius: 6px
+        background: rgba(#000, 0.45)
+        backdrop-filter: blur(6px)
+        -webkit-backdrop-filter: blur(6px)
+        display: flex
+        align-items: center
+        justify-content: center
+        transition: all 0.15s ease
+
+        &.on
+            background: $app-big-button-background
+            box-shadow: 0 2px 8px rgba($app-big-button-background, 0.35)
+
+.pd-selected
+    outline: 2px solid $app-big-button-background
+    outline-offset: -2px
+
+// ── Skeleton ──
+.pd-skel
+    padding: 0
+
+    &__grid
+        display: grid
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+        gap: 10px
+
+    &__card
+        aspect-ratio: 114 / 127
+        background: $app-background-secondary
+        border-radius: 0.7em
+        position: relative
+        overflow: hidden
+
+        @for $i from 1 through 9
+            &:nth-child(#{$i})
+                animation: pd-shimmer 1.5s ease #{$i * 0.08}s infinite
+
+    &__badge
+        position: absolute
+        top: 8px
+        right: 8px
+        width: 40px
+        height: 14px
+        border-radius: 8px
+        background: rgba(#fff, 0.05)
+
+    &__circle
+        position: absolute
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -55%)
+        width: 55%
+        height: 50%
+        border-radius: 50%
+        background: rgba(#fff, 0.04)
+
+    &__price
+        position: absolute
+        bottom: 8px
+        left: 50%
+        transform: translateX(-50%)
+        width: 45px
+        height: 20px
+        border-radius: 2em
+        background: rgba(#fff, 0.05)
+
+// ── Deals list v2 ──
+.pd-deals
+    &__loading
+        display: flex
+        flex-direction: column
+        gap: 10px
+
+    &__empty
         display: flex
         flex-direction: column
         align-items: center
+        padding: 60px 0
+
+        &-ic
+            width: 48px
+            height: 48px
+            margin-bottom: 14px
+            opacity: 0.25
+
+            svg
+                width: 48px
+                height: 48px
+
+        p
+            font-size: 15px
+            color: $app-text-color-descr
+
+    &__list
+        display: flex
+        flex-direction: column
         gap: 10px
-        transition: all 0.22s forwards
 
-        ._inputBlock
-            width: 100%
-            height: auto
-            margin-top: 10px
-            margin-bottom: 5px
+.pd-deal-skel
+    background: $app-background-secondary
+    border-radius: 16px
+    padding: 16px
+    animation: pd-shimmer 1.5s ease infinite
 
-            & label
-                height: auto
-                font-size: 18px
-                font-weight: 500
-                color: $app-text-color
+    &:nth-child(2)
+        animation-delay: 0.15s
 
-            ._flexed
-              display: flex
-              align-items: center
-              gap: 15px
-              width: 100%
-              justify-content: space-between
+    &:nth-child(3)
+        animation-delay: 0.3s
 
-              & label
-                  height: auto
-                  font-size: 18px
-                  font-weight: 500
-                  color: $app-text-color
-              
-              & span
-                  height: auto
-                  font-size: 16px
-                  font-weight: 500
-                  color: $app-text-color-primary-secondary
-
-            ._inputContent
-                width: 100%
-                height: auto
-                display: flex
-                align-items: center
-                gap: 10px
-                position: relative
-                margin-top: 10px
-
-                & img
-                    position: absolute
-                    z-index: 2
-                    width: 20px
-                    height: 20px
-                    left: 18px
-                    
-                    & img
-                        width: 100%
-                        height: 100%
-
-                & input
-                    width: 100%
-                    height: 53px
-                    background: $app-background-secondary
-                    border-radius: 13px
-                    border: none
-                    padding: 0 15px 0 48px
-                    font-size: 16px
-                    font-weight: 500
-                    color: $app-text-color
-                    transition: all 0.22s ease
-                    outline: none
-                    z-index: 1
-
-                    &::placeholder
-                        color: $app-text-color-descr
-
-            ._gifts
-              width: 100%
-              display: grid
-              grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
-              gap: 14px
-              margin-top: 10px
-              padding-bottom: calc($app-menu-height + 25%)
-
-              ._gift
-                  width: 100%
-                  height: 197px
-                  background: $app-background-secondary
-                  border-radius: 16px
-                  position: sticky
-                  animation: bubbleNft 0.20s linear
-
-                  &:active
-                      transition: transform 0.11s linear
-                      will-change: transform
-                      transform: scale(0.98)
-
-                  &.rare
-                      background: $app-rarity-background-rare
-                  
-                  &.veryrare
-                      background: $app-rarity-background-very-rare
-                  
-                  &.epic
-                      background: $app-rarity-background-epic
-                  
-                  &.legend
-                      background: $app-rarity-background-legendary
-                    
-                  &.author                    
-                      background: $app-rarity-background-author
-
-                  ._checkbox
-                      position: absolute
-                      top: 13px
-                      right: 13px
-                      z-index: 2
-                      
-                      .kit-icon
-                        position: absolute
-                        top: 50%
-                        left: 50%
-                        transform: translate(-50%, -50%)
-                        width: fit-content
-                        height: fit-content
-                        opacity: 0
-                        transition: opacity 0.07s linear
-                        will-change: opacity
-                        visibility: hidden
-
-                        &.active
-                          opacity: 1
-                          visibility: visible
-
-                        & svg
-                          width: 13px
-                          height: 13px
-
-                      & input
-                        appearance: none
-                        width: 24px
-                        height: 24px
-                        background: $app-background
-                        transition: background 0.07s linear
-                        will-change: background
-                        border-radius: 6px
-                        cursor: pointer
-
-                        &:checked
-                          background: $app-background-gold-secondary
-
-                  ._symbols
-                      position: absolute
-                      width: 100%
-                      height: 100%
-                      overflow: hidden
-                      // mix-blend-mode: overlay
-                      z-index: 1
-
-                      & img
-                          position: absolute
-                          left: 50%
-                          top: 50%
-                          width: calc(100% + 25px)
-                          height: calc(100%)
-                          transform: translate(-50%, -50%)
-                          z-index: -1
-
-                  ._nft
-                      width: 100%
-                      height: 100%
-                      position: absolute
-                      top: 50%
-                      left: 50%
-                      transform: translate(-50%, -52%)
-                      text-align: center
-                      display: flex
-                      justify-content: center
-                      align-items: center
-                      z-index: 5
-
-                      & img
-                          width: 75%
-                          height: 75%
-                          object-fit: cover
-    
-
-._comp._item._sect
-    width: 100%
-    height: fit-content
-    margin-top: 5px
-    margin-bottom: 10px
-    padding-left: 16px
-    padding-right: 16px
-    
-    ._skeleton
-        width: 100%
+    &__row
         display: flex
         align-items: center
-        gap: 10px
+        gap: 12px
 
-        ._section
-            width: 100%
-            height: 38px
-            background: $app-background-secondary
-            border-radius: 50px
-    
-    ._content
-        width: 100%
+    &__icon
+        width: 40px
+        height: 40px
+        min-width: 40px
+        border-radius: 12px
+        background: rgba(#fff, 0.05)
+
+    &__lines
+        display: flex
+        flex-direction: column
+        gap: 8px
+        flex: 1
+
+    &__line
+        height: 12px
+        border-radius: 6px
+        background: rgba(#fff, 0.05)
+
+        &--w60
+            width: 60%
+
+        &--w40
+            width: 40%
+
+.pd-deal2
+    background: $app-background-secondary
+    border-radius: 16px
+    padding: 14px
+    cursor: pointer
+    transition: background 0.12s ease
+    animation: pd-pop 0.2s ease
+
+    &:active
+        background: #2e2e31
+
+    &__thumbs
+        display: flex
+        gap: 6px
+        margin-bottom: 12px
+
+    &__thumb
+        width: 44px
+        height: 44px
+        min-width: 44px
+        border-radius: 12px
+        background: $app-background
         display: flex
         align-items: center
-        gap: 10px
-        overflow-x: scroll
+        justify-content: center
+        overflow: hidden
 
-        ._section
-            width: fit-content
-            height: 38px
-            padding: 0 17px
-            border-radius: 50px
+        &.rare
+            background: $app-rarity-background-rare
+        &.veryrare
+            background: $app-rarity-background-very-rare
+        &.epic
+            background: $app-rarity-background-epic
+        &.legend
+            background: $app-rarity-background-legendary
+        &.author
+            background: $app-rarity-background-author
+
+        img
+            width: 72%
+            height: 72%
+            object-fit: contain
+
+        &-ph
+            width: 20px
+            height: 20px
+            border-radius: 6px
+            background: rgba(#fff, 0.06)
+
+        &-more
+            width: 44px
+            height: 44px
+            min-width: 44px
+            border-radius: 12px
+            background: rgba(#fff, 0.04)
             display: flex
-            justify-content: center
             align-items: center
-            transition: background 0.06s ease
-            gap: 7px
+            justify-content: center
+            font-size: 13px
+            font-weight: 600
+            color: $app-text-color-descr
 
-            &.numeric
-                padding: 0 10px 0 17px
+    &__body
+        display: flex
+        flex-direction: column
 
-            & h4
-                white-space: nowrap
-                font-size: 15px
-                font-weight: 400
-                color: $app-text-color
-                opacity: .55
-                transition: opacity 0.06s ease
-            
-            & span
-                width: 24px
-                height: 24px
-                border-radius: 50px
-                background: $app-span-gray-background
-                display: flex
-                justify-content: center
-                align-items: center
-                position: relative
-                font-size: 15px
-                font-weight: 500
-                opacity: .45
-                transition: opacity 0.206s ease
-            
-            &._active
-                background: $app-background-secondary
+    &__top
+        display: flex
+        align-items: center
+        justify-content: space-between
 
-                & h4
-                    color: $app-text-color
-                    opacity: 1
+    &__info
+        display: flex
+        flex-direction: column
+        gap: 3px
 
-                & span
-                    width: 24px
-                    height: 24px
-                    border-radius: 50px
-                    background: $app-span-gray-background
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    position: relative
-                    font-size: 15px
-                    font-weight: 500
-                    opacity: 1
-    
+        h4
+            font-size: 16px
+            font-weight: 600
+            color: $app-text-color
 
-._comp._item._privateDeals
+    &__status
+        font-size: 13px
+        font-weight: 400
+
+        &--pending
+            color: $app-text-color-primary
+        &--accepted
+            color: $app-background-green-secondary
+        &--cancelled, &--expired
+            color: $app-text-color-red
+
+    &__price
+        display: flex
+        align-items: center
+        gap: 5px
+
+        img
+            width: 16px
+            height: 16px
+
+        span
+            font-size: 16px
+            font-weight: 600
+            color: $app-button-text-color
+
+    &__actions
+        display: flex
+        gap: 6px
+        margin-top: 12px
+        padding-top: 12px
+        border-top: 1px solid rgba(#fff, 0.06)
+
+    &__act
+        flex: 1
+        height: 38px
+        border-radius: 10px
+        border: none
+        display: flex
+        align-items: center
+        justify-content: center
+        cursor: pointer
+        transition: all 0.12s ease
+
+        .kit-icon
+            width: 16px
+            height: 16px
+
+            svg
+                width: 16px
+                height: 16px
+
+        &--share
+            background: rgba($app-text-color-primary, 0.12)
+            color: $app-text-color-primary
+
+        &--cancel
+            background: rgba($app-text-color-red, 0.1)
+            color: $app-text-color-red
+
+        &:active
+            transform: scale(0.95)
+
+// ── Share overlay ──
+.pd-share-overlay
+    position: fixed
+    inset: 0
+    z-index: 100
+    background: rgba(0, 0, 0, 0.5)
+    backdrop-filter: blur(8px)
+    display: flex
+    align-items: flex-end
+    justify-content: center
+    animation: pd-fade 0.2s ease
+
+.pd-share
     width: 100%
-    height: fit-content
-    margin-top: 5px
-    margin-bottom: 10px
-    padding-left: 16px
-    padding-right: 16px
-    
-    ._skeleton
+    max-width: $app-max-preview-width
+    background: $app-background-secondary
+    border-radius: 20px 20px 0 0
+    border-top: 1px solid rgba(#fff, 0.06)
+    padding: 24px 20px calc(24px + env(safe-area-inset-bottom))
+    animation: pd-slide-up 0.25s ease
+
+    &__head
+        display: flex
+        align-items: center
+        justify-content: space-between
+        margin-bottom: 20px
+
+        h3
+            font-size: 20px
+            font-weight: 700
+            color: $app-text-color
+
+    &__close
+        width: 32px
+        height: 32px
+        border-radius: 50%
+        background: rgba(#fff, 0.08)
+        border: none
+        display: flex
+        align-items: center
+        justify-content: center
+        cursor: pointer
+        color: $app-text-color
+        transition: background 0.12s ease
+
+        &:active
+            background: rgba(#fff, 0.14)
+
+        .kit-icon
+            width: 14px
+            height: 14px
+
+            svg
+                width: 14px
+                height: 14px
+
+    &__info
+        display: flex
+        flex-direction: column
+        gap: 12px
+        margin-bottom: 20px
+
+    &__row
+        display: flex
+        align-items: center
+        justify-content: space-between
+
+        span
+            font-size: 15px
+            color: $app-text-color-descr
+
+        strong
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+            display: flex
+            align-items: center
+            gap: 5px
+
+    &__star
+        width: 16px
+        height: 16px
+
+    &__link
+        display: flex
+        gap: 8px
+        margin-bottom: 16px
+
+        input
+            flex: 1
+            height: 44px
+            background: rgba(#fff, 0.04)
+            border-radius: 12px
+            border: 1px solid rgba(#fff, 0.06)
+            padding: 0 14px
+            font-size: 13px
+            color: $app-text-color
+            outline: none
+
+        button
+            width: 44px
+            height: 44px
+            border-radius: 12px
+            background: rgba(#fff, 0.08)
+            border: none
+            display: flex
+            align-items: center
+            justify-content: center
+            cursor: pointer
+            color: $app-text-color
+            transition: background 0.12s ease
+
+            .kit-icon
+                width: 18px
+                height: 18px
+
+                svg
+                    width: 18px
+                    height: 18px
+
+            &:active
+                background: rgba(#fff, 0.14)
+
+    &__buttons
+        display: flex
+        gap: 8px
+
+    &__tg
+        flex: 1
+        height: 50px
+        border-radius: 14px
+        background: $app-big-button-background
+        border: none
+        color: #fff
+        font-size: 16px
+        font-weight: 600
+        cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        transition: all 0.12s ease
+
+        .kit-icon
+            width: 18px
+            height: 18px
+
+            svg
+                width: 18px
+                height: 18px
+
+        &:active
+            transform: scale(0.97)
+
+// ── Deal View v2 ──
+.pdv-loader
+    display: flex
+    flex-direction: column
+    gap: 16px
+    padding-top: 40px
+    align-items: center
+
+.pdv-skel
+    border-radius: 16px
+    background: $app-background-secondary
+    animation: pd-shimmer 1.5s ease infinite
+
+    &--ava
+        width: 120px
+        height: 24px
+        border-radius: 100px
+
+    &--gifts
         width: 100%
+        height: 180px
+        border-radius: 20px
+
+    &--info
+        width: 100%
+        height: 80px
+        border-radius: 16px
+
+.pdv-empty
+    display: flex
+    flex-direction: column
+    align-items: center
+    text-align: center
+    padding: 80px 0
+
+    &__icon
+        width: 56px
+        height: 56px
+        opacity: 0.25
+        margin-bottom: 16px
+
+        svg
+            width: 56px
+            height: 56px
+
+    h3
+        font-size: 20px
+        font-weight: 700
+        color: $app-text-color
+        margin-bottom: 8px
+
+    p
+        font-size: 14px
+        color: $app-text-color-descr
+        margin-bottom: 24px
+
+    &__btn
+        height: 44px
+        padding: 0 24px
+        border-radius: 12px
+        background: $app-big-button-background
+        border: none
+        color: #fff
+        font-size: 15px
+        font-weight: 600
+        cursor: pointer
+
+.pdv2
+    padding-top: 10px
+
+    &__seller
         display: flex
         align-items: center
         gap: 10px
+        margin-bottom: 24px
 
-        ._section
-            width: 100%
-            height: 38px
-            background: $app-background-secondary
-            border-radius: 50px
-    
-    ._content
-        width: 100%
-        display: flex
-        align-items: center
-        gap: 10px
-        overflow-x: scroll
+        &-photo
+            width: 36px
+            height: 36px
+            min-width: 36px
+            border-radius: 50%
+            object-fit: cover
 
-        ._items
-            width: 100%
-            height: fit-content
+        &-ava
+            width: 36px
+            height: 36px
+            min-width: 36px
+            border-radius: 50%
+            background: linear-gradient(135deg, #6366f1, #3b82f6)
+            display: flex
+            align-items: center
+            justify-content: center
+            font-size: 14px
+            font-weight: 700
+            color: #fff
+
+        &-txt
             display: flex
             flex-direction: column
-            align-items: center
-            gap: 10px
-            overflow-x: scroll
+            gap: 1px
 
-            ._item
-                width: 100%
-                height: 68px
-                background: $app-background-secondary
-                border-radius: 16px
+            span
+                font-size: 12px
+                color: $app-text-color-descr
+
+            strong
+                font-size: 15px
+                font-weight: 600
+                color: $app-text-color
+
+    &__showcase
+        display: flex
+        gap: 10px
+        flex-wrap: wrap
+        justify-content: center
+        margin-bottom: 24px
+
+    &__gift
+        width: 120px
+        height: 120px
+        border-radius: 20px
+        position: relative
+        overflow: hidden
+        display: flex
+        align-items: center
+        justify-content: center
+
+        &-bg
+            position: absolute
+            inset: 0
+            z-index: 0
+
+            &--upg
+                border-radius: 20px
+
+            &.rare
+                background: $app-rarity-background-rare
+            &.veryrare
+                background: $app-rarity-background-very-rare
+            &.epic
+                background: $app-rarity-background-epic
+            &.legend
+                background: $app-rarity-background-legendary
+            &.author
+                background: $app-rarity-background-author
+
+        &-symbol
+            position: absolute
+            width: 80%
+            height: 80%
+            object-fit: contain
+            z-index: 1
+            opacity: 0.35
+
+        &-img
+            width: 65%
+            height: 65%
+            object-fit: contain
+            position: relative
+            z-index: 2
+
+        &-placeholder
+            color: rgba(#fff, 0.15)
+            position: relative
+            z-index: 2
+
+    &__info
+        background: $app-background-secondary
+        border-radius: 16px
+        padding: 16px
+        margin-bottom: 16px
+
+        &-row
+            display: flex
+            align-items: center
+            justify-content: space-between
+            padding: 4px 0
+
+            span
+                font-size: 15px
+                color: $app-text-color-descr
+
+            strong
+                font-size: 16px
+                font-weight: 600
+                color: $app-text-color
                 display: flex
                 align-items: center
-                gap: 10px
-                padding: 0 15px
-                animation: bubbleNft 0.20s linear
-                
-                ._left
-                    width: fit-content
-                    height: 100%
-                    display: flex
-                    flex-direction: column
-                    align-items: start
-                    justify-content: center
-                    gap: 6px
+                gap: 5px
 
-                    ._title
-                        width: 100%
+                img
+                    width: 18px
+                    height: 18px
 
-                        & h4
-                            font-size: 17px
-                            font-weight: 600
-                            color: $app-text-color
+            &--price strong
+                color: $app-button-text-color
 
-                    ._stars
-                        width: 100%
-                        display: flex
-                        align-items: center
-                        gap: 5px
+        &-divider
+            height: 1px
+            background: rgba(#fff, 0.06)
+            margin: 10px 0
 
-                        & img
-                            width: 16px
-                            height: 16px
-                        
-                        & span
-                            font-size: 15px
-                            font-weight: 500
-                            color: $app-button-text-color
-                            margin-top: 2px
+    &__status
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        font-size: 14px
+        font-weight: 500
+        padding: 12px 0
+        margin-bottom: 8px
 
-                ._right
-                    width: fit-content
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    margin-left: auto
-                    gap: 10px
+        &-dot
+            width: 8px
+            height: 8px
+            border-radius: 50%
 
-                    ._delete
-                        width: 40px
-                        height: 40px
-                        display: flex
-                        align-items: center
-                        justify-content: center
-                        gap: 10px
-                        background: rgba($app-text-color-red, 0.1)
-                        border-radius: 11px
+        &--pending
+            color: $app-text-color-primary
+            .pdv2__status-dot
+                background: $app-text-color-primary
+                box-shadow: 0 0 8px rgba($app-text-color-primary, 0.5)
 
-                        & .kit-icon
-                            width: 18px
-                            height: 18px
+        &--accepted
+            color: $app-background-green-secondary
+            .pdv2__status-dot
+                background: $app-background-green-secondary
+                box-shadow: 0 0 8px rgba($app-background-green-secondary, 0.5)
 
-                            & svg
-                                width: 18px
-                                height: 18px
+        &--cancelled, &--expired
+            color: $app-text-color-red
+            .pdv2__status-dot
+                background: $app-text-color-red
+                box-shadow: 0 0 8px rgba($app-text-color-red, 0.5)
+
+    &__bottom
+        position: fixed
+        bottom: 0
+        left: 50%
+        transform: translateX(-50%)
+        width: 100%
+        max-width: $app-max-preview-width
+        padding: 12px 16px calc(16px + env(safe-area-inset-bottom))
+        background: linear-gradient(0deg, $app-background 70%, transparent)
+        z-index: 10
+        display: flex
+        flex-direction: column
+        gap: 8px
+
+    &__btn
+        width: 100%
+        height: 52px
+        border-radius: 14px
+        border: none
+        font-size: 16px
+        font-weight: 600
+        cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        transition: all 0.12s ease
+
+        &--primary
+            background: $app-big-button-background
+            color: #fff
+
+            img
+                width: 18px
+                height: 18px
+
+            .kit-icon
+                width: 18px
+                height: 18px
+
+                svg
+                    width: 18px
+                    height: 18px
+
+            &:active
+                transform: scale(0.97)
+
+            &:disabled
+                opacity: 0.5
+                pointer-events: none
+
+        &--danger
+            height: 46px
+            background: transparent
+            border: 1px solid rgba($app-text-color-red, 0.2)
+            color: $app-text-color-red
+            font-size: 15px
+
+            &:active
+                transform: scale(0.97)
+
+        &--ghost
+            height: 46px
+            background: $app-background-secondary
+            border: 1px solid rgba(#fff, 0.04)
+            color: $app-text-color
+            font-size: 15px
+            font-weight: 500
+
+            &:active
+                transform: scale(0.97)
+                background: #2e2e31
+
+    &__badge
+        width: 100%
+        height: 50px
+        border-radius: 14px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        font-size: 16px
+        font-weight: 600
+
+        .kit-icon
+            width: 18px
+            height: 18px
+
+            svg
+                width: 18px
+                height: 18px
+
+        &--success
+            background: rgba($app-background-green-secondary, 0.12)
+            color: $app-background-green-secondary
+
+        &--cancelled
+            background: rgba($app-text-color-red, 0.1)
+            color: $app-text-color-red
+
+// ── Animations ──
+@keyframes pd-shimmer
+    0%
+        opacity: 0.5
+    50%
+        opacity: 0.8
+    100%
+        opacity: 0.5
+
+@keyframes pd-pop
+    0%
+        opacity: 0
+        transform: scale(0.92)
+    100%
+        opacity: 1
+        transform: scale(1)
+
+@keyframes pd-fade
+    from
+        opacity: 0
+    to
+        opacity: 1
+
+@keyframes pd-slide-up
+    from
+        transform: translateY(100%)
+    to
+        transform: translateY(0)

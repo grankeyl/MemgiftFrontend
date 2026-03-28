@@ -1,57 +1,53 @@
 <template>
-  <div class="_selects" :class="containerClasses">
+  <div ref="filtersEl" class="_filters" :class="containerClasses">
     <div v-if="isLoading" class="_skeleton">
-      <div class="_select skeleton-box"></div>
+      <div class="_pill-skel"></div>
+      <div class="_pill-skel"></div>
+      <div class="_pill-skel _short"></div>
     </div>
     <div v-else class="_content">
-      <div class="flexed">
-        <div class="_select custom-select" @click="toggleSelectRarityDropdown">
-          <span class="selected">
-            {{ selectedRarityLabel || 'Выберите вариант' }}
-          </span>
-          <div class="kit-icon" v-html="Icon.Chevrone"></div>
-        </div>
-        <div class="_select custom-select" @click="toggleSelectSortbyDropdown">
-          <span class="selected">
-            {{ selectedSortbyLabel || 'Выберите вариант' }}
-          </span>
-          <div class="kit-icon" v-html="Icon.Chevrone"></div>
+      <div class="_filters-top">
+        <div class="_pills-wrap">
+          <button class="_filter-pill" :class="{ _open: selectRarityOpened }" @click="toggleSelectRarityDropdown">
+            <span>{{ selectedRarityLabel }}</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <button class="_filter-pill" :class="{ _open: selectSortbyOpened }" @click="toggleSelectSortbyDropdown">
+            <span>{{ selectedSortbyLabel }}</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
         </div>
 
-          <div class="dropdown" :class="{ open: selectRarityOpened }">
-            <div class="dropdown-scroll">
-              <div
-                v-for="option in selectRarityOptions"
-                :key="option.value"
-                class="dropdown-option"
-                :class="{ active: option.value === selectRarityValue }"
-                @click.stop="selectRarityOption(option)"
-              >
-                <span>{{ option.label }}</span>
-                <div v-if="option.value === selectRarityValue" class="kit-icon" v-html="Icon.Done"></div>
-              </div>
-            </div>
+        <div class="_filter-dropdown" :class="{ _visible: selectRarityOpened }">
+          <div
+            v-for="option in selectRarityOptions"
+            :key="option.value"
+            class="_filter-option"
+            :class="{ _selected: option.value === selectRarityValue }"
+            @click.stop="selectRarityOption(option)"
+          >
+            <span>{{ option.label }}</span>
+            <svg v-if="option.value === selectRarityValue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           </div>
+        </div>
 
-          <div class="dropdown" :class="{ open: selectSortbyOpened }">
-            <div class="dropdown-scroll">
-              <div
-                v-for="option in selectSortbyOptions"
-                :key="option.value"
-                class="dropdown-option"
-                :class="{ active: option.value === selectSortbyValue }"
-                @click.stop="selectSortbyOption(option)"
-              >
-                <span>{{ option.label }}</span>
-                <div v-if="option.value === selectSortbyValue" class="kit-icon" v-html="Icon.Done"></div>
-              </div>
-            </div>
+        <div class="_filter-dropdown" :class="{ _visible: selectSortbyOpened }">
+          <div
+            v-for="option in selectSortbyOptions"
+            :key="option.value"
+            class="_filter-option"
+            :class="{ _selected: option.value === selectSortbyValue }"
+            @click.stop="selectSortbyOption(option)"
+          >
+            <span>{{ option.label }}</span>
+            <svg v-if="option.value === selectSortbyValue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           </div>
-          
+        </div>
       </div>
-      <div class="_checkbox custom-checkbox" @click="toggleHideSoldOut">
-        <div class="custom-checkbox-box" :class="{ checked: checkboxHideSoldOut }"></div>
-        <div class="custom-checkbox-label">{{ $t('home.hideGifts') }}</div>
+
+      <div class="_checkbox" @click="toggleHideSoldOut">
+        <div class="_checkbox-box" :class="{ _checked: checkboxHideSoldOut }"></div>
+        <span class="_checkbox-label">{{ $t('home.hideGifts') }}</span>
       </div>
     </div>
   </div>
@@ -63,12 +59,12 @@
       <div class="_gift"></div>
       <div class="_gift"></div>
     </div>
-    <div v-else class="_content">
+    <div v-else class="_content _anim-stagger">
       <div 
         v-for="(gift, index) in otherGifts" 
         :key="gift.UKey"
         @click="openCollection(gift.UKey)"
-        class="_gift"
+        class="_gift _anim-press"
         :class="{ 
           [gift.Rarity]: true, 
           ['giftNew_' + gift.New]: true
@@ -97,28 +93,15 @@
           </div>
         </div>
 
-        <div v-if="gift.Media === 'svg'" class="_nft" :class="{ nftLoading: gift.nftOnLoading }">
+        <div class="_nft" :class="{ nftLoading: gift.nftOnLoading }">
           <img 
             @load="giftOnLoad(gift)"
             @error="giftOnError(gift)"
             :src="gift.ImageMain"
             v-bind:class="{ nftLoading: gift.nftOnLoading }"
+            loading="lazy"
           />
           <div class="loader-icon" :class="{ active: gift.nftOnLoading }"></div>
-        </div>
-
-        <div v-if="gift.Media === 'lottie'" class="_nft _lottie">
-          <GiftLottie
-            ref="otherLottieRefs"
-            class="lt"
-            :path="`/gifts/lottie/${gift.Key}.json`"
-            :loop="false"
-            :autoplay="false"
-            width="25"
-            height="25"
-            renderer="svg"
-            @complete="onOtherComplete"
-          />
         </div>
         
         <div v-if="!gift.Locked" class="_buy">
@@ -132,7 +115,7 @@
         </div>
         
         <div v-if="gift.Locked" class="_buy locked">
-          <button v-if="gift.Price">
+          <button>
             <p>Locked</p>
             <div class="kit-icon" v-html="Icon.Lock"></div>
           </button>
@@ -178,8 +161,6 @@ import Image_starsPng from '@/assets/images/stars.png';
 import Image_TicketSodaSvg from '@/assets/images/soda-ticket.svg';
 
 import Button from '../Button.vue';
-import Lottie from '../Lottie.vue';
-import GiftLottie from '../GiftLottie.vue';
 
 
 export default {
@@ -200,15 +181,10 @@ export default {
 
   components: {
     Button,
-    Lottie,
-    GiftLottie,
   },
 
   data() {
     return {
-      currentEventIdx: 0,
-      currentOtherIdx: 0,
-
       storeCache: useCacheStore(),
       storeNftsApp: {},
 
@@ -254,37 +230,11 @@ export default {
     };
   },
 
-  watch: {
-    eventGifts() { this.currentEventIdx = 0; this.$nextTick(this.startEventQueue); },
-    otherGifts() { this.currentOtherIdx = 0; this.$nextTick(this.startOtherQueue); },
-  },
-
   computed: {
-    eventGifts() {
-      return this.filteredNfts.filter(g =>
-        ['Swipee','HotDog','BurningPanties','HungryDog','Soda'].includes(g.UKey)
-      );
-    },
     otherGifts() {
       return this.filteredNfts;
     },
 
-    // только лотти
-    eventLottieGifts() {
-      return this.eventGifts.filter(g => g.Media === 'lottie');
-    },
-    otherLottieGifts() {
-      return this.otherGifts.filter(g => g.Media === 'lottie');
-    },
-
-    // текущие ключи для монтирования
-    currentEventLottieUKey() {
-      return this.eventLottieGifts[this.currentLottieIndexEvent]?.UKey || null;
-    },
-    currentOtherLottieUKey() {
-      return this.otherLottieGifts[this.currentLottieIndexOthers]?.UKey || null;
-    },
-      
     isLoading() {
       return this.Skeleton;
     },
@@ -300,7 +250,7 @@ export default {
       return found ? found.label : '';
     },
     containerClasses() {
-      return ['_direction', '_comp', '_item', '_lefting'];
+      return ['_direction', '_comp', '_item', '_filters', '_lefting'];
     },
     nftArray() {
       return Array.isArray(this.storeNftsApp) ? this.storeNftsApp : Object.values(this.storeNftsApp || {});
@@ -364,49 +314,17 @@ export default {
     this.storeNftsApp = this.storeCache.NftsApp;
     this.loadResources();
     this.getSodaEvent();
-      
-    this.$nextTick(() => {
-      this.startEventQueue();
-      this.startOtherQueue();
-    });
 
     this.$watch(() => this.storeCache.NftsApp, () => {
       this.storeNftsApp = this.storeCache.NftsApp;
       this.loadResources();
       this.getSodaEvent();
     });
+
+    document.addEventListener('click', this._onClickOutside);
   },
 
   methods: {
-    _eventRefs() { return (this.$refs.eventLottieRefs || []).filter(Boolean); },
-    _otherRefs() { return (this.$refs.otherLottieRefs || []).filter(Boolean); },
-
-    startEventQueue() {
-      const refs = this._eventRefs();
-      if (!refs.length) return;
-      refs.forEach(r => { r.stop?.(); r.goToStart?.(); });
-      refs[this.currentEventIdx]?.play?.();
-    },
-    onEventComplete() {
-      const refs = this._eventRefs();
-      if (!refs.length) return;
-      this.currentEventIdx = (this.currentEventIdx + 1) % refs.length;
-      this.startEventQueue();
-    },
-
-    startOtherQueue() {
-      const refs = this._otherRefs();
-      if (!refs.length) return;
-      refs.forEach(r => { r.stop?.(); r.goToStart?.(); });
-      refs[this.currentOtherIdx]?.play?.();
-    },
-    onOtherComplete() {
-      const refs = this._otherRefs();
-      if (!refs.length) return;
-      this.currentOtherIdx = (this.currentOtherIdx + 1) % refs.length;
-      this.startOtherQueue();
-    },
-
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadImages()]);
@@ -470,9 +388,11 @@ export default {
       this.saveFiltersToLocalStorage();
     },
 
-    handleClickOutside(event) {
-      if (!this.$refs.giftsContainer.contains(event.target)) {
+    _onClickOutside(e) {
+      const el = this.$refs.filtersEl;
+      if (el && !el.contains(e.target)) {
         this.selectRarityOpened = false;
+        this.selectSortbyOpened = false;
       }
     },
 
@@ -534,8 +454,8 @@ export default {
     },
   },
 
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
+  beforeUnmount() {
+    document.removeEventListener('click', this._onClickOutside);
   },
 };
 </script>

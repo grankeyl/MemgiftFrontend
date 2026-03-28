@@ -1,0 +1,226 @@
+@use "./../../assets/styles/_variables" as *
+
+.bulk
+    width: 100%
+    margin-top: -16px
+    border-radius: 12px
+    background: rgba($app-text-color, 0.04)
+    overflow: hidden
+
+    // ===== COLLAPSED ROW =====
+    &__row
+        width: 100%
+        height: 40px
+        display: flex
+        align-items: center
+        gap: 6px
+        padding: 0 12px
+        cursor: pointer
+        transition: opacity 0.25s ease, height 0.25s ease
+        overflow: hidden
+
+        &:active
+            background: rgba($app-text-color, 0.03)
+
+    &__trigger
+        font-size: 13px
+        font-weight: 600
+        color: $app-text-color
+
+    &__hint
+        font-size: 12px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+        margin-left: auto
+
+    &__chevron
+        color: $app-text-color-descr
+        flex-shrink: 0
+        transition: transform 0.25s ease
+
+    // ===== EXPANDED PANEL (grid trick for smooth height) =====
+    &__panel
+        display: grid
+        grid-template-rows: 0fr
+        transition: grid-template-rows 0.3s ease
+        overflow: hidden
+
+    &__inner
+        overflow: hidden
+        padding: 0 14px
+        opacity: 0
+        transition: opacity 0.2s ease, padding 0.3s ease
+
+    // ===== OPEN STATE =====
+    &.open
+        .bulk__row
+            height: 0
+            opacity: 0
+            pointer-events: none
+            padding-top: 0
+            padding-bottom: 0
+
+        .bulk__panel
+            grid-template-rows: 1fr
+
+        .bulk__inner
+            padding: 12px 14px
+            opacity: 1
+
+        .bulk__chevron
+            transform: rotate(180deg)
+
+    // ===== SLIDER =====
+    &__slide
+        width: 100%
+        padding: 2px 0 10px
+
+    &__input
+        -webkit-appearance: none
+        appearance: none
+        width: 100%
+        height: 4px
+        border-radius: 2px
+        background: linear-gradient(to right, $app-background-blue-secondary var(--bulk-pct, 0%), rgba($app-text-color, 0.08) var(--bulk-pct, 0%))
+        cursor: pointer
+
+        &::-webkit-slider-thumb
+            -webkit-appearance: none
+            width: 20px
+            height: 20px
+            border-radius: 50%
+            background: #fff
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35)
+            cursor: grab
+            transition: box-shadow 0.12s ease
+
+            &:active
+                box-shadow: 0 0 0 6px rgba($app-background-blue-secondary, 0.25), 0 1px 4px rgba(0, 0, 0, 0.35)
+                cursor: grabbing
+
+        &::-moz-range-thumb
+            width: 20px
+            height: 20px
+            border-radius: 50%
+            background: #fff
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35)
+            border: none
+            cursor: grab
+
+    // ===== STATS ROW =====
+    &__stats
+        display: flex
+        align-items: center
+        justify-content: space-between
+        margin-bottom: 10px
+
+    &__qty
+        display: flex
+        align-items: baseline
+        gap: 5px
+
+    &__qty-num
+        font-size: 26px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.8px
+        line-height: 1
+
+    &__qty-unit
+        font-size: 12px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+
+    &__price
+        display: flex
+        align-items: center
+        gap: 3px
+
+    &__price-val
+        font-size: 16px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.3px
+
+    &__price img
+        width: 15px
+        height: 15px
+
+    // ===== ACTIONS =====
+    &__actions
+        display: flex
+        gap: 6px
+
+    &__buy
+        flex: 1
+        height: 44px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 4px
+        background: $app-big-button-background !important
+        border-radius: 12px !important
+        padding: 0 !important
+        cursor: pointer
+        font-size: 14px
+        font-weight: 600
+        color: #fff !important
+        position: relative
+        overflow: hidden
+        transition: transform 0.12s ease, background 0.2s ease
+
+        &:active
+            transform: scale(0.97)
+
+        &:disabled
+            pointer-events: none
+
+        &._disabled
+            opacity: 0.35
+
+        &._loading
+            background: rgba($app-text-color, 0.08) !important
+            color: $app-text-color !important
+            pointer-events: none
+
+        &._done
+            background: rgba($app-background-green-secondary, 0.14) !important
+            color: $app-background-green-secondary !important
+
+    &__buy-progress
+        position: relative
+        z-index: 1
+
+    &__buy-bar
+        position: absolute
+        left: 0
+        top: 0
+        height: 100%
+        background: rgba($app-background-blue-secondary, 0.25)
+        transition: width 0.3s ease
+        border-radius: 12px
+
+    &__close
+        width: 44px !important
+        min-width: 44px
+        height: 44px !important
+        padding: 0 !important
+        display: flex
+        align-items: center
+        justify-content: center
+        background: rgba(#fff, 0.12) !important
+        border-radius: 12px !important
+        cursor: pointer
+        transition: transform 0.12s ease
+
+        &:active
+            transform: scale(0.9)
+
+    // ===== WARNING =====
+    &__warn
+        font-size: 11px
+        font-weight: 500
+        color: $app-text-color-red
+        margin-top: 8px
+        margin-bottom: 14px
+        text-align: center

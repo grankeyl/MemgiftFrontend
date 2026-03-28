@@ -7,12 +7,6 @@ export const MenuJson = {
         Route: '/',
         Disable: false,
     },
-    Rating: {
-        Key: 'rating',
-        Icon: Icon.Rating,
-        Route: '/rating',
-        Disable: false
-    },
     Tickets: {
         Key: 'tasks',
         Icon: Icon.Ticket,
