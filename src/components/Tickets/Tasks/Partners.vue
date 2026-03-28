@@ -17,6 +17,30 @@
         </div>
 
         <div class="_task-list">
+          <!-- ScoobyVPN hardcoded task -->
+          <div class="_task-row">
+            <div class="_task-avatar">
+              <img src="/scooby_vpn.png" alt="ScoobyVPN" />
+            </div>
+            <div class="_task-info">
+              <h4>Scooby VPN</h4>
+              <div class="_task-reward">
+                <p style="color: rgba(255,255,255,0.5); font-size: 13px;">Активировать подписку в боте</p>
+              </div>
+            </div>
+            <div class="_task-action">
+              <button v-if="!scoobyVpnDone && !scoobyVpnLoading" @click="clickScoobyVpn()" class="_btn _start">
+                <span>{{ $t('tickets.taskButtonStart') }}</span>
+              </button>
+              <button v-if="scoobyVpnDone" class="_btn _done">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              </button>
+              <button v-if="scoobyVpnLoading && !scoobyVpnDone" class="_btn _loading">
+                <Lottie class="lt" slug="loading-spin" :loop="true" width="25" height="25" renderer="svg" />
+              </button>
+            </div>
+          </div>
+
           <div v-for="(task, index) in TasksData" :key="index" class="_task-row">
             <template v-if="task.type === 'subscribe_channel'">
               <div class="_task-avatar">
@@ -128,6 +152,10 @@ export default {
       useCheckInterval: false,
       useCheckTimeout: false,
 
+      scoobyVpnDone: false,
+      scoobyVpnLoading: false,
+      scoobyVpnInterval: null,
+
       Icon,
       Image_Ticket,
       Image_TicketImage,
@@ -137,6 +165,7 @@ export default {
 
   mounted() {
     this.loadResources();
+    this.checkScoobyVpn();
 
     if (this.TasksData) {
       this.TasksData.forEach(task => {
@@ -375,6 +404,26 @@ export default {
           this.storeCache.UserData.user.Tickets += response.awarded;
         };
       }
+    },
+
+    async checkScoobyVpn() {
+      const data = await nftApi.checkScoobyVpn();
+      if (data && data.has_subscription) {
+        this.scoobyVpnDone = true;
+      }
+    },
+
+    clickScoobyVpn() {
+      TelegramModule.useLink('https://t.me/ScoobyVpnBot?start=e81566f4');
+      this.scoobyVpnLoading = true;
+      this.scoobyVpnInterval = setInterval(async () => {
+        const data = await nftApi.checkScoobyVpn();
+        if (data && data.has_subscription) {
+          this.scoobyVpnDone = true;
+          this.scoobyVpnLoading = false;
+          clearInterval(this.scoobyVpnInterval);
+        }
+      }, 5000);
     },
 
     becomePartner() {

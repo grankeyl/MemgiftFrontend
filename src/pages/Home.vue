@@ -141,6 +141,16 @@ export default {
  
       SlidesList: [
         {
+          id: 2,
+          Title: "Бесплатный\nподарок",
+          Button: "Author",
+          ButtonText: "Забрать >",
+          ButtonKey: "Scooby",
+          ButtonSlide: "first",
+          ImageContent: "https://memgift.codes/s3/models/Scooby/Scooby.svg",
+          BgImage: "/home/scooby-banner.jpg",
+        },
+        {
           id: 1,
           Title: this.$t('home.slider_1'),
           Button: "Buy",
@@ -177,7 +187,7 @@ export default {
     TelegramModule.hideBackButton();
 
     this.SlidesList.forEach((slide, index) => {
-      if (index === 0) {
+      if (index === 1) {
         try {
           slide.ButtonKey = this.PremiumGiftKey;
           slide.ButtonText = this.storeCache.NftsAppData[this.PremiumGiftKey].Price;
@@ -193,7 +203,7 @@ export default {
       (newValue) => {
         if (newValue) {
           this.SlidesList.forEach((slide, index) => {
-            if (index === 0) {
+            if (index === 1) {
               try {
                 slide.ButtonKey = this.PremiumGiftKey;
                 slide.ButtonText = newValue[this.PremiumGiftKey].Price;

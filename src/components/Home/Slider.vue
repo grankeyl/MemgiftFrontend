@@ -12,10 +12,10 @@
           <div v-if="index === 0" @click="handleButtonClick(slide)" :style="{ backgroundImage: `url(${slide.BgImage})`, width: '110%', }" class="slideBg">
             <div class="_left">
               <div class="_title">
-                <h1>{{ slide.Title }}</h1>
+                <h1 :style="slide.ButtonKey === 'Scooby' ? { color: '#111' } : {}">{{ slide.Title }}</h1>
               </div>
               <div class="_button">
-                <button @click="handleButtonClick(slide)" :class="slide.Button.toLowerCase()">
+                <button @click="handleButtonClick(slide)" :class="slide.Button.toLowerCase()" :style="slide.ButtonKey === 'Scooby' ? { background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' } : {}">
                   <img v-if="slide.Button === 'Buy'" src="/src/assets/images/stars.png" alt="stars" />
                   <p>{{ slide.ButtonText }}</p>
                   <div v-if="slide.Button === 'Reading'" class="kit-icon" v-html="slide.ButtonIcon"></div>
@@ -135,7 +135,11 @@ export default {
       if (slide.Button === 'Buy' || slide.Button === 'Author') {
         this.openCollection(slide.ButtonKey);
       } else if (slide.Button === 'Reading') {
-        this.goToReading(slide.ButtonLink);
+        if (slide.ButtonKey && !slide.ButtonLink) {
+          this.openCollection(slide.ButtonKey);
+        } else {
+          this.goToReading(slide.ButtonLink);
+        }
       }
     },
 
