@@ -448,7 +448,7 @@ export default {
             } else if (type === 'ShareChats' && this.isScoobyGift) {
                 this.TermsScooby.ShareChats = true;
             } else {
-                this.Terms[type] = true;
+                (this.Terms as any)[type] = true;
             }
         },
 
