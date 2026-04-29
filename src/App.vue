@@ -1,6 +1,6 @@
 <template>
   <Transition name="loader-fade">
-    <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
+    <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading && !$route.meta.public">
       <div class="_load-bg">
         <div class="_load-glow _load-glow--1"></div>
         <div class="_load-glow _load-glow--2"></div>
@@ -21,7 +21,7 @@
   </Transition>
 
   <RouterView v-slot="{ Component, route }">
-    <template v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
+    <template v-if="route.meta.public || (!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
       <div v-if="!route.meta.noLayout" class="_main">
         <component :is="Component" @loaded="onRouterViewLoaded" :success="pageSuccess" />
         <Toast />

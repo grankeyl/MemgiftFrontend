@@ -22,11 +22,15 @@ const Referral = () => import('../pages/Referral.vue')
 const Wallet = () => import('../pages/Wallet.vue')
 const Soda = () => import('../pages/Soda.vue')
 const Maintenance = () => import('../pages/Maintenance.vue')
+const Terms = () => import('../pages/Terms.vue')
+const Privacy = () => import('../pages/Privacy.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/maintenance', name: 'maintenance', component: Maintenance, meta: { noLayout: true } },
+    { path: '/terms', name: 'terms', component: Terms, meta: { noLayout: true, public: true } },
+    { path: '/privacy', name: 'privacy', component: Privacy, meta: { noLayout: true, public: true } },
     { path: '/', name: 'home', component: Home },
     { path: '/profile', name: 'profile', component: Profile },
     { path: '/deposit', name: 'deposit', component: Deposit },
