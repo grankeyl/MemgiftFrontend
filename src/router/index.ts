@@ -19,9 +19,14 @@ import PrivateDeal from '../pages/PrivateDeal.vue'
 import ActivateMulticheck from '../pages/Activate/Multicheck.vue'
 import Referral from '../pages/Referral.vue'
 
+const Terms = () => import('../pages/Terms.vue')
+const Privacy = () => import('../pages/Privacy.vue')
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/terms', name: 'terms', component: Terms, meta: { noLayout: true, public: true } },
+    { path: '/privacy', name: 'privacy', component: Privacy, meta: { noLayout: true, public: true } },
     { path: '/', name: 'home', component: Home },
     { path: '/profile', name: 'profile', component: Profile },
     { path: '/deposit', name: 'deposit', component: Deposit },

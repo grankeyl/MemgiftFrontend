@@ -1,5 +1,5 @@
 <template>
-  <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading">
+  <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading && !$route.meta.public">
     <div class="background">
       <img src="/bg-load.jpg" alt="background" />
     </div>
@@ -12,7 +12,7 @@
   </div>
 
   <RouterView v-slot="{ Component, route }">
-    <template v-if="(!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
+    <template v-if="route.meta.public || (!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
       <div v-if="!route.meta.noLayout" class="_main">
         <component :is="Component" @loaded="onRouterViewLoaded" :success="pageSuccess" />
         <Toast />
