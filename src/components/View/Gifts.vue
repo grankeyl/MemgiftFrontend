@@ -1,67 +1,62 @@
 <template>
-  <div class="_direction _comp _item _categoriesSelected">
-      <div v-if="isLoading" class="_skeleton">
-        <div class="_category"></div>
-        <div class="_category"></div>
-      </div>
-      <div v-if="!isLoading" class="_content">
-        <div 
-          v-for="(category, index) in CategoriesList" 
-          @click="setActiveTab(category.Key)"
-          :key="index" 
-          class="_category" 
-          :class="{ _active: activeCategory === category.Key }"
+  <div class="prf-gifts">
+    <!-- Табы: подарки / NFT — тот же стеклянный сегмент, что в своём профиле -->
+    <div class="_direction _comp _item prf-tabs">
+      <div class="prf-tabs__pill" :class="{ 'is-wallet': ActiveTab === 'wallet' }">
+        <div class="prf-tabs__indicator"></div>
+        <button
+          type="button"
+          class="prf-tabs__tab"
+          :class="{ active: ActiveTab === 'all' }"
+          @click="$emit('useTab', 'all')"
         >
-          <h4>{{ category.Title }}</h4>
-        </div>
+          <span>{{ $t('profile.profileTabs.all') }}</span>
+        </button>
+        <button
+          type="button"
+          class="prf-tabs__tab"
+          :class="{ active: ActiveTab === 'wallet' }"
+          @click="$emit('useTab', 'wallet')"
+        >
+          <span>{{ $t('profile.profileTabs.wallet') }}</span>
+          <div class="kit-icon" v-html="Icon.MintChain"></div>
+        </button>
       </div>
-  </div>
+    </div>
 
-  <div class="_direction _comp _item _filter">
-      <div v-if="isLoading" class="_skeleton">
-      </div>
-      <div v-if="!isLoading" class="_content">
+    <div class="_direction _comp _item _filter">
+      <div v-if="isLoading" class="_skeleton"></div>
+      <div v-else class="_content">
         <div class="cont">
-          <div class="lefted">
-            <div class="item" @click="openSortModal">
-              <div v-if="hasSort" class="circle"></div>
+          <div class="filtersItems">
+            <div class="filtersItemsItem" @click="openSortModal">
+              <div class="circle" v-if="hasSort"></div>
               <div class="flexer">
+                <div class="title">{{ $t('profile.profileFilters.sort') }}</div>
+                <div class="border"></div>
                 <div class="icon">
                   <div class="kit-icon" v-html="Icon.Sort"></div>
                 </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.sort') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
-            <div class="item" @click="openModelModal">
-              <div v-if="hasModels" class="circle"></div>
+            <div class="filtersItemsItem" @click="openModelModal">
+              <div class="circle" v-if="hasModels"></div>
               <div class="flexer">
+                <div class="title">{{ $t('profile.profileFilters.collection') }}</div>
+                <div class="border"></div>
                 <div class="icon">
                   <div class="kit-icon" v-html="Icon.Blocks"></div>
                 </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.collection') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
               </div>
             </div>
           </div>
         </div>
+
         <div class="information">
           <div class="gifts">
             <h5>
               {{ GiftsCount }}
-              {{ pluralizeGift(
-                $t('profile.profileFilters.gifts'),
-                GiftsCount,
-                storeCache.TelegramData.user.language
-              ) }}
+              {{ pluralizeGift($t('profile.profileFilters.gifts'), GiftsCount, storeCache.TelegramData.user.language || 'en') }}
             </h5>
           </div>
           <div class="righted">
@@ -73,13 +68,14 @@
             </div>
           </div>
         </div>
+
         <div v-if="!isEmptyFilter" class="cheaps">
           <div class="cheap clear" @click="clearAll">
             <h4>{{ $t('profile.clearAll') }}</h4>
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
           <div v-if="hasModels" class="cheap model" @click="clearModels">
-            <div class="kit-icon" v-html="Icon.Gift"></div>
+            <div class="kit-icon" v-html="Icon.Blocks"></div>
             <h4>{{ modelsCount === 1 ? `Model: ${SelectedModels[0]}` : `${modelsCount} Models` }}</h4>
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
@@ -90,198 +86,182 @@
           </div>
         </div>
       </div>
-  </div>
-  
-
-
-  <div class="_direction _comp _item _nfts">
-    <div v-if="isLoading" class="_skeleton">
     </div>
-    <div v-if="!isLoading" class="_content">
-      <div v-if="tabViewNFTs === 'blocks'" class="items blocks">
-        <div 
-          v-for="(item, index) in GiftsList"
-          :key="index" 
-          @click="useModal(item.uuid)"
-          class="item"
-        >
-          <div v-if="item.upgraded && !item.market" class="mark">
-            <p>#{{ item.upgrade.seq }}</p>
-          </div>
-          <div v-if="item.upgraded && item.market" class="mark">
-            <img :src="StoreImg" alt="store" />
-            <p>{{ $t('profile.market') }}</p>
-          </div>
-          <div v-if="!item.upgraded && !item.market" class="rarity">
-            <div class="image">
-              <img 
-                :src="checkRarityImage(storeCache.NftsAppData?.[item.gift_ukey]?.Rarity)" 
-                alt="rarity" 
+
+    <div class="_direction _comp _item _nfts">
+      <!-- скелетон держим и пока идёт загрузка списка: раньше здесь
+           мелькало «подарков нет», потому что пустой список неотличим
+           от незагруженного -->
+      <div v-if="isLoading || isLoadingGifts" class="_skeleton">
+        <div class="item" v-for="i in 9" :key="'gs-' + i"></div>
+      </div>
+      <div v-if="!isLoading && !isLoadingGifts" class="_content">
+        <div v-if="tabViewNFTs === 'blocks'" :key="'blocks-' + ActiveTab" class="items blocks">
+          <div
+            v-for="(item, index) in GiftsList"
+            :key="item.uuid"
+            class="item _gift"
+            :class="{ 'is-upgraded': !!item.upgraded, 'is-market': !!item.market }"
+            :style="giftCardStyle(item)"
+            @click="useModal(item.uuid)"
+          >
+            <div class="_symbols">
+              <img v-if="item.upgraded && item.upgrade?.symbol_image" :src="item.upgrade.symbol_image" alt="" />
+              <img v-else src="/gift_bg.png" alt="" />
+            </div>
+
+            <div v-if="item.upgraded && item.upgrade?.seq != null" class="_badge _badge--num">
+              <span>#{{ item.upgrade.seq }}</span>
+            </div>
+
+            <div class="_nft">
+              <img
+                v-if="item.upgraded && item.gift_media === 'svg'"
+                :src="item.upgrade.nft_image"
+                alt=""
               />
+              <img
+                v-else-if="item.upgraded"
+                :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name?.name || item.upgrade.nft_name, 'svg')"
+                alt=""
+              />
+              <img v-else :src="item.gift_image" alt="" />
             </div>
-            <div class="span">
-              <p>{{ checkRarity(storeCache.NftsAppData[item.gift_ukey]?.Rarity) }}</p>
-            </div>
-          </div>
 
-          <div
-            v-if="item.upgraded && item.upgrade"
-            class="background upg"
-            :style="{
-              '--center-color': item.upgrade.background_colors_center,
-              '--around-color': item.upgrade.background_colors_around,
-            }"
-          ></div>
-          <div
-            v-else
-            class="background no-upg"
-            :class="storeCache.NftsAppData[item.gift_ukey]?.Rarity"
-          ></div>
-
-          <div v-if="item.upgraded" class="symbol upg">
-            <img :src="item.upgrade.symbol_image" :alt="item.upgrade.symbol_name" />
-          </div>
-          <div v-else class="symbol no-upg">
-            <img src="/gift_bg.png" alt="gift_bg" />
-          </div>
-
-          <div class="model">
-            <div v-if="item.upgraded" class="upg">
-              <div v-if="item.gift_media === 'svg'" class="image">
-                <img :src="item.upgrade.nft_image" alt="model" />
-              </div>
-              <div v-if="item.gift_media === 'lottie'" class="image">
-                <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="model" />
+            <!-- заминчен в кошелёк: та же лента-маска, TON-синим -->
+            <div v-if="isMintedItem(item)" class="_rarity _rarity--sale _rarity--mint">
+              <div class="_image"></div>
+              <div class="_text">
+                <span>{{ (item.mint?.status === 'processing' || item.status === 'mint_locked') ? $t('profile.profileMintFlow.tickerMinting') : $t('profile.profileMintFlow.ribbon') }}</span>
               </div>
             </div>
-            <div v-else class="no-upg">
-              <div class="image">
-                <img :src="item.gift_image" alt="model" />
+
+            <div v-else-if="!item.upgraded && giftRarity(item)" class="_rarity">
+              <div class="_image">
+                <img :src="checkRarityImage(giftRarity(item))" alt="" />
+              </div>
+              <div class="_text">
+                <span>{{ checkRarity(giftRarity(item)) }}</span>
               </div>
             </div>
-          </div>
-          <div class="button">
-            <button v-if="!item.market">
-              <h5>{{ item.purchase_price }}</h5>
-              <img :src="StarsImg" alt="stars" />
-            </button>
-            <button v-if="item.market">
-              <h5>{{ cutNumber(item.market.price_ton) }}</h5>
-              <img :src="TonImg" alt="svg" />
-            </button>
           </div>
         </div>
-      </div>
-      <div v-if="tabViewNFTs === 'lists'" class="items lists">
-        <div
-          v-for="(item, index) in GiftsList"
-          :key="index"
-          @click="useModal(item.uuid)"
-          class="item"
-        >
-          <div class="nft">
-            <div
-              v-if="item.upgraded && item.upgrade"
-              class="background upg"
-              :style="{
-                '--center-color': item.upgrade.background_colors_center,
-                '--around-color': item.upgrade.background_colors_around,
-              }"
-            ></div>
-            <div
-              v-else
-              class="background no-upg"
-              :class="storeCache.NftsAppData[item.gift_ukey]?.Rarity"
-            ></div>
 
-            <div v-if="item.upgraded" class="symbol upg">
-              <img :src="item.upgrade.symbol_image" :alt="item.upgrade.symbol_name" />
-            </div>
-            <div v-else class="symbol no-upg">
-              <img src="/gift_bg.png" alt="gift_bg" />
-            </div>
+        <div v-if="tabViewNFTs === 'lists'" :key="'lists-' + ActiveTab" class="items lists">
+          <div
+            v-for="(item, index) in GiftsList"
+            :key="item.uuid"
+            @click="useModal(item.uuid)"
+            class="item"
+          >
+            <div class="nft">
+              <div
+                v-if="item.upgraded && item.upgrade"
+                class="background upg"
+                :style="{
+                  '--center-color': item.upgrade.background_colors_center,
+                  '--around-color': item.upgrade.background_colors_around,
+                }"
+              ></div>
+              <div
+                v-else
+                class="background no-upg"
+                :class="storeCache.NftsAppData[item.gift_ukey]?.Rarity"
+              ></div>
 
-            <div class="model">
-              <div v-if="item.upgraded" class="upg">
-                <div v-if="item.gift_media === 'svg'" class="image">
-                  <img :src="item.upgrade.nft_image" alt="model" />
-                </div>
-                <div v-if="item.gift_media === 'lottie'" class="image">
-                  <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="model" />
-                </div>
+              <div v-if="item.upgraded" class="symbol upg">
+                <img :src="item.upgrade.symbol_image" :alt="item.upgrade.symbol_name" />
               </div>
-              <div v-else class="no-upg">
-                <div class="image">
-                  <img :src="item.gift_image" alt="model" />
-                </div>
+              <div v-else class="symbol no-upg">
+                <img src="/gift_bg.png" alt="gift_bg" />
               </div>
-            </div>
-          </div>
-          <div class="content">
-            <div class="naming">
-              <h4>{{ item.gift_name }}</h4>
-              <p v-if="item.upgraded">#{{ item.upgrade.seq }}</p>
-            </div>
-            <div class="info">
-              <div v-if="!item.market" class="price">
-                <p>{{ item.purchase_price }}</p>
-                <img :src="StarsImg" alt="stars" />
-              </div>
-              <div v-if="item.market" class="market-on">
-                <div class="price">
-                  <p>{{ cutNumber(item.market.price_ton) }}</p>
-                  <img :src="TonImg" alt="svg" />
+
+              <div class="model">
+                <div v-if="item.upgraded" class="upg">
+                  <div v-if="item.gift_media === 'svg'" class="image">
+                    <img :src="item.upgrade.nft_image" alt="model" />
+                  </div>
+                  <div v-if="item.gift_media === 'lottie'" class="image">
+                    <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="model" />
+                  </div>
                 </div>
-                <div class="marker">
-                  <svg width="9" height="10" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8.95003 3.66223L8.18925 1.72701C8.07645 1.44008 8.02004 1.2966 7.9292 1.19129C7.84891 1.09821 7.74974 1.02692 7.63964 0.983134C7.51506 0.933594 7.37188 0.933594 7.08552 0.933594H1.91454C1.62818 0.933594 1.485 0.933594 1.36042 0.983134C1.25031 1.02692 1.15114 1.09821 1.07085 1.19129C0.980011 1.2966 0.92361 1.44007 0.810807 1.72701L0.050022 3.66223H8.95003Z" fill="#98989D"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.747463 6.05565C0.952178 6.13754 1.17337 6.18223 1.40416 6.18223C1.78431 6.18223 2.13877 6.06058 2.43611 5.85158C2.73346 6.06058 3.08791 6.18223 3.46807 6.18223C3.84822 6.18223 4.20268 6.06058 4.50002 5.85158C4.79737 6.06058 5.15182 6.18223 5.53198 6.18223C5.91214 6.18223 6.26659 6.06058 6.56393 5.85158C6.86128 6.06058 7.21573 6.18223 7.59589 6.18223C7.82668 6.18223 8.04787 6.13754 8.25259 6.05565V8.6245C8.25259 9.08273 8.25259 9.31184 8.17079 9.48686C8.09884 9.64081 7.98402 9.76598 7.84281 9.84442C7.68226 9.93359 7.4721 9.93359 7.05177 9.93359H1.94828C1.52796 9.93359 1.31779 9.93359 1.15725 9.84442C1.01603 9.76598 0.901218 9.64081 0.829264 9.48686C0.747463 9.31184 0.747463 9.08273 0.747463 8.6245V6.05565ZM1.49796 7.7245C1.49796 7.49539 1.49796 7.38083 1.53886 7.29332C1.57483 7.21635 1.63224 7.15377 1.70285 7.11455C1.78312 7.06996 1.8882 7.06996 2.09837 7.06996H3.52434C3.73451 7.06996 3.83959 7.06996 3.91986 7.11455C3.99047 7.15377 4.04787 7.21635 4.08385 7.29332C4.12475 7.38083 4.12475 7.49539 4.12475 7.7245V8.46087C4.12475 8.68998 4.12475 8.80453 4.08385 8.89204C4.04787 8.96902 3.99047 9.0316 3.91986 9.07082C3.83959 9.11541 3.73451 9.11541 3.52434 9.11541H2.09837C1.8882 9.11541 1.78312 9.11541 1.70285 9.07082C1.63224 9.0316 1.57483 8.96902 1.53886 8.89204C1.49796 8.80453 1.49796 8.68998 1.49796 8.46087V7.7245Z" fill="#98989D"/>
-                    <path d="M1.40413 5.63814C0.658477 5.63814 0.0482754 5.00589 0 4.20632H9C8.95172 5.00589 8.34152 5.63814 7.59587 5.63814C7.18814 5.63814 6.82091 5.4491 6.56391 5.14704C6.30691 5.4491 5.93968 5.63814 5.53196 5.63814C5.12423 5.63814 4.757 5.4491 4.5 5.14704C4.243 5.4491 3.87577 5.63814 3.46804 5.63814C3.06032 5.63814 2.69309 5.4491 2.43609 5.14704C2.17909 5.4491 1.81186 5.63814 1.40413 5.63814Z" fill="#98989D"/>
-                  </svg>
-                  <p>{{ $t('profile.market') }}</p>
+                <div v-else class="no-upg">
+                  <div class="image">
+                    <img :src="item.gift_image" alt="model" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="dropdown">
-            <div class="kit-icon" v-html="Icon.ChevroneRight"></div>
+            <div class="content">
+              <div class="naming">
+                <h4>{{ item.gift_name }}</h4>
+                <p v-if="item.upgraded">#{{ item.upgrade.seq }}</p>
+              </div>
+              <div class="info">
+                <div v-if="isMintedItem(item)" class="mint-on">
+                  <div class="kit-icon" v-html="Icon.MintChain"></div>
+                  <p>{{ $t('profile.profileMintFlow.ribbon') }}</p>
+                </div>
+                <div v-if="!item.market && !isMintedItem(item)" class="price">
+                  <p>{{ item.purchase_price }}</p>
+                  <img :src="StarsImg" alt="stars" />
+                </div>
+                <div v-if="item.market" class="market-on">
+                  <div class="price">
+                    <p>{{ cutNumber(item.market.price_ton) }}</p>
+                    <div class="kit-icon gram" v-html="Icon.Gram"></div>
+                  </div>
+                  <div class="marker">
+                    <svg width="9" height="10" viewBox="0 0 9 10" fill="none">
+                      <path d="M8.95 3.662L8.189 1.727C8.076 1.44 8.02 1.297 7.929 1.191C7.849 1.098 7.75 1.027 7.64.983C7.515.934 7.372.934 7.086.934H1.915C1.628.934 1.485.934 1.36.983C1.25 1.027 1.151 1.098 1.071 1.191C0.98 1.297 0.924 1.44.811 1.727L.05 3.662H8.95Z" fill="#98989D"/>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M.747 6.056C.952 6.138 1.173 6.182 1.404 6.182 1.784 6.182 2.139 6.061 2.436 5.852 2.733 6.061 3.088 6.182 3.468 6.182 3.848 6.182 4.203 6.061 4.5 5.852 4.797 6.061 5.152 6.182 5.532 6.182 5.912 6.182 6.267 6.061 6.564 5.852 6.861 6.061 7.216 6.182 7.596 6.182 7.827 6.182 8.048 6.138 8.253 6.056V8.625 8.252 9.083 8.252 9.312 8.252 9.486 8.171 9.641 8.099 9.766 7.985 9.844 7.843 9.934 7.682 9.934 7.472 9.934 1.948 9.934 1.528 9.934 1.318 9.934 1.157 9.844 1.016 9.766.901 9.641.829 9.486.747 9.312.747 9.083.747 8.625V6.056zm1.751 1.669c0 .23 0 .35.051.457.033.076.091.153.167.2.079.05.192.05.411.05h1.426c.23 0 .349 0 .406-.05.076-.033.153-.091.2-.167.05-.079.05-.192.05-.411v-.78c0-.23 0-.35-.051-.457-.033-.076-.091-.153-.167-.2-.079-.05-.192-.05-.411-.05h-1.426c-.23 0-.349 0-.406.05-.076.033-.153.091-.2.167-.05.079-.05.192-.05.411v.78zm-1.51 1.724c0 .28 0 .4.051.492.033.063.091.12.167.157.079.05.192.05.411.05h1.426c.23 0 .349 0 .406-.05.076-.033.153-.091.2-.167.05-.079.05-.192.05-.411v-.78c0-.23 0-.35-.051-.457-.033-.076-.091-.153-.167-.2-.079-.05-.192-.05-.411-.05h-1.426c-.23 0-.349 0-.406.05-.076.033-.153.091-.2.167-.05.079-.05.192-.05.411v.78zM1.404 5.638C.658 5.638.048 5.006 0 4.206h9c.051.977.658 1.75 1.404 1.75.808 0 1.177-.201 1.436-.502.259.301.627.49 1.036.49.808 0 1.177-.201 1.436-.502.259.301.627.49 1.036.49.808 0 1.177-.201 1.436-.502.259.301.627.49 1.036.49.808 0 1.177-.201 1.404-.502v.93c0 .56 0 .79-.051.903-.033.076-.091.153-.167.2-.079.05-.192.05-.411.05H1.948c-.524 0-.735 0-.891-.05-.076-.033-.153-.091-.2-.167-.05-.079-.05-.192-.05-.411V5.638zM1.404 5.638" fill="#98989D"/>
+                    </svg>
+                    <p>{{ $t('profile.market') }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown">
+              <div class="kit-icon" v-html="Icon.ChevroneRight"></div>
+            </div>
           </div>
         </div>
+
+        <div v-if="hasMore" ref="sentinel" class="_sentinel"></div>
+        <div v-if="Searching" class="_bottomLoader">
+          <div class="load-icon"></div>
+        </div>
       </div>
-      <div v-if="hasMore" ref="sentinel" class="_sentinel"></div>
-      <div v-if="Searching" class="_bottomLoader">
+    </div>
+
+    <div
+      v-if="!Searching && isEmptyList && !isLoading && !isLoadingGifts"
+      class="_direction _comp _item _empty"
+    >
+      <div class="null">
+        <div class="image">
+          <img :src="ProfileEmptyImg" alt="empty" />
+        </div>
+        <div class="title">
+          <h4>{{ $t('profile.profileGiftsNull') }}</h4>
+        </div>
+        <div class="description">
+          <p>{{ $t('profile.profileGiftsNullButtonAsking') }}</p>
+          <span @click="openStore">
+            <div class="kit-icon" v-html="Icon.Store"></div>
+            <p>Market</p>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="Searching"
+      class="_direction _comp _item _loads"
+    >
+      <div class="null">
         <div class="load-icon"></div>
       </div>
-    </div>
-  </div>
-
-  <div
-    v-if="!Searching && isEmptyList"
-    class="_direction _comp _item _empty"
-  >
-    <div class="null">
-      <div class="image">
-        <img src="/profile/empty.svg" alt="empty" />
-      </div>
-      <div class="title">
-        <h4>{{ $t('profile.profileGiftsNull') }}</h4>
-      </div>
-      <div class="description">
-        <p>{{ $t('profile.profileGiftsNullButtonAsking') }}</p>
-        <span @click="openStore">
-          <div class="kit-icon" v-html="Icon.Store"></div>
-          <p>Market</p>
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div
-    v-if="Searching"
-    class="_direction _comp _item _loads"
-  >
-    <div class="null">
-      <div class="load-icon"></div>
     </div>
   </div>
 </template>
@@ -309,7 +289,6 @@ import Lottie from '../Lottie.vue';
 import Button from '../Button.vue';
 import GiftLottie from '../GiftLottie.vue';
 
-// Images
 import StoreImg from '@/assets/images/market/store.svg';
 import TonImg from '@/assets/images/market/ton.svg';
 import StarsImg from '@/assets/images/profile/stars.png';
@@ -317,367 +296,184 @@ import ProfileEmptyImg from '@/assets/images/profile/empty.svg';
 
 export default {
   props: {
-    Skeleton: {
-      type: Boolean,
-      required: true,
-    },
-    SkeletonTime: {
-      type: Number,
-      required: true,
-    },
-    CategoriesList: {
-      type: Array,
-      required: true,
-    },
-    GiftsList: {
-      type: Array,
-      required: true,
-    },
-    GiftsCount: {
-      type: Number,
-      required: true,
-    },
-    GiftsLoading: {
-      type: Boolean,
-      required: true,
-    },
-    ActiveTab: {
-      type: String,
-      required: true,
-    },
-    SelectedModels: {
-      type: Array,
-      required: true,
-    },
-    SelectedSort: {
-      type: String,
-      required: true,
-    },
-    SortItems: {
-      type: Object,
-      required: true,
-    },
-    Searching: {
-      type: Boolean,
-      required: true,
-    },
+    Skeleton: { type: Boolean, required: true },
+    SkeletonTime: { type: Number, required: true },
+    GiftsList: { type: Array, required: true },
+    GiftsCount: { type: Number, required: true },
+    GiftsLoading: { type: Boolean, required: true },
+    SelectedModels: { type: Array, required: true },
+    SelectedSort: { type: String, required: true },
+    SortItems: { type: Object, required: true },
+    Searching: { type: Boolean, required: true },
+    ActiveTab: { type: String, default: 'all' },
   },
-
-  components: {
-    Lottie,
-    GiftLottie,
-    Button,
-  },
-
+  components: { Lottie, GiftLottie, Button },
   data() {
     return {
-      TonImg,
-      StarsImg,
-      StoreImg,
-      ProfileEmptyImg,
-
+      TonImg, StarsImg, StoreImg, ProfileEmptyImg,
       configApp: getConfig(),
       storeCache: useCacheStore(),
       storeNftsApp: {},
-
-      isLoading: this.$props.Skeleton,
-      isLoadingGifts: this.$props.GiftsLoading,
-
-      activeReceivedTab: true,
-      activePurchasedTab: false,
-
-      activeCategory: this.$props.ActiveTab,
+      isLoading: this.Skeleton,
+      isLoadingGifts: this.GiftsLoading,
       activeGift: null,
-
-      tabViewNFTs: "blocks",
+      tabViewNFTs: 'blocks',
       observer: null,
-
-      checkRarity,
-      checkRariryNumber,
-      checkRarityImage,
-      getImageUrl,
-      splitCamelCase,
-      pluralizeGift,
-      getUpgradedModel,
-      getUpgradedSymbol,
-      clearBackgroundName,
-      cutNumber,
-      
-      Icon,
-      Image_GiftBg,
-      Image_RarirySended,
-      Image_Ticket,
-      Image_Stars,
+      checkRarity, checkRariryNumber, checkRarityImage,
+      getImageUrl, splitCamelCase, pluralizeGift,
+      getUpgradedModel, getUpgradedSymbol, clearBackgroundName,
+      cutNumber, Icon,
+      Image_GiftBg, Image_RarirySended, Image_Ticket, Image_Stars,
     };
   },
-
   mounted() {
     this.loadResources();
     this.storeNftsApp = this.storeCache.NftsAppData;
-
     this.$watch(() => this.storeCache.NftsAppData, () => {
       this.storeNftsApp = this.storeCache.NftsAppData;
     });
-
-    this.setActiveCategoryFromHash();
     this.$nextTick(() => {
       const items = this.$el.querySelectorAll('._gifts');
-      items.forEach(el => {
-        el.style.setProperty('--max-height', el.scrollHeight + 'px');
-      });
+      items.forEach(el => el.style.setProperty('--max-height', el.scrollHeight + 'px'));
       this.initObserver();
     });
   },
-
-  onBeforeUnmount() {
-    this.destroyObserver();
-  },
-
+  onBeforeUnmount() { this.destroyObserver(); },
   computed: {
-    isLoading() {
-      return this.Skeleton;
-    },
-    isLoadingGifts() {
-      return this.GiftsLoading;
-    },
-    isEmptyList() {
-       return !this.GiftsList || this.GiftsList.length === 0;
-    },
-    modelsCount() {
-      return this.SelectedModels?.length ?? 0 
-    },
-    hasModels() {
-      return this.modelsCount > 0 
-    },
-    hasSort() {
-      return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort] 
-    },
+    isLoading() { return this.Skeleton; },
+    isLoadingGifts() { return this.GiftsLoading; },
+    isEmptyList() { return !this.GiftsList || this.GiftsList.length === 0; },
+    modelsCount() { return this.SelectedModels?.length ?? 0; },
+    hasModels() { return this.modelsCount > 0; },
+    hasSort() { return !!this.SelectedSort && !!this.SortItems?.[this.SelectedSort]; },
     sortTitle() {
-      if (this.hasSort) {
-        return this.$t(`profile.profileFilterModal.items.${this.SelectedSort}`)
-      } else {
-        return ''
-      }
+      return this.hasSort ? this.$t(`profile.profileFilterModal.items.${this.SelectedSort}`) : '';
     },
-    isEmptyFilter() {
-      return !(this.hasModels || this.hasSort) 
-    },
-    hasMore() {
-      return (this.GiftsList?.length || 0) < (this.GiftsCount || 0);
-    },
+    isEmptyFilter() { return !(this.hasModels || this.hasSort); },
+    hasMore() { return (this.GiftsList?.length || 0) < (this.GiftsCount || 0); },
   },
-
   watch: {
-    ActiveTab() {
-      this.activeCategory = this.ActiveTab;
-      this.$nextTick(() => this.resetObserver());
-    },
-    GiftsList(newValue) {
-      if (!this.GiftsList || this.GiftsList.length === 0) return;
-      this.GiftsList.splice(0, this.GiftsList.length, ...newValue);
-      this.$nextTick(() => this.resetObserver());
-    },
+    GiftsList() { this.$nextTick(() => this.resetObserver()); },
   },
-
   methods: {
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadImages()]);
         this.isLoading = false;
-        this.$emit("loadSuccess");
-      } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
-      }
+        this.$emit('loadSuccess');
+      } catch (e) { console.error(e); }
     },
-
-    loadFonts() {
-      return document.fonts.ready;
-    },
-
+    loadFonts() { return document.fonts.ready; },
     loadImages() {
       const giftsImages = (Array.isArray(this.storeCache?.NftsApp) ? this.storeCache?.NftsApp : Object.values(this.storeCache?.NftsApp || {})).map((gift) => {
         return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.src = gift.ImageArticle;
-          img.onload = resolve;
-          img.onerror = reject;
+          const img = new Image(); img.src = gift.ImageArticle; img.onload = resolve; img.onerror = reject;
         });
       });
-
-      const staticImages = [
-        Image_GiftBg
-      ].map((src) => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.src = src;
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-      });
-
+      const staticImages = [Image_GiftBg].map((src) => new Promise((resolve, reject) => {
+        const img = new Image(); img.src = src; img.onload = resolve; img.onerror = reject;
+      }));
       return Promise.all([...giftsImages, ...staticImages]);
     },
-
-    setActiveCategoryFromHash() {
-      if (this.$route.hash) {
-        const hash = this.$route.hash.replace('#', '');
-        if (hash !== 'received' && hash !== 'purchased') {
-          this.activeCategory = 'received';
-          this.$emit('useTab', 'received');
-          return;
-        }
-        this.activeCategory = this.$route.hash.replace('#', '') || 'received';
-        this.$emit('useTab', this.$route.hash.replace('#', '') || 'received');
-      }
-
-      watch(() => this.$route.hash, (newHash) => {
-        const hash = newHash.replace('#', '');
-        if (hash !== 'received' && hash !== 'purchased') {
-          this.activeCategory = 'received';
-          this.$emit('useTab', 'received');
-          return;
-        }
-        this.activeCategory = newHash.replace('#', '') || 'received';
-        this.$emit('useTab', newHash.replace('#', '') || 'received');
-      });
-    },
-
-    setActiveTab(arg) {
-      if (arg === this.activeCategory) return;
-      
-      this.activeCategory = arg;
-      this.$emit('useTab', arg);
-    },
-
-    setActiveTabAccordion(arg) {
-      if (arg === 'received') this.activeReceivedTab = !this.activeReceivedTab;
-      if (arg === 'purchased') this.activePurchasedTab = !this.activePurchasedTab;
-    },
-
-    openStore() {
-      this.$router.push('/');
-    },
-
-    openMulticheck() {
-      this.$router.push('/multicheck');
-    },
-
-    openGifts(nft) {
-      this.$router.push(`/profile/gifts/${nft}`);
-    },
-
-    appLanguage() {
-      return this.storeCache.TelegramData.user.language || getUserLanguage();
-    },
-
-    async sendNft(giftId, giftUniqueKey, giftUuid) {
-      if (!giftId) return;
-      this.activeGift = giftId;
-
-      TelegramModule.useMediumHaptic();
-
-      const preparedMessage = await telegramApi.createPrepareMessage(
-        this.storeCache.TelegramData.user.id,
-        giftUniqueKey,
-        giftUuid,
-        this.appLanguage()
-      );
-      if (!preparedMessage) return;
-
-      const giftToUpdate = this.GiftsPurchasedList.find(gift => gift.id === giftId);
-      if (!giftToUpdate) return;
-
-      TelegramModule.useShareMessage(preparedMessage.id)
-        .then(async (sharedMessage) => {
-          await nftApi.updateStatusSended(this.storeCache.TelegramData.user.id, giftToUpdate.id);
-
-          this.activeGift = null;
-
-          if (giftToUpdate.status !== 'sended') {
-            this.storeCache.UserData.sendedGiftsCount += 1;
-          }
-           
-          giftToUpdate.status = 'sended';
-        })
-        .catch(() => {
-          this.activeGift = null;
-        });
-    },
-
+    openStore() { this.$router.push('/m'); },
     initObserver() {
       if (this.observer) return;
       const sentinel = this.$refs.sentinel;
       if (!sentinel) return;
-
-      this.observer = new IntersectionObserver(
-        (entries) => {
-          const [entry] = entries;
-          if (!entry?.isIntersecting) return;
-          if (this.Searching) return;      // уже грузим — выходим
-          if (!this.hasMore) return;       // всё загрузили — выходим
-          this.requestMore();               // просим родителя догрузить
-        },
-        { root: null, rootMargin: '300px 0px 300px 0px', threshold: 0.01 }
-      );
-
+      this.observer = new IntersectionObserver((entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        if (this.Searching || !this.hasMore) return;
+        this.requestMore();
+      }, { root: null, rootMargin: '300px 0px 300px 0px', threshold: 0.01 });
       this.observer.observe(sentinel);
     },
-
-    destroyObserver() {
-      if (this.observer) {
-        this.observer.disconnect();
-        this.observer = null;
-      }
-    },
-
-    resetObserver() {
-      this.destroyObserver();
-      this.initObserver();
-    },
-
+    destroyObserver() { if (this.observer) { this.observer.disconnect(); this.observer = null; } },
+    resetObserver() { this.destroyObserver(); this.initObserver(); },
     requestMore() {
-      // Родитель должен добавить следующую порцию в GiftsList и обновить GiftsCount
       this.$emit('loadMore', {
-        tab: this.activeCategory,
         sort: this.SelectedSort,
         models: this.SelectedModels,
         offset: this.GiftsList.length,
         limit: 20,
       });
     },
-
     useModal(NftId) {
       TelegramModule.useSoftHaptic();
       this.$emit('useModal', { id: NftId });
     },
-
-    setTabViewNFTs(tab) {
-      this.tabViewNFTs = (tab === 'lists') ? 'lists' : 'blocks';
+    // подарок уже в блокчейне (или минтится прямо сейчас)
+    isMintedItem(item) {
+      return item?.mint?.status === 'success' || item?.status === 'minted'
+        || item?.mint?.status === 'processing' || item?.status === 'mint_locked';
     },
-
-    openModelModal() {
-      this.$emit('openModelModal');
+    setTabViewNFTs(tab) { this.tabViewNFTs = (tab === 'lists') ? 'lists' : 'blocks'; },
+    openModelModal() { this.$emit('openModelModal'); },
+    openSortModal() { this.$emit('openSortModal'); },
+    clearAll() { this.$emit('clearAll'); },
+    clearModels() { this.$emit('clearModels'); },
+    clearSort() { this.$emit('clearSort'); },
+    giftCatalog(item) {
+      const data = this.storeCache?.NftsAppData;
+      if (!data || !item) return null;
+      const key = item.gift_ukey || item.nft_unique_key || item.u_key;
+      if (key && data[key]) return data[key];
+      const list = Array.isArray(data) ? data : Object.values(data || {});
+      return list.find((g) => g?.UKey === key || g?.u_key === key || g?.Key === key || g?.key === key) || null;
     },
-
-    openSortModal() {
-      this.$emit('openSortModal');
+    giftRarity(item) {
+      const cat = this.giftCatalog(item);
+      let raw = cat?.Rarity || cat?.rarity || item?.gift_rarity || item?.rarity || '';
+      raw = String(raw).toLowerCase().replace(/[\s_-]+/g, '');
+      if (raw === 'legendary') return 'legend';
+      if (raw === 'veryrare' || raw === 'veryrarity') return 'veryrare';
+      return raw;
     },
-
-    clearAll() {
-      this.$emit('clearAll');
+    boostColor(hex, amount = 0.22) {
+      try {
+        let h = String(hex || '').replace('#', '').trim();
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return hex || '#666';
+        const n = parseInt(h, 16);
+        let r = Math.min(255, Math.round(((n >> 16) & 255) + (255 - ((n >> 16) & 255)) * amount));
+        let g = Math.min(255, Math.round(((n >> 8) & 255) + (255 - ((n >> 8) & 255)) * amount));
+        let b = Math.min(255, Math.round((n & 255) + (255 - (n & 255)) * amount));
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+      } catch { return hex || '#666'; }
     },
-
-    clearModels() {
-      this.$emit('clearModels');
+    giftCardStyle(item) {
+      if (item.upgraded && item.upgrade) {
+        const c = item.upgrade.background_colors_center || item.upgrade.background?.colors_center || '#666';
+        const a = item.upgrade.background_colors_around || item.upgrade.background?.colors_around || '#1a1a1a';
+        const hot = this.boostColor(c, 0.28);
+        return { background: `radial-gradient(circle at 50% 40%, ${hot} 0%, ${c} 45%, ${a} 100%)`, boxShadow: 'none' };
+      }
+      const r = this.giftRarity(item);
+      const map = {
+        rare: 'linear-gradient(180deg, #282867 0%, #131328 100%)',
+        veryrare: 'linear-gradient(180deg, #1D6132 0%, #0B2211 100%)',
+        epic: 'linear-gradient(180deg, #632475 0%, #19101D 100%)',
+        legend: 'linear-gradient(180deg, #6F480E 0%, #1D1710 100%)',
+        author: 'linear-gradient(180deg, #762121 0%, #221111 100%)',
+      };
+      return { background: map[r] || '#252028' };
     },
-
-    clearSort() {
-      this.$emit('clearSort');
-    },
-
-    openStore() {
-      this.$router.push('/m');
-    },
-  },
+  }
 };
 </script>
+
+<style lang="sass" scoped>
+._filter .filtersItemsItem
+    flex: 0 0 auto
+    width: fit-content
+    min-width: fit-content
+    max-width: fit-content
+</style>
+
+<style lang="sass" scoped>
+._filter .filtersItemsItem
+    flex: 0 0 auto
+    width: fit-content
+    min-width: fit-content
+    max-width: fit-content
+</style>

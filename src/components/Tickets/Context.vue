@@ -2,8 +2,8 @@
   <div class="_direction _comp _item _ticketsContext" :class="Key">
       <div v-if="isLoading" class="_skeleton">
         <div class="_hero-skel">
-          <div class="_num-skel"></div>
-          <div class="_label-skel"></div>
+          <div class="_num-skel _load-shimmer"></div>
+          <div class="_label-skel _load-shimmer"></div>
         </div>
       </div>
       <div v-else class="_content">

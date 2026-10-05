@@ -1,1141 +1,474 @@
 @use "./../_variables" as *
 
-// ===== ANIMATIONS =====
-@keyframes fadeIn
-  0%
-    opacity: 0
-  100%
-    opacity: 1
-
-@keyframes podiumRise
-  0%
-    opacity: 0
-    transform: translateY(40px) scale(0.85)
-  60%
-    opacity: 1
-    transform: translateY(-6px) scale(1.02)
-  100%
-    opacity: 1
-    transform: translateY(0) scale(1)
-
-@keyframes rowSlideIn
-  0%
-    opacity: 0
-    transform: translateX(-12px)
-  100%
-    opacity: 1
-    transform: translateX(0)
-
-@keyframes glowPulse
-  0%, 100%
-    box-shadow: 0 0 14px rgba($app-leaderboard-background-one, 0.35)
-  50%
-    box-shadow: 0 0 28px rgba($app-leaderboard-background-one, 0.6)
-
-@keyframes crownBob
-  0%, 100%
-    transform: translateY(0) rotate(-2deg)
-  50%
-    transform: translateY(-3px) rotate(2deg)
-
-._skeleton
-    animation: fadeIn 0.72s
-
-._content
-    animation: fadeIn 0.32s
-
-// ===== CONTEXT HEADER =====
-._comp._item._contextRating
-    width: 100%
-    height: fit-content
-    margin-bottom: 16px
-    padding: 0px 22px
-
-    ._skeleton
-        width: 100%
-        display: flex
-        flex-direction: column
-        align-items: center
-        margin: auto
-        gap: 10px
-
-        ._block
-            width: 100%
-            display: flex
-            flex-direction: column
-            gap: 6px
-
-            ._title
-                width: 60%
-                height: 24px
-                border-radius: 10px
-                background: rgba($app-text-color, 0.06)
-
-            ._descr
-                width: 80%
-                height: 14px
-                border-radius: 8px
-                background: rgba($app-text-color, 0.04)
-
-    ._content
-        width: 100%
-        display: flex
-        flex-direction: column
-        gap: 4px
-
-        ._block
-            width: 100%
-            display: flex
-            flex-direction: column
-            gap: 4px
-
-        .rt-title
-            font-size: 28px
-            font-weight: 800
-            color: $app-text-color
-            letter-spacing: -0.5px
-            margin-bottom: 4px
-
-        .rt-descr
-            font-size: 14px
-            font-weight: 500
-            color: $app-text-color-descr-primary
-            max-width: 280px
-            line-height: 1.35
-    
-
-._comp._item._yourTop
-    width: 100%
-    height: fit-content
-    margin-bottom: 15px
-
-    ._skeleton
-        width: 100%
-        display: flex
-        flex-direction: column
-        align-items: center
-        margin: auto
-        gap: 10px
-        
-        ._block
-            width: 100%
-            height: 66px
-            background: $app-leaderboard-second-background
-            opacity: .3
-            border-radius: 13px
-            display: flex
-            flex-direction: column
-            justify-content: center
-            text-align: center
-            align-items: center
-            gap: 14px
-
-    ._content
-        width: 100%
-        display: flex
-        flex-direction: column
-        align-items: center
-        margin: auto
-        gap: 6px
-
-        ._block
-            width: 100%
-            height: 66px
-            background: $app-leaderboard-second-background
-            border-radius: 13px
-            display: flex
-            align-items: center
-            padding: 0 16px
-            gap: 16px
-            
-            ._number
-                width: fit-content
-                height: auto
-
-                h4
-                    font-size: 16px
-                    font-weight: 700
-                    color: $app-text-color
-
-            ._user
-                width: 100%
-                height: 100%
-                display: flex
-                align-items: center
-                gap: 14px
-                
-                ._user_left
-                    width: fit-content
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    gap: 10px
-                    
-                    ._user_avatar
-                        width: 40px
-                        height: 40px
-                        border-radius: 50%
-                        background: $app-background-secondary
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        
-                        & img
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-
-                ._user_center
-                    width: 100%
-                    height: 100%
-                    display: flex
-                    flex-direction: column
-                    align-items: center
-                    justify-content: center
-                    gap: 3px
-                    
-                    ._user_center_name
-                        width: 100%
-                        height: auto
-                        
-                        & h4
-                            max-width: 170px
-                            overflow: hidden
-                            text-overflow: ellipsis
-                            font-size: 16px
-                            font-weight: 700
-                            color: $app-text-color
-                            
-                    ._user_center_gifts
-                        width: 100%
-                        height: auto
-                        display: flex
-                        align-items: center
-                        gap: 4px
-
-                        .kit-icon
-                            width: fit-content
-                            height: fit-content
-                            margin-top: 1px
-                            opacity: .45
-
-                            & svg
-                                width: 16px
-                                height: 16px
-
-                        & p
-                            font-size: 15px
-                            font-weight: 500
-                            color: $app-text-color
-                            opacity: .5
-
-
-._comp._item._otherTop
-    width: 100%
-    height: 100%
-    padding: 6px 6px
-    border-radius: 15px
-    margin-bottom: 15px
-    background: $app-leaderboard-background
-    margin-bottom: 30px
-
-    ._skeleton
-        width: 100%
-        height: 80px
-        display: flex
-        flex-direction: column
-        align-items: center
-        justify-content: center
-        margin: auto
-        gap: 10px
-
-        & ._leadersLoading
-            width: 100%
-            display: flex
-            align-items: center
-            justify-content: center
-
-            & .loader-icon
-                width: 26px
-                height: 26px
-                border: 2px solid $app-span-gray-background
-                border-top-color: $app-text-color
-                border-radius: 50%
-                animation: spinner 1s linear infinite
-
-    ._content
-        width: 100%
-        height: 100%
-        display: flex
-        flex-direction: column
-        align-items: center
-        margin: auto
-        gap: 6px
-
-        ._block
-            width: 100%
-            height: 66px
-            border-radius: 13px
-            display: flex
-            align-items: center
-            padding: 0 15px
-            gap: 16px
-
-            & ._leadersLoading
-                width: 100%
-                display: flex
-                align-items: center
-                justify-content: center
-
-                & .loader-icon
-                    width: 50px
-                    height: 50px
-                    border: 2px solid $app-span-gray-background
-                    border-top-color: $app-text-color
-                    border-radius: 50%
-                    animation: spinner 1s linear infinite
-            
-            ._number
-                width: 22px
-                height: auto
-
-                ._medal
-                    width: fit-content
-                    height: fit-content
-                    font-size: 22px
-                    font-weight: 700
-                    transform: translateX(-5px)
-                    margin-top: 1px
-
-                h4
-                    font-size: 16px
-                    font-weight: 700
-                    color: $app-text-color
-
-            ._user
-                width: 100%
-                height: 100%
-                display: flex
-                align-items: center
-                gap: 14px
-                
-                ._user_left
-                    width: fit-content
-                    height: 100%
-                    display: flex
-                    align-items: center
-                    gap: 10px
-                    
-                    ._user_avatar
-                        width: 40px
-                        height: 40px
-                        border-radius: 50%
-                        background: $app-background-secondary
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        
-                        & img
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-                            
-                        & .avatar_null
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-                            background: $app-span-gray-background
-                            display: flex
-                            justify-content: center
-                            align-items: center
-                                
-                            & h4
-                                font-size: 0.9em
-                                font-weight: 700
-                                color: $app-text-color
-
-                ._user_center
-                    width: 100%
-                    height: 100%
-                    display: flex
-                    flex-direction: column
-                    align-items: center
-                    justify-content: center
-                    gap: 3px
-                    
-                    ._user_center_name
-                        width: 100%
-                        height: auto
-                        
-                        & h4
-                            max-width: 170px
-                            white-space: nowrap
-                            overflow: hidden
-                            text-overflow: ellipsis
-                            font-size: 16px
-                            font-weight: 700
-                            color: $app-text-color-primary
-                            
-                    ._user_center_gifts
-                        width: 100%
-                        height: auto
-                        display: flex
-                        align-items: center
-                        gap: 4px
-
-                        .kit-icon
-                            width: fit-content
-                            height: fit-content
-                            margin-top: 1px
-                            opacity: .45
-
-                            & svg
-                                width: 16px
-                                height: 16px
-
-                        & p
-                            font-size: 15px
-                            font-weight: 500
-                            color: $app-text-color
-                            opacity: .5
-            
-            ._chevrone_left
-                width: fit-content
-                height: auto
-                display: flex
-                align-items: center
-                gap: 4px
-
-                .kit-icon
-                    width: fit-content
-                    height: fit-content
-                    margin-top: 1px
-                    opacity: .45
-
+// ═══ Лидерборд: сегмент-таб, подиум топ-3, список, закреплённая «твоя» строка ═══
 
 ._comp._item._leaderboard
     width: 100%
-    height: 100%
+    padding: 0 $app-page-padding-left
 
+    // ── скелетон ──
     ._skeleton
         width: 100%
-        height: 100%
-            
-        .sections
+        display: flex
+        flex-direction: column
+        gap: 18px
+
+        .rt-seg-skel
             width: 100%
-            height: fit-content
+            height: 52px
+            border-radius: 99em
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        .rt-hero-skel
             display: flex
-            align-items: center
-            overflow: hidden
-            gap: 8px
-            margin-bottom: 13px
-            padding: 0px 22px
+            align-items: flex-end
+            justify-content: center
+            gap: 26px
+            padding: 10px 0 4px
 
-            .section
-                width: 100px
-                height: 40px
-                background: rgba($app-span-gray-background, 0.5)
-                border-radius: 50px
-
-        .topFlexed
-            width: 100%
-            height: 100%
-            display: flex
-            flex-direction: row
-
-        .top
-            min-width: 100%
-            height: 100%
-            transform: translateX(0%)
-            transition: transform 0.22s ease
-
-            &.holders
-                transform: translateX(0%)
-                height: 100%
-
-                &.hide
-                    transform: translateX(-100%)
-                    height: 0
-
-            .top-three
-                display: flex
-                justify-content: space-around
-                align-items: end
-                margin-top: 1.8rem
-                margin-bottom: 1.8rem
-                padding: 0px 14px
-                width: 100%
-                z-index: 5
-
-                @media screen and (max-width: 356px)
-                    justify-content: space-between
-
-                .top-user
-                    display: flex
-                    flex-direction: column
-                    align-items: center
-                    gap: 6px
-
-                    &.place-1
-                        .avatar-wrapper 
-                            width: 80px
-                            height: 80px
-
-                            .avatar
-                                width: 80px
-                                height: 80px
-                                border: 2px solid $app-leaderboard-background-one
-                            
-                            .rank-badge
-                                background: $app-leaderboard-background-one
-                    
-                    &.place-2
-                        .avatar-wrapper 
-                            width: 60px
-                            height: 60px
-                            
-                            .avatar
-                                width: 60px
-                                height: 60px
-                                border: 2px solid rgba($app-leaderboard-background-two, 0.7)
-                            
-                            .rank-badge
-                                background: $app-leaderboard-background-two
-                    
-                    &.place-3
-                        .avatar-wrapper 
-                            width: 60px
-                            height: 60px
-                            
-                            .avatar
-                                width: 60px
-                                height: 60px
-                                border: 2px solid rgba($app-leaderboard-background-three, 0.6)
-                            
-                            .rank-badge
-                                background: $app-leaderboard-background-three
-
-                    .avatar-wrapper
-                        position: relative
-                        width: 70px
-                        height: 70px
-
-                        .avatar
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-                            object-fit: cover
-                        
-                        & .avatar_null
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-                            background: $app-span-gray-background
-                            display: flex
-                            justify-content: center
-                            align-items: center
-                                
-                            & h4
-                                margin-top: -2px
-                                font-size: 1em
-                                font-weight: 700
-                                color: $app-text-color
-
-                        .rank-badge
-                            position: absolute
-                            top: -4px
-                            right: -4px
-                            background: $app-leaderboard-background-one
-                            color: black
-                            font-weight: 600
-                            border-radius: 50%
-                            width: 22px
-                            height: 22px
-                            font-size: 0.8rem
-                            display: flex
-                            align-items: center
-                            justify-content: center
-                    
-                    .name
-                        margin-top: 0.5rem
-                        font-weight: 600
-                        max-width: 130px
-                        overflow: hidden
-                        text-overflow: ellipsis
-                        white-space: nowrap
-                    
-                        @media screen and (max-width: 356px)
-                            font-size: 13px
-
-                    .gifts
-                        font-size: 0.9rem
-                        color: $app-button-text-color
-                        background: $app-button-background-blur
-                        border-radius: 50px
-                        padding: 6px 12px
-                        margin-top: 0.3rem
-                        white-space: nowrap
-
-                        @media screen and (max-width: 356px)
-                            font-size: 0.7rem
-                            padding: 4px 8px
-            
-            .other-list
-                display: flex
-                flex-direction: column
-                padding: 0px 16px
+            &__u
+                width: 84px
+                height: 84px
+                border-radius: 50%
                 background: $app-background-secondary
-                box-shadow: 0px 0px 35px rgba($app-preview, 0.2)
-                border-radius: 24px
-                z-index: 10
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
 
-                .other-user
-                    padding: 14px 6px
-                    display: flex
-                    align-items: center
-                    justify-content: space-between
-                    border-bottom: 1px solid rgba($app-input-background, 0.5)
+                &.small
+                    width: 62px
+                    height: 62px
 
-                    &:last-child
-                        border-bottom: none
+        .rt-list-skel
+            display: flex
+            flex-direction: column
+            gap: 8px
 
-                    .rank
-                        width: 26px
-                        height: 30px
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        font-size: 14px
-                        font-weight: 600
-                        color: $app-text-color
-                    
-                    .info
-                        flex: 1
-                        margin-left: 1rem
-                        display: flex
-                        flex-direction: column
-                        gap: 0.4rem
-                    
-                        .name
-                            font-weight: 600
-                            color: $app-text-color
-                        
-                        .gifts
-                            font-size: 0.9rem
-                            color: $app-text-color-phiolete
-                    
-                    .small-avatar
-                        width: 46px
-                        height: 46px
-                        border-radius: 50%
-                        object-fit: cover
-                        background: $app-span-gray-background
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        
-                        & h4
-                            font-size: 0.9em
-                            font-weight: 700
-                    
-                    .hold
-                        width: fit-content
-                        height: 100%
-                        display: flex
-                        align-items: center
-                        justify-content: space-between
-                        gap: 7px
-                        position: relative
-                        
-                        & p
-                            font-size: 1.05em
-                            font-weight: 700
-                            color: $app-text-color
-                            
-                        & img
-                            width: 42px
-                            height: 42px
-                            border-radius: 50%
-                            object-fit: cover
+            &__row
+                width: 100%
+                height: 60px
+                border-radius: 18px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
 
     ._content
         width: 100%
-        height: 100%
+        display: flex
+        flex-direction: column
 
-        // ===== ANIMATED TABS =====
-        .rt-tabs
-            width: fit-content
-            height: 42px
+// ── сегмент-таб: стеклянная пилюля со скользящим индикатором ──
+.rt-seg
+    position: relative
+    width: 100%
+    height: 52px
+    display: flex
+    align-items: stretch
+    padding: 4px
+    border-radius: 99em
+    box-sizing: border-box
+    background-color: color-mix(in srgb, $app-background-secondary-2 50%, transparent)
+    backdrop-filter: blur(13px) saturate($app-saturation)
+    -webkit-backdrop-filter: blur(13px) saturate($app-saturation)
+    box-shadow: $app-glass-shadow
+    -webkit-box-shadow: $app-glass-shadow
+    margin-bottom: 20px
+
+    &.is-right .rt-seg__indicator
+        transform: translateX(100%)
+
+    &__indicator
+        position: absolute
+        top: 4px
+        bottom: 4px
+        left: 4px
+        width: calc(50% - 4px)
+        border-radius: 999px
+        background: #ffffff16
+        pointer-events: none
+        transform: translateX(0)
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)
+        will-change: transform
+
+    &__tab
+        flex: 1 1 0
+        min-width: 0
+        height: 100%
+        display: flex
+        align-items: center
+        justify-content: center
+        padding: 0
+        border: none
+        border-radius: 999px
+        background: transparent
+        cursor: pointer
+        position: relative
+        z-index: 1
+        transition: transform 0.2s ease
+        -webkit-tap-highlight-color: transparent
+
+        &:active
+            transform: scale(0.97)
+
+        & span
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+            opacity: 0.4
+            letter-spacing: -0.2px
+            transition: opacity 0.28s ease
+
+        &.active span
+            opacity: 1
+
+// контент таба въезжает мягко при переключении
+.rt-board
+    animation: fade-in-up 0.34s cubic-bezier(0.22, 1, 0.36, 1) both
+
+// ── подиум топ-3: 2 — 1 — 3 ──
+.rt-hero
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    align-items: end
+    justify-items: center
+    padding: 12px 0 22px
+
+    &__u
+        position: relative
+        display: flex
+        flex-direction: column
+        align-items: center
+        width: 100%
+        min-width: 0
+        cursor: pointer
+        animation: bounce-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both
+        animation-delay: calc(var(--hi, 0) * 0.1s)
+        transition: transform 0.15s ease
+        -webkit-tap-highlight-color: transparent
+
+        &:active
+            transform: scale(0.96)
+
+    &__ava
+        position: relative
+        width: 62px
+        height: 62px
+        border-radius: 50%
+        padding: 2.5px
+        box-sizing: content-box
+
+        img,
+        &-null
+            width: 100%
+            height: 100%
+            border-radius: 50%
+            object-fit: cover
+            display: block
+            background: $app-background-secondary
+
+        &-null
             display: flex
             align-items: center
-            position: relative
-            border-radius: 12px
-            background: rgba($app-text-color, 0.05)
-            padding: 3px
-            margin: 0 16px 18px
-            gap: 0
+            justify-content: center
 
-            &__item
-                position: relative
-                z-index: 1
-                height: 100%
-                display: flex
-                align-items: center
-                justify-content: center
-                padding: 0 20px
-                font-size: 14px
-                font-weight: 600
+            h4
+                font-size: 22px
+                font-weight: 700
                 color: $app-text-color-descr-primary
-                cursor: pointer
-                transition: color 0.2s ease
-                white-space: nowrap
 
-                &.active
-                    color: $app-text-color
+    // номер места — кружок на нижней кромке аватара
+    &__rank
+        position: absolute
+        bottom: -8px
+        left: 50%
+        transform: translateX(-50%)
+        min-width: 22px
+        height: 22px
+        padding: 0 6px
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 99em
+        font-size: 12px
+        font-weight: 700
+        color: $app-preview
+        box-sizing: border-box
 
-            &__bg
-                position: absolute
-                top: 3px
-                left: 3px
-                width: calc(50% - 3px)
-                height: calc(100% - 6px)
-                border-radius: 9px
-                background: rgba($app-text-color, 0.1)
-                transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)
+    &__name
+        margin-top: 14px
+        max-width: 92%
+        text-align: center
+        font-size: 13px
+        font-weight: 600
+        color: $app-text-color
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+        letter-spacing: -0.2px
 
-                &.right
-                    transform: translateX(100%)
+    &__count
+        margin-top: 5px
+        display: flex
+        align-items: center
+        gap: 4px
 
-        // ===== ANIMATION CLASSES =====
-        .rt-podium
-            animation: podiumRise 0.5s ease both
+        .kit-icon
+            width: 12px
+            display: flex
+            opacity: 0.5
 
-            &.place-1
-                .avatar-wrapper .avatar
-                    animation: glowPulse 2.5s ease-in-out infinite
-                    border-radius: 50%
+            svg
+                width: 12px
+                height: 12px
 
-                .avatar-wrapper .avatar_null
-                    animation: glowPulse 2.5s ease-in-out infinite
+            path
+                fill: $app-text-color
 
-        .rt-row
-            animation: rowSlideIn 0.3s ease both
+        span
+            font-size: 13px
+            font-weight: 700
+            color: $app-text-color
+            font-variant-numeric: tabular-nums
 
-        .topFlexed
+    // цвета мест: золото / серебро / бронза (токены лидерборда)
+    &__u.is-1
+        .rt-hero__ava
+            width: 84px
+            height: 84px
+            background: linear-gradient(180deg, $app-leaderboard-background-one, rgba($app-leaderboard-background-one, 0.25))
+
+        .rt-hero__rank
+            background: $app-leaderboard-background-one
+
+        .rt-hero__name
+            font-size: 14px
+
+        .rt-hero__count span
+            font-size: 15px
+
+    &__u.is-2
+        .rt-hero__ava
+            background: linear-gradient(180deg, $app-leaderboard-background-two, rgba($app-leaderboard-background-two, 0.25))
+
+        .rt-hero__rank
+            background: $app-leaderboard-background-two
+            color: #fff
+
+    &__u.is-3
+        .rt-hero__ava
+            background: linear-gradient(180deg, $app-leaderboard-background-three, rgba($app-leaderboard-background-three, 0.25))
+
+        .rt-hero__rank
+            background: $app-leaderboard-background-three
+            color: #fff
+
+// ── список 4+ — единый плоский блок, как списки в шитах ──
+.rt-list
+    width: 100%
+    background: #171717
+    border-radius: 29px
+    padding: 4px 18px
+    margin-bottom: 12px
+
+    &__row
+        display: flex
+        align-items: center
+        gap: 14px
+        height: 58px
+        border-bottom: 1px solid rgba($app-text-color, 0.05)
+        cursor: pointer
+        -webkit-tap-highlight-color: transparent
+        animation: fade-in-up 0.3s ease both
+        animation-delay: calc(var(--ri, 0) * 0.03s)
+
+        &:last-child
+            border-bottom: none
+
+        &:active
+            opacity: 0.65
+
+    &__rank
+        width: 30px
+        min-width: 30px
+        font-size: 14px
+        font-weight: 700
+        color: $app-text-color-descr
+        text-align: center
+        font-variant-numeric: tabular-nums
+
+    &__ava
+        width: 42px
+        height: 42px
+        min-width: 42px
+        border-radius: 50%
+        object-fit: cover
+        background: $app-span-gray-background
+
+        &--null
+            display: flex
+            align-items: center
+            justify-content: center
+
+            h4
+                font-size: 16px
+                font-weight: 700
+                color: $app-text-color-descr-primary
+
+    &__name
+        flex: 1
+        min-width: 0
+        font-size: 15px
+        font-weight: 600
+        color: $app-text-color
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+        letter-spacing: -0.2px
+
+    &__count
+        display: flex
+        align-items: center
+        gap: 6px
+        flex-shrink: 0
+        height: 34px
+        padding: 0 13px
+        border-radius: 99em
+        background: linear-gradient(180deg, #232323 0%, #1b1b1b 100%)
+        box-shadow: $app-glass-shadow-2
+        -webkit-box-shadow: $app-glass-shadow-2
+
+        .kit-icon
+            width: 13px
+            display: flex
+            opacity: 0.5
+
+            svg
+                width: 13px
+                height: 14px
+
+            path
+                fill: $app-text-color
+
+        span
+            font-size: 14px
+            font-weight: 600
+            color: $app-text-color
+            letter-spacing: -0.2px
+            font-variant-numeric: tabular-nums
+
+// ── твоё место: компактная стеклянная пилюля по центру над меню ──
+.rt-me
+    position: fixed
+    left: 50%
+    transform: translateX(-50%)
+    bottom: calc($app-menu-height + max(22px, env(safe-area-inset-bottom, 0px)) + 12px)
+    width: calc(100% - 32px)
+    max-width: calc($app-max-preview-width - 32px)
+    display: flex
+    align-items: center
+    gap: 10px
+    height: 48px
+    padding: 0 18px 0 8px
+    border-radius: 99em
+    z-index: 20
+    box-sizing: border-box
+    background-color: color-mix(in srgb, $app-background-secondary-2 50%, transparent)
+    backdrop-filter: blur(13px) saturate($app-saturation)
+    -webkit-backdrop-filter: blur(13px) saturate($app-saturation)
+    box-shadow: $app-glass-shadow, 0 8px 24px rgba(0, 0, 0, 0.35)
+    -webkit-box-shadow: $app-glass-shadow, 0 8px 24px rgba(0, 0, 0, 0.35)
+    animation: rtMeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both
+
+    &__ava
+        width: 32px
+        height: 32px
+        min-width: 32px
+        border-radius: 50%
+        overflow: hidden
+        background: $app-span-gray-background
+
+        img
+            width: 100%
+            height: 100%
+            object-fit: cover
+            display: block
+
+        &-null
             width: 100%
             height: 100%
             display: flex
-            flex-direction: row
-            overflow: hidden
+            align-items: center
+            justify-content: center
 
-        .top
-            min-width: 100%
-            height: 100%
-            transform: translateX(0%)
-            transition: transform 0.22s ease
+            h4
+                font-size: 13px
+                font-weight: 700
+                color: $app-text-color-descr-primary
 
-            &.contest
-                .top-three
-                    .sk-block
-                        width: 100%
-                        height: 120px
-                        opacity: .2
-                        background: $app-background-secondary
-                        border-radius: 20px
+    &__name
+        flex: 1
+        min-width: 0
+        font-size: 15px
+        font-weight: 600
+        color: $app-text-color
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+        letter-spacing: -0.2px
 
-                    .name
-                        max-width: 80px !important
-                        
-                    .gifts
-                        display: flex
-                        width: fit-content
-                        white-space: nowrap
-                        align-items: center
-                        background: rgba($app-background-blue-secondary, 0.15) !important
-                        
-                        img
-                            width: 11px
-                            height: 11px
-                            margin-left: 4px
+    &__right
+        flex-shrink: 0
+        display: flex
+        align-items: center
+        gap: 8px
 
-                .progress-contest
-                    width: 100%
-                    height: fit-content
-                    margin-top: -10px
-                    margin-bottom: 22px
-                    border-radius: 10px
-                    padding: 0 16px
+    &__rank
+        font-size: 14px
+        font-weight: 600
+        color: $app-text-color
+        font-variant-numeric: tabular-nums
+        letter-spacing: -0.2px
 
-                    .progress-contest-lined
-                        width: 100%
-                        height: 6px
-                        background: rgba($app-background-blue-secondary, 0.05)
-                        border-radius: 10px
+    &__dot
+        width: 3px
+        height: 3px
+        border-radius: 50%
+        background: rgba($app-text-color, 0.25)
 
-                        .progress-contest-line
-                            width: 10%
-                            height: 100%
-                            background: rgba($app-background-blue-secondary, 0.8)
-                            border-radius: 10px
-                            transition: width 0.2s linear
-                    
-                    .progressed-texts
-                        width: 100%
-                        height: fit-content
-                        display: flex
-                        align-items: center
-                        justify-content: space-between
-                        margin-top: 10px
-                        margin-bottom: 8px
+    .kit-icon
+        width: 13px
+        display: flex
+        opacity: 0.5
 
-                        .title
-                            width: fit-content
-                            height: 100%
-                            display: flex
-                            align-items: center
-                            justify-content: center
+        svg
+            width: 13px
+            height: 14px
 
-                            &:last-child
-                                h4
-                                    color: $app-text-color
-                                    opacity: 1
+        path
+            fill: $app-text-color
 
-                                    span
-                                        color: $app-text-color-primary-secondary
-                                        
+    &__count
+        font-size: 14px
+        font-weight: 600
+        color: $app-text-color
+        letter-spacing: -0.2px
+        font-variant-numeric: tabular-nums
 
-                            h4
-                                font-size: 14px
-                                font-weight: 600
-                                color: $app-text-color-primary-secondary
-                                white-space: nowrap
-                            
-                            img
-                                width: 11px
-                                height: 11px
-                                margin-left: 4px
-                    
-                    .info 
-                        margin-top: 10px
-                        p
-                            font-size: 13px
-                            font-weight: 400
-                            opacity: 0.6
+@keyframes rtMeIn
+    0%
+        opacity: 0
+        transform: translate(-50%, 10px)
+    100%
+        opacity: 1
+        transform: translate(-50%, 0)
 
-                .my-volume
-                    margin-top: 20px
-                    margin-bottom: 12px
-
-                    .title
-                        display: flex
-                        align-items: center
-
-                        h4
-                            font-size: 16px
-                            margin-right: 6px
-                            font-weight: 500
-
-                        p
-                            font-size: 16px
-                            font-weight: 600
-                            color: $app-text-color
-                        
-                        img
-                            width: 12px
-                            height: 12px
-                            margin-left: 4px
-
-                .other-list
-                    margin-bottom: 12px
-
-                    .sk-block
-                        width: 100%
-                        height: 30vh
-                        opacity: .3
-                        background: $app-background-secondary
-                        border-radius: 20px
-
-                    &.my
-                        background: rgba($app-background-blue-secondary, 0.08)
-
-                        .other-user
-                            .info
-                                margin-left: 0
-
-                            .name
-                                display: flex
-                                align-items: center
-                                gap: 4px
-
-                                span
-                                    font-size: 12px
-                                    color: $app-text-color
-
-                    .gifts
-                        display: flex
-                        width: fit-content
-                        white-space: nowrap
-                        align-items: center
-                        background: rgba($app-background-blue-secondary, 0.1) !important
-                        padding: 4px 9px
-                        border-radius: 50px
-
-                        img
-                            width: 11px
-                            height: 11px
-                            margin-left: 4px
-
-            &.holders
-                transform: translateX(0%)
-                visibility: visible
-                height: 100%
-
-                &.hide
-                    transform: translateX(-100%)
-                    visibility: hidden
-                    height: 0
-
-            &.gifts
-                transform: translateX(-100%)
-                margin-top: 12px
-                visibility: visible
-                height: auto
-
-                .other-list
-                    .small-avatar
-                        margin-left: 7px
-                        margin-right: -2px
-
-                &.hide
-                    transform: translateX(0%)
-                    visibility: hidden
-                    height: 0
-
-            .top-three
-                display: flex
-                justify-content: center
-                align-items: flex-end
-                gap: 6px
-                margin-top: 20px
-                margin-bottom: 24px
-                padding: 0 10px
-                width: 100%
-                z-index: 5
-
-                .top-user
-                    display: flex
-                    flex-direction: column
-                    align-items: center
-                    gap: 4px
-                    flex: 1
-                    max-width: 120px
-                    cursor: pointer
-
-                    &.place-1
-                        order: 2
-                        padding-bottom: 14px
-
-                        .avatar-wrapper
-                            width: 84px
-                            height: 84px
-
-                            .avatar
-                                border: 2.5px solid $app-leaderboard-background-one
-
-                            .rank-badge
-                                background: $app-leaderboard-background-one
-                                width: 24px
-                                height: 24px
-                                font-size: 12px
-
-                    &.place-2
-                        order: 1
-
-                        .avatar-wrapper
-                            width: 64px
-                            height: 64px
-
-                            .avatar
-                                border: 2px solid rgba($app-leaderboard-background-two, 0.7)
-
-                            .rank-badge
-                                background: $app-leaderboard-background-two
-
-                    &.place-3
-                        order: 3
-
-                        .avatar-wrapper
-                            width: 64px
-                            height: 64px
-
-                            .avatar
-                                border: 2px solid rgba($app-leaderboard-background-three, 0.6)
-
-                            .rank-badge
-                                background: $app-leaderboard-background-three
-
-                    .avatar-wrapper
-                        position: relative
-                        width: 64px
-                        height: 64px
-
-                        .avatar
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-                            object-fit: cover
-
-                        .avatar_null
-                            width: 100%
-                            height: 100%
-                            border-radius: 50%
-                            background: $app-span-gray-background
-                            display: flex
-                            justify-content: center
-                            align-items: center
-
-                            h4
-                                font-size: 1em
-                                font-weight: 700
-                                color: $app-text-color
-
-                        .rank-badge
-                            position: absolute
-                            bottom: -6px
-                            left: 50%
-                            transform: translateX(-50%)
-                            width: 20px
-                            height: 20px
-                            display: flex
-                            align-items: center
-                            justify-content: center
-                            background: $app-leaderboard-background-one
-                            color: #000
-                            font-weight: 700
-                            font-size: 11px
-                            border-radius: 50%
-
-                        .gift
-                            position: absolute
-                            top: -10px
-                            right: -10px
-                            width: 38px
-                            height: 38px
-                            display: flex
-                            align-items: center
-                            justify-content: center
-
-                            img
-                                width: 34px
-                                height: 34px
-
-                    .name
-                        margin-top: 8px
-                        font-size: 13px
-                        font-weight: 600
-                        color: $app-text-color
-                        max-width: 100px
-                        overflow: hidden
-                        text-overflow: ellipsis
-                        white-space: nowrap
-                        text-align: center
-
-                    .gifts
-                        font-size: 12px
-                        font-weight: 600
-                        color: $app-text-color-descr-primary
-                        white-space: nowrap
-            
-            .other-list
-                display: flex
-                flex-direction: column
-                padding: 4px 14px
-                background: $app-background-secondary
-                border-radius: 20px
-                z-index: 10
-
-                .other-user
-                    height: 62px
-                    display: flex
-                    align-items: center
-                    gap: 12px
-                    border-bottom: 1px solid rgba($app-input-background, 0.35)
-                    cursor: pointer
-
-                    &:last-child
-                        border-bottom: none
-
-                    .rank
-                        width: 24px
-                        flex-shrink: 0
-                        text-align: center
-                        font-size: 13px
-                        font-weight: 700
-                        color: rgba($app-text-color, 0.45)
-
-                    .gift
-                        position: relative
-                        width: 28px
-                        height: 28px
-                        flex-shrink: 0
-                        display: flex
-                        align-items: center
-                        justify-content: center
-
-                        img
-                            width: 32px
-                            height: 32px
-
-                    .info
-                        flex: 1
-                        min-width: 0
-                        display: flex
-                        flex-direction: column
-                        gap: 2px
-
-                        .name
-                            font-size: 14px
-                            font-weight: 600
-                            color: $app-text-color
-                            white-space: nowrap
-                            overflow: hidden
-                            text-overflow: ellipsis
-
-                        .gifts
-                            font-size: 12px
-                            font-weight: 500
-                            color: $app-text-color-descr-primary
-                            margin-bottom: 0
-
-                    .small-avatar
-                        width: 40px
-                        height: 40px
-                        flex-shrink: 0
-                        border-radius: 50%
-                        object-fit: cover
-                        background: $app-span-gray-background
-                        display: flex
-                        justify-content: center
-                        align-items: center
-
-                        h4
-                            font-size: 0.85em
-                            font-weight: 700
-
-                    .hold
-                        display: flex
-                        align-items: center
-                        gap: 8px
-
-                        p
-                            font-size: 15px
-                            font-weight: 700
-                            color: $app-text-color
-
-                        img
-                            width: 40px
-                            height: 40px
-                            border-radius: 50%
-                            object-fit: cover
+@media (prefers-reduced-motion: reduce)
+    .rt-board,
+    .rt-hero__u,
+    .rt-list__row,
+    .rt-me
+        animation: none

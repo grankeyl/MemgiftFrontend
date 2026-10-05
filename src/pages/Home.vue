@@ -1,89 +1,30 @@
 <template>
   <section class="_wrap _home" :class="{ desktop: isDesktop() }">
+    <div class="bluring-t"></div>
+    <div class="bluring-b"></div>
     <div class="_view">
-
-      <div class="_home-glow">
-        <div class="_home-glow-orb _home-glow-orb--1"></div>
-        <div class="_home-glow-orb _home-glow-orb--2"></div>
-      </div>
-
       <div class="title">
         <img src="/logotype.svg" alt="logotype" />
-        <button class="_ratingBtn" @click="openRating">
-          <div class="kit-icon" v-html="Icon.Rating"></div>
-          <span>{{ $t('rating.title') }}</span>
-        </button>
+        <div class="title-right flex items-center gap-2">
+          <div class="balance" @click="openWallet">
+            <Icon class="kit-icon" v-html="Icon.Gram" />
+            <span>{{ cutNumber(getBalance.toString()) }}</span>
+          </div>
+        </div>
       </div>
 
       <Slider
         @loadSuccess="handleLoadSuccess"
-
         :Skeleton="isPageLoading"
         :SkeletonTime="configApp.skeletonTime"
-
         :slides="SlidesList" 
       />
 
-      <transition name="fade-history" mode="out-in">
-        <div v-if="getFirstHistory" class="_direction _comp _item _lastActivity _lefting" :key="getFirstHistory.id">
-          <div class="_content" @click="openActivity()">
-            <div 
-              class="_block"
-              :class="getFirstHistory?.gift_rarity || ''"
-            >
-              <div class="_image">
-                <img :src="getFirstHistory.gift_image" />
-              </div>
-              <div class="_title">
-                <h4 v-if="getFirstHistory.status === 'purchased'">
-                  {{ getFirstHistory.user_name }}
-                  <p>{{ $t('home.buyed') }}</p>
-                  <span @click="openCollection(getFirstHistory?.u_key)">
-                    {{ getFirstHistory?.gift_name }}
-                  </span>
-                </h4>
-                <h4 v-if="getFirstHistory.status === 'transferred'">
-                  {{ getFirstHistory.from_user_name }}
-                  <p>{{ $t('home.sended') }}</p>
-                  <span @click="openCollection(getFirstHistory?.u_key)">
-                    {{ getFirstHistory?.gift_name }}
-                  </span>
-                </h4>
-                <p>{{ unixToRelative(getFirstHistory.created_at) }}</p>
-              </div>
-              <div class="_button">
-                <button>
-                  <div class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
-
-      <Title
-        class="_lefting"
-
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-
-        :Text="$t('home.gift_store_title')"
-        Key="_upcoming"
-
-        :ImageShow="false"
-      />
-
       <Gifts
-        class="_lefting"
-
         @loadSuccess="handleLoadSuccess"
-
         :Skeleton="isPageLoading"
         :SkeletonTime="configApp.skeletonTime"
       />
-          
     </div>
   </section>
 </template>
@@ -98,6 +39,7 @@ import { Icon } from '../components/Icon';
 import { getConfig } from '../config';
 import { getImageUrl, unixToRelative } from '../utils/useApp';
 import { pluralizeGift } from '../utils/useGift';
+import { cutNumber } from '../utils/useTon';
 
 import * as historyApi from '../api/historyApi';
 
@@ -125,6 +67,9 @@ export default {
     getFirstHistory() {
       return this.storeCache.HistoryApp[0];
     },
+    getBalance() {
+      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
   },
 
   data() {
@@ -137,41 +82,18 @@ export default {
       propsSuccess: this.$props.success,
       isPageLoading: true,
 
-      PremiumGiftKey: "HungryDog",
- 
       SlidesList: [
         {
           id: 2,
-          Title: "Бесплатный\nподарок",
-          Button: "Author",
-          ButtonText: "Забрать >",
-          ButtonKey: "Scooby",
-          ButtonSlide: "first",
-          ImageContent: "https://memgift.codes/s3/models/Scooby/Scooby.svg",
-          BgImage: "/home/scooby-banner.jpg",
+          ImageContent: "",
+          BgImage: "/home/slider-1.png?v=2",
+          Link: "https://t.me/memgift/768",
         },
         {
           id: 1,
-          Title: this.$t('home.slider_1'),
-          Button: "Buy",
-          ButtonText: "500",
-          ButtonKey: "Chillguy",
-          ButtonSlide: "first",
           ImageContent: "",
-          BgImage: "/home/banner.png",
-        },
-        {
-          id: 3,
-          Title: this.$t('home.slider_2'),
-          Button: "Reading",
-          ButtonText: this.$t('home.slider_button'),
-          ButtonIcon: Icon.ChevroneRight,
-          ButtonSlide: "other",
-          ImageContent: "/home/banner-2-image.png",
-          BgImage: "/home/banner-2.png",
-          ButtonLink: typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_AFFILIATE
-          ? import.meta.env.VITE_APP_AFFILIATE
-          : null,
+          BgImage: "/home/slider-2.png?v=2",
+          Link: "https://t.me/memgift/468",
         },
       ],
 
@@ -180,43 +102,17 @@ export default {
       getImageUrl,
       unixToRelative,
       pluralizeGift,
+      cutNumber,
     };
   },
 
   mounted() {
     TelegramModule.hideBackButton();
-
-    this.SlidesList.forEach((slide, index) => {
-      if (index === 1) {
-        try {
-          slide.ButtonKey = this.PremiumGiftKey;
-          slide.ButtonText = this.storeCache.NftsAppData[this.PremiumGiftKey].Price;
-          slide.ImageContent = this.storeCache.NftsAppData[this.PremiumGiftKey].ImageMain;
-        } catch {}
-      }
-    });
-
     this.initHistory();
-
-    this.$watch(
-      () => this.storeCache.NftsAppData,
-      (newValue) => {
-        if (newValue) {
-          this.SlidesList.forEach((slide, index) => {
-            if (index === 1) {
-              try {
-                slide.ButtonKey = this.PremiumGiftKey;
-                slide.ButtonText = newValue[this.PremiumGiftKey].Price;
-                slide.ImageContent = newValue[this.PremiumGiftKey].ImageMain;
-              } catch {}
-            }
-          });
-        }
-      }
-    );
   },
 
   methods: {
+    openWallet() { this.$router.push('/wallet'); },
     checkPageApp() {
       const pageAppCheck = this.storeCache.LoadedData.includes(this.pageApp);
 
@@ -229,7 +125,7 @@ export default {
     handleLoadSuccess() {
       this.handleLoads ++;
 
-      if (this.handleLoads >= 2) {
+      if (this.handleLoads >= 1) {
         setTimeout(() => {
           if (this.$props.success) {
             this.isPageLoading = false;
@@ -280,4 +176,5 @@ export default {
 <style lang="sass">
 @use "@/assets/styles/home/_main.sass"
 @use "@/assets/styles/home/_comp.sass"
+// Filter modals: global via App.vue → _filter-modals.sass
 </style>

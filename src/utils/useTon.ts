@@ -1,9 +1,9 @@
-export const obfuscateAddress = (address: string) => {
-    const startLength = 3;
-    const endLength = 5;
-    const str = address.slice(0, startLength) + "..." + address.slice(-endLength);
-    if (str.length <= startLength + endLength) return str;
-    return `${str.slice(0, startLength)}...${str.slice(-endLength)}`;
+export const obfuscateAddress = (address?: string | null) => {
+    if (!address || typeof address !== 'string') return '';
+    const cleaned = address.trim();
+    if (!cleaned) return '';
+    if (cleaned.length <= 10) return cleaned;
+    return `${cleaned.slice(0, 4)}...${cleaned.slice(-4)}`;
 };
 
 export const cutNumber = (num: string, decimals = 2) => {

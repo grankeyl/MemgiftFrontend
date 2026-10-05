@@ -1060,3 +1060,48 @@
         border-top-color: $app-text-color
         border-radius: 50%
         animation: spinner 1s linear infinite
+
+.profile-filter-skeleton
+    margin-bottom: 12px
+
+    .items-skeleton__row
+        overflow: hidden
+
+    .items-skeleton__circle,
+    .items-skeleton__line,
+    .items-skeleton__box
+        position: relative
+        overflow: hidden
+
+        &::after
+            content: ''
+            position: absolute
+            inset: 0
+            background: linear-gradient(90deg, transparent 0%, rgba($app-text-color, 0.08) 46%, transparent 100%)
+            transform: translateX(-120%)
+            animation: profile-filter-skeleton-glint 1.35s ease-in-out infinite
+
+    .profile-filter-skeleton__copy
+        flex: 1
+        min-width: 0
+        display: flex
+        flex-direction: column
+        gap: 7px
+
+    .profile-filter-skeleton__line-small
+        height: 10px
+        opacity: 0.58
+
+    .profile-filter-skeleton__circle-symbol
+        border-radius: 50%
+        background: conic-gradient(from 30deg, rgba($app-background-blue-secondary, 0.2), $app-background-secondary, rgba($app-button-text-color, 0.16), $app-background-secondary)
+
+    .profile-filter-skeleton__circle-backdrop
+        border-radius: 50%
+        background: radial-gradient(circle at 36% 34%, rgba($app-button-blue-light-text-color, 0.28), $app-background-secondary 48%, rgba($app-button-text-color, 0.14) 100%)
+
+@keyframes profile-filter-skeleton-glint
+    0%
+        transform: translateX(-120%)
+    100%
+        transform: translateX(120%)

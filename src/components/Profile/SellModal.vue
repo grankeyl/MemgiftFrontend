@@ -1,95 +1,112 @@
 <template>
-  <div 
-    class="_direction _comp _item _modelModal sell"
-    :class="[Key]"
-  >
-      <div 
-        v-if="isLoading" 
-        class="_skeleton"
-        :class="{ hide: !ModalActive }"
+  <Teleport to="body">
+    <div class="overlay mgm-overlay" :class="{ 'is-open is-dark': isVisible }" @click="closeModal" />
+
+    <div v-if="isRendered" class="_direction _comp _item giftModal pgm-sell-modal">
+      <div
+        class="mgm-dock pgm-dock"
+        :class="{ hide: !isVisible, open: isVisible }"
+        :style="sheetStyle"
+        @touchstart.passive="onTouchStart"
+        @touchmove.prevent="onTouchMove"
+        @touchend="onTouchEnd"
       >
-        <div @click="closeModal" class="close"></div>
-      </div>
-      <div 
-        v-if="!isLoading" 
-        class="_content"
-        :class="{ hide: !ModalActive }"
-      >
-        <div class="head">
-          <div class="centered">
-            <div class="kit-icon" v-html="Icon.Gift"></div>
-            <h4>Sell Gift on Market</h4>
-          </div>
-          <div @click="closeModal" class="close">
+        <div class="mgm-sheet">
+          <button type="button" class="mgm-close" :disabled="isSubmitting" aria-label="Close" @click="closeModal">
             <div class="kit-icon" v-html="Icon.Close"></div>
+          </button>
+
+          <div v-if="!gift" class="pgm-sell-empty">
+            <h3>Gift unavailable</h3>
+            <p>Close this window and try again.</p>
           </div>
-        </div>
-        <div class="sells">
-          <div
-            v-for="(sell, index) in ModalSellList"
-            :key="index"
-            class="sell"
-          >
-            <div class="nft">
-              <div
-                class="background upg"
-                :style="{
-                  '--center-color': sell.background_colors_center,
-                  '--around-color': sell.background_colors_around,
-                }"
-              ></div>
-              <div class="symbol upg">
-                <img :src="sell.symbol_image" :alt="sell.symbol_name" />
-              </div>
-              <div class="model">
-                <div class="upg">
-                  <div v-if="sell.gift_media === 'svg'" class="image">
-                    <img :src="sell.nft_image" alt="model" />
-                  </div>
-                  <div v-if="sell.gift_media === 'lottie'" class="image">
-                    <img :src="getUpgradedModel(sell.gift_ukey, sell.nft_name, 'svg')" alt="model" />
-                  </div>
+
+          <div v-else class="mgm-body">
+            <div class="mgm-card market">
+              <div class="mgm-card__head" :style="previewStyle">
+                <div class="mgm-card__bg"></div>
+                <div class="mgm-card__symbol">
+                  <img :src="gift.symbol_image" alt="" />
+                </div>
+                <div class="mgm-card__mark">
+                  <p>#{{ gift.seq }}</p>
+                </div>
+                <div class="mgm-card__model">
+                  <img class="mgm-card__model-img" :src="modelImage" alt="nft" />
                 </div>
               </div>
             </div>
-            <div class="content">
-              <div class="naming">
-                <h4>{{ sell.nft_name }}</h4>
-                <p>#{{ sell.seq }}</p>
+
+            <div class="mgm-title">
+              <div class="mgm-title__left">
+                <h3>{{ gift.nft_name }}</h3>
               </div>
             </div>
-            <div class="blocker">
-              <div class="input-amount">
+
+            <div class="pgm-sell-form">
+              <div class="pgm-recipient-search pgm-sell-input" :class="{ error: priceError || submitError }">
                 <input
+                  id="pgm-sell-price"
+                  v-model="priceInput"
                   type="text"
                   inputmode="decimal"
                   autocomplete="off"
-                  placeholder="Your Price"
-                  :value="sell.ton_price === 0 ? '' : String(sell.ton_price)"
-                  @input="onPriceInput($event, sell, 2)"
-                  @blur="onPriceBlur($event, sell, 2)"
+                  placeholder="0"
+                  :disabled="isSubmitting"
+                  @input="onPriceInput"
+                  @blur="onPriceBlur"
                 />
-                <img :src="TonImg" alt="ton" />
+                <div class="pgm-sell-input__unit">
+                  <img :src="TonImg" alt="TON" />
+                  <span>TON</span>
+                </div>
               </div>
-              <div class="summary" v-if="!checkAmount">
-                <p>Min: {{ cutNumber(minimumPrice) }} TON</p>
+
+              <div class="pgm-sell-summary">
+                <div class="pgm-sell-summary__row">
+                  <span class="pgm-sell-summary__label">{{ $t('profile.profileSellMinimum') }}</span>
+                  <span class="pgm-sell-summary__value">
+                    <template v-if="isMinimumLoading">…</template>
+                    <template v-else>{{ cutNumber(minimumPrice) }} TON</template>
+                  </span>
+                </div>
+                <div class="pgm-sell-summary__row">
+                  <span class="pgm-sell-summary__label">{{ $t('profile.profileSellTotal') }}</span>
+                  <span class="pgm-sell-summary__value">{{ cutNumber(totalAmount) }} TON</span>
+                </div>
               </div>
+
+              <p v-if="priceError" class="pgm-recipient-error">{{ priceError }}</p>
+              <p v-else-if="minimumError" class="pgm-recipient-error">{{ minimumError }}</p>
+              <p v-else-if="submitError" class="pgm-recipient-error">{{ submitError }}</p>
+            </div>
+
+            <div class="mgm-footer market pgm-transfer-footer">
+              <button
+                type="button"
+                class="mgm-footer__buy"
+                :class="{ _loading: isSubmitting }"
+                :disabled="!canSubmit"
+                @click="apply"
+              >
+                <span class="pgm-send-button__content" :class="{ hidden: isSubmitting }">
+                  <span>{{ $t('profile.profileSellFor') }}</span>
+                  <span class="pgm-transfer-cost">
+                    <img :src="TonWhiteImg" alt="TON" />
+                    <span>{{ cutNumber(priceValue) }}</span>
+                  </span>
+                </span>
+                <span class="pgm-send-button__loading" :class="{ visible: isSubmitting }">
+                  <IOSLoader class="mgm-footer__spin" />
+                  <span>{{ $t('profile.profileSellSubmitting') }}</span>
+                </span>
+              </button>
             </div>
           </div>
         </div>
-        <div class="buttons" :class="sellType">
-          <button @click="cancel">
-            <h4>Close</h4>
-          </button>
-          <button @click="apply" :disabled="!checkAmount">
-            <h4>Sell for {{ cutNumber(comissionAmount) }}</h4>
-            <img :src="TonWhiteImg" alt="ton" />
-            <IOSLoader />
-            <img :src="DoneImg" alt="done" />
-          </button>
-        </div>
       </div>
-  </div>
+    </div>
+  </Teleport>
 </template>
 
 <script>
@@ -97,20 +114,12 @@ import { Icon } from '../Icon';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { cutNumber, cutNumberNano } from '../../utils/useTon';
 import { getUpgradedModel } from '../../utils/useGift';
-
+import { showToast } from '../../utils/toastManager';
+import TelegramModule from '../../hooks/useTelegram';
 import IOSLoader from '../IOSLoader.vue';
-
 import * as MarketNftApi from '@/api/market/nft';
-
-import Image_Stars from '@/assets/images/stars.png';
-import Image_StarsWhite from '@/assets/images/stars-white.png';
-import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
-import Lottie from '../Lottie.vue';
-
-// Images
 import TonImg from '@/assets/images/market/ton.svg';
 import TonWhiteImg from '@/assets/images/market/ton-white.svg';
-import DoneImg from '@/assets/images/market/done.svg';
 
 export default {
   props: {
@@ -120,187 +129,236 @@ export default {
     ModalSellList: { type: Array, required: true },
   },
 
-  components: {
-    Lottie,
-    IOSLoader,
-  },
+  components: { IOSLoader },
 
   data() {
     return {
+      storeCache: useCacheStore(),
+      priceInput: '',
+      minimumPrice: 5,
+      isMinimumLoading: false,
+      minimumError: '',
+      submitError: '',
+      isSubmitting: false,
+      isRendered: false,
+      isVisible: false,
+      closeTimer: null,
+      minimumRequestKey: '',
+      dragY: 0,
+      startY: 0,
+      startX: 0,
+      startTimeMs: 0,
+      isDragging: false,
+      Icon,
       TonImg,
       TonWhiteImg,
-      DoneImg,
-
-      storeCache: useCacheStore(),
-      isLoadingModalImage: true,
-
-      OwnerImage: true,
-      ActiveButton: false,
-
-      sellType: 'notactive', // notactive | processed | success
-      sellPrice: 0,
-
-      minimumPrice: 5,
-
-      Icon,
-      Image_Stars,
-      Image_StarsWhite,
-      Image_GiftBg,
-
-      getUpgradedModel,
       cutNumber,
     };
   },
 
+  computed: {
+    gift() {
+      return this.ModalSellList?.[0] || null;
+    },
+    priceValue() {
+      return Number(this.priceInput || 0);
+    },
+    totalAmount() {
+      return this.priceValue * 0.95;
+    },
+    priceError() {
+      if (!this.priceInput || this.priceValue === 0) return '';
+      if (this.priceValue < this.minimumPrice) return `Minimum price is ${cutNumber(this.minimumPrice)} TON`;
+      if (this.priceValue > 15000) return 'Maximum price is 15,000 TON';
+      return '';
+    },
+    canSubmit() {
+      return !!this.gift && !this.isMinimumLoading && !this.minimumError && !this.priceError && this.priceValue > 0 && !this.isSubmitting;
+    },
+    modelImage() {
+      if (!this.gift) return '';
+      if (this.gift.gift_media === 'svg' && this.gift.nft_image) return this.gift.nft_image;
+      return getUpgradedModel(this.gift.gift_ukey, this.gift.nft_name, 'svg');
+    },
+    previewStyle() {
+      if (!this.gift) return null;
+      return {
+        '--center-color': this.gift.background_colors_center || '#666',
+        '--around-color': this.gift.background_colors_around || '#1a1a1a',
+      };
+    },
+    sheetStyle() {
+      if (!this.isDragging || !this.isVisible) return null;
+      return {
+        transform: `translate(-50%, ${Math.max(0, this.dragY)}px)`,
+        transition: 'none',
+        animation: 'none',
+      };
+    },
+  },
+
   watch: {
+    ModalActive(value) {
+      if (value) this.openSheet();
+      else if (this.isRendered && this.isVisible) this.startClose(false);
+    },
+    'gift.gift_uuid'() {
+      if (this.ModalActive) this.resetAndLoad();
+    },
   },
 
   mounted() {
-    this.loadResources();
-    this.getMinimumPrice();
-
-    this.$watch(
-      () => this.ModalSellList,
-      () => {
-        this.getMinimumPrice();
-      }
-    );
+    if (this.ModalActive) this.openSheet();
   },
 
-  computed: {
-    isSkeleton() {
-      return this.Skeleton;
-    },
-    comissionAmount() {
-      return parseFloat(this.sellPrice) * 1.05;
-    },
-    checkAmount() {
-      if (
-        this.sellPrice > 0.05 && this.sellPrice < 15000 &&
-        this.sellPrice >= this.minimumPrice
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
+  beforeUnmount() {
+    if (this.closeTimer) clearTimeout(this.closeTimer);
   },
-  
+
   methods: {
-    async loadResources() {
-      try {
-        await Promise.all([this.loadFonts(), this.loadImages()]);
-        this.isLoading = false;
-        this.$emit("loadSuccess");
-      } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
-      }
+    openSheet() {
+      if (this.closeTimer) clearTimeout(this.closeTimer);
+      this.isRendered = true;
+      this.resetAndLoad();
+      this.$nextTick(() => requestAnimationFrame(() => { this.isVisible = true; }));
     },
-
-    loadFonts() {
-      return document.fonts.ready;
+    startClose(emitParent = true) {
+      this.isVisible = false;
+      this.isDragging = false;
+      this.dragY = 0;
+      if (this.closeTimer) clearTimeout(this.closeTimer);
+      this.closeTimer = setTimeout(() => {
+        this.isRendered = false;
+        this.closeTimer = null;
+        if (emitParent) this.$emit('closeModal');
+      }, 340);
     },
-
-    loadImages() {
-      const staticImages = [
-        Image_Stars
-      ].map((src) => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.src = src;
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-      });
-
-      return Promise.all([...staticImages]);
-    },
-      
-    sanitizePrice(str, maxDecimals = 2) {
-      if (!str) return '';
-      str = str.replace(',', '.').replace(/[^\d.]/g, '');
-      const firstDot = str.indexOf('.');
-      if (firstDot !== -1) {
-        str =
-          str.slice(0, firstDot + 1) +
-          str.slice(firstDot + 1).replace(/\./g, '');
-      }
-      let [int = '', frac = ''] = str.split('.');
-      int = int.replace(/^0+(?=\d)/, '') || (str.startsWith('0') ? '0' : '');
-      frac = frac.slice(0, maxDecimals);
-      if (frac.length > 0) {
-        return `${int || '0'}.${frac}`;
-      }
-      if (str.endsWith('.')) {
-        return `${int || '0'}.`;
-      }
-      return int;
-    },
-
-    onPriceInput(e, sell, maxDecimals = 2) {
-      const cleaned = this.sanitizePrice(e.target.value, maxDecimals);
-      e.target.value = cleaned;
-      sell.ton_price = cleaned.endsWith('.') ? Number(cleaned.slice(0, -1) || 0) : Number(cleaned || 0);
-      this.sellPrice = sell.ton_price;
-    },
-
-    onPriceBlur(e, sell, decimals = 2) {
-      const s = this.sanitizePrice(e.target.value, decimals);
-      const normalized = s ? cutNumber(s, decimals) : '';
-      e.target.value = normalized;
-      sell.ton_price = normalized === '' ? 0 : Number(normalized);
-      this.sellPrice = sell.ton_price;
-    },
-      
     closeModal() {
-      this.$emit('closeModal');
+      if (this.isSubmitting) return;
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.startClose(true);
     },
-
+    resetAndLoad() {
+      this.priceInput = '';
+      this.minimumPrice = 5;
+      this.minimumError = '';
+      this.submitError = '';
+      this.isSubmitting = false;
+      this.getMinimumPrice();
+    },
+    sanitizePrice(value, decimals = 2) {
+      let result = String(value || '').replace(',', '.').replace(/[^\d.]/g, '');
+      const dot = result.indexOf('.');
+      if (dot !== -1) result = result.slice(0, dot + 1) + result.slice(dot + 1).replace(/\./g, '');
+      const [integer = '', fraction = ''] = result.split('.');
+      const normalizedInteger = integer.replace(/^0+(?=\d)/, '') || (result.startsWith('0') ? '0' : '');
+      if (result.endsWith('.')) return `${normalizedInteger || '0'}.`;
+      return fraction ? `${normalizedInteger || '0'}.${fraction.slice(0, decimals)}` : normalizedInteger;
+    },
+    onPriceInput(event) {
+      this.priceInput = this.sanitizePrice(event.target.value);
+      event.target.value = this.priceInput;
+      this.submitError = '';
+    },
+    onPriceBlur() {
+      if (this.priceInput.endsWith('.')) this.priceInput = this.priceInput.slice(0, -1);
+    },
     async getMinimumPrice() {
-      const response = await MarketNftApi.minPrice(
-        this.ModalSellList[0].gift_ukey
-      );
-      if (!response) return;
-      this.minimumPrice = response.min;
+      const gift = this.gift;
+      if (!gift?.gift_ukey) return;
+      const requestKey = `${gift.gift_uuid}:${gift.gift_ukey}`;
+      this.minimumRequestKey = requestKey;
+      this.isMinimumLoading = true;
+      this.minimumError = '';
+      try {
+        const response = await MarketNftApi.minPrice(gift.gift_ukey);
+        if (this.minimumRequestKey !== requestKey) return;
+        if (!response || response.min == null) {
+          this.minimumError = this.$t('profile.profileSellMinError');
+          return;
+        }
+        this.minimumPrice = Number(response.min);
+      } catch {
+        if (this.minimumRequestKey === requestKey) this.minimumError = this.$t('profile.profileSellMinError');
+      } finally {
+        if (this.minimumRequestKey === requestKey) this.isMinimumLoading = false;
+      }
     },
-
     async apply() {
-      if (!this.checkAmount) return;
+      if (!this.canSubmit) return;
+      const gift = this.gift;
+      this.isSubmitting = true;
+      this.submitError = '';
+      // владелец баланса на маркете — это uuid самого пользователя:
+      // именно по нему App.vue запрашивает баланс. объект Balance приходит
+      // только когда маркет уже знает пользователя, поэтому опираться на
+      // него нельзя — иначе выставление блокируется с ложным «подключите
+      // кошелёк». обращение через ?. обязательно: раньше пустой Balance
+      // бросал TypeError, его глотал catch и наружу шла общая ошибка
+      const balanceUuid =
+        this.storeCache.UserData?.user?.Balance?.user_uuid ||
+        this.storeCache.UserData?.user?.ID ||
+        '';
+      if (!balanceUuid) {
+        this.submitError = this.$t('profile.profileSellError');
+        showToast(this.submitError, 'error');
+        this.isSubmitting = false;
+        return;
+      }
 
-      const nft = this.ModalSellList[0];
-      if (!nft) return;
-
-      this.sellType = 'processed';
-      const response = await MarketNftApi.create(
-        nft.gift_uuid,
-        this.storeCache.UserData.user.Balance.user_uuid,
-        nft.ton_price,
-        false
-      );
-      if (!response) return;
-
-      this.sellType = 'success';
-
-      setTimeout(() => {
-        this.sellType = 'notactive';
-        this.minimumPrice = 5;
-        this.sellPrice = 0;
-      }, 1200);
-
-      const price = cutNumberNano(response.lot.price_nano_com);
-      this.$emit('apply', { 
-        lot_id: response.lot.id,
-        gift_uuid: nft.gift_uuid, 
-        price_ton: price
-      });
+      try {
+        const response = await MarketNftApi.create(
+          gift.gift_uuid,
+          balanceUuid,
+          this.priceValue,
+          false,
+        );
+        if (!response?.lot) {
+          this.submitError = this.$t('profile.profileSellError');
+          showToast(this.submitError, 'error');
+          return;
+        }
+        this.$emit('apply', {
+          lot_id: response.lot.id,
+          gift_uuid: gift.gift_uuid,
+          price_ton: cutNumberNano(response.lot.price_nano_com),
+        });
+      } catch {
+        this.submitError = this.$t('profile.profileSellError');
+        showToast(this.submitError, 'error');
+      } finally {
+        this.isSubmitting = false;
+      }
     },
-
-    cancel() {
-      this.$emit('closeModal');
+    onTouchStart(event) {
+      if (!this.isVisible || this.isSubmitting) return;
+      const touch = event.touches?.[0] ?? event;
+      this.isDragging = true;
+      this.startY = touch.clientY;
+      this.startX = touch.clientX;
+      this.startTimeMs = performance.now();
+      this.dragY = 0;
+    },
+    onTouchMove(event) {
+      if (!this.isDragging) return;
+      const touch = event.touches?.[0] ?? event;
+      const dy = touch.clientY - this.startY;
+      if (Math.abs(touch.clientX - this.startX) > Math.abs(dy)) return;
+      this.dragY = Math.max(0, dy);
+    },
+    onTouchEnd() {
+      if (!this.isDragging) return;
+      const elapsed = Math.max(1, performance.now() - this.startTimeMs);
+      const distance = this.dragY;
+      this.isDragging = false;
+      if (distance > 120 || distance / elapsed > 0.6) this.closeModal();
+      else this.dragY = 0;
     },
   },
 };
 </script>
 
-<style>
+<style lang="sass" scoped>
+@use "../Market/Modal.sass"
+@use "./ProfileGiftModal.sass"
 </style>

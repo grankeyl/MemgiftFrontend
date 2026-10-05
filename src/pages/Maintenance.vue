@@ -1,5 +1,7 @@
 <template>
   <div class="_pageLoad _maintenance">
+    <div class="bluring-t"></div>
+    <div class="bluring-b"></div>
     <div class="_load-bg">
       <div class="_load-glow _load-glow--1"></div>
       <div class="_load-glow _load-glow--2"></div>

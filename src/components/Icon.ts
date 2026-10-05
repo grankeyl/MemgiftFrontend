@@ -16,8 +16,10 @@ import loveIcon from '@/assets/icons/Love.svg?raw';
 import doneIcon from '@/assets/icons/Done.svg?raw';
 import trashIcon from '@/assets/icons/Trash.svg?raw';
 import replyIcon from '@/assets/icons/Reply.svg?raw';
+import shareFillIcon from '@/assets/icons/ShareFill.svg?raw';
 import updateIcon from '@/assets/icons/Update.svg?raw';
 import emojiIcon from '@/assets/icons/Emoji.svg?raw';
+import emojiFillIcon from '@/assets/icons/EmojiFill.svg?raw';
 import linkIcon from '@/assets/icons/Link.svg?raw';
 import profileIcon from '@/assets/icons/Profile.svg?raw';
 import copyIcon from '@/assets/icons/Copy.svg?raw';
@@ -26,6 +28,9 @@ import tiktokIcon from '@/assets/icons/TikTok.svg?raw';
 import youtubeIcon from '@/assets/icons/Youtube.svg?raw';
 import swapIcon from '@/assets/icons/Swap.svg?raw';
 import mintIcon from '@/assets/icons/Mint.svg?raw';
+import mintChainIcon from '@/assets/icons/MintChain.svg?raw';
+import tonscanIcon from '@/assets/icons/Tonscan.svg?raw';
+import tonviewerIcon from '@/assets/icons/Tonviewer.svg?raw';
 import rewardIcon from '@/assets/icons/Reward.svg?raw';
 import shieldIcon from '@/assets/icons/Shield.svg?raw';
 import friendIcon from '@/assets/icons/Friends.svg?raw';
@@ -40,6 +45,19 @@ import rangeIcon from '@/assets/icons/Range.svg?raw';
 import giftOthIcon from '@/assets/icons/GiftOth.svg?raw';
 import storeIcon from '@/assets/icons/Store.svg?raw';
 import lockIcon from '@/assets/icons/Lock.svg?raw';
+
+import menuHomeIcon from '@/assets/icons/MenuHome.svg?raw';
+import menuTasksIcon from '@/assets/icons/MenuTasks.svg?raw';
+import menuMarketIcon from '@/assets/icons/MenuMarket.svg?raw';
+import menuProfileIcon from '@/assets/icons/MenuProfile.svg?raw';
+
+import getGemsIcon from '@/assets/icons/GetGems.svg?raw';
+import getGemsFullIcon from '@/assets/icons/GetGemsFull.svg?raw';
+import gramIcon from '@/assets/icons/Gram.svg?raw';
+import directIcon from '@/assets/icons/Direct.svg?raw';
+import flashIcon from '@/assets/icons/Flash.svg?raw';
+
+import marketOffIcon from '@/assets/icons/MarketOff.svg?raw';
 
 export const Icon = {
   Gift: giftIcon,
@@ -59,8 +77,10 @@ export const Icon = {
   Done: doneIcon,
   Trash: trashIcon,
   Reply: replyIcon,
+  ShareFill: shareFillIcon,
   Update: updateIcon,
   Emoji: emojiIcon,
+  EmojiFill: emojiFillIcon,
   Link: linkIcon,
   Profile: profileIcon,
   Copy: copyIcon,
@@ -69,6 +89,9 @@ export const Icon = {
   Youtube: youtubeIcon,
   Swap: swapIcon,
   Mint: mintIcon,
+  MintChain: mintChainIcon,
+  Tonscan: tonscanIcon,
+  Tonviewer: tonviewerIcon,
   Reward: rewardIcon,
   Shield: shieldIcon,
   Friends: friendIcon,
@@ -83,4 +106,14 @@ export const Icon = {
   GiftOth: giftOthIcon,
   Store: storeIcon,
   Lock: lockIcon,
+  MenuHome: menuHomeIcon,
+  MenuTasks: menuTasksIcon,
+  MenuMarket: menuMarketIcon,
+  MenuProfile: menuProfileIcon,
+  GetGems: getGemsIcon,
+  GetGemsFull: getGemsFullIcon,
+  Gram: gramIcon,
+  Direct: directIcon,
+  Flash: flashIcon,
+  MarketOff: marketOffIcon,
 };

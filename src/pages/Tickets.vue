@@ -1,28 +1,23 @@
 <template>
   <section class="_wrap _tickets" :class="{ desktop: isDesktop() }">
+    <div class="bluring-t"></div>
+    <div class="bluring-b"></div>
     <div class="_view">
-      
-      <div class="_first" :class="{ desktop: isDesktop() }">
-        <Context
-          @loadSuccess="handleLoadSuccess"
-
-          :Skeleton="isPageLoading"
-          :SkeletonTime="configApp.skeletonTime"
-
-          :completedTasks="completedTasks"
-          :totalTasks="totalTasks"
-        />
-
-        <TasksPinned
-          @loadSuccess="handleLoadSuccess"
-
-          :Skeleton="isPageLoading"
-          :SkeletonTime="configApp.skeletonTime"
-
-          :TasksData="storeCache.TasksApp.pinned"
-        />
+      <div class="title">
+        <h4>
+          {{ $t('tickets.title') }}
+        </h4>
+        <div class="balances">
+          <div class="balance">
+            <Icon class="kit-icon ticket" v-html="Icon.Ticket" />
+            <span>{{ storeCache.UserData.user.Tickets || 0 }}</span>
+          </div>
+          <div class="balance" @click="openWallet">
+            <Icon class="kit-icon" v-html="Icon.Gram" />
+            <span>{{ cutNumber(getBalance.toString()) }}</span>
+          </div>
+        </div>
       </div>
-
       <div class="_second">
         <TasksPartners
           @loadSuccess="handleLoadSuccess"
@@ -42,7 +37,6 @@
           :TasksData="storeCache.TasksApp.others"
         />
       </div>
-          
     </div>
   </section>
 </template>
@@ -54,6 +48,7 @@ import { useCacheStore } from '../stores/pinia/piniaStore';
 import { isDesktop } from '../utils/checkDevice';
 import { Icon } from '../components/Icon';
 import { getConfig } from '../config';
+import { cutNumber } from '@/utils/useTon.ts';
 
 import Context from '../components/Tickets/Context.vue';
 import Recent from '../components/Tickets/Recent.vue';
@@ -90,6 +85,7 @@ export default {
 
       Icon,
       isDesktop,
+      cutNumber,
     };
   },
 
@@ -106,6 +102,9 @@ export default {
     completedTasks(): number {
       return this.allTasks.filter((t: any) => t.user_status === 'completed').length;
     },
+    getBalance() {
+      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
   },
 
   mounted() {
@@ -113,10 +112,11 @@ export default {
   },
 
   methods: {
+    openWallet() { this.$router.push('/wallet'); },
     handleLoadSuccess() {
       this.handleLoads ++;
 
-      if (this.handleLoads >= 1) {
+      if (this.handleLoads >= 2) {
         setTimeout(() => {
           if (this.$props.success) {
             this.isPageLoading = false;

@@ -1,29 +1,17 @@
 <template>
   <Transition name="loader-fade">
-    <div class="_pageLoad" id="pageLoad" v-if="miniAppLoading && !$route.meta.public">
-      <div class="_load-bg">
-        <div class="_load-glow _load-glow--1"></div>
-        <div class="_load-glow _load-glow--2"></div>
-        <div class="_load-glow _load-glow--3"></div>
-      </div>
-      <div class="_load-center">
-        <div class="_load-logo">
-          <img src="/logotype.svg" alt="Memgift" />
-        </div>
-        <div class="_load-spinner">
-          <svg viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="17" />
-          </svg>
-        </div>
-        <p class="_load-hint">{{ $t('app.loadingHint') }}</p>
-      </div>
-    </div>
+    <SplashLoader v-if="miniAppLoading && !$route.meta.public" @ready="onAssetsReady" />
   </Transition>
 
   <RouterView v-slot="{ Component, route }">
     <template v-if="route.meta.public || (!miniAppLoading && miniAppTesting === 'development') || (!miniAppLoading && miniAppMounted)">
       <div v-if="!route.meta.noLayout" class="_main">
-        <component :is="Component" @loaded="onRouterViewLoaded" :success="pageSuccess" />
+        <component
+          :is="Component"
+          @loaded="onRouterViewLoaded"
+          :success="pageSuccess"
+          :class="menuPageEnterClass(route.path)"
+        />
         <Toast />
       </div>
 
@@ -64,12 +52,21 @@ import * as MarketBalanceApi from "./api/market/balance";
 import TelegramModule from './hooks/useTelegram';
 import Menu from './components/Menu/Menu.vue';
 import Toast from './components/Toast/Toast.vue';
+import SplashLoader from './components/SplashLoader.vue';
 import i18next from 'i18next';
+import { startVersionWatch } from './utils/useAppVersion';
+import {
+  shouldAnimateMenuPageEnter,
+  markMenuPageVisited,
+  updateMenuEnterDirection,
+  menuEnterDirection,
+} from './composables/useMenuPageEnter';
 
 export default {
   components: {
     Menu,
     Toast,
+    SplashLoader,
   },
 
   setup() {
@@ -79,6 +76,10 @@ export default {
     const miniAppLang = getUserLanguage();
     const miniAppMounted = ref(false);
     const miniAppLoading = ref(true);
+    // сплэш уходит, только когда сошлись оба условия: данные получены
+    // и ресурсы (шрифты, картинки) реально загружены
+    const assetsReady = ref(false);
+    const dataReady = ref(false);
 
     const pageSuccess = ref(false);
     const storeCache = useCacheStore() as any;
@@ -103,8 +104,25 @@ export default {
 
     let removeHook: (() => void) | undefined;
 
+    function menuPageEnterClass(path: string) {
+      if (!shouldAnimateMenuPageEnter(path)) return undefined;
+      const dir = menuEnterDirection.value;
+      return {
+        '_menu-page-enter': true,
+        '_menu-page-enter--forward': dir === 'forward',
+        '_menu-page-enter--back': dir === 'back',
+        '_menu-page-enter--neutral': dir === 'neutral',
+      };
+    }
+
     onMounted(() => {
-      removeHook = router.afterEach(async () => {
+
+      startVersionWatch();
+      router.beforeEach((to, from) => {
+        updateMenuEnterDirection(from.path, to.path);
+      });
+      removeHook = router.afterEach(async (to) => {
+        markMenuPageVisited(to.path);
         await nextTick();
         requestAnimationFrame(scrollTopSmooth);
       });
@@ -126,8 +144,6 @@ export default {
       }
 
       const webApp = await waitForTelegramWebApp();
-
-      // initData теперь получаем независимо от валидности
       const initDataRaw =
         (webApp && import.meta.env.VITE_APP_MODE === 'production')
           ? pickInitData(webApp)
@@ -224,24 +240,35 @@ export default {
               const lang = storeCache.UserData.user.Language;
               i18next.changeLanguage(lang);
             }
-            initStartApp(TelegramModule.initData()?.start_param);
 
-            const tasksGet = await taskApi.getAll();
-            const historyGet = await historyApi.getAll();
-            const balance = await MarketBalanceApi.get(storeCache.UserData.user.ID);
-            if (balance && balance.balance_ton) {
-              storeCache.UserData.user.Balance = balance;
-              storeCache.UserData.user.Balance.balance_ton = cutNumber(balance.balance_ton);
+            try {
+              const tasksGet = await taskApi.getAll();
+              const historyGet = await historyApi.getAll();
+              const balance = await MarketBalanceApi.get(storeCache.UserData.user.ID);
+              if (balance && balance.balance_ton != null) {
+                storeCache.UserData.user.Balance = balance;
+                storeCache.UserData.user.Balance.balance_ton = cutNumber(String(balance.balance_ton));
+              }
+
+              storeCache.UserData.user_full_name = cleanString(storeCache.UserData.user_full_name);
+              storeCache.TasksApp = tasksGet;
+              storeCache.HistoryApp = historyGet;
+            } catch (loadErr) {
+              console.error('Post-auth data load error:', loadErr);
             }
 
-            storeCache.UserData.user_full_name = cleanString(storeCache.UserData.user_full_name);
-            storeCache.TasksApp = tasksGet;
-            storeCache.HistoryApp = historyGet;
+            // Await deep-link handling; always ends with mountMiniApp()
+            await initStartApp(TelegramModule.initData()?.start_param);
           }
         }
       } catch (e) {
         console.error(e);
-      } finally {}
+      } finally {
+        // Never leave the user stuck on the splash loader
+        // if (!miniAppMounted.value) {
+        //   mountMiniApp();
+        // }
+      }
     });
 
     const miniAppTransport = (dtx: any) => {
@@ -353,15 +380,25 @@ export default {
       }
     }
 
-    const appStartTime = Date.now();
-    const MIN_LOADER_MS = 2800;
+    const hideLoaderWhenReady = () => {
+      if (assetsReady.value && dataReady.value) {
+        miniAppLoading.value = false;
+      }
+    };
 
+    const onAssetsReady = () => {
+      assetsReady.value = true;
+      hideLoaderWhenReady();
+    };
+
+    // Раньше здесь стоял искусственный минимум в 2800мс и ожидание только
+    // document.fonts.ready. Теперь ждём фактическую загрузку ресурсов —
+    // об этом сообщает сам SplashLoader.
     const mountMiniApp = () => {
       miniAppMounted.value = true;
       pageSuccess.value = true;
-      const elapsed = Date.now() - appStartTime;
-      const remaining = Math.max(MIN_LOADER_MS - elapsed, 0);
-      setTimeout(() => { miniAppLoading.value = false; }, remaining);
+      dataReady.value = true;
+      hideLoaderWhenReady();
     }
 
     const setOwnerNft = async (getNft: any, checkType: string = 'check') => {
@@ -414,6 +451,8 @@ export default {
 
       Icon,
       miniAppLoading,
+      onAssetsReady,
+      menuPageEnterClass,
     };
   },
 
@@ -440,4 +479,5 @@ export default {
 @use "./assets/styles/_variables.sass"
 @use "./assets/styles/_root.sass"
 @use "./assets/styles/_base.sass"
+@use "./assets/styles/_filter-modals.sass"
 </style>

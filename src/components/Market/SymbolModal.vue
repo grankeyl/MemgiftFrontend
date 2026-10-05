@@ -56,10 +56,10 @@
               @click="applyModel(item.unique_name)"
               class="item"
             >
-              <div class="symbol">
-                <img :src="item.image" alt="symbol">
-              </div>
               <div class="left">
+                <div class="symbol">
+                  <img :src="item.image" alt="symbol">
+                </div>
                 <h5>{{ item.unique_name }}</h5>
                 <span>{{ item.drop_rate }}%</span>
               </div>
@@ -202,23 +202,4 @@ export default {
 
 <style lang="sass" scoped>
 @use "./ModelModal.sass"
-
-.item
-  justify-content: start !important
-
-  .symbol
-    width: 30px
-    height: 30px
-    border-radius: 20px
-    overflow: hidden
-
-    & img
-      width: 550% 
-      height: 550%
-      margin-left: -27px
-      margin-top: 6px
-      object-fit: cover
-  
-  .checkbox
-    margin-left: auto
 </style>

@@ -83,14 +83,15 @@ const pluralizeGift = (word: string, count: number, lang: string = 'en') => {
 
 const getUpgradedModel = (nftUniqueKey: string, model: string, media: string = 'svg') => {
     if (!nftUniqueKey || !model) return;
-    const clearModel = model.replace(" ", "+");
+    const clearModel = String(model).trim().replace(/ /g, '+');
     const bucketsLink = import.meta.env.VITE_APP_S3_LINK;
+    if (!bucketsLink) return;
 
     if (media === 'svg') {
         return `${bucketsLink}/models/${nftUniqueKey}/${clearModel}.svg`;
-    } else {
-        return `${bucketsLink}/models/${nftUniqueKey}/${clearModel}.json`;
     }
+    // lottie / json animation
+    return `${bucketsLink}/models/${nftUniqueKey}/${clearModel}.json`;
 }
 
 const getUpgradedSymbol = (symbol: string) => {

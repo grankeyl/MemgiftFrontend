@@ -1,36 +1,28 @@
 @use "./../_variables" as *
 
-._wrap._pageReferral
-    width: 100%
+// Same shell language as wallet / market / home / tickets / profile
+._wrap.referral
+    padding-top: calc($app-menu-height + 12px)
+    display: flex
+    flex-direction: column
+    min-height: 100dvh
     background: $app-background
-    padding-top: 0px
+    padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 8px)
 
     &.desktop
-        margin-top: -20px
+        padding-top: 12px
 
     ._view
-        padding: 0
-        display: flex
-        flex-direction: column
-        gap: 11px
-        padding-bottom: 36px
+        position: relative
+        -webkit-overflow-scrolling: touch
+        padding-bottom: calc($app-menu-height + 28px)
+        z-index: 1
 
-        ._second
+        .display
             width: 100%
-            height: fit-content
-            padding: 14px 16px 0px 16px
-            border-radius: 20px 20px 20px 20px
-            background: $app-background
-            margin-bottom: 58px
-
-            ._title
-                width: fit-content
-                height: auto
-                
-                & h4
-                    width: fit-content
-                    height: auto
-                    font-size: 16px
-                    font-weight: 500
-                    color: $app-text-color-descr
-    
+            height: auto
+            display: flex
+            flex-direction: column
+            gap: 18px
+            z-index: 1
+            box-sizing: border-box

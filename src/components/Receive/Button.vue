@@ -2,22 +2,18 @@
     <div v-if="ButtonType === 'sended'" class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
-            <button></button>
+            <div class="pgm-footer">
+              <div class="pgm-footer__btn rcv-btn-skel"></div>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_button" @click="useButton">
-            <button @click="openProfile" :class="{ _loading: isLoadingButtonSended }">
-              <h4>{{ $t('receive.okButton') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
+          <div class="_button">
+            <div class="pgm-footer">
+              <button type="button" class="pgm-footer__btn pgm-footer__btn--close" @click="openProfile">
+                <span>{{ $t('receive.okButton') }}</span>
+              </button>
+            </div>
           </div>
         </div>
     </div>
@@ -25,38 +21,28 @@
     <div v-if="ButtonType === 'purchased'" class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
-            <button></button>
-            <button></button>
+            <div class="pgm-footer">
+              <div class="pgm-footer__btn rcv-btn-skel"></div>
+              <div class="pgm-footer__btn rcv-btn-skel rcv-share"></div>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_button" @click="useButton">
-            <button @click="openProfile" class="default" :class="{ _loading: isLoadingButtonPurchasedOpenProfile }">
-              <h4>{{ $t('receive.openProfile') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
-            <!-- <button 
-              v-if="!isDeletedButtonPurchasedChooseRecipient"
-              @click="chooseRecipient" 
-              :class="{ _loading: isLoadingButtonPurchasedChooseRecipient }"
-            >
-              <h4>{{ $t('receive.chooseRecipient') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button> -->
+          <div class="_button">
+            <!-- та же кнопка, что «Ок» в модалке подарка на чужом профиле -->
+            <div class="pgm-footer">
+              <button type="button" class="pgm-footer__btn pgm-footer__btn--close" @click="openProfile">
+                <span>{{ $t('receive.openProfile') }}</span>
+              </button>
+              <button
+                type="button"
+                class="pgm-footer__btn pgm-footer__btn--close rcv-share"
+                :aria-label="$t('receive.shareGift')"
+                @click="$emit('shareGift')"
+              >
+                <span class="kit-icon" v-html="Icon.ShareFill"></span>
+              </button>
+            </div>
           </div>
         </div>
     </div>
@@ -64,25 +50,27 @@
     <div v-if="ButtonType === 'received'" class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
-            <button></button>
+            <div class="pgm-footer">
+              <div class="pgm-footer__btn rcv-btn-skel"></div>
+              <div class="pgm-footer__btn rcv-btn-skel rcv-share"></div>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_button" @click="useButton">
-            <button 
-              @click="openProfile" 
-              :class="{ _loading: isLoadingButtonReceived }"
-            >
-              <h4>{{ $t('receive.openProfile') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
+          <div class="_button">
+            <div class="pgm-footer">
+              <button type="button" class="pgm-footer__btn pgm-footer__btn--close" @click="openProfile">
+                <span>{{ $t('receive.openProfile') }}</span>
+              </button>
+              <button
+                type="button"
+                class="pgm-footer__btn pgm-footer__btn--close rcv-share"
+                :aria-label="$t('receive.shareGift')"
+                @click="$emit('shareGift')"
+              >
+                <span class="kit-icon" v-html="Icon.ShareFill"></span>
+              </button>
+            </div>
           </div>
         </div>
     </div>
@@ -90,22 +78,18 @@
     <div v-if="ButtonType === 'notfound'" class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
-            <button></button>
+            <div class="pgm-footer">
+              <div class="pgm-footer__btn rcv-btn-skel"></div>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_button" @click="useButton">
-            <button @click="openShop" :class="{ _loading: isLoadingButtonNotfound }">
-              <h4>{{ $t('receive.openShop') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
+          <div class="_button">
+            <div class="pgm-footer">
+              <button type="button" class="pgm-footer__btn pgm-footer__btn--close" @click="openShop">
+                <span>{{ $t('receive.openShop') }}</span>
+              </button>
+            </div>
           </div>
         </div>
     </div>
@@ -113,22 +97,18 @@
     <div v-if="ButtonType === 'selfed'" class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
-            <button></button>
+            <div class="pgm-footer">
+              <div class="pgm-footer__btn rcv-btn-skel"></div>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_button" @click="useButton">
-            <button @click="openShop" :class="{ _loading: isLoadingButtonNotfound }">
-              <h4>{{ $t('receive.openShop') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
+          <div class="_button">
+            <div class="pgm-footer">
+              <button type="button" class="pgm-footer__btn pgm-footer__btn--close" @click="openShop">
+                <span>{{ $t('receive.openShop') }}</span>
+              </button>
+            </div>
           </div>
         </div>
     </div>
@@ -143,6 +123,7 @@
 
   import TelegramModule from '../../hooks/useTelegram';
   import Lottie from '../Lottie.vue';
+  import { Icon } from '../Icon';
 
   export default {
     props: {
@@ -180,6 +161,7 @@
 
         isLoadingButton: false,
         isLoadingButtonSended: false,
+        Icon,
         isLoadingButtonPurchasedOpenProfile: false,
         isLoadingButtonPurchasedChooseRecipient: false,
         isDeletedButtonPurchasedChooseRecipient: false,
@@ -290,3 +272,42 @@
     },
   };
   </script>
+
+<style lang="sass" scoped>
+@use "../Profile/ProfileGiftModal.sass"
+@use "@/assets/styles/_variables" as *
+
+// collection/_comp.sass глобально красит .pgm-footer__btn--close плоским #252528
+// цепочкой (0,5,0) — перебиваем её здесь, чтобы кнопка была материалом модалки
+._comp._item._button ._content ._button
+    .pgm-footer__btn--close
+        background: $app-background-secondary-2
+        box-shadow: $app-glass-shadow
+        -webkit-box-shadow: $app-glass-shadow
+
+    .pgm-footer__btn--close.rcv-share,
+    .rcv-btn-skel.rcv-share
+        flex: 0 0 56px
+        width: 56px
+        padding: 0 !important
+        border-radius: 50% !important
+
+        .kit-icon
+            display: flex
+            align-items: center
+            justify-content: center
+
+            :deep(svg)
+                width: 22px
+                height: 22px
+
+            :deep(path)
+                fill: $app-text-color
+
+    .rcv-btn-skel
+        pointer-events: none
+        background: $app-background-secondary
+        background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba($app-text-color, .06) 50%, $app-background-secondary 75%)
+        background-size: 200% 100%
+        animation: shimmer 1.8s ease-in-out infinite
+</style>

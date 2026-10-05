@@ -65,8 +65,8 @@ export default {
     Skeleton: { type: Boolean, required: true },
     SkeletonTime: { type: Number, required: true },
     ModalActive: { type: Boolean, required: true },
-    SortItems: { type: Array, required: true },
-    Selected: { type: Array, default: () => [] },
+    SortItems: { type: Object, required: true },
+    Selected: { type: String, default: '' },
   },
 
   components: {
@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       storeCache: useCacheStore(),
+      isLoading: this.Skeleton,
       isLoadingModalImage: true,
       localSelected: '',
 

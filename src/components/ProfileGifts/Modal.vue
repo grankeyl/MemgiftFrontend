@@ -465,8 +465,7 @@
               <h4>{{ $t('profile.profileGiftPreviewButtonSendFor') }}</h4>
               <div class="stars">
                 <img :src="Image_StarsWhite" alt="avatar" />
-                <span v-if="ModalComp.NftStatus === 'received'">25</span>
-                <span v-else>0</span>
+                <span>0</span>
               </div>
               <Lottie 
                 class="lt"
@@ -776,40 +775,18 @@ export default {
       if (!this.transferData.success) return;
       if (parseInt(this.transferData.userId) === parseInt(this.storeCache.TelegramData.user.id)) return;
 
-      if (this.ModalComp.NftStatus === 'purchased' || this.ModalComp.NftStatus === 'sended') {
-        this.ActiveButton = true;
-        const nftsToTransfer = [this.ModalComp.NftUuid]
-        const transfer = await nftApi.transfer(nftsToTransfer, this.transferData.userId);
-        if (!transfer) {
-          showToast('Error transfering gift', 'error');
-          this.ActiveButton = false;
-        };
-
+      this.ActiveButton = true;
+      const nftsToTransfer = [this.ModalComp.NftUuid];
+      const transfer = await nftApi.transfer(nftsToTransfer, this.transferData.userId);
+      if (!transfer) {
+        showToast('Error transfering gift', 'error');
         this.ActiveButton = false;
-        this.closeTransferModal();
-        this.$emit('useTransfered');
-      };
-
-      if (this.ModalComp.NftStatus === 'received') {
-        this.ActiveButton = true;
-
-        const invoice = await invoiceApi.createInvoiceNftTransfer(
-          this.ModalComp.NftUuid,
-          this.ModalComp.NftUniqueKey,
-          this.transferData.userId,
-        );
-
-        TelegramModule.useInvoice(
-          invoice.link, 
-          () => {
-            this.ActiveButton = false;
-            this.closeTransferModal();
-            this.$emit('useTransfered');
-          }, 
-          () => {
-          }
-        );
+        return;
       }
+
+      this.ActiveButton = false;
+      this.closeTransferModal();
+      this.$emit('useTransfered');
     },
 
     async checkUpgradedNft() {

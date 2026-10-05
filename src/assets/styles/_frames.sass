@@ -9,18 +9,56 @@
         opacity: 1
         transform: scale(1)
 
-@keyframes page-enter
+@keyframes menu-page-enter-neutral
     0%
         opacity: 0
-        filter: blur(17px)
-        transform: scale(0.85)
-        transform-origin: top
+        filter: blur(10px)
+        transform: translateY(16px) scale(0.96)
+    55%
+        opacity: 1
+        filter: blur(0)
+        transform: translateY(-3px) scale(1.008)
     100%
         opacity: 1
         filter: blur(0)
-        transform: scale(1)
+        transform: translateY(0) scale(1)
 
-    
+@keyframes menu-page-enter-forward
+    0%
+        opacity: 0
+        filter: blur(8px)
+        transform: translateX(28px) translateY(8px) scale(0.97)
+    60%
+        opacity: 1
+        filter: blur(0)
+        transform: translateX(-4px) translateY(-2px) scale(1.006)
+    100%
+        opacity: 1
+        filter: blur(0)
+        transform: translateX(0) translateY(0) scale(1)
+
+@keyframes menu-page-enter-back
+    0%
+        opacity: 0
+        filter: blur(8px)
+        transform: translateX(-28px) translateY(8px) scale(0.97)
+    60%
+        opacity: 1
+        filter: blur(0)
+        transform: translateX(4px) translateY(-2px) scale(1.006)
+    100%
+        opacity: 1
+        filter: blur(0)
+        transform: translateX(0) translateY(0) scale(1)
+
+@keyframes menu-icon-settle
+    0%
+        transform: scale(0.82)
+    65%
+        transform: scale(1.12)
+    100%
+        transform: scale(1.08)
+
 @keyframes skeleton
     0%
         background-position: 0% 0

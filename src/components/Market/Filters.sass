@@ -5,6 +5,7 @@
     height: fit-content
     display: flex !important
     opacity: 1 !important
+    padding-left: 16px
     
     ._content
         width: 100%
@@ -18,7 +19,7 @@
         .cont
             display: flex
             flex-direction: column
-            gap: 12px
+            gap: 15px
             position: relative !important
 
             .filtersItems
@@ -37,6 +38,10 @@
                 cursor: grab
                 user-select: none
 
+                &::after
+                    content: ""
+                    flex: 0 0 8px
+
                 &:active
                     cursor: grabbing
 
@@ -44,17 +49,27 @@
                     display: none
                 
                 .filtersItemsItem
-                    height: 36px
+                    flex: 1
+                    width: fit-content
+                    height: 40px
+                    padding: 0 16px
                     display: flex
                     align-items: center
-                    gap: 6px
-                    padding: 0 12px
-                    background: rgba($app-text-color, 0.06)
-                    border-radius: 50px
+                    justify-content: space-between
+                    border-radius: 99em
+                    background: linear-gradient(
+                        180deg,
+                        $app-background-secondary-2 50%,
+                        #191919 100%
+                    )
+                    backdrop-filter: blur(28px) saturate(60%)
+                    -webkit-backdrop-filter: blur(28px) saturate(60%)
+                    box-shadow: $app-glass-shadow-2
+                    -webkit-box-shadow: $app-glass-shadow-2
+                    border: none
                     cursor: pointer
-                    flex-shrink: 0
-                    position: relative
-                    transition: background 0.15s ease, transform 0.15s ease
+                    box-sizing: border-box
+                    transition: background 0.18s ease, transform 0.18s ease
 
                     &:active
                         transform: scale(0.95)
@@ -108,12 +123,20 @@
                                     opacity: 0.5
                             
                     .title
-                        font-size: 14px
+                        font-size: 15px
                         font-weight: 500
                         color: $app-text-color
                         white-space: nowrap
-                        opacity: 0.7
+                        overflow: hidden
+                        text-overflow: ellipsis
                     
+                    & .border
+                        width: 1px
+                        height: 19px
+                        background: $app-table-button
+                        margin-left: 5px
+                        margin-right: 5px
+                        
                     .dropdown
                         display: none
 
@@ -121,25 +144,25 @@
                 width: 100%
                 display: flex
                 align-items: center
+                padding-right: 16px
 
                 .number
                     width: 100%
-                    height: 40px
+                    height: 46px
                     display: flex
                     align-items: center
-                    background: rgba($app-text-color, 0.06)
-                    border-radius: 12px
+                    background: $app-background-secondary-2
+                    border-radius: 52px
 
                     & .hash
-                        margin-left: 14px
+                        margin-left: 18px
                         display: flex
                         align-items: center
 
                         & h4
-                            font-size: 16px
+                            font-size: 18px
                             font-weight: 600
                             color: $app-text-color
-                            opacity: 0.4
 
                     & input
                         width: 100%
@@ -147,21 +170,21 @@
                         background: transparent
                         border: none
                         padding: 0 10px
-                        font-size: 14px
+                        font-size: 15px
                         font-weight: 500
                         color: $app-text-color
 
                         &::placeholder
                             color: $app-text-color
                             opacity: 0.3
-                            font-size: 14px
+                            font-size: 15px
                             font-weight: 500
 
             .cheaps
                 width: 100%
                 display: flex
                 align-items: center
-                gap: 6px
+                gap: 8px
                 overflow-x: auto
                 overflow-y: hidden
                 -webkit-overflow-scrolling: touch
@@ -173,15 +196,25 @@
                     display: none
 
                 .cheap
-                    height: 28px
-                    padding: 0 10px
-                    background: rgba($app-text-color, 0.06)
-                    border-radius: 50px
+                    width: fit-content
+                    height: 34px
+                    padding: 0 14px
                     display: flex
+                    gap: 8px
                     align-items: center
-                    gap: 5px
-                    flex-shrink: 0
+                    justify-content: space-between
+                    border-radius: 99em
+                    background: linear-gradient(
+                        180deg,
+                        $app-background-secondary-2 0%,
+                        #191919 100%
+                    )
+                    backdrop-filter: blur(28px) saturate(60%)
+                    -webkit-backdrop-filter: blur(28px) saturate(60%)
+                    border: none
                     cursor: pointer
+                    box-sizing: border-box
+                    transition: background 0.18s ease, transform 0.18s ease
 
                     &.clear
                         background: rgba($app-background-blue-secondary, 0.15)

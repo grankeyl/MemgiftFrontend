@@ -1,40 +1,40 @@
 <template>
   <div class="pd-share-overlay" @click.self="$emit('close')">
     <div class="pd-share">
+      <div class="pd-share__grab"></div>
       <div class="pd-share__head">
         <h3>{{ $t('privateDeal.shareTitle') }}</h3>
-        <button class="pd-share__close" @click="$emit('close')">
+        <button type="button" class="pd-share__close" @click="$emit('close')">
           <div class="kit-icon" v-html="Icon.Close"></div>
         </button>
       </div>
 
-      <div class="pd-share__info">
+      <div class="pd-share__card">
         <div class="pd-share__row">
           <span>{{ $t('privateDeal.giftsWord') }}</span>
           <strong>{{ deal.gift_count }}</strong>
         </div>
         <div class="pd-share__row">
           <span>{{ $t('privateDeal.label1') }}</span>
-          <strong>
-            <img :src="Image_Ton" alt="TON" class="pd-share__star" />
+          <strong class="pd-share__price">
+            <img :src="Image_Ton" alt="" />
             {{ nanoToTon(deal.price_nano) }} TON
           </strong>
         </div>
       </div>
 
-      <div class="pd-share__link">
-        <input :value="shareUrl" readonly @focus="$event.target.select()" />
-        <button @click="$emit('copy', deal)">
-          <div class="kit-icon" v-html="Icon.Copy"></div>
-        </button>
-      </div>
+      <button type="button" class="pd-share__link" @click="$emit('copy', deal)">
+        <span>{{ shortUrl }}</span>
+        <div class="kit-icon" v-html="Icon.Copy"></div>
+      </button>
 
-      <div class="pd-share__buttons">
-        <button class="pd-share__tg" @click="$emit('share', deal)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          {{ $t('privateDeal.shareViaTelegram') }}
-        </button>
-      </div>
+      <button type="button" class="pd-share__tg" @click="$emit('share', deal)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        {{ $t('privateDeal.shareViaTelegram') }}
+      </button>
     </div>
   </div>
 </template>
@@ -57,6 +57,11 @@ export default {
   computed: {
     shareUrl() {
       return getDealShareUrl(this.deal.id);
+    },
+    shortUrl() {
+      const u = this.shareUrl.replace(/^https?:\/\//, '');
+      if (u.length <= 34) return u;
+      return `${u.slice(0, 16)}…${u.slice(-12)}`;
     },
   },
 };

@@ -1,9 +1,13 @@
 <template>
+    <div class="bluring-b"></div>
+
     <Button
         v-if="!NftData?.Locked"
         @loadSuccess="handleLoadSuccess"
         @checkNftFree="checkNftFree"
-        
+        @buyCountPlus="buyCountPlus"
+        @buyCountMinus="buyCountMinus"
+
         :Skeleton="isPageLoading"
         :SkeletonTime="configApp.skeletonTime"
 
@@ -15,15 +19,15 @@
         :Terms="activeTerms"
         :NftKey="NftData?.Key"
 
-        :isUseTickets="isUseTickets"
-        :useTicketsCount="useTicketsCount"
     />
 
     <ButtonLocked
         v-if="NftData?.Locked"
         @loadSuccess="handleLoadSuccess"
         @checkNftFree="checkNftFree"
-        
+        @buyCountPlus="buyCountPlus"
+        @buyCountMinus="buyCountMinus"
+
         :Skeleton="isPageLoading"
         :SkeletonTime="configApp.skeletonTime"
 
@@ -34,8 +38,6 @@
         :NftLocked="NftData?.Locked"
         :Terms="TermsLocked"
 
-        :isUseTickets="isUseTickets"
-        :useTicketsCount="useTicketsCount"
     />
 
     <div class="_wrap _collection" :class="{ desktop: isDesktop() }">
@@ -55,103 +57,66 @@
                     :NftTickets="NftData?.Tickets"
                     :NftMedia="NftData?.Media"
                     :NftSaleSupport="NftData?.SaleSupport"
+                    :NftSupply="NftSupplyLeft"
+                    :NftSupplyMax="NftSupplyAll"
                 />
-                <Context 
+                <Context
                     @loadSuccess="handleLoadSuccess"
 
                     @buyCountPlus="buyCountPlus"
                     @buyCountMinus="buyCountMinus"
-                    @useTickets="useTickets"
-                    
+
                     :Skeleton="isPageLoading"
                     :SkeletonTime="configApp.skeletonTime"
-
-                    :Description="$t('collection.description')"
 
                     :NftName="NftData?.Name"
-                    :NftSupply="NftSupplyCurrent"
-                    :NftSupplyMax="NftSupplyAll"
-                    :NftPrice="NftData?.Price"
-                    :NftBuyCount="NftBuyCount"
-                    :NftSaleSupport="NftData?.SaleSupport"
                     :NftCustomEmoji="NftData?.Emoji"
-                    :NftLocked="NftData?.Locked"
                 />
             </div>
 
-            <div v-if="!NftData?.Price && !NftData?.Locked" class="_second">
-                <div class="_title">
-                    <h4>{{ $t('collection.terms.termsTitle') }}</h4>
-                </div>
+            <Terms
+                v-if="!NftData?.Price && !NftData?.Locked"
+                @loadSuccess="handleLoadSuccess"
+                @completeTerm="completeTerm"
 
-                <Terms
-                    @loadSuccess="handleLoadSuccess"
-                    @completeTerm="completeTerm"
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
+                :NftKey="NftData?.Key || ('nft_' + NftUniqueKey.toLowerCase())"
+                :NftRarity="NftData?.Rarity"
+                :NftGetFree="NftData?.NftGetFree"
+                :Terms="activeTerms"
+            />
 
-                    :Skeleton="isPageLoading"
-                    :SkeletonTime="configApp.skeletonTime"
-                    :NftKey="NftData?.Key || ('nft_' + NftUniqueKey.toLowerCase())"
-                    :NftGetFree="NftData?.NftGetFree"
-                    :Terms="activeTerms"
-                />
-            </div>
+            <TermsLocked
+                v-if="NftData?.Locked"
+                @loadSuccess="handleLoadSuccess"
+                @completeTerm="completeTerm"
 
-            <div v-if="NftData?.Locked" class="_second">
-                <div class="_title">
-                    <h4>{{ $t('collection.terms.termsTitle') }}</h4>
-                </div>
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
+                :NftKey="NftData?.Key"
+                :NftRarity="NftData?.Rarity"
+                :NftGetFree="NftData?.NftGetFree"
+                :Terms="TermsLocked.items"
+            />
 
-                <TermsLocked
-                    @loadSuccess="handleLoadSuccess"
-                    @completeTerm="completeTerm"
+            <Stats
+                @loadSuccess="handleLoadSuccess"
 
-                    :Skeleton="isPageLoading"
-                    :SkeletonTime="configApp.skeletonTime"
-                    :NftKey="NftData?.Key"
-                    :NftGetFree="NftData?.NftGetFree"
-                    :Terms="TermsLocked.items"
-                />
-            </div>
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
 
-            <div class="_second">
-                <Ads 
-                    @loadSuccess="handleLoadSuccess"
+                :NftUniqueKey="NftUniqueKey"
+            />
 
-                    :Skeleton="isPageLoading"
-                    :SkeletonTime="configApp.skeletonTime"
-                />
-            </div>
+            <Top
+                @loadSuccess="handleLoadSuccess"
 
-            <div v-if="similarGifts.length > 0" class="_second">
-                <div class="_title">
-                    <h4>{{ $t('collection.similarTitle') }}</h4>
-                </div>
-                <SimilarGifts
-                    @loadSuccess="handleLoadSuccess"
+                :Skeleton="isPageLoading"
+                :SkeletonTime="configApp.skeletonTime"
 
-                    :Skeleton="isPageLoading"
-                    :SkeletonTime="configApp.skeletonTime"
-
-                    :NftRarity="NftData?.Rarity"
-                    :NftKey="NftData?.Key"
-                />
-            </div>
-
-            <div class="_second">
-                <div class="_title">
-                    <h4>{{ $t('collection.recentsTitle') }}</h4>
-                </div>
-
-                <Recent 
-                    @loadSuccess="handleLoadSuccess"
-
-                    :Skeleton="isPageLoading"
-                    :SkeletonTime="configApp.skeletonTime"
-
-                    :NftKey="NftData?.Key"
-                    :RecentList="RecentList"
-                />
-            </div>
+                :TopList="TopList"
+            />
 
         </div>
     </div>
@@ -164,7 +129,6 @@ import * as nftApi from '../api/nftApi';
 import { useCacheStore } from '../stores/pinia/piniaStore';
 import { getConfig } from '../config';
 import { isDesktop } from '../utils/checkDevice';
-import { Icon } from '../components/Icon';
 
 import TelegramModule from '../hooks/useTelegram';
 
@@ -176,9 +140,8 @@ import Gift from '../components/Collection/Gift.vue';
 import Context from '../components/Collection/Context.vue';
 import Terms from '../components/Collection/Terms.vue';
 import TermsLocked from '../components/Collection/TermsLocked.vue';
-import Recent from '../components/Collection/Recent.vue';
-import Ads from '../components/Collection/Ads.vue';
-import SimilarGifts from '../components/Collection/SimilarGifts.vue';
+import Top from '../components/Collection/Top.vue';
+import Stats from '../components/Collection/Stats.vue';
 
 export default {
     props: {
@@ -195,9 +158,8 @@ export default {
         Context,
         Terms,
         TermsLocked,
-        Recent,
-        Ads,
-        SimilarGifts,
+        Stats,
+        Top,
     },
 
     data() {
@@ -206,22 +168,17 @@ export default {
             configApp: getConfig(),
 
             handleLoads: 0,
-            propsSuccess: this.$props.success,
             isPageLoading: true,
             isTabVisible: true,
 
             NftUniqueKey: '' as string,
             
             NftData: {} as any,
-            NftResponseData: {} as any,
             NftSupplyCurrent: 0,
             NftSupplyAll: 0,
 
             NftBuyCount: 1,
             NftBuyAmount: 100,
-
-            isUseTickets: false,
-            useTicketsCount: 0,
 
             Terms: {
                 InviteFriends: false,
@@ -266,8 +223,8 @@ export default {
             _onVisibilityChange: null as any,
 
             RecentList: [],
+            TopList: null,
 
-            Icon,
             isDesktop,
 
             Image_GiftBg,
@@ -280,9 +237,7 @@ export default {
         );
 
         this.checkNft();
-        this.checkLockedTerms();
         this.getNftData();
-        
         this.checkCurrentSupply();
         this.checkLockedTerms();
         this.scheduleCheckSupply();
@@ -325,11 +280,15 @@ export default {
             }
         );
 
+        // перебирать нужно TermsLocked.items, а не сам TermsLocked:
+        // раньше every() шёл по {items, all_success} и всегда давал false,
+        // из-за чего кнопка получения залоченного подарка не разблокировалась
         this.$watch(
-            () => this.TermsLocked,
-            () => {
-                this.TermsLocked.all_success = Object.values(this.TermsLocked).every((t: any) => t.success);
-            }
+            () => this.TermsLocked.items,
+            (items: any) => {
+                this.TermsLocked.all_success = Object.values(items).every((t: any) => t.success);
+            },
+            { deep: true, immediate: true }
         );
     },
 
@@ -347,14 +306,11 @@ export default {
         activeTerms(): any {
             return this.isScoobyGift ? this.TermsScooby : this.Terms;
         },
-        NftSupplyCurrent(): number {
-            return (this.NftData?.Supply ?? 0) - (this.NftSupplyCurrent ?? 0);
-        },
-        similarGifts() {
-            const all = this.storeCache.NftsApp;
-            if (!all || !this.NftData?.Rarity) return [];
-            const arr = Array.isArray(all) ? all : Object.values(all);
-            return arr.filter((g: any) => g.Rarity === this.NftData.Rarity && g.Key !== this.NftData.Key && !g.soldOut).slice(0, 6);
+        // на карточке показываем остаток тиража, а не количество проданных
+        NftSupplyLeft(): number {
+            const all = Number(this.NftSupplyAll) || 0;
+            const sold = Number(this.NftSupplyCurrent) || 0;
+            return Math.max(all - sold, 0);
         },
     },
 
@@ -362,7 +318,7 @@ export default {
         handleLoadSuccess() {
             this.handleLoads ++;
 
-            if (this.handleLoads >= 5) {
+            if (this.handleLoads === 3) {
                 setTimeout(() => {
                     this.isPageLoading = false;
                 }, this.configApp.skeletonTime);
@@ -379,6 +335,9 @@ export default {
         },
 
         async checkLockedTerms() {
+            // условия есть только у залоченных подарков — на остальных запрос лишний
+            if (!this.NftData?.Locked) return;
+
             const res = await nftApi.sodaLocked();
             if (!res) return;
 
@@ -403,8 +362,9 @@ export default {
 
         async checkCurrentSupply() {
             const nftResponseData = await giftsApi.get(this.NftData?.ID);
-            this.RecentList = nftResponseData.history;
-            this.NftResponseData = nftResponseData.gift;
+            if (!nftResponseData || !nftResponseData.gift) return;
+            this.RecentList = Array.isArray(nftResponseData.history) ? nftResponseData.history : [];
+            this.TopList = Array.isArray(nftResponseData.top) ? nftResponseData.top : [];
             this.NftSupplyCurrent = nftResponseData.gift.SupplyUsers;
             this.NftSupplyAll = this.NftData?.Supply;
             this.NftData.nftSupplyCurrent = this.NftSupplyAll - this.NftSupplyCurrent;
@@ -430,15 +390,6 @@ export default {
             const max = this.NftSupplyAll - this.NftSupplyCurrent;
             this.NftBuyCount = Math.min(max, Math.max(1, this.NftBuyCount - summary));
             this.NftData.nftPriceCurrent = Math.max(this.NftBuyAmount, this.NftData.nftPriceCurrent - this.NftBuyAmount);
-        },
-
-        isTicketsNotNull(summary: any) {
-            return summary > 0;
-        },
-
-        useTickets(summary: any) {
-            this.isUseTickets = this.isTicketsNotNull(summary);
-            this.useTicketsCount = summary;
         },
 
         completeTerm(type: string) {

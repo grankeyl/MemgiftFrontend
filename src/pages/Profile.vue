@@ -1,31 +1,115 @@
 <template>
-  <div class="overlay" :class="{ 'is-open': ModalComp.ModalActive }" @click="ModalComp.ModalActive = false" />
+  <!-- Gift modal has its own market-style overlay inside Profile/Modal.vue -->
   <div class="overlay" :class="{ 'is-open is-dark': ModalModelComp.ModalActive }" @click="ModalModelComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open is-dark': ModalSortComp.ModalActive }" @click="ModalSortComp.ModalActive = false" />
-  <div class="overlay" :class="{ 'is-open is-dark': ModalSellComp.ModalActive }" @click="ModalSellComp.ModalActive = false" />
-  <div class="overlay" :class="{ 'is-open': ModalComp.ModalTransferActive }" @click="ModalComp.ModalTransferActive = false" />
-  <div class="overlay" :class="{ 'is-open': ModalDisconnectWalletComp.ModalActive }" @click="ModalDisconnectWalletComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open is-dark': ModalGiftModelsComp.ModalActive }" @click="ModalGiftModelsComp.ModalActive = false" />
   <div class="overlay" :class="{ 'is-open is-dark': SymbolModelComp.SymbolsActive }" @click="SymbolModelComp.SymbolsActive = false" />
   <div class="overlay" :class="{ 'is-open is-dark': BackdropModelComp.BackdropsActive }" @click="BackdropModelComp.BackdropsActive = false" />
+
+  <!-- Outside ._view (z-index:1) so fixed sheet can sit above bottom menu (z-index:999) -->
+  <Modal
+    @openSellModal="openSellModal"
+
+    @loadSuccess="handleLoadSuccess"
+    @closeModal="closeModal"
+    @transferNft="transferNft"
+    @sendedNft="sendedNft"
+    @useTransferModal="useTransferModal"
+    @useTransfered="useTransfered"
+    @closeTransferModal="closeTransferModal"
+    @upgradedNftModal="upgradedNftModal"
+    @removeGift="removeGift"
+    @removeGiftLot="removeGiftLot"
+    @mintUpdated="syncGiftMintState"
+
+    @UPGRADE="UPGRADE"
+
+    :Skeleton="isPageLoading"
+    :SkeletonTime="configApp.skeletonTime"
+    :ModalActive="ModalComp.ModalActive"
+    :ModalTransferActive="ModalComp.ModalTransferActive"
+    :ModalComp="ModalComp"
+    :UpgradedNft="UpgradedNft"
+    :Table="GiftTableList"
+  />
+
+  <!-- Teleported sheet; keep outside ._view for clarity -->
+  <DisconnectModal
+    @closeModal="ModalDisconnectWalletComp.ModalActive = false"
+    :Skeleton="isPageLoading"
+    :SkeletonTime="configApp.skeletonTime"
+    :ModalActive="ModalDisconnectWalletComp.ModalActive"
+  />
+
+  <Teleport to="body">
+    <ModelModal
+      @closeModal="() => { ModalModelComp.ModalActive = false }"
+      @apply="applyModels"
+
+      :Skeleton="isPageLoading"
+      :SkeletonTime="configApp.skeletonTime"
+      :ModalActive="ModalModelComp.ModalActive"
+      :GiftsList="storeCache.NftsAppData"
+      :Selected="ModalModelComp.ModelsSelected"
+    />
+
+    <SortModal
+      @closeModal="() => { ModalSortComp.ModalActive = false }"
+      @apply="applySort"
+
+      :Skeleton="isPageLoading"
+      :SkeletonTime="configApp.skeletonTime"
+      :ModalActive="ModalSortComp.ModalActive"
+      :SortItems="ModalSortComp.SortItems"
+      :Selected="ModalSortComp.SortSelected"
+    />
+
+    <ModelModalGift
+      @closeModal="() => { ModalGiftModelsComp.ModalActive = false }"
+      @apply="applyGiftModels"
+
+      :Skeleton="isPageLoading"
+      :SkeletonTime="configApp.skeletonTime"
+      :ModalActive="ModalGiftModelsComp.ModalActive"
+      :GiftsList="ModalGiftModelsComp.ModelsList"
+      :Selected="ModalGiftModelsComp.ModelsSelected"
+      :ListLoading="ModalGiftModelsComp.Loading"
+    />
+
+    <SymbolModal
+      @closeModal="() => { SymbolModelComp.SymbolsActive = false }"
+      @apply="applySymbols"
+
+      :Skeleton="isPageLoading"
+      :SkeletonTime="configApp.skeletonTime"
+      :ModalActive="SymbolModelComp.SymbolsActive"
+      :GiftsList="SymbolModelComp.SymbolsList"
+      :Selected="SymbolModelComp.SymbolsSelected"
+      :ListLoading="SymbolModelComp.Loading"
+    />
+
+    <BackdropModal
+      @closeModal="() => { BackdropModelComp.BackdropsActive = false }"
+      @apply="applyBackdrops"
+
+      :Skeleton="isPageLoading"
+      :SkeletonTime="configApp.skeletonTime"
+      :ModalActive="BackdropModelComp.BackdropsActive"
+      :GiftsList="BackdropModelComp.BackdropsList"
+      :Selected="BackdropModelComp.BackdropsSelected"
+      :ListLoading="BackdropModelComp.Loading"
+    />
+  </Teleport>
 
   <div 
     class="_wrap _profile flex-grow-scroll" 
     :class="{ desktop: isDesktop() }"
   >
-    <div class="_view">
-      <div class="stylish">
-        <div class="_prof-orb _prof-orb--1"></div>
-        <div class="_prof-orb _prof-orb--2"></div>
-        <div class="_prof-orb _prof-orb--3"></div>
-        <div class="_prof-particle _prof-particle--1"></div>
-        <div class="_prof-particle _prof-particle--2"></div>
-        <div class="_prof-particle _prof-particle--3"></div>
-        <div class="_prof-particle _prof-particle--4"></div>
-        <div class="_prof-particle _prof-particle--5"></div>
-      </div>
+    <div class="bluring-t"></div>
+    <div class="bluring-b"></div>
 
-      <div class="fixed">
+    <div class="_view">
+      <div class="display">
         <User
           @loadSuccess="handleLoadSuccess"
           @openDisconnectModal="openDisconnectModal"
@@ -42,7 +126,6 @@
           @loadMore="fetchNftsStacks"
           @loadSuccess="handleLoadSuccess"
           @useModal="useModal"
-          @useTab="setActiveTab"
           @openModelModal="ModalModelComp.ModalActive = true"
           @openSortModal="ModalSortComp.ModalActive = true"
           @openGiftModelsModal="openGiftModelsModal"
@@ -61,7 +144,6 @@
           :GiftsList="GiftsComp.List"
           :GiftsCount="GiftsComp.NFTsCount"
           :GiftsLoading="GiftsComp.Loading"
-          :ActiveTab="ActiveTab"
           :SelectedModels="ModalModelComp.ModelsSelected"
           :SelectedSort="ModalSortComp.SortSelected"
           :SelectedGiftModels="ModalGiftModelsComp.ModelsSelected"
@@ -70,116 +152,22 @@
           :SortItems="ModalSortComp.SortItems"
           :Searching="GiftsComp.Searching"
           :HasMore="GiftsComp.HasMore"
+          :ActiveTab="GiftsTab"
+          @useTab="setGiftsTab"
         />
       </div>
 
-      <Modal
-        @openSellModal="openSellModal"
-
-        @loadSuccess="handleLoadSuccess"
-        @closeModal="closeModal"
-        @transferNft="transferNft"
-        @sendedNft="sendedNft"
-        @useTransferModal="useTransferModal"
-        @useTransfered="useTransfered"
-        @closeTransferModal="closeTransferModal"
-        @upgradedNftModal="upgradedNftModal"
-        @removeGift="removeGift"
-        @removeGiftLot="removeGiftLot"
-
-        @UPGRADE="UPGRADE"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :ModalActive="ModalComp.ModalActive"
-        :ModalTransferActive="ModalComp.ModalTransferActive"
-        :ModalComp="ModalComp"
-        :UpgradedNft="UpgradedNft"
-        :Table="GiftTableList"
-      />
-
-      <DisconnectModal
-        @closeModal="ModalDisconnectWalletComp.ModalActive = false"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :ModalActive="ModalDisconnectWalletComp.ModalActive"
-      />
-
-      <ModelModal
-        @closeModal="() => { ModalModelComp.ModalActive = false }"
-        @apply="applyModels"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :ModalActive="ModalModelComp.ModalActive"
-        :GiftsList="storeCache.NftsAppData"
-        :Selected="ModalModelComp.ModelsSelected"
-      />
-
-      <SortModal
-        @closeModal="() => { ModalSortComp.ModalActive = false }"
-        @apply="applySort"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :ModalActive="ModalSortComp.ModalActive"
-        :SortItems="ModalSortComp.SortItems"
-        :Selected="ModalSortComp.SortSelected"
-      />
-
-
-            <ModelModalGift
-                @closeModal="() => { ModalGiftModelsComp.ModalActive = false }"
-                @apply="applyGiftModels"
-
-                :Skeleton="isPageLoading"
-                :SkeletonTime="configApp.skeletonTime"
-                :ModalActive="ModalGiftModelsComp.ModalActive"
-                :GiftsList="ModalGiftModelsComp.ModelsList"
-                :Selected="ModalGiftModelsComp.ModelsSelected"
-            />
-
-            <SymbolModal
-                @closeModal="() => { SymbolModelComp.SymbolsActive = false }"
-                @apply="applySymbols"
-
-                :Skeleton="isPageLoading"
-                :SkeletonTime="configApp.skeletonTime"
-                :ModalActive="SymbolModelComp.SymbolsActive"
-                :GiftsList="SymbolModelComp.SymbolsList"
-                :Selected="SymbolModelComp.SymbolsSelected"
-            />
-
-            <BackdropModal
-                @closeModal="() => { BackdropModelComp.BackdropsActive = false }"
-                @apply="applyBackdrops"
-
-                :Skeleton="isPageLoading"
-                :SkeletonTime="configApp.skeletonTime"
-                :ModalActive="BackdropModelComp.BackdropsActive"
-                :GiftsList="BackdropModelComp.BackdropsList"
-                :Selected="BackdropModelComp.BackdropsSelected"
-            />
-
-      <Notify
-        :Title="`Подарок выставлен на продажу`"
-        :Button="`Go to Market`"
-        :ButtonLink="`/m`"
-        :Visible="NotifySellComp.NotifySellActive"
-      />
-      <SellModal
-        @closeModal="() => { ModalSellComp.ModalActive = false }"
-        @apply="applySell"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :ModalActive="ModalSellComp.ModalActive"
-        :ModalSellList="ModalSellComp.ModalSellList"
-      />
-      
     </div>
   </div>
+
+  <SellModal
+    @closeModal="() => { ModalSellComp.ModalActive = false }"
+    @apply="applySell"
+    :Skeleton="isPageLoading"
+    :SkeletonTime="configApp.skeletonTime"
+    :ModalActive="ModalSellComp.ModalActive"
+    :ModalSellList="ModalSellComp.ModalSellList"
+  />
 </template>
 
 <script lang="ts">
@@ -207,9 +195,9 @@ import SellModal from '../components/Profile/SellModal.vue';
 import ModelModalGift from '../components/Profile/ModelModalGift.vue';
 import SymbolModal from '../components/Profile/SymbolModal.vue';
 import BackdropModal from '../components/Profile/BackdropModal.vue';
-import Notify from '../components/Notify/Notify.vue';
 
 import i18next from 'i18next';
+import { showToast } from '../utils/toastManager';
 import TelegramModule from '../hooks/useTelegram';
 
 const { t } = i18next;
@@ -227,7 +215,6 @@ export default defineComponent({
     ModelModalGift,
     SymbolModal,
     BackdropModal,
-    Notify,
   },
 
   setup() {
@@ -268,9 +255,11 @@ export default defineComponent({
       NftUniqueKey: '',
       NftImage: '',
       NftName: '',
+      GiftName: '',
       NftId: '',
       NftKey: '',
       NftUuid: '',
+      FreeTransferAt: 0,
       NftPrice: 0,
       NftRarity: '',
       NftStatus: '',
@@ -280,9 +269,11 @@ export default defineComponent({
       NftUpgraded: false,
       Market: {
         MarketOn: false,
-        TonPrice: null,
-        LotId: null,
-      }
+        TonPrice: null as number | null,
+        LotId: null as string | null,
+      },
+      // минт в кошелёк: null — не минтился; { status, wallet_address, getgems_url, ... }
+      Mint: null as any,
     });
 
     const UpgradedNft = ref({
@@ -350,26 +341,27 @@ export default defineComponent({
 
     const ModalGiftModelsComp = ref({
       ModalActive: false,
+      Loading: false,
       ModelsList: [] as any[],
       ModelsSelected: [],
     });
 
     const SymbolModelComp = ref({
       SymbolsActive: false,
+      Loading: false,
       SymbolsList: [] as any[],
       SymbolsSelected: [],
     });
 
     const BackdropModelComp = ref({
       BackdropsActive: false,
+      Loading: false,
       BackdropsList: [] as any[],
       BackdropsSelected: [],
     });
 
     const GiftPurchasedOffset = ref(10);
     const GiftPurchasedLimit = ref(3);
-
-    const ActiveTab = ref('received');
 
     const isLoadingMore = ref(false);
 
@@ -423,10 +415,16 @@ export default defineComponent({
       ModalComp.value.NftStatus = nft.status;
       ModalComp.value.NftKey = NftData.Key;
       ModalComp.value.NftUuid = arg;
+      // 0 — пересылка бесплатна; иначе до этого времени она платная
+      ModalComp.value.FreeTransferAt = nft.free_transfer_at || 0;
       ModalComp.value.NftUniqueKey = NftData.UKey;
       ModalComp.value.NftMedia = NftData.Media;
+      // оригинальное название коллекции: у улучшенного подарка NftName
+      // ниже перетирается именем модели, а в заголовке нужен сам подарок
+      ModalComp.value.GiftName = NftData.Name;
       ModalComp.value.NftUpgraded = nft.upgrade;
       ModalComp.value.NftUpgradeSupport = NftData.UpgradeSupport;
+      ModalComp.value.Mint = nft.mint || null;
 
       GiftTableList.value.OwnerName = storeCache.TelegramData.user.firstName;
       GiftTableList.value.OwnerAvatar = storeCache.TelegramData.user.photoUrl;
@@ -593,13 +591,8 @@ export default defineComponent({
       }
     };
 
-    const setActiveTab = (arg: string) => {
-      ActiveTab.value = arg;
-    };
-
     const transferNft = async () => {
       resetLocalStorage();
-      setActiveTab('received');
     };
 
     const sendedNft = (id: string) => {
@@ -619,14 +612,81 @@ export default defineComponent({
       }
     };
 
+    const syncGiftMarketState = (uuid: string, market: { price_ton: number; lot_id: string } | null) => {
+      const updateItems = (items: any[]) => {
+        let changed = false;
+        for (const item of items || []) {
+          if (item?.uuid === uuid) {
+            item.market = market ? { ...market } : null;
+            changed = true;
+          }
+          if (Array.isArray(item?.stackGifts) && updateItems(item.stackGifts)) {
+            changed = true;
+          }
+        }
+        return changed;
+      };
+
+      // раньше здесь пересоздавался весь массив: TransitionGroup считал это
+      // перестроением списка и запускал move-переход у каждой карточки —
+      // сетка заметно дёргалась. item.market реактивен сам по себе,
+      // поэтому достаточно мутации, подмена ссылки не нужна
+      updateItems(GiftsComp.value.List);
+
+      for (const bucket of Object.values(storeCache.UserNFTs || {}) as any[]) {
+        if (Array.isArray(bucket?.items)) updateItems(bucket.items);
+      }
+
+      if (ModalComp.value.NftUuid === uuid) {
+        ModalComp.value.Market = {
+          MarketOn: !!market,
+          TonPrice: market?.price_ton ?? null,
+          LotId: market?.lot_id ?? null,
+        };
+      }
+    };
+
     const removeGiftLot = (id: string) => {
-      const nft = GiftsComp.value.List.find(gift => gift.uuid === id);
-      if (!nft) return;
-      nft.market = null;
+      syncGiftMarketState(id, null);
     }
 
+    // минт-статус пришёл из модалки — мутируем карточки на месте,
+    // как и с маркетом: подмена массива дёргает TransitionGroup
+    const syncGiftMintState = (uuid: string, mint: any) => {
+      const updateItems = (arr: any[]) => {
+        for (const it of arr || []) {
+          if (it?.uuid === uuid) {
+            it.mint = mint;
+            if (mint?.status === 'success') it.status = 'minted';
+            else if (mint?.status === 'processing') it.status = 'mint_locked';
+          }
+        }
+      };
+      updateItems(GiftsComp.value.List);
+      for (const bucket of Object.values(storeCache.UserNFTs || {}) as any[]) {
+        if (Array.isArray(bucket?.items)) updateItems(bucket.items);
+      }
+      if (ModalComp.value.NftUuid === uuid) {
+        ModalComp.value.Mint = mint;
+      }
+
+      // успешный минт переносит подарок в таб «в кошельке»: с таба «подарки»
+      // он уезжает, а кэш всех бакетов больше не соответствует серверу
+      if (mint?.status === 'success') {
+        storeCache.UserNFTs = {};
+        if (GiftsTab.value === 'all') {
+          GiftsComp.value.List = GiftsComp.value.List.filter((it: any) => it?.uuid !== uuid);
+          if (GiftsComp.value.NFTsCount) GiftsComp.value.NFTsCount -= 1;
+        }
+      }
+    };
+
+    const setGiftsTab = (tab: 'all' | 'wallet') => {
+      if (GiftsTab.value === tab) return;
+      GiftsTab.value = tab; // дальше отработает watch по ключу кэша
+    };
+
     const openDisconnectModal = () => {
-      console.log('openDisconnectModal');
       ModalDisconnectWalletComp.value.ModalActive = true;
     };
 
@@ -634,20 +694,22 @@ export default defineComponent({
       ModalDisconnectWalletComp.value.ModalActive = false;
     };
 
-    const keyFor = (tab: string, sort: string, models: string[], modelsGift: string[], symbols: string[], backdrops: string[]) =>
-      `${tab}|${sort}|${models.join(',')}|${modelsGift.join(',')}|${symbols.join(',')}|${backdrops.join(',')}`;
+    // таб подарков: all — обычные, wallet — заминченные в кошелёк
+    const GiftsTab = ref<'all' | 'wallet'>('all');
+
+    const keyFor = (sort: string, models: string[], modelsGift: string[], symbols: string[], backdrops: string[]) =>
+      `${GiftsTab.value}|${sort}|${models.join(',')}|${modelsGift.join(',')}|${symbols.join(',')}|${backdrops.join(',')}`;
       
     const fetchNftsStacks = async () => {
       if (GiftsComp.value.Searching) return;
       GiftsComp.value.Searching = true;
 
-      const tab = ActiveTab.value;
       const sort = ModalSortComp.value.SortSelected || 'latest';
       const modelsCsv = ModalModelComp.value.ModelsSelected;
       const modelsGiftCsv = ModalGiftModelsComp.value.ModelsSelected;
       const symbolsCsv = SymbolModelComp.value.SymbolsSelected;
       const backdropsCsv = BackdropModelComp.value.BackdropsSelected;
-      const cacheKey = keyFor(tab, sort, modelsCsv, modelsGiftCsv, symbolsCsv, backdropsCsv);
+      const cacheKey = keyFor(sort, modelsCsv, modelsGiftCsv, symbolsCsv, backdropsCsv);
 
       if (!storeCache.UserNFTs[cacheKey]) {
         storeCache.UserNFTs[cacheKey] = { items: [], count: 0, fullyLoaded: false };
@@ -676,14 +738,15 @@ export default defineComponent({
       if (!bucket.fullyLoaded) {
         const offset = bucket.items.length;
         const gifts = await nftApi.getGifts(
-          tab,
+          '',
           sort,
           modelsCsv.join(','),
           modelsGiftCsv.join(','),
           symbolsCsv.join(','),
           backdropsCsv.join(','),
           offset,
-          GiftsComp.value.Limit
+          GiftsComp.value.Limit,
+          GiftsTab.value === 'wallet' ? 'only' : 'exclude'
         );
 
         if (gifts) {
@@ -715,22 +778,21 @@ export default defineComponent({
     resetLocalStorage();
     fetchNftsStacks();
 
-    /** Смена фильтров/таба — просто меняем ключ; если кэша нет, первая загрузка начнётся с сервера */
+    /** Смена фильтров — просто меняем ключ; если кэша нет, первая загрузка начнётся с сервера */
     watch([
-      ActiveTab, 
-      () => ModalSortComp.value.SortSelected, 
-      () => ModalModelComp.value.ModelsSelected.join(','), 
-      () => ModalGiftModelsComp.value.ModelsSelected.join(','), 
-      () => SymbolModelComp.value.SymbolsSelected.join(','), 
+      () => GiftsTab.value,
+      () => ModalSortComp.value.SortSelected,
+      () => ModalModelComp.value.ModelsSelected.join(','),
+      () => ModalGiftModelsComp.value.ModelsSelected.join(','),
+      () => SymbolModelComp.value.SymbolsSelected.join(','),
       () => BackdropModelComp.value.BackdropsSelected.join(',')
     ], () => {
-      const tab = ActiveTab.value;
       const sort = ModalSortComp.value.SortSelected || 'latest';
       const models = ModalModelComp.value.ModelsSelected;
       const modelsGift = ModalGiftModelsComp.value.ModelsSelected;
       const symbols = SymbolModelComp.value.SymbolsSelected;
       const backdrops = BackdropModelComp.value.BackdropsSelected;
-      const cacheKey = keyFor(tab, sort, models, modelsGift, symbols, backdrops);
+      const cacheKey = keyFor(sort, models, modelsGift, symbols, backdrops);
 
       const bucket = storeCache.UserNFTs[cacheKey];
       if (bucket) {
@@ -742,7 +804,7 @@ export default defineComponent({
       }
       fetchNftsStacks();
     });
-
+ 
     const applyModels = (models: any) => {
       ModalModelComp.value.ModelsSelected = models;
       fetchNftsStacks();
@@ -769,38 +831,54 @@ export default defineComponent({
     }
 
     const applySell = (item: any) => {
-      NotifySellComp.value.NotifySellActive = true;
+      if (!item?.gift_uuid || !item?.lot_id) return;
+      syncGiftMarketState(item.gift_uuid, {
+        price_ton: item.price_ton,
+        lot_id: item.lot_id,
+      });
+      showToast(t('profile.profileSellNotifyTitle'), 'success');
       ModalSellComp.value.ModalActive = false;
-
-      const nft = GiftsComp.value.List.find(gift => gift.uuid === item.gift_uuid);
-      if (!nft) return;
-      nft.market = { price_ton: item.price_ton, lot_id: item.lot_id };
     }
     
     const openGiftModelsModal = async () => {
       ModalGiftModelsComp.value.ModelsList = [];
       ModalGiftModelsComp.value.ModalActive = true;
-      for (const model of ModalModelComp.value.ModelsSelected) {
-        const modelName = await MarketNftApi.modelsName(model);
-        if (!modelName) return;
-        modelName.items.forEach((item: any) => {
-          ModalGiftModelsComp.value.ModelsList.push(item);
-        });
+      ModalGiftModelsComp.value.Loading = true;
+      try {
+        for (const model of ModalModelComp.value.ModelsSelected) {
+          const modelName = await MarketNftApi.modelsName(model);
+          if (!modelName) continue;
+          modelName.items.forEach((item: any) => {
+            ModalGiftModelsComp.value.ModelsList.push(item);
+          });
+        }
+      } finally {
+        ModalGiftModelsComp.value.Loading = false;
       }
     }
 
     const openSymbolModal = async () => {
       SymbolModelComp.value.SymbolsActive = true;
-      const symbols = await MarketLotsApi.symbols();
-      if (!symbols) return;
-      SymbolModelComp.value.SymbolsList = symbols;
+      SymbolModelComp.value.Loading = true;
+      try {
+        const symbols = await MarketLotsApi.symbols();
+        if (!symbols) return;
+        SymbolModelComp.value.SymbolsList = symbols;
+      } finally {
+        SymbolModelComp.value.Loading = false;
+      }
     }
 
     const openBackdropModal = async () => {
       BackdropModelComp.value.BackdropsActive = true;
-      const backdrops = await MarketLotsApi.backdrops();
-      if (!backdrops) return;
-      BackdropModelComp.value.BackdropsList = backdrops;
+      BackdropModelComp.value.Loading = true;
+      try {
+        const backdrops = await MarketLotsApi.backdrops();
+        if (!backdrops) return;
+        BackdropModelComp.value.BackdropsList = backdrops;
+      } finally {
+        BackdropModelComp.value.Loading = false;
+      }
     }
 
     const clearAll = () => {
@@ -910,8 +988,6 @@ export default defineComponent({
       isLoadingMore,
       isDesktop,
       handleLoadSuccess,
-      ActiveTab,
-      setActiveTab,
       transferNft,
       sendedNft,
       UserCompInit,
@@ -948,6 +1024,9 @@ export default defineComponent({
       clearSort,
 
       removeGiftLot,
+      syncGiftMintState,
+      GiftsTab,
+      setGiftsTab,
 
       ModalGiftModelsComp,
       applyGiftModels,
@@ -975,4 +1054,5 @@ export default defineComponent({
 <style lang="sass">
 @use "@/assets/styles/profile/_main.sass"
 @use "@/assets/styles/profile/_comp.sass"
+@use "@/assets/styles/_filter-modals.sass"
 </style>

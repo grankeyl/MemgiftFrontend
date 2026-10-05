@@ -1,240 +1,113 @@
 <template>
-  <div 
-    class="_direction _comp _item _pageGiftContext"
-    :class="[Key]"
-  >
-      <div 
-        v-if="isLoading" 
-        class="_skeleton"
-      >
-        <div 
-          class="_pageGiftContent" 
+  <div class="_direction _comp _item _pageGiftContext" :class="[Key]">
+    <div v-if="isLoading" class="_skeleton">
+      <div class="mgm-skel">
+        <div class="mgm-skel__card"></div>
+        <div class="mgm-skel__block"></div>
+        <div class="mgm-skel__btn"></div>
+      </div>
+    </div>
+
+    <!-- та же вёрстка, что в модалке подарка на странице профиля -->
+    <div v-else class="_content mgm-body pg-body">
+      <div class="mgm-card">
+        <div
+          class="mgm-card__head"
+          :class="[NftData.upgraded ? 'is-upg' : normalizedRarity]"
+          :style="cardHeadStyle"
         >
-          <div class="_pageGiftContentImage">
+          <div class="mgm-card__bg"></div>
+
+          <div class="mgm-card__symbol">
+            <img v-if="NftData.upgraded && NftData?.SymbolImage" :src="NftData.SymbolImage" alt="" />
+            <img v-else :src="Image_GiftBg" alt="" />
           </div>
 
-          <div class="_pageGiftContentTitle">
-            <h4></h4>
+          <div v-if="NftData.upgraded && NftData?.ModelNumber != null" class="mgm-card__mark">
+            <p>#{{ NftData.ModelNumber }}</p>
           </div>
 
-          <div class="_pageGiftContentButtons">
-            <button></button>
-            <button></button>
-          </div>
-        </div>
-
-        <div class="_pageGiftContentTable">
-          <div class="_pageGiftContentTableRow">
-            <div class="profile_gift_preview_table_item">
-            </div>
-            <div class="profile_gift_preview_table_item">
-            </div>
-            <div class="profile_gift_preview_table_item">
-            </div>
-            <div class="profile_gift_preview_table_item">
-            </div>
+          <div class="mgm-card__model">
+            <GiftLottie
+              v-if="showLottie"
+              class="mgm-card__lottie"
+              :path="lottiePath"
+              :loop="true"
+              :autoplay="true"
+              width="0"
+              height="0"
+              renderer="canvas"
+            />
+            <img v-else class="mgm-card__model-img" :src="modelImageSrc" alt="nft" />
           </div>
         </div>
       </div>
-      <div 
-        v-if="!isLoading" 
-        class="_content"
-      >
-        <div 
-          class="_pageGiftContent" 
-          :class="NftData.NftRarity"
-        >
-          <div 
-            v-if="NftData.upgraded" 
-            class="_pageGiftContentGradient"
-            :style="{
-              '--center-color': NftData.BackgroundColors?.Center,
-              '--around-color': NftData.BackgroundColors?.Around
-            }"
-          ></div>
-          <div class="_symbols">
-            <img :src="Image_GiftBg" :class="{ _show: !NftData.upgraded }" alt="symbols" />
-            <img :src="NftData?.SymbolImage" :class="{ _show: NftData.upgraded }" alt="symbols" />
-          </div>
-          <div class="_pageGiftContentImage">
-            <img 
-              v-if="NftData.NftKey && NftData.NftMedia === 'svg'"
-              :src="NftData.NftImage"
-              alt="nft"
-              class="modalImage"
-              v-bind:class="{ _hide: NftData.upgraded }"
-            />
-            <GiftLottie
-              v-if="NftData.NftKey && NftData.NftMedia === 'lottie'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _hide: NftData.upgraded }"
-              class="_lottie"
-              :path="`/gifts/lottie/${NftData.NftKey}.json`"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
-            <img 
-              v-if="NftData.upgraded && NftData.NftKey && NftData.NftMedia === 'svg'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.upgraded }"
-              :src="NftData?.ModelImage"
-              alt="nft"
-              class="upgradedImage"
-            />
-            <GiftLottie
-              v-if="NftData.upgraded && NftData.NftKey && NftData.NftMedia === 'lottie'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: NftData.upgraded }"
-              class="_lottie upgraded"
-              :path="NftData?.ModelImage"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
-          </div>
 
-          <div 
-            v-if="NftData.upgraded"
-            class="_number"
-          >
-            <span>#{{ NftData?.ModelNumber }}</span>
-          </div>
+      <div class="mgm-title">
+        <div class="mgm-title__left">
+          <h3>{{ displayName }}</h3>
+        </div>
+        <div class="mgm-title__tools">
+          <button type="button" class="mgm-tool" @click="shareGiftLink">
+            <img :src="ForwardImg" alt="" />
+          </button>
+          <button type="button" class="mgm-tool" @click="copyGiftLink">
+            <img :src="CopyImg" alt="" />
+          </button>
+        </div>
+      </div>
 
-          <div class="_pageGiftContentTitle">
-            <h4 v-if="!NftData.upgraded">{{ NftData.NftName }}</h4>
-            <h4 v-if="NftData.upgraded">{{ NftData?.ModelName }}</h4>
+      <div class="mgm-info">
+        <template v-if="NftData.upgraded">
+          <div class="mgm-info__row">
+            <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem1') }}</span>
+            <div class="mgm-info__right">
+              <span class="mgm-info__val">{{ NftData?.ModelName || '—' }}</span>
+              <span v-if="NftData?.ModelDropRate" class="mgm-info__pct">{{ NftData.ModelDropRate }}%</span>
+            </div>
           </div>
+          <div class="mgm-info__row">
+            <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem2') }}</span>
+            <div class="mgm-info__right">
+              <span class="mgm-info__val">{{ NftData?.SymbolName || '—' }}</span>
+              <span v-if="NftData?.SymbolDropRate" class="mgm-info__pct">{{ NftData.SymbolDropRate }}%</span>
+            </div>
+          </div>
+          <div class="mgm-info__row">
+            <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem3') }}</span>
+            <div class="mgm-info__right">
+              <span class="mgm-info__val">{{ NftData?.BackgroundName || '—' }}</span>
+              <span v-if="NftData?.BackgroundDropRate" class="mgm-info__pct">{{ NftData.BackgroundDropRate }}%</span>
+            </div>
+          </div>
+        </template>
 
-          <div class="_pageGiftContentButtons">
-            <button @click="shareGiftLink">
-              <Icon class="kit-icon" v-html="Icon.Link"></Icon>
-              <span>
-                {{ $t('profile.profileShare') }}
-              </span>
-            </button>
-            <button @click="openProfile">
-              <Icon class="kit-icon" v-html="Icon.Profile"></Icon>
-              <span>
-                {{ $t('profile.profileProfile') }}
-              </span>
-            </button>
+        <div class="mgm-info__row">
+          <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem1') }}</span>
+          <div class="mgm-info__right">
+            <span class="mgm-info__val">{{ Table?.OwnerName || '—' }}</span>
           </div>
         </div>
-
-        <div class="_pageGiftContentTable" :class="{ _show: !NftData.upgraded }">
-          <div class="_pageGiftContentTableRow">
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem1') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <span>{{ Table?.OwnerName }}</span>
-                <div
-                  v-if="Table?.OwnerAvatar"
-                  class="avatar_null"
-                >
-                  <img 
-                    @load="Table.OwnerAvatarLoading = false"
-                    @error="OwnerImage = false"
-                    :src="Table?.OwnerAvatar"
-                    alt="avatar" 
-                  />
-                </div>
-                <div v-else class="avatar_null">
-                  <h4 v-if="Table.OwnerName">{{ Table.OwnerName[0] }}</h4>
-                </div>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem2') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ Table?.NftDate }}</p>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem3') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ Table?.NftPrice }}</p>
-                <img loading="lazy" class="_stars" :src="Image_Stars" alt="avatar" />
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left last">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem4') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right last">
-                <p>{{ Table?.NftSupply }}</p>
-              </div>
-            </div>
+        <div v-if="!NftData.upgraded" class="mgm-info__row">
+          <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem3') }}</span>
+          <div class="mgm-info__right">
+            <span class="mgm-info__val">{{ Table?.NftPrice || '—' }}</span>
           </div>
         </div>
-
-        <div class="_pageGiftContentTable" :class="{ _show: NftData.upgraded }">
-          <div class="_pageGiftContentTableRow">
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem1') }}</h4>
-              </div>
-              <div v-if="Table.OwnerName" class="profile_gift_preview_table_item_right">
-                <span>{{ Table.OwnerName }}</span>
-                <div
-                  v-if="Table.OwnerAvatar && OwnerImage"
-                  class="avatar_null"
-                >
-                  <img 
-                    @load="Table.OwnerAvatarLoading = false"
-                    @error="OwnerImage = false"
-                    :src="Table.OwnerAvatar"
-                    alt="avatar" 
-                  />
-                </div>
-                <div v-else class="avatar_null">
-                  <h4>{{ Table.OwnerName[0] }}</h4>
-                </div>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>Модель</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ NftData?.ModelName }}</p>
-                <span>{{ NftData?.ModelDropRate }}%</span>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>Символ</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ NftData?.SymbolName }}</p>
-                <span>{{ NftData?.SymbolDropRate }}%</span>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>Фон</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ NftData?.BackgroundName }}</p>
-                <span>{{ NftData?.BackgroundDropRate }}%</span>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left last">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem4') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right last">
-                <p>{{ Table.NftSupply }}</p>
-              </div>
-            </div>
+        <div class="mgm-info__row">
+          <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem4') }}</span>
+          <div class="mgm-info__right">
+            <span class="mgm-info__val">{{ Table?.NftSupply || '—' }}</span>
           </div>
         </div>
       </div>
+
+      <div class="pgm-footer">
+        <button type="button" class="pgm-footer__btn pgm-footer__btn--close" @click="openProfile">
+          <span>{{ $t('profile.profileProfile') }}</span>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
   
@@ -251,6 +124,11 @@
 
   import Image_Stars from '@/assets/images/stars.png';
   import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
+  import ForwardImg from '@/assets/images/forward.svg';
+  import CopyImg from '@/assets/images/copy.svg';
+
+  import { copyToClipboard } from '../../utils/copyToClipboard';
+  import { showToast } from '../../utils/toastManager';
 
   export default {
     props: {
@@ -291,12 +169,53 @@
         Icon,
         Image_Stars,
         Image_GiftBg,
+        ForwardImg,
+        CopyImg,
       };
     },
 
     computed: {
       isLoading() {
         return this.Skeleton;
+      },
+
+      // редкость приходит в разном написании — приводим к классам фона
+      normalizedRarity() {
+        let rarity = String(this.NftData?.NftRarity || '').toLowerCase().replace(/[\s_-]+/g, '');
+        if (rarity === 'legendary') rarity = 'legend';
+        if (rarity === 'veryrarity') rarity = 'veryrare';
+        return rarity;
+      },
+
+      // у улучшенного подарка фон рисуется его собственными цветами
+      cardHeadStyle() {
+        if (!this.NftData?.upgraded) return null;
+        const center = this.NftData?.BackgroundColors?.Center;
+        const around = this.NftData?.BackgroundColors?.Around;
+        if (!center && !around) return null;
+        return {
+          '--center-color': center || '#666',
+          '--around-color': around || '#1a1a1a',
+        };
+      },
+
+      // заголовок — оригинальное название подарка; имя модели остаётся
+      // в строке «Модель», иначе по улучшенным непонятно, что за подарок
+      displayName() {
+        return this.NftData?.GiftName || this.NftData?.NftName;
+      },
+
+      showLottie() {
+        return this.NftData?.NftMedia === 'lottie' && !!this.lottiePath;
+      },
+
+      lottiePath() {
+        if (this.NftData?.upgraded) return this.NftData?.ModelImage || '';
+        return this.NftData?.NftKey ? `/gifts/lottie/${this.NftData.NftKey}.json` : '';
+      },
+
+      modelImageSrc() {
+        return this.NftData?.upgraded ? this.NftData?.ModelImage : this.NftData?.NftImage;
       },
     },
   
@@ -339,6 +258,12 @@
 
           Promise.all(promises).then(resolve).catch(reject);
         });
+      },
+
+      copyGiftLink() {
+        const link = `${import.meta.env.VITE_APP_MINI_APP_LINK}=gift_${this.$route.params.id}`;
+        copyToClipboard(link);
+        showToast(this.$t('profile.profileCopiedLink'), 'success');
       },
 
       shareGiftLink() {

@@ -6,6 +6,9 @@ import { pluralize as pluralizeRu } from "numeralize-ru";
 import * as inflection from "inflection";
 
 import 'dayjs/locale/en';
+import 'dayjs/locale/ru';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/ar';
 
 dayjs.extend(relativeTime);
  
@@ -36,9 +39,12 @@ const unixToDefault = (unix: number) => {
   return `${formattedDate} at ${formattedTime}`;
 };
 
+// раньше здесь была жёстко прибита 'ru', причём без импорта локали —
+// dayjs молча откатывался на английский для всех языков
+const DAYJS_LOCALE: Record<string, string> = { ru: 'ru', en: 'en', zh: 'zh-cn', ar: 'ar' };
+
 const unixToRelative = (unix: number) => {
-  dayjs.locale('ru');
-  return dayjs.unix(unix / 1000).fromNow();
+  return dayjs.unix(unix / 1000).locale(DAYJS_LOCALE[getUserLanguage()] ?? 'en').fromNow();
 };
 
 const randomString = () => {
@@ -66,12 +72,12 @@ export const getImageUrlSvg = (nftKey: string) => {
   return `${bucketsLink}/gifts/${nftKeyCleaned}.svg`;
 };
 
-export const obfuscateAddress = (address: string) => {
-    const startLength = 3;
-    const endLength = 5;
-    const str = address.slice(0, startLength) + "..." + address.slice(-endLength);
-    if (str.length <= startLength + endLength) return str;
-    return `${str.slice(0, startLength)}...${str.slice(-endLength)}`;
+export const obfuscateAddress = (address?: string | null) => {
+    if (!address || typeof address !== 'string') return '';
+    const cleaned = address.trim();
+    if (!cleaned) return '';
+    if (cleaned.length <= 10) return cleaned;
+    return `${cleaned.slice(0, 4)}...${cleaned.slice(-4)}`;
 };
 
 export const splitCamelCase = (name: string) => {

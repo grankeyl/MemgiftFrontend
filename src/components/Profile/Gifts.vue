@@ -1,239 +1,265 @@
 <template>
-  <div class="_direction _comp _item _categoriesSelected">
-      <div v-if="isLoading" class="_skeleton">
-        <div class="_category"></div>
-        <div class="_category"></div>
-      </div>
-      <div v-if="!isLoading" class="_content">
-        <div 
-          v-for="(category, index) in CategoriesList" 
-          @click="setActiveTab(category.Key)"
-          :key="index" 
-          class="_category" 
-          :class="{ _active: activeCategory === category.Key }"
-        >
-          <h4 v-if="category.Key === 'received'">{{ $t('profile.profileGiftsCategory1') }}</h4>
-          <h4 v-if="category.Key === 'purchased'">{{ $t('profile.profileGiftsCategory2') }}</h4>
-        </div>
-      </div>
+  <!-- Single root so page gap doesn't double between filters / gifts -->
+  <div class="prf-gifts">
+  <!-- Табы: подарки / в кошельке — стеклянный сегмент со скользящим
+       индикатором, как пилюля нижнего меню -->
+  <div class="_direction _comp _item prf-tabs">
+    <div class="prf-tabs__pill" :class="{ 'is-wallet': ActiveTab === 'wallet' }">
+      <div class="prf-tabs__indicator"></div>
+      <button
+        type="button"
+        class="prf-tabs__tab"
+        :class="{ active: ActiveTab === 'all' }"
+        @click="$emit('useTab', 'all')"
+      >
+        <span>{{ $t('profile.profileTabs.all') }}</span>
+      </button>
+      <button
+        type="button"
+        class="prf-tabs__tab"
+        :class="{ active: ActiveTab === 'wallet' }"
+        @click="$emit('useTab', 'wallet')"
+      >
+        <span>{{ $t('profile.profileTabs.wallet') }}</span>
+        <div class="kit-icon" v-html="Icon.MintChain"></div>
+      </button>
+    </div>
   </div>
-
+  <!-- Filters — same markup pattern as Market/Filters.vue -->
   <div class="_direction _comp _item _filter">
-      <div v-if="isLoading" class="_skeleton">
+    <div v-if="!isLoading" class="_content">
+      <div class="cont">
+        <div class="filtersItems">
+          <div class="filtersItemsItem" @click="openSortModal">
+            <div class="circle" v-if="hasSort"></div>
+            <div class="flexer">
+              <div class="title">{{ $t('profile.profileFilters.sort') }}</div>
+              <div class="border"></div>
+              <div class="icon">
+                <div class="kit-icon" v-html="Icon.Sort"></div>
+              </div>
+            </div>
+          </div>
+          <div class="filtersItemsItem" @click="openModelModal">
+            <div class="circle" v-if="hasModels"></div>
+            <div class="flexer">
+              <div class="title">{{ $t('profile.profileFilters.collection') }}</div>
+              <div class="border"></div>
+              <div class="icon">
+                <div class="kit-icon" v-html="Icon.Blocks"></div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="filtersItemsItem"
+            :class="{ disabled: !hasModelsUpgraded }"
+            @click="openGiftModelsModal"
+          >
+            <div class="circle" v-if="hasGiftModels"></div>
+            <div class="flexer">
+              <div class="title">{{ $t('profile.profileFilters.model') }}</div>
+              <div class="border"></div>
+              <div class="icon">
+                <div class="kit-icon" v-html="Icon.GiftOth"></div>
+              </div>
+            </div>
+          </div>
+          <div class="filtersItemsItem" @click="openSymbolModal">
+            <div class="circle" v-if="hasSymbols"></div>
+            <div class="flexer">
+              <div class="title">{{ $t('profile.profileFilters.symbol') }}</div>
+              <div class="border"></div>
+              <div class="icon">
+                <div class="kit-icon" v-html="Icon.Symbol"></div>
+              </div>
+            </div>
+          </div>
+          <div class="filtersItemsItem" @click="openBackdropModal">
+            <div class="circle" v-if="hasBackdrops"></div>
+            <div class="flexer">
+              <div class="title">{{ $t('profile.profileFilters.backdrop') }}</div>
+              <div class="border"></div>
+              <div class="icon">
+                <div class="kit-icon" v-html="Icon.Backdrop"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div v-if="!isLoading" class="_content">
-        <div class="cont">
-          <div class="lefted">
-            <div class="item" @click="openSortModal">
-              <div v-if="hasSort" class="circle"></div>
-              <div class="flexer">
-                <div class="icon">
-                  <div class="kit-icon" v-html="Icon.Sort"></div>
-                </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.sort') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
-            <div class="item" @click="openModelModal">
-              <div v-if="hasModels" class="circle"></div>
-              <div class="flexer">
-                <div class="icon">
-                  <div class="kit-icon" v-html="Icon.Blocks"></div>
-                </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.collection') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
-            <div class="item" @click="openGiftModelsModal" :class="{ disabled: !hasModelsUpgraded }">
-              <div class="circle" v-if="hasGiftModels"></div>
-              <div class="flexer">
-                <div class="icon">
-                  <div class="kit-icon" v-html="Icon.GiftOth"></div>
-                </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.model') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
-            <div class="item" @click="openSymbolModal">
-              <div class="circle" v-if="hasSymbols"></div>
-              <div class="flexer">
-                <div class="icon">
-                  <div class="kit-icon" v-html="Icon.Symbol"></div>
-                </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.symbol') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
-            <div class="item" @click="openBackdropModal">
-              <div class="circle" v-if="hasBackdrops"></div>
-              <div class="flexer">
-                <div class="icon">
-                  <div class="kit-icon" v-html="Icon.Backdrop"></div>
-                </div>
-                <div class="title">
-                  {{ $t('profile.profileFilters.backdrop') }}
-                </div>
-              </div>
-              <div class="dropdown">
-                <div class="kit-icon" v-html="Icon.ChevroneTop"></div>
-              </div>
-            </div>
-          </div>
+
+      <div class="information">
+        <div class="gifts">
+          <h5>
+            {{ GiftsCount }}
+            {{ pluralizeGift(
+              $t('profile.profileFilters.gifts'),
+              GiftsCount,
+              storeCache.TelegramData.user.language
+            ) }}
+          </h5>
         </div>
-        <div class="information">
-          <div class="gifts">
-            <h5>
-              {{ GiftsCount }}
-              {{ pluralizeGift(
-                $t('profile.profileFilters.gifts'),
-                GiftsCount,
-                storeCache.TelegramData.user.language
-              ) }}
-            </h5>
+        <div class="righted">
+          <div v-if="tabViewNFTs === 'blocks'" class="display" @click="setTabViewNFTs('lists')">
+            <div class="kit-icon" v-html="Icon.List"></div>
           </div>
-          <div class="righted">
-            <div v-if="tabViewNFTs === 'blocks'" class="display" @click="setTabViewNFTs('lists')">
-              <div class="kit-icon" v-html="Icon.List"></div>
-            </div>
-            <div v-if="tabViewNFTs === 'lists'" class="display" @click="setTabViewNFTs('blocks')">
-              <div class="kit-icon" v-html="Icon.Blocks"></div>
-            </div>
-          </div>
-        </div>
-        <div v-if="!isEmptyFilter" class="cheaps">
-          <div class="cheap clear" @click="clearAll">
-            <h4>{{ $t('profile.clearAll') }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-          <div v-if="hasModels" class="cheap model" @click="clearModels">
+          <div v-if="tabViewNFTs === 'lists'" class="display" @click="setTabViewNFTs('blocks')">
             <div class="kit-icon" v-html="Icon.Blocks"></div>
-            <h4>{{ modelsCount === 1 ? `Model: ${SelectedModels[0]}` : `${modelsCount} Models` }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-          <div v-if="hasSort" class="cheap sort" @click="clearSort">
-            <div class="kit-icon" v-html="Icon.Sort"></div>
-            <h4>{{ sortTitle }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-          <div v-if="hasGiftModels" class="cheap model" @click="clearGiftModels">
-            <div class="kit-icon" v-html="Icon.Gift"></div>
-            <h4>{{ giftModelsCount === 1 ? `Model: ${SelectedGiftModels[0]}` : `${giftModelsCount} Models` }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-          <div v-if="hasSymbols" class="cheap symbol" @click="clearSymbols">
-            <div class="kit-icon" v-html="Icon.Symbol"></div>
-            <h4>{{ symbolsCount === 1 ? `Symbol: ${SelectedSymbols[0]}` : `${symbolsCount} Symbols` }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-          <div v-if="hasBackdrops" class="cheap backdrop" @click="clearBackdrops">
-            <div class="kit-icon" v-html="Icon.Backdrop"></div>
-            <h4>{{ backdropsCount === 1 ? `Backdrop: ${SelectedBackdrops[0]}` : `${backdropsCount} Backdrops` }}</h4>
-            <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
       </div>
+
+      <div v-if="!isEmptyFilter" class="cheaps">
+        <div class="cheap clear" @click="clearAll">
+          <h4>{{ $t('profile.clearAll') }}</h4>
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+        <div v-if="hasModels" class="cheap model" @click="clearModels">
+          <div class="kit-icon" v-html="Icon.Blocks"></div>
+          <h4>{{ modelsCount === 1 ? `Model: ${SelectedModels[0]}` : `${modelsCount} Models` }}</h4>
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+        <div v-if="hasSort" class="cheap sort" @click="clearSort">
+          <div class="kit-icon" v-html="Icon.Sort"></div>
+          <h4>{{ sortTitle }}</h4>
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+        <div v-if="hasGiftModels" class="cheap model" @click="clearGiftModels">
+          <div class="kit-icon" v-html="Icon.Gift"></div>
+          <h4>{{ giftModelsCount === 1 ? `Model: ${SelectedGiftModels[0]}` : `${giftModelsCount} Models` }}</h4>
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+        <div v-if="hasSymbols" class="cheap symbol" @click="clearSymbols">
+          <div class="kit-icon" v-html="Icon.Symbol"></div>
+          <h4>{{ symbolsCount === 1 ? `Symbol: ${SelectedSymbols[0]}` : `${symbolsCount} Symbols` }}</h4>
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+        <div v-if="hasBackdrops" class="cheap backdrop" @click="clearBackdrops">
+          <div class="kit-icon" v-html="Icon.Backdrop"></div>
+          <h4>{{ backdropsCount === 1 ? `Backdrop: ${SelectedBackdrops[0]}` : `${backdropsCount} Backdrops` }}</h4>
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="_direction _comp _item _nfts">
     <div v-if="isLoading" class="_skeleton">
+      <div class="item" v-for="i in 9" :key="'gs-' + i"></div>
     </div>
     <div v-if="!isLoading" class="_content">
-      <div v-if="tabViewNFTs === 'blocks'" class="items blocks">
-        <div 
+      <!-- Blocks — home store cards, 3 per row -->
+      <TransitionGroup v-if="tabViewNFTs === 'blocks'" :key="'blocks-' + ActiveTab" appear tag="div" name="giftgone" class="items blocks" @before-leave="freezeLeavingCard">
+        <div
           v-for="(item, index) in GiftsList"
-          :key="item.uuid" 
+          :key="item.uuid"
+          class="item _gift"
+          :class="{ 'is-upgraded': !!item.upgraded, 'is-market': !!item.market }"
+          :style="[giftCardStyle(item), { '--gi': index % 12 }]"
           @click="useModal(item.uuid)"
-          class="item"
         >
-          <div v-if="item.upgraded && !item.market" class="mark">
-            <p>#{{ item.upgrade.seq }}</p>
-          </div>
-          <div v-if="item.upgraded && item.market" class="mark">
-            <img :src="StoreImg" alt="store" />
-            <p>{{ $t('profile.market') }}</p>
-          </div>
-          <div v-if="!item.upgraded && !item.market" class="rarity">
-            <div class="image">
-              <img 
-                :src="checkRarityImage(storeCache.NftsAppData?.[item.gift_ukey]?.Rarity)" 
-                alt="rarity" 
-              />
-            </div>
-            <div class="span">
-              <p>{{ checkRarity(storeCache.NftsAppData[item.gift_ukey]?.Rarity) }}</p>
-            </div>
+          <div class="_symbols">
+            <img
+              v-if="item.upgraded && item.upgrade?.symbol_image"
+              :src="item.upgrade.symbol_image"
+              alt=""
+            />
+            <img v-else src="/gift_bg.png" alt="" />
           </div>
 
+          <div v-if="item.upgraded && item.upgrade?.seq != null" class="_badge _badge--num">
+            <span>#{{ item.upgrade.seq }}</span>
+          </div>
+
+          <div class="_nft">
+            <img
+              v-if="item.upgraded && item.gift_media === 'svg'"
+              :src="item.upgrade.nft_image"
+              alt=""
+            />
+            <img
+              v-else-if="item.upgraded"
+              :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name?.name || item.upgrade.nft_name, 'svg')"
+              alt=""
+            />
+            <img v-else :src="item.gift_image" alt="" />
+          </div>
+
+          <!-- заминчен в кошелёк: та же лента-маска, TON-синим -->
           <div
-            v-if="item.upgraded && item.upgrade"
-            class="background upg"
-            :style="{
-              '--center-color': item.upgrade.background_colors_center,
-              '--around-color': item.upgrade.background_colors_around,
-            }"
-          ></div>
-          <div
-            v-else
-            class="background no-upg"
-            :class="storeCache.NftsAppData[item.gift_ukey]?.Rarity"
-          ></div>
-
-          <div v-if="item.upgraded" class="symbol upg">
-            <img :src="item.upgrade.symbol_image" :alt="item.upgrade.symbol_name" />
-          </div>
-          <div v-else class="symbol no-upg">
-            <img src="/gift_bg.png" alt="gift_bg" />
-          </div>
-
-          <div class="model">
-            <div v-if="item.upgraded" class="upg">
-              <div v-if="item.gift_media === 'svg'" class="image">
-                <img :src="item.upgrade.nft_image" alt="model" />
-              </div>
-              <div v-if="item.gift_media === 'lottie'" class="image">
-                <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="model" />
-              </div>
-            </div>
-            <div v-else class="no-upg">
-              <div class="image">
-                <img :src="item.gift_image" alt="model" />
-              </div>
+            v-if="item.mint?.status === 'success' || item.status === 'minted' || item.mint?.status === 'processing' || item.status === 'mint_locked'"
+            class="_rarity _rarity--sale _rarity--mint"
+          >
+            <div class="_image"></div>
+            <div class="_text">
+              <span>{{ (item.mint?.status === 'processing' || item.status === 'mint_locked') ? $t('profile.profileMintFlow.tickerMinting') : $t('profile.profileMintFlow.ribbon') }}</span>
             </div>
           </div>
-          <div class="button">
-            <button v-if="!item.market">
-              <h5>{{ item.purchase_price }}</h5>
-              <img :src="StarsImg" alt="stars" />
-            </button>
-            <button v-if="item.market">
-              <h5>{{ cutNumber(item.market.price_ton) }}</h5>
-              <img :src="TonImg" alt="svg" />
-            </button>
+
+          <!-- выставлен на маркете: та же лента, что у редкости, своим цветом -->
+          <div v-else-if="item.market" class="_rarity _rarity--sale" :style="saleRibbonStyle(item)">
+            <div class="_image"></div>
+            <div class="_text">
+              <span>on sale</span>
+            </div>
           </div>
+
+          <!-- Rarity outside clip stack so it sticks out of the card -->
+          <div v-else-if="!item.upgraded && giftRarity(item)" class="_rarity">
+            <div class="_image">
+              <img :src="checkRarityImage(giftRarity(item))" alt="" />
+            </div>
+            <div class="_text">
+              <span>{{ checkRarity(giftRarity(item)) }}</span>
+            </div>
+          </div>
+
+          <!-- Quick actions — sell / send / mint / remove listing -->
+          <!-- <div class="prf-card-actions" @click.stop>
+            <button
+              v-if="!item.upgraded"
+              type="button"
+              class="prf-card-actions__btn prf-card-actions__btn--mint"
+              @click="onMint(item)"
+            >
+              <div class="kit-icon" v-html="Icon.Mint"></div>
+              <span>{{ $t('profile.profileMint') }}</span>
+            </button>
+            <button
+              v-else-if="!item.market"
+              type="button"
+              class="prf-card-actions__btn prf-card-actions__btn--sell"
+              @click="onSell(item)"
+            >
+              <div class="kit-icon" v-html="Icon.Market"></div>
+              <span>{{ $t('profile.profileSell') }}</span>
+            </button>
+            <button
+              v-else
+              type="button"
+              class="prf-card-actions__btn prf-card-actions__btn--remove"
+              @click="onRemove(item)"
+            >
+              <div class="kit-icon" v-html="Icon.Close"></div>
+              <span>{{ $t('profile.removeListing') }}</span>
+            </button>
+            <button
+              type="button"
+              class="prf-card-actions__btn prf-card-actions__btn--send"
+              @click="onSend(item)"
+            >
+              <div class="kit-icon" v-html="Icon.Gift"></div>
+              <span>{{ $t('profile.profileGiftPreviewButtonSend') }}</span>
+            </button>
+          </div> -->
         </div>
-      </div>
-      <div v-if="tabViewNFTs === 'lists'" class="items lists">
+      </TransitionGroup>
+      <TransitionGroup v-if="tabViewNFTs === 'lists'" :key="'lists-' + ActiveTab" appear tag="div" name="giftgone" class="items lists" @before-leave="freezeLeavingCard">
         <div
           v-for="(item, index) in GiftsList"
           :key="item.uuid"
           @click="useModal(item.uuid)"
           class="item"
+          :style="{ '--gi': index % 12 }"
         >
           <div class="nft">
             <div
@@ -279,14 +305,18 @@
               <p v-if="item.upgraded">#{{ item.upgrade.seq }}</p>
             </div>
             <div class="info">
-              <div v-if="!item.market" class="price">
+              <div v-if="isMintedItem(item)" class="mint-on">
+                <div class="kit-icon" v-html="Icon.MintChain"></div>
+                <p>{{ $t('profile.profileMintFlow.ribbon') }}</p>
+              </div>
+              <div v-if="!item.market && !isMintedItem(item)" class="price">
                 <p>{{ item.purchase_price }}</p>
                 <img :src="StarsImg" alt="stars" />
               </div>
               <div v-if="item.market" class="market-on">
                 <div class="price">
                   <p>{{ cutNumber(item.market.price_ton) }}</p>
-                  <img :src="TonImg" alt="svg" />
+                  <div class="kit-icon gram" v-html="Icon.Gram"></div>
                 </div>
                 <div class="marker">
                   <svg width="9" height="10" viewBox="0 0 9 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -303,7 +333,7 @@
             <div class="kit-icon" v-html="Icon.ChevroneRight"></div>
           </div>
         </div>
-      </div>
+      </TransitionGroup>
       <div v-if="hasMore" ref="sentinel" class="_sentinel"></div>
       <div v-if="Searching" class="_bottomLoader">
         <div class="load-icon"></div>
@@ -340,6 +370,7 @@
       <div class="load-icon"></div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
@@ -369,12 +400,15 @@ import GiftLottie from '../GiftLottie.vue';
 
 // Images
 import StoreImg from '@/assets/images/market/store.svg';
-import TonImg from '@/assets/images/market/ton.svg';
 import StarsImg from '@/assets/images/profile/stars.png';
 import ProfileEmptyImg from '@/assets/images/profile/empty.svg';
 
 export default {
   props: {
+    ActiveTab: {
+      type: String,
+      default: 'all',
+    },
     Skeleton: {
       type: Boolean,
       required: true,
@@ -393,10 +427,6 @@ export default {
     },
     GiftsLoading: {
       type: Boolean,
-      required: true,
-    },
-    ActiveTab: {
-      type: String,
       required: true,
     },
     SelectedModels: {
@@ -443,7 +473,7 @@ export default {
   data() {
     return {
       StoreImg,
-      TonImg,
+
       StarsImg,
       ProfileEmptyImg,
 
@@ -454,21 +484,12 @@ export default {
       isLoading: this.$props.Skeleton,
       isLoadingGifts: this.$props.GiftsLoading,
 
-      activeReceivedTab: true,
-      activePurchasedTab: false,
-
-      activeCategory: this.$props.ActiveTab,
       activeGift: null,
 
       tabViewNFTs: "blocks",
       observer: null,
       _ioBusy: false,
       _ioLock: false,
-
-      CategoriesList: [
-        { id: 1, Key: 'received' },
-        { id: 2, Key: 'purchased' },
-      ],
 
       checkRarity,
       checkRariryNumber,
@@ -528,7 +549,6 @@ export default {
     },
     hasModelsUpgraded() {
       for (const model of this.SelectedModels) {
-        console.log(model, this.storeCache.NftsAppData[model]);
         const modelName = this.storeCache.NftsAppData[model];
         if (modelName?.UpgradeSupport) return true;
       }
@@ -547,7 +567,7 @@ export default {
       return this.backdropsCount > 0 
     },
     isEmptyFilter() {
-      return !(this.hasModels || this.hasGiftModels || this.hasSort || this.hasStatus || this.hasSymbols || this.hasBackdrops)
+      return !(this.hasModels || this.hasGiftModels || this.hasSort || this.hasSymbols || this.hasBackdrops)
     },
     sortTitle() {
       if (this.hasSort) {
@@ -578,16 +598,18 @@ export default {
   },
 
   watch: {
-    ActiveTab() {
-      this.activeCategory = this.ActiveTab;
-      this.$nextTick(() => this.resetObserver());
-    },
     GiftsList(newValue) {
       this.$nextTick(() => this.resetObserver());
     },
   },
 
   methods: {
+    // подарок уже в блокчейне (или минтится прямо сейчас)
+    isMintedItem(item) {
+      return item?.mint?.status === 'success' || item?.status === 'minted'
+        || item?.mint?.status === 'processing' || item?.status === 'mint_locked';
+    },
+
     async loadResources() {
       try {
         await Promise.all([this.loadFonts(), this.loadImages()]);
@@ -624,42 +646,6 @@ export default {
       });
 
       return Promise.all([...giftsImages, ...staticImages]);
-    },
-
-    setActiveCategoryFromHash() {
-      if (this.$route.hash) {
-        const hash = this.$route.hash.replace('#', '');
-        if (hash !== 'received' && hash !== 'purchased') {
-          this.activeCategory = 'received';
-          this.$emit('useTab', 'received');
-          return;
-        }
-        this.activeCategory = this.$route.hash.replace('#', '') || 'received';
-        this.$emit('useTab', this.$route.hash.replace('#', '') || 'received');
-      }
-
-      watch(() => this.$route.hash, (newHash) => {
-        const hash = newHash.replace('#', '');
-        if (hash !== 'received' && hash !== 'purchased') {
-          this.activeCategory = 'received';
-          this.$emit('useTab', 'received');
-          return;
-        }
-        this.activeCategory = newHash.replace('#', '') || 'received';
-        this.$emit('useTab', newHash.replace('#', '') || 'received');
-      });
-    },
-
-    setActiveTab(arg) {
-      if (arg === this.activeCategory) return;
-      
-      this.activeCategory = arg;
-      this.$emit('useTab', arg);
-    },
-
-    setActiveTabAccordion(arg) {
-      if (arg === 'received') this.activeReceivedTab = !this.activeReceivedTab;
-      if (arg === 'purchased') this.activePurchasedTab = !this.activePurchasedTab;
     },
 
     openStore() {
@@ -796,7 +782,6 @@ export default {
 
     requestMore() {
       this.$emit('loadMore', {
-        tab: this.activeCategory,
         sort: this.SelectedSort,
         models: this.SelectedModels,
         offset: this.GiftsList.length,
@@ -807,6 +792,204 @@ export default {
     useModal(NftId) {
       TelegramModule.useSoftHaptic();
       this.$emit('useModal', { id: NftId });
+    },
+
+    giftCatalog(item) {
+      const data = this.storeCache?.NftsAppData;
+      if (!data || !item) return null;
+      const key = item.gift_ukey || item.nft_unique_key || item.u_key;
+      if (key && data[key]) return data[key];
+      const list = Array.isArray(data) ? data : Object.values(data || {});
+      return (
+        list.find(
+          (g) =>
+            g?.UKey === key ||
+            g?.u_key === key ||
+            g?.Key === key ||
+            g?.key === key
+        ) || null
+      );
+    },
+
+    giftRarity(item) {
+      const cat = this.giftCatalog(item);
+      let raw =
+        cat?.Rarity ||
+        cat?.rarity ||
+        item?.gift_rarity ||
+        item?.rarity ||
+        '';
+      raw = String(raw).toLowerCase().replace(/[\s_-]+/g, '');
+      // normalize aliases
+      if (raw === 'legendary') return 'legend';
+      if (raw === 'veryrare' || raw === 'veryrarity') return 'veryrare';
+      return raw;
+    },
+
+    // Boost hex color toward white for a juicier center glow
+    // лента «on sale» красится цветами самого подарка: у улучшенных — фон
+    // модели, у обычных — градиент его редкости. так метка всегда в тон карточке
+    saleRibbonStyle(item) {
+      let from = '';
+      let to = '';
+
+      if (item?.upgraded && item?.upgrade) {
+        from = item.upgrade.background_colors_center || item.upgrade.background?.colors_center || '';
+        to = item.upgrade.background_colors_around || item.upgrade.background?.colors_around || '';
+      } else {
+        const map = {
+          rare: ['#4F4FC0', '#2B2B80'],
+          veryrare: ['#2E9A55', '#134C24'],
+          epic: ['#9B3FB4', '#4A1D57'],
+          legend: ['#C9902A', '#6F480E'],
+          author: ['#C43C3C', '#6B1F1F'],
+        };
+        const pair = map[this.giftRarity(item)] || ['#4A4A52', '#26262C'];
+        from = pair[0];
+        to = pair[1];
+      }
+
+      if (!from) from = '#4A4A52';
+      if (!to) to = from;
+
+      // лента должна читаться темнее карточки, а не ярче её:
+      // осветляем начало чуть-чуть, а конец наоборот притемняем
+      // лента светлая и насыщенная: тёмный конец берём не из фонового
+      // цвета подарка (он почти чёрный), а из основного — иначе градиент
+      // уходит в грязь и «цветность» пропадает
+      const base = this.saturateColor(from, 0.34);
+      return {
+        '--sale-from': this.boostColor(base, 0.14),
+        '--sale-to': this.darkenColor(base, 0.26),
+        '--sale-text': '#FFFFFF',
+      };
+    },
+
+    // подмешиваем насыщенности в HSL: простое осветление в RGB
+    // одновременно обесцвечивает, и лента получается блёклой
+    saturateColor(hex, amount = 0.3) {
+      try {
+        let h = String(hex || '').replace('#', '').trim();
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return hex || '#4A4A52';
+        const n = parseInt(h, 16);
+        const r = ((n >> 16) & 255) / 255;
+        const g = ((n >> 8) & 255) / 255;
+        const b = (n & 255) / 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const l = (max + min) / 2;
+        if (max === min) return hex;
+        const d = max - min;
+        let sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        let hue = 0;
+        if (max === r) hue = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        else if (max === g) hue = ((b - r) / d + 2) / 6;
+        else hue = ((r - g) / d + 4) / 6;
+        sat = Math.min(1, sat + amount);
+        const q = l < 0.5 ? l * (1 + sat) : l + sat - l * sat;
+        const pp = 2 * l - q;
+        const conv = (t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1 / 6) return pp + (q - pp) * 6 * t;
+          if (t < 1 / 2) return q;
+          if (t < 2 / 3) return pp + (q - pp) * (2 / 3 - t) * 6;
+          return pp;
+        };
+        const to255 = (v) => Math.round(Math.min(1, Math.max(0, v)) * 255);
+        const rr = to255(conv(hue + 1 / 3));
+        const gg = to255(conv(hue));
+        const bb = to255(conv(hue - 1 / 3));
+        return `#${((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1)}`;
+      } catch {
+        return hex || '#4A4A52';
+      }
+    },
+
+    darkenColor(hex, amount = 0.3) {
+      try {
+        let h = String(hex || '').replace('#', '').trim();
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return hex || '#1E1E23';
+        const n = parseInt(h, 16);
+        const k = 1 - amount;
+        const r = Math.max(0, Math.round(((n >> 16) & 255) * k));
+        const g = Math.max(0, Math.round(((n >> 8) & 255) * k));
+        const b = Math.max(0, Math.round((n & 255) * k));
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+      } catch {
+        return hex || '#1E1E23';
+      }
+    },
+
+    // светлая заливка требует тёмного текста, иначе надпись пропадает
+    isLightColor(hex) {
+      try {
+        let h = String(hex || '').replace('#', '').trim();
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return false;
+        const n = parseInt(h, 16);
+        const r = (n >> 16) & 255;
+        const g = (n >> 8) & 255;
+        const b = n & 255;
+        // яркость по восприятию, а не среднее по каналам
+        return (0.299 * r + 0.587 * g + 0.114 * b) > 165;
+      } catch {
+        return false;
+      }
+    },
+
+    boostColor(hex, amount = 0.22) {
+      try {
+        let h = String(hex || '').replace('#', '').trim();
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return hex || '#666';
+        const n = parseInt(h, 16);
+        let r = (n >> 16) & 255;
+        let g = (n >> 8) & 255;
+        let b = n & 255;
+        r = Math.min(255, Math.round(r + (255 - r) * amount));
+        g = Math.min(255, Math.round(g + (255 - g) * amount));
+        b = Math.min(255, Math.round(b + (255 - b) * amount));
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+      } catch {
+        return hex || '#666';
+      }
+    },
+
+    // Inline backgrounds — upgraded juicy color, no vignette/shadow edges
+    // уходящая карточка становится absolute и теряет размеры,
+    // которые ей давала сетка: без этого она схлопывается в тёмный
+    // прямоугольник и мигает. запоминаем её коробку до отрыва из потока
+    freezeLeavingCard(el) {
+      el.style.left = el.offsetLeft + 'px';
+      el.style.top = el.offsetTop + 'px';
+      el.style.width = el.offsetWidth + 'px';
+      el.style.height = el.offsetHeight + 'px';
+    },
+
+    giftCardStyle(item) {
+      if (item.upgraded && item.upgrade) {
+        const c = item.upgrade.background_colors_center || item.upgrade.background?.colors_center || '#666';
+        const a = item.upgrade.background_colors_around || item.upgrade.background?.colors_around || '#1a1a1a';
+        const hot = this.boostColor(c, 0.28);
+        return {
+          background: `radial-gradient(circle at 50% 40%, ${hot} 0%, ${c} 45%, ${a} 100%)`,
+          boxShadow: 'none',
+        };
+      }
+      const r = this.giftRarity(item);
+      const map = {
+        rare: 'linear-gradient(180deg, #282867 0%, #131328 100%)',
+        veryrare: 'linear-gradient(180deg, #1D6132 0%, #0B2211 100%)',
+        epic: 'linear-gradient(180deg, #632475 0%, #19101D 100%)',
+        legend: 'linear-gradient(180deg, #6F480E 0%, #1D1710 100%)',
+        author: 'linear-gradient(180deg, #762121 0%, #221111 100%)',
+      };
+      return {
+        background: map[r] || '#252528',
+      };
     },
 
     setTabViewNFTs(tab) {
@@ -859,6 +1042,26 @@ export default {
 
     clearGiftModels() {
       this.$emit('clearGiftModels');
+    },
+
+    // Quick-action handlers on gift cards
+    onMint(item) {
+      this.useModal(item.uuid);
+      this.$emit('quickMint', item);
+    },
+
+    onSell(item) {
+      this.useModal(item.uuid);
+      this.$emit('quickSell', item);
+    },
+
+    onRemove(item) {
+      this.$emit('quickRemove', item);
+    },
+
+    onSend(item) {
+      this.useModal(item.uuid);
+      this.$emit('quickSend', item);
     },
   },
 };

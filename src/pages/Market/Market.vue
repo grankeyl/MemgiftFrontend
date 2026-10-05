@@ -6,20 +6,11 @@
     <div class="overlay" :class="{ 'is-open is-dark': SymbolModelComp.SymbolsActive }" @click="SymbolModelComp.SymbolsActive = false" />
     <div class="overlay" :class="{ 'is-open is-dark': BackdropModelComp.BackdropsActive }" @click="BackdropModelComp.BackdropsActive = false" />
     
+    <div class="bluring-t"></div>
+    <div class="bluring-b"></div>
+
     <div class="_wrap _market" :class="{ desktop: isDesktop() }">
         <div class="_view">
-            <div class="bg">
-                <div class="_mkt-orb _mkt-orb--1"></div>
-                <div class="_mkt-orb _mkt-orb--2"></div>
-                <div class="_mkt-orb _mkt-orb--3"></div>
-            </div>
-            <Notify
-                @unVisible="unVisibleNotifyBuyed"
-                :Title="$t('market.notifyBuyed')"
-                :Button="$t('market.notifyBuyedButton')"
-                :ButtonLink="`/profile`"
-                :Visible="NotifyBuyedVisible"
-            />
             <Modal
                 @closeModal="ModalComp.ModalActive = false"
                 @notifyBuyed="notifyBuyed"
@@ -32,7 +23,10 @@
                 :ModalComp="ModalComp"
             />
 
+            <!-- корзина временно скрыта: логика и роут /m/basket оставлены,
+                 чтобы вернуть её одним снятием v-if -->
             <div 
+                v-if="false"
                 class="basket" 
                 :class="{ empty: isEmptyBasket }"
                 @click="openBasket"
@@ -49,7 +43,7 @@
 
             <div class="display">
                 <div class="logotype">
-                    <img :src="LogotypeImg" alt="logotype" />
+                    <img :src="LogotypeImg" alt="MemGift" />
                 </div>
                 <Tabs
                     @useTab="setActiveTab"
@@ -87,11 +81,6 @@
                     :StatusItems="ModalStatusComp.SortItems"
                     :HasMore="GiftsComp.HasMore"
                     :SearchNumber="searchNumber"
-                />
-                <BulkBar
-                    v-if="Tabs.Active === 'gifts' && !isPageLoading && GiftsComp.List.length > 1"
-                    :GiftsList="GiftsComp.List"
-                    @bought="onBulkBought"
                 />
                 <Gifts
                     v-if="Tabs.Active === 'gifts'"
@@ -194,6 +183,8 @@ import TelegramModule from '../../hooks/useTelegram';
 import { watch } from 'vue';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { isDesktop } from '../../utils/checkDevice';
+import { showToast } from '../../utils/toastManager';
+import { t } from 'i18next';
 import { Icon } from '../../components/Icon';
 import { getConfig } from '../../config';
 import { cutNumber } from '../../utils/useTon';
@@ -213,7 +204,6 @@ import StatusModal from '../../components/Market/StatusModal.vue';
 import SymbolModal from '../../components/Market/SymbolModal.vue';
 import BackdropModal from '../../components/Market/BackdropModal.vue';
 import BulkBar from '../../components/Market/BulkBar.vue';
-import Notify from '../../components/Notify/Notify.vue';
 
 // Images
 import BasketBlackImg from '@/assets/images/market/basket-black.svg';
@@ -242,7 +232,6 @@ export default {
         SymbolModal,
         BackdropModal,
         BulkBar,
-        Notify,
     },
 
     data() {
@@ -295,7 +284,7 @@ export default {
 
             ModalModelComp: {
                 ModalActive: false,
-                ModelsSelected: [],
+                ModelsSelected: [] as string[],
             },
 
             ModalGiftModelsComp: {
@@ -335,8 +324,6 @@ export default {
                 HasMore: false,
             },
 
-            NotifyBuyedVisible: false,
-
             isDesktop,
             cutNumber,
             Icon,
@@ -349,6 +336,14 @@ export default {
         );
 
         this.resetLocalStorage();
+
+        // ?g=<UKey> — приход со страницы коллекции, сразу фильтруем по этому подарку.
+        // Ставим до первого запроса, чтобы не дёргать маркет дважды.
+        const giftFilter = this.$route.query.g;
+        if (giftFilter) {
+            this.ModalModelComp.ModelsSelected = [String(giftFilter)];
+        }
+
         this.fetchNftsStacks();
         this.loadBasketFromLS();
 
@@ -689,21 +684,15 @@ export default {
             this.BackdropModelComp.BackdropsList = backdrops;
         },
 
-        unVisibleNotifyBuyed(id: string) {
-            console.log(id);
-            this.NotifyBuyedVisible = false;
-            this.ModalComp.ModalActive = false;
-        },
-
         notifyBuyed(id: string) {
             this.GiftsComp.List = this.GiftsComp.List.filter((item: any) => item.id !== id);
-            this.NotifyBuyedVisible = true;
+            showToast(t('market.notifyBuyed'), 'success');
             this.ModalComp.ModalActive = false;
         },
 
         onBulkBought(ids: string[]) {
             this.GiftsComp.List = this.GiftsComp.List.filter((item: any) => !ids.includes(item.id));
-            this.NotifyBuyedVisible = true;
+            showToast(t('market.notifyBuyed'), 'success');
         },
     },
 };

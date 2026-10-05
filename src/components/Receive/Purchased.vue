@@ -1,22 +1,21 @@
 <template>
-  <div :class="['_direction _comp _item _purchased', Key]">
+  <div class="_direction _comp _item _purchased">
     <div v-if="isLoading" class="_skeleton">
-      <div class="_block">
-        <div class="_image"></div>
-        <div class="_title"></div>
-        <div class="_descr"></div>
+      <div class="rcv-gift _shine"></div>
+      <div class="rcv-head">
+        <div class="rcv-head__title _shine"></div>
       </div>
     </div>
+
     <div v-else class="_content">
-      <div class="_block">
-        <div class="_background">
-          <img :src="Background" />
+      <!-- плитка как в профиле: узор overlay + модель по центру, без ленты и подписей -->
+      <div class="rcv-gift" :class="normalizedRarity">
+        <div class="_symbols">
+          <img :src="Image_giftBg" alt="" />
         </div>
-        <div v-if="NftMedia === 'svg'" class="_image">
-          <img :src="NftImage" />
-        </div>
-        <div v-if="NftMedia === 'lottie'" class="_image _lottie">
+        <div class="_nft">
           <GiftLottie
+            v-if="NftMedia === 'lottie'"
             class="lt"
             :path="`/gifts/lottie/${NftKey}.json`"
             :loop="true"
@@ -24,65 +23,38 @@
             height="25"
             renderer="svg"
           />
+          <img v-else :src="NftImage" alt="" />
         </div>
-        <div class="_title">
-          <h4>{{ Text }}</h4>
-        </div>
-        <div class="_descr">
-          <p>{{ Descr }}</p>
-        </div>
+      </div>
+
+      <div class="rcv-head">
+        <h4>{{ Text }}</h4>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import GiftLottie from '../GiftLottie.vue';
+import Image_giftBg from '@/assets/gifts/png/gift_bg.png';
 
 export default {
   props: {
-    Skeleton: {
-      type: Boolean,
-      required: true,
-    },
-    SkeletonTime: {
-      type: Number,
-      required: true,
-    },
-    Background: {
-      type: String,
-      required: true,
-    },
-    NftKey: {
-      type: String,
-      required: true,
-    },
-    NftMedia: {
-      type: String,
-      required: true,
-    },
-    NftImage: {
-      type: String,
-      required: true,
-    },
-    Text: {
-      type: String,
-      required: true,
-    },
-    Descr: {
-      type: String,
-      required: true,
-    },
+    Skeleton: { type: Boolean, required: true },
+    SkeletonTime: { type: Number, required: true },
+    Background: { type: String, required: false, default: '' },
+    NftKey: { type: String, required: true },
+    NftMedia: { type: String, required: true },
+    NftImage: { type: String, required: true },
+    NftRarity: { type: String, required: false, default: '' },
+    Text: { type: String, required: true },
   },
 
-  components: {
-    GiftLottie,
-  },
+  components: { GiftLottie },
+
+  emits: ['loadSuccess'],
 
   data() {
-    return {
-      isLoading: this.Skeleton,
-    };
+    return { Image_giftBg };
   },
 
   mounted() {
@@ -93,44 +65,23 @@ export default {
     isLoading() {
       return this.Skeleton;
     },
+    // редкость приходит в разном написании, классы фона — .legend / .veryrare
+    normalizedRarity() {
+      let rarity = String(this.NftRarity || '').toLowerCase().replace(/[\s_-]+/g, '');
+      if (rarity === 'legendary') rarity = 'legend';
+      if (rarity === 'veryrarity') rarity = 'veryrare';
+      return rarity;
+    },
   },
 
   methods: {
     async loadResources() {
       try {
-        await Promise.all([this.loadFonts(), this.loadIcons()]);
-        // this.isLoading = false;
-        this.$emit("loadSuccess");
+        await document.fonts.ready;
+        this.$emit('loadSuccess');
       } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
+        console.error(error);
       }
-    },
-
-    loadFonts() {
-      return document.fonts.ready;
-    },
-
-    loadIcons() {
-      return new Promise((resolve, reject) => {
-        const div = document.createElement("div");
-        div.innerHTML = this.Icon;
-
-        const icons = div.querySelectorAll("img, svg");
-        const promises = Array.from(icons).map((icon) => {
-          if (icon.tagName === "IMG") {
-            return new Promise((resolveImage, rejectImage) => {
-              const img = new Image();
-              img.src = icon.src;
-              img.onload = resolveImage;
-              img.onerror = rejectImage;
-            });
-          } else {
-            return Promise.resolve();
-          }
-        });
-
-        Promise.all(promises).then(resolve).catch(reject);
-      });
     },
   },
 };

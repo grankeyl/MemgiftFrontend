@@ -56,14 +56,14 @@
               @click="applyModel(item.unique_name)"
               class="item"
             >
-              <div
-                class="backdrop"
-                :style="{
-                  '--center-color': item.colors_center,
-                  '--around-color': item.colors_around,
-                }"
-              ></div>
               <div class="left">
+                <div
+                  class="backdrop"
+                  :style="{
+                    '--center-color': item.colors_center,
+                    '--around-color': item.colors_around,
+                  }"
+                ></div>
                 <h5>{{ item.unique_name }}</h5>
                 <span>{{ item.drop_rate }}%</span>
               </div>
@@ -206,16 +206,4 @@ export default {
 
 <style lang="sass" scoped>
 @use "./ModelModal.sass"
-
-.item
-  justify-content: start !important
-
-  .backdrop
-    width: 30px
-    height: 30px
-    border-radius: 20px
-    background: radial-gradient(circle, var(--center-color), var(--around-color))
-  
-  .checkbox
-    margin-left: auto
 </style>

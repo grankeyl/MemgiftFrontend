@@ -7,28 +7,40 @@
       </div>
     </div>
     <div v-else class="_content">
-      <div class="_block">
-        <h2 class="rt-title">{{ $t('rating.title') }}</h2>
-        <p class="rt-descr">{{ $t('rating.description') }}</p>
+      <div class="rt-head">
+        <div class="rt-head__info">
+          <div class="rt-head__badge">
+            <div class="kit-icon" v-html="Icon.Rating || Icon.Gift"></div>
+            <span>{{ $t('menu.rating') }}</span>
+          </div>
+          <h2 class="rt-head__title">{{ $t('rating.title') }}</h2>
+          <p class="rt-head__descr">{{ $t('rating.description') }}</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Image_Rating from '@/assets/images/rating.png';
+import { Icon } from '../Icon';
 
 export default {
   props: {
     Skeleton: { type: Boolean, required: true },
     SkeletonTime: { type: Number, required: true },
+    Key: { type: String, default: '' },
   },
 
   data() {
-    return { isLoading: this.Skeleton, Image_Rating };
+    return {
+      isLoading: this.Skeleton,
+      Icon,
+    };
   },
 
-  mounted() { this.loadResources(); },
+  mounted() {
+    this.loadResources();
+  },
 
   computed: {
     isLoading() { return this.Skeleton; },

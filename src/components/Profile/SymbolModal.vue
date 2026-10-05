@@ -24,7 +24,17 @@
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
-        <div class="items">
+        <div v-if="showListSkeleton" class="items-skeleton profile-filter-skeleton profile-filter-skeleton--symbols">
+          <div class="items-skeleton__row" v-for="n in 6" :key="'symbol-skel-' + n">
+            <div class="items-skeleton__circle profile-filter-skeleton__circle-symbol"></div>
+            <div class="profile-filter-skeleton__copy">
+              <div class="items-skeleton__line" :style="{ width: 38 + n * 7 + '%' }"></div>
+              <div class="items-skeleton__line profile-filter-skeleton__line-small" :style="{ width: 18 + n * 5 + '%' }"></div>
+            </div>
+            <div class="items-skeleton__box"></div>
+          </div>
+        </div>
+        <div v-else class="items">
           <div 
             v-for="(item, index) in GiftsList" 
             :key="index"
@@ -49,7 +59,7 @@
           <button @click="cancel">
             <h4>{{ $t('profile.profileModelModal.cancel') }}</h4>
           </button>
-          <button @click="apply">
+          <button @click="apply" :disabled="showListSkeleton">
             <h4>{{ $t('profile.profileModelModal.apply') }}</h4>
           </button>
         </div>
@@ -73,6 +83,7 @@ export default {
     ModalActive: { type: Boolean, required: true },
     GiftsList: { type: Array, required: true },
     Selected: { type: Array, default: () => [] },
+    ListLoading: { type: Boolean, default: false },
   },
 
   components: {
@@ -82,6 +93,7 @@ export default {
   data() {
     return {
       storeCache: useCacheStore(),
+      isLoading: this.Skeleton,
       isLoadingModalImage: true,
       localSelectedSymbols: [],
 
@@ -109,7 +121,10 @@ export default {
   computed: {
     isSkeleton() {
       return this.Skeleton;
-    }
+    },
+    showListSkeleton() {
+      return this.ModalActive && this.ListLoading;
+    },
   },
   
   methods: {

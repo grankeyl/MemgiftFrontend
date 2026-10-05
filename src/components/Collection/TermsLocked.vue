@@ -1,240 +1,132 @@
 <template>
-    <div class="_direction _comp _item _terms">
+    <div class="_comp _item _terms _termsLocked blockTasks">
         <div v-if="isLoading" class="_skeleton">
+            <div class="_section-head">
+                <h4>{{ $t('collection.terms.termsTitle') }}</h4>
+            </div>
+            <div class="_task-list">
+                <div class="_task-row" v-for="i in Math.max(items.length || 4, 3)" :key="i">
+                    <div class="_task-avatar _load-shimmer"></div>
+                    <div class="_task-info">
+                        <div class="_title-skel _load-shimmer"></div>
+                        <div class="_desc-skel _load-shimmer"></div>
+                    </div>
+                    <div class="_action-skel _load-shimmer"></div>
+                </div>
+            </div>
         </div>
+
         <div v-else class="_content">
-          <div class="items">
-
-            <div v-for="(item, index) in Terms" :key="index" class="item" @click="useTerm('InviteFriends')">
-              <div class="image">
-                <img :src="item.image" alt="">
-              </div>
-              <div class="info">
-                <h4>Buy {{ item.title }}</h4>
-              </div>
-              <div class="button">
-                <button :class="{ done: item.success || !NftGetFree }">
-                  <div v-if="!item.success && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                  <div v-if="item.success || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
-                </button>
-              </div>
+            <div class="_section-head">
+                <h4>
+                    {{ $t('collection.terms.termsTitle') }}
+                    <b>{{ doneCount }}/{{ items.length }}</b>
+                </h4>
             </div>
 
-            <!-- <div class="item" @click="useTerm('InviteFriends')">
-              <div class="image">
-                <img src="https://memgift.codes/s3/soda/HungryDog.svg" alt="">
-              </div>
-              <div class="info">
-                <h4>Buy HungryDog</h4>
-              </div>
-              <div class="button">
-                <button :class="{ done: Terms.ShareChats || !NftGetFree }">
-                  <div v-if="!Terms.ShareChats && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                  <div v-if="Terms.ShareChats || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
+            <div class="_task-list">
+                <button
+                    v-for="item in items"
+                    :key="item.key"
+                    type="button"
+                    class="_task-row"
+                    :class="{ done: item.success }"
+                    :disabled="item.success"
+                    @click="onRowClick(item)"
+                >
+                    <span class="_task-avatar _rarity" :class="giftRarity(item)">
+                        <img :src="item.image" :alt="item.title" loading="lazy" />
+                    </span>
+
+                    <span class="_task-info">
+                        <span class="_task-title">{{ $t('collection.lockedBuyGift', { name: item.title }) }}</span>
+                        <span class="_task-desc">{{ $t('collection.lockedBuyGiftDesc') }}</span>
+                    </span>
+
+                    <span class="_task-action">
+                        <span v-if="item.success" class="_btn _done">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        </span>
+                        <span v-else class="_btn _start">
+                            <span>{{ $t('collection.terms.go') }}</span>
+                        </span>
+                    </span>
                 </button>
-              </div>
             </div>
-
-            <div class="item" @click="useTerm('InviteFriends')">
-              <div class="image">
-                <img src="https://memgift.codes/s3/soda/HotDog.svg" alt="">
-              </div>
-              <div class="info">
-                <h4>Buy HotDog</h4>
-              </div>
-              <div class="button">
-                <button :class="{ done: Terms.ShareChats || !NftGetFree }">
-                  <div v-if="!Terms.ShareChats && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                  <div v-if="Terms.ShareChats || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
-                </button>
-              </div>
-            </div>
-
-            <div class="item" @click="useTerm('InviteFriends')">
-              <div class="image">
-                <img src="https://memgift.codes/s3/soda/BurningPanties.svg" alt="">
-              </div>
-              <div class="info">
-                <h4>Buy BurningPanties</h4>
-              </div>
-              <div class="button">
-                <button :class="{ done: Terms.ShareChats || !NftGetFree }">
-                  <div v-if="!Terms.ShareChats && NftGetFree" class="kit-icon" v-html="Icon.ChevroneRight"></div>
-                  <div v-if="Terms.ShareChats || !NftGetFree" class="kit-icon" v-html="Icon.Done"></div>
-                </button>
-              </div>
-            </div> -->
-
-          </div>
         </div>
     </div>
-  </template>
-  
-  <script>
-  import { checkPriceNumber } from '../../utils/useGift';
-  import { unixToRelative } from '../../utils/useApp';
-  import { cleanString } from '../../utils/useApp';
-  import { useCacheStore } from '../../stores/pinia/piniaStore';
-  import { Icon } from '../Icon';
+</template>
 
-  import TelegramModule from '../../hooks/useTelegram';
+<script>
+import { useCacheStore } from '../../stores/pinia/piniaStore';
+import { Icon } from '../Icon';
 
-  import * as telegramApi from '../../api/telegramApi';
-  import * as historyApi from '../../api/historyApi';
-  import * as taskApi from '@/api/taskApi';
+import TelegramModule from '../../hooks/useTelegram';
 
-  import Image_Stars from '@/assets/images/stars.png';
-
-  export default {
+export default {
     props: {
-      Skeleton: {
-        type: Boolean,
-        required: true,
-      },
-      SkeletonTime: {
-        type: Number,
-        required: true,
-      },
-      NftKey: {
-        type: String,
-        required: true,
-      },
-      NftGetFree: {
-        type: Boolean,
-        required: true,
-      },
-      Terms: {
-        type: Object,
-        required: true,
-      },
+        Skeleton: { type: Boolean, required: true },
+        SkeletonTime: { type: Number, required: true },
+        NftKey: { type: String, required: true },
+        NftGetFree: { type: Boolean, required: true },
+        Terms: { type: Object, required: true },
     },
-  
+
     data() {
-      return {
-        storeCache: useCacheStore(),
-        isLoading: this.Skeleton,
-
-        HistoryList: {},
-
-        isCheckSubscribeChannelInterval: false,
-        checkSubscribeChannelInterval: false,
-
-        subscribeChannelTask: {
-          isLoading: false
-        },
-
-        isUseInterval: false,
-        useCheckInterval: false,
-        useCheckTimeout: false,
-
-        cleanString,
-        
-        checkPriceNumber,
-        unixToRelative,
-
-        Icon,
-        Image_Stars,
-      };
+        return {
+            storeCache: useCacheStore(),
+            isLoading: this.Skeleton,
+            Icon,
+        };
     },
-  
+
     mounted() {
-      this.loadResources();
-
-      this.$watch(() => this.Terms.InviteFriendsCount, () => {
-        if (this.Terms.InviteFriendsCount >= this.Terms.InviteFriendsCountNeed) {
-          this.$emit('completeTerm', 'InviteFriends');
-        }
-      });
-
-      if (this.TasksData) {
-        this.TasksData.forEach(task => {
-          if (task.user_status === 'in_progress') {
-            this.startUse(task.id);
-          }
-        });
-      }
-
-      this.$watch(
-        () => this.TasksData,
-        () => {
-          this.TasksData.forEach(task => {
-            if (task.user_status === 'in_progress') {
-              this.startUse(task);
-            }
-          });
-        }
-      );
+        this.loadResources();
     },
 
     computed: {
-      isLoading() {
-        return this.Skeleton;
-      },
-      doneSubscribeChannel() {
-        if (!this.subscribeChannelTask) return false;
-        if (this.subscribeChannelTask.user_status === 'in_review') {
-          this.$emit('completeTerm', 'SubscribedChannel');
-          return true
-        };
-        if (this.subscribeChannelTask.user_status === 'completed') {
-          this.$emit('completeTerm', 'SubscribedChannel');
-          return true
-        };
-        return false;
-      },
-      loadingSubscribeChannel() {
-        if (!this.subscribeChannelTask) return false;
-        if (this.subscribeChannelTask.isLoading) return true;
-        return false;
-      }
+        isLoading() {
+            return this.Skeleton;
+        },
+        items() {
+            if (!this.Terms) return [];
+            return Object.keys(this.Terms).map(key => ({
+                key,
+                title: this.Terms[key].title,
+                image: this.Terms[key].image,
+                success: this.Terms[key].success,
+            }));
+        },
+        doneCount() {
+            return this.items.filter(i => i.success).length;
+        },
+        allDone() {
+            return this.items.length > 0 && this.doneCount === this.items.length;
+        },
     },
 
     methods: {
-      async getTaskSubscribeChannel() {
-        const task = this.storeCache.TasksApp.partners.find(t => t.id === '00580bd6-bd4b-47d4-b811-f6b657597469');
-        this.subscribeChannelTask = { ...task, isLoading: false };
-      },
-
-      async loadResources() {
-        try {
-          await Promise.all([this.loadFonts(), this.loadIcons()]);
-          this.isLoading = false;
-          this.$emit("loadSuccess");
-        } catch (error) {
-          console.error("Ошибка при загрузке ресурсов:", error);
-        }
-      },
-
-      loadFonts() {
-        return document.fonts.ready;
-      },
-
-      loadIcons() {
-        return new Promise((resolve, reject) => {
-          const div = document.createElement("div");
-          div.innerHTML = this.Icon;
-
-          const icons = div.querySelectorAll("img, svg");
-          const promises = Array.from(icons).map((icon) => {
-            if (icon.tagName === "IMG") {
-              return new Promise((resolveImage, rejectImage) => {
-                const img = new Image();
-                img.src = icon.src;
-                img.onload = resolveImage;
-                img.onerror = rejectImage;
-              });
-            } else {
-              return Promise.resolve();
+        giftRarity(item) {
+            const all = this.storeCache.NftsApp;
+            if (!all) return '';
+            const arr = Array.isArray(all) ? all : Object.values(all);
+            const nft = arr.find(g => g && (g.Key === item.key || g.UKey === item.title || g.Name === item.title));
+            return nft?.Rarity || '';
+        },
+        onRowClick(item) {
+            if (!item || item.success) return;
+            TelegramModule.useSoftHaptic();
+            this.$router.push({ name: 'collection', params: { nft: item.title } });
+        },
+        async loadResources() {
+            try {
+                await document.fonts.ready;
+                this.isLoading = false;
+                this.$emit("loadSuccess");
+            } catch (error) {
+                console.error("Ошибка при загрузке ресурсов:", error);
             }
-          });
-
-          Promise.all(promises).then(resolve).catch(reject);
-        });
-      },
-      
-      async useTerm(type) {
-        
-      }
+        },
     }
-  };
-  </script>
+};
+</script>

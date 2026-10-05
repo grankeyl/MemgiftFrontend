@@ -8,12 +8,12 @@
               <div class="_symbols">
                 <img :src="NftSymbols" />
               </div>
-              <div class="_tickets">
-                <img :src="Image_Ticket" alt="tickets" />
-                <p>{{ NftTickets }}</p>
+              <div v-if="NftSupplyMax" class="_supply">
+                <p>{{ (NftSupply || 0).toLocaleString() }}<span>/{{ (NftSupplyMax || 0).toLocaleString() }}</span></p>
               </div>
-              <div class="_mark">
-                <span>{{ $t('collection.giftCollectable') }}</span>
+              <div class="_tickets">
+                <img :src="Image_TicketProfile" alt="tickets" />
+                <p>{{ NftTickets }}</p>
               </div>
               <div v-if="NftMedia === 'svg'" class="_nft">
                 <img :src="NftImage" />
@@ -35,6 +35,7 @@
   
   <script>
   import Image_Ticket from '@/assets/images/ticket.svg';
+  import Image_TicketProfile from '@/assets/icons/Ticket.svg';
   import GiftLottie from '../GiftLottie.vue';
 
   export default {
@@ -70,6 +71,14 @@
       NftMedia: {
         type: String,
         required: true,
+      },
+      NftSupply: {
+        type: Number,
+        required: true,
+      },
+      NftSupplyMax: {
+        type: Number,
+        required: true,
       }
     },
 
@@ -82,6 +91,7 @@
         isLoading: this.Skeleton,
 
         Image_Ticket,
+        Image_TicketProfile,
       };
     },
 
@@ -92,6 +102,11 @@
     computed: {
       isLoading() {
         return this.Skeleton;
+      },
+      remainingFormatted() {
+        const remaining = Math.max(this.NftSupply || 0, 0);
+        if (remaining >= 1000) return (remaining / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+        return remaining.toLocaleString();
       },
     },
 

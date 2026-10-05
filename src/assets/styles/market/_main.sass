@@ -1,84 +1,19 @@
 @use "./../_variables" as *
 
 ._wrap._market
-    padding-top: calc($app-menu-height + 20px)
     display: flex
     flex-direction: column
     min-height: 100dvh
+    padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 16px)
 
     &.desktop
-        padding-top: 20px
+        padding-top: 18px
 
     ._view
         -webkit-overflow-scrolling: touch
-        padding-bottom: calc($app-menu-height + 83px)
-
-        .bg
-            width: 100%
-            height: 100%
-            position: absolute
-            top: 0
-            left: 0
-            pointer-events: none
-            background: radial-gradient(145.36% 31.28% at 81.92% -7%, #1E3AC6 0%, #2B2261 50%, #1C1C1E 100%)
-            overflow: hidden
-
-            ._mkt-orb
-                position: absolute
-                border-radius: 50%
-                filter: blur(80px)
-                will-change: transform, opacity
-
-            ._mkt-orb--1
-                width: 200px
-                height: 200px
-                background: #4F46E5
-                top: -60px
-                right: -30px
-                opacity: 0.3
-                animation: mkt-drift-1 12s ease-in-out infinite
-
-            ._mkt-orb--2
-                width: 160px
-                height: 160px
-                background: #7C3AED
-                top: 20px
-                left: -40px
-                opacity: 0.22
-                animation: mkt-drift-2 9s ease-in-out infinite
-
-            ._mkt-orb--3
-                width: 120px
-                height: 120px
-                background: #2563EB
-                top: 60%
-                left: 50%
-                opacity: 0.15
-                animation: mkt-drift-3 11s ease-in-out infinite
-
-        @keyframes mkt-drift-1
-            0%, 100%
-                transform: translate(0, 0)
-                opacity: 0.3
-            50%
-                transform: translate(-20px, 15px)
-                opacity: 0.4
-
-        @keyframes mkt-drift-2
-            0%, 100%
-                transform: translate(0, 0)
-                opacity: 0.22
-            50%
-                transform: translate(15px, -10px)
-                opacity: 0.32
-
-        @keyframes mkt-drift-3
-            0%, 100%
-                transform: translate(0, 0)
-                opacity: 0.15
-            50%
-                transform: translate(-10px, -12px)
-                opacity: 0.25
+        padding-bottom: 26px
+        padding-left: 0
+        padding-right: 0
 
         .basket
             width: fit-content
@@ -86,7 +21,7 @@
             position: fixed
             bottom: calc($app-menu-height + 14px)
             right: 18px
-            z-index: 2
+            z-index: 20
             background: $app-text-color
             border-radius: 14px
             display: flex
@@ -134,7 +69,7 @@
             height: auto
             display: flex
             flex-direction: column
-            gap: 16px
+            gap: 18px
             z-index: 1
 
             .logotype
@@ -142,7 +77,8 @@
                 height: fit-content
                 margin-right: auto
                 opacity: .4
+                padding-left: 16px
 
-                & img
-                    width: 140px
+                & svg
+                    width: 115px
                     height: auto

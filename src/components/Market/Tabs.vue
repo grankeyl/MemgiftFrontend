@@ -19,13 +19,8 @@
         </div>
       </div>
       <div class="balance" @click="openWallet">
-        <div class="context">
-          <h4>{{ cutNumber(getBalance.toString()) }}</h4>
-          <img :src="TonImg" alt="ton" />
-        </div>
-        <div class="button">
-          <img :src="PlusImg" alt="plus" />
-        </div>
+        <Icon class="kit-icon" v-html="Icon.Gram" />
+        <span>{{ cutNumber(getBalance.toString()) }}</span>
       </div>
     </div>
   </div>

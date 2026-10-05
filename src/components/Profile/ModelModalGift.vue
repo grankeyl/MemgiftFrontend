@@ -24,7 +24,17 @@
             <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
-        <div class="items">
+        <div v-if="showListSkeleton" class="items-skeleton profile-filter-skeleton profile-filter-skeleton--models">
+          <div class="items-skeleton__row" v-for="n in 6" :key="'model-skel-' + n">
+            <div class="items-skeleton__circle"></div>
+            <div class="profile-filter-skeleton__copy">
+              <div class="items-skeleton__line" :style="{ width: 44 + n * 6 + '%' }"></div>
+              <div class="items-skeleton__line profile-filter-skeleton__line-small" :style="{ width: 22 + n * 4 + '%' }"></div>
+            </div>
+            <div class="items-skeleton__box"></div>
+          </div>
+        </div>
+        <div v-else class="items">
           <div 
             v-for="(item, index) in GiftsList" 
             :key="index"
@@ -41,14 +51,14 @@
             </div>
           </div>
         </div>
-        <div v-if="isEmptyList" class="load">
+        <div v-if="!showListSkeleton && isEmptyList" class="load">
           <div class="load-icon"></div>
         </div>
         <div class="buttons">
           <button @click="cancel">
             <h4>{{ $t('profile.profileModelModal.cancel') }}</h4>
           </button>
-          <button @click="apply">
+          <button @click="apply" :disabled="showListSkeleton">
             <h4>{{ $t('profile.profileModelModal.apply') }}</h4>
           </button>
         </div>
@@ -72,6 +82,7 @@ export default {
     ModalActive: { type: Boolean, required: true },
     GiftsList: { type: Array, required: true },
     Selected: { type: Array, default: () => [] },
+    ListLoading: { type: Boolean, default: false },
   },
 
   components: {
@@ -81,6 +92,7 @@ export default {
   data() {
     return {
       storeCache: useCacheStore(),
+      isLoading: this.Skeleton,
       isLoadingModalImage: true,
       localSelectedModels: [],
 
@@ -111,6 +123,9 @@ export default {
     },
     isEmptyList() {
        return !this.GiftsList || this.GiftsList.length === 0;
+    },
+    showListSkeleton() {
+      return this.ModalActive && this.ListLoading;
     },
   },
   

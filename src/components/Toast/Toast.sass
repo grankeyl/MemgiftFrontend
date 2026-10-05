@@ -1,4 +1,4 @@
-@use "../../assets/styles/variables.sass" as *
+@use "../../assets/styles/_variables" as *
 
 .toast-container
   position: fixed
@@ -8,18 +8,19 @@
   flex-direction: column
   gap: 0.5rem
   z-index: 9999
+  padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) - 9px)
 
 .toast
   padding: 0.75rem 1.25rem
-  border-radius: 12px
+  border-radius: 18px
   color: $app-text-color
-  font-size: 16px
+  font-size: 15px
   font-weight: 600
   max-width: 300px
   margin-bottom: 10px
 
   &.success
-    background-color: $app-background-secondary
+    background-color: $app-background-secondary-2
 
   &.error
     background-color: #ef4444

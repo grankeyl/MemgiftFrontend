@@ -44,7 +44,7 @@
             flex-direction: column
             gap: 12px
 
-            & button
+            & button:not(.pgm-footer__btn)
                 width: 100%
                 height: 53px
                 display: flex
@@ -81,7 +81,7 @@
             flex-direction: column
             gap: 12px
 
-            & button
+            & button:not(.pgm-footer__btn)
                 width: 100%
                 height: 53px
                 display: flex
@@ -142,280 +142,125 @@
     width: 100%
     max-width: $app-max-preview-width
     margin: 0 auto
-    
-    ._skeleton
-        width: 100%
-        display: flex
-        align-items: center
-        gap: 10px
+    display: flex
+    flex-direction: column
+    align-items: center
 
-        ._block
-            width: 100%
-            height: 100%
-            border-radius: 10px
-            display: flex
-            flex-direction: column
-            align-items: center
-            justify-content: center
-
-            ._image
-                width: 110px
-                height: 110px
-                border-radius: 50%
-                background: $app-background-secondary
-                display: flex
-                justify-content: center
-                align-items: center
-                position: relative
-                margin-bottom: 13px
-
-                & img
-                    width: 100%
-                    height: 100%
-                    border-radius: 50%
-            
-            ._title
-                width: 30%
-                height: 30px
-                background: $app-background-secondary
-                border-radius: 10px
-                margin-bottom: 13px
-
-            ._descr
-                width: 50%
-                height: 30px
-                background: $app-background-secondary
-                border-radius: 10px
-    
+    ._skeleton,
     ._content
         width: 100%
         display: flex
+        flex-direction: column
         align-items: center
-        gap: 10px
-        transition: all 0.22s forwards
-        opacity: 1
-        pointer-events: all
-        visibility: visible
+        gap: 20px
 
-        &.hide
-            width: 0
-            opacity: 0
-            pointer-events: none
-            visibility: hidden
+    // ── плитка: геометрия ._gift со страницы профиля ──
+    .rcv-gift
+        width: 172px
+        height: 172px
+        flex-shrink: 0
+        position: relative
+        overflow: hidden
+        border-radius: 26px
+        background: $app-background-secondary
 
-        ._block
+        &.rare
+            background: $app-rarity-background-rare
+        &.veryrare
+            background: $app-rarity-background-very-rare
+        &.epic
+            background: $app-rarity-background-epic
+        &.legend
+            background: $app-rarity-background-legendary
+        &.author
+            background: $app-rarity-background-author
+
+        &._shine
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255, 255, 255, 0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        ._symbols
+            position: absolute
             width: 100%
-            border-radius: 10px
-            display: flex
-            flex-direction: column
-            align-items: center
-            justify-content: center
-            position: relative
+            height: 100%
+            overflow: hidden
+            opacity: .6
+            z-index: 1
+            mix-blend-mode: overlay
+            pointer-events: none
 
-            ._background
+            img
                 position: absolute
-                top: 50%
-                left: 50%
-                transform: translate(-50%, -50%)
+                inset: 0
+                width: 100%
+                height: 100%
+                object-fit: cover
                 z-index: -1
 
-                & img
-                    width: 100%
-                    height: 100%
-                    transform: scale(1.3)
+        ._nft
+            width: 84%
+            height: 84%
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+            text-align: center
+            z-index: 5
 
-            ._image
-                width: 200px
-                height: 200px
-                border-radius: 50%
-                display: flex
-                justify-content: center
-                align-items: center
-                position: relative
-                margin-bottom: -13px
-
-                &._lottie
-                    margin-bottom: 5px
-
-                & .lottie-gift
-                    width: 80%
-                    height: 80%
-
-                & img
-                    width: 100%
-                    height: 100%
-                    border-radius: 50%
-            
-            ._title
-                width: fit-content
-                height: 30px
-                border-radius: 10px
-                margin-bottom: 13px
-
-                & h4
-                    font-size: 24px
-                    font-weight: 600
-                    color: $app-text-color
-
-            ._descr
-                width: fit-content
-                height: 30px
-                border-radius: 10px
-
-                & p
-                    text-align: center
-                    font-size: 15px
-                    font-weight: 500
-                    color: $app-text-color-descr
-                    max-width: 245px
-
-            // ── Multicheck sent success ──
-            .mc-success
+            img,
+            .lt
                 width: 100%
-                display: flex
-                flex-direction: column
-                align-items: center
-                animation: mcFadeUp 0.45s ease both
+                height: 100%
+                object-fit: contain
 
-                &__icon
-                    width: 80px
-                    height: 80px
-                    border-radius: 50%
-                    background: linear-gradient(135deg, #34C759, #30D158)
-                    display: flex
-                    align-items: center
-                    justify-content: center
-                    color: #fff
-                    margin-bottom: 20px
-                    position: relative
-                    animation: mcPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both
+            :deep(svg)
+                width: 100%
+                height: 100%
 
-                    svg
-                        position: relative
-                        z-index: 1
+    // ── стикер для экранов «себе» и «не найден» ──
+    .rcv-sticker
+        width: 172px
+        height: 172px
+        flex-shrink: 0
+        display: flex
+        align-items: center
+        justify-content: center
 
-                &__ring
-                    position: absolute
-                    inset: -6px
-                    border-radius: 50%
-                    border: 2px solid rgba(#34C759, 0.2)
-                    animation: mcRingPulse 2s ease-out infinite
+        .lt
+            width: 100%
+            height: 100%
 
-                &__gift
-                    width: 110px
-                    height: 110px
-                    border-radius: 22px
-                    overflow: hidden
-                    margin-bottom: 20px
-                    background: rgba($app-text-color, 0.04)
-                    animation: mcPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both
+        :deep(svg)
+            width: 100%
+            height: 100%
 
-                    img
-                        width: 100%
-                        height: 100%
-                        object-fit: cover
+        &._shine
+            border-radius: 50%
 
-                &__title
-                    font-size: 28px
-                    font-weight: 700
-                    color: $app-text-color
-                    margin-bottom: 20px
-                    text-align: center
-                    animation: mcFadeUp 0.4s ease 0.35s both
+    // ── заголовок под плиткой, по центру ──
+    .rcv-head
+        width: 100%
+        text-align: center
 
-                &__icon--gift
-                    background: linear-gradient(135deg, $app-text-color-phiolete, #9B59B6)
-                    box-shadow: 0 4px 24px rgba($app-text-color-phiolete, 0.35)
+        h4
+            margin: 0
+            font-size: 24px
+            font-weight: 600
+            letter-spacing: -.4px
+            color: $app-text-color
 
-                &__list
-                    width: 100%
-                    max-width: 300px
-                    display: flex
-                    flex-direction: column
-                    gap: 0
-                    border-radius: 14px
-                    background: rgba($app-text-color, 0.04)
-                    overflow: hidden
-                    margin-bottom: 16px
-                    animation: mcFadeUp 0.4s ease 0.35s both
+        &__title
+            width: 190px
+            height: 24px
+            margin: 0 auto
+            border-radius: 9px
 
-                &__item
-                    display: flex
-                    align-items: center
-                    gap: 10px
-                    padding: 10px 14px
-                    border-bottom: 1px solid rgba($app-text-color, 0.04)
-
-                    &:last-child
-                        border-bottom: none
-
-                    &-img
-                        width: 36px
-                        height: 36px
-                        border-radius: 8px
-                        overflow: hidden
-                        flex-shrink: 0
-                        background: rgba($app-text-color, 0.04)
-
-                        img
-                            width: 100%
-                            height: 100%
-                            object-fit: cover
-
-                    &-name
-                        flex: 1
-                        font-size: 14px
-                        font-weight: 600
-                        color: $app-text-color
-                        white-space: nowrap
-                        overflow: hidden
-                        text-overflow: ellipsis
-
-                    &-count
-                        font-size: 14px
-                        font-weight: 700
-                        color: $app-text-color-phiolete
-                        flex-shrink: 0
-
-                &__subtitle
-                    font-size: 14px
-                    font-weight: 500
-                    color: rgba($app-text-color, 0.45)
-                    text-align: center
-                    max-width: 260px
-                    line-height: 1.4
-                    animation: mcFadeUp 0.4s ease 0.5s both
-
-                &__card
-                    width: 100%
-                    max-width: 300px
-                    display: flex
-                    flex-direction: column
-                    gap: 0
-                    border-radius: 14px
-                    background: rgba($app-text-color, 0.04)
-                    overflow: hidden
-                    animation: mcFadeUp 0.4s ease 0.45s both
-
-                    &-row
-                        display: flex
-                        align-items: center
-                        gap: 10px
-                        padding: 13px 16px
-                        border-bottom: 1px solid rgba($app-text-color, 0.04)
-
-                        &:last-child
-                            border-bottom: none
-
-                        svg
-                            flex-shrink: 0
-                            color: rgba($app-text-color, 0.3)
-
-                        span
-                            font-size: 13px
-                            font-weight: 500
-                            color: rgba($app-text-color, 0.5)
-                            line-height: 1.35
+    ._shine
+        background: $app-background-secondary
+        background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba($app-text-color, .06) 50%, $app-background-secondary 75%)
+        background-size: 200% 100%
+        animation: shimmer 1.8s ease-in-out infinite
 
 @keyframes mcFadeUp
     0%

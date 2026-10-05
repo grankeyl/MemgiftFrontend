@@ -3,6 +3,8 @@
 .tabs
     width: 100%
     height: fit-content
+    padding: 0 16px
+    margin-bottom: -3px
     
     ._skeleton
         width: 100%
@@ -43,13 +45,12 @@
             .item
                 cursor: pointer
                 position: relative
-                transition: opacity 0.18s ease
 
                 &:active
                     opacity: 0.7
 
                 & h4
-                    font-size: 26px
+                    font-size: 24px
                     font-weight: 700
                     color: $app-text-color
                     opacity: 0.2
@@ -65,47 +66,34 @@
                         opacity: 1
         
         .balance
-            height: 32px
             display: flex
             align-items: center
-            gap: 4px
-            padding: 0px 3px 0px 10px
-            background: rgba($app-text-color, 0.06)
-            border-radius: 50px
+            gap: 6px
+            height: 32px
             cursor: pointer
-            flex-shrink: 0
-            transition: transform 0.18s ease
+            -webkit-user-select: none
+            user-select: none
 
             &:active
-                transform: scale(0.95)
+                transform: scale(0.97)
 
-            & .context
-                display: flex
-                align-items: center
-                gap: 2px
-
-                & h4
-                    font-size: 12px
-                    font-weight: 600
-                    color: $app-text-color
-
-                & img
-                    width: 14px
-                    height: 14px
-
-            & .button
-                width: 24px
-                height: 24px
-                min-width: 24px
+            & .kit-icon
+                width: 17px
+                height: 17px
                 display: flex
                 align-items: center
                 justify-content: center
-                border-radius: 50px
-                background: $app-background-blue-secondary
-                
-                & img
-                    width: 16px
-                    height: 16px
+                opacity: 0.8
+
+                svg
+                    width: 17px
+                    height: 17px
+
+            & span
+                font-size: 16px
+                font-weight: 600
+                color: $app-text-color
+                opacity: 0.85
 
 @keyframes shimmer
     0%

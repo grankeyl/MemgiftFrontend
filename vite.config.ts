@@ -1,5 +1,5 @@
 import viteCompression from 'vite-plugin-compression';
-import mkcert from 'vite-plugin-mkcert'
+// import mkcert from 'vite-plugin-mkcert' // включается вместе с mkcert() ниже
 import vue from '@vitejs/plugin-vue';
 
 import { defineConfig } from 'vite';
@@ -35,7 +35,7 @@ export default defineConfig({
     viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
     viteCompression({ algorithm: 'gzip', ext: '.gz' }),
 
-    mkcert(),
+    // mkcert(),
     nodePolyfills({ protocolImports: true }),
   ],
 
@@ -43,19 +43,25 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: 3000,
-    hmr: {
-      protocol: 'wss',
-      host: '192.168.0.198',
-      clientPort: 3000,
-    },
+    // hmr: {
+    //   protocol: 'wss',
+    //   host: '192.168.0.170',
+    //   clientPort: 3000,
+    // },
     proxy: {
       '/api': {
         target: 'http://localhost:4090',
         changeOrigin: true,
         secure: false,
       },
+      // Proxy S3 so GiftLottie fetch() works in local dev (S3 CORS is production-only)
+      '/s3': {
+        target: 'https://memgift.codes',
+        changeOrigin: true,
+        secure: true,
+      },
     },
-    watch: { usePolling: true, interval: 300 },
+    // watch: { usePolling: true, interval: 300 },
   },
 
   resolve: {

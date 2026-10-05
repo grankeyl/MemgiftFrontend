@@ -1,72 +1,55 @@
 <template>
   <div class="pd-deals">
-    <div v-if="loading" class="pd-deals__loading">
-      <div v-for="i in 3" :key="i" class="pd-deal-skel">
-        <div class="pd-deal-skel__row">
-          <div class="pd-deal-skel__icon"></div>
-          <div class="pd-deal-skel__lines">
-            <div class="pd-deal-skel__line pd-deal-skel__line--w60"></div>
-            <div class="pd-deal-skel__line pd-deal-skel__line--w40"></div>
-          </div>
-        </div>
-      </div>
+    <div v-if="loading" class="pd-deals__skel">
+      <div v-for="i in 3" :key="i" class="pd-deals__skel-row"></div>
     </div>
 
-    <div v-else-if="deals.length === 0" class="pd-deals__empty">
-      <div class="pd-deals__empty-ic" v-html="Icon.Trade"></div>
+    <div v-else-if="deals.length === 0" class="pd-empty">
       <p>{{ $t('privateDeal.noDeals') }}</p>
     </div>
 
-    <div v-else class="pd-deals__list">
+    <div v-else class="pd-list">
       <div
         v-for="deal in deals"
         :key="deal.id"
-        class="pd-deal2"
+        class="pd-row"
         @click="$emit('openDeal', deal)"
       >
-        <!-- Gift thumbnails row -->
-        <div class="pd-deal2__thumbs">
+        <div class="pd-row__thumbs">
           <div
             v-for="gp in getGiftPreviews(deal)"
             :key="gp.uuid"
-            class="pd-deal2__thumb"
+            class="pd-row__thumb"
             :class="{ [gp.rarity]: !gp.upgraded }"
-            :style="gp.upgraded && gp.bg_center ? {
-              background: `radial-gradient(circle at center, ${gp.bg_center}, ${gp.bg_around})`
-            } : {}"
+            :style="
+              gp.upgraded && gp.bg_center
+                ? { background: `radial-gradient(circle at center, ${gp.bg_center}, ${gp.bg_around})` }
+                : {}
+            "
           >
             <img v-if="gp.image" :src="gp.image" alt="" />
-            <div v-else class="pd-deal2__thumb-ph"></div>
           </div>
-          <div v-if="deal.gift_count > 3" class="pd-deal2__thumb-more">
-            +{{ deal.gift_count - 3 }}
-          </div>
+          <div v-if="deal.gift_count > 3" class="pd-row__more">+{{ deal.gift_count - 3 }}</div>
         </div>
 
-        <!-- Deal info -->
-        <div class="pd-deal2__body">
-          <div class="pd-deal2__top">
-            <div class="pd-deal2__info">
-              <h4>{{ deal.gift_count }} {{ $t('privateDeal.giftsWord') }}</h4>
-              <span class="pd-deal2__status" :class="'pd-deal2__status--' + deal.status">
-                {{ statusText(deal.status) }}
-              </span>
-            </div>
-            <div class="pd-deal2__price">
-              <img :src="Image_Ton" alt="TON" />
-              <span>{{ nanoToTon(deal.price_nano) }}</span>
-            </div>
-          </div>
+        <div class="pd-row__mid">
+          <span class="pd-row__title">{{ deal.gift_count }} {{ $t('privateDeal.giftsWord') }}</span>
+          <span class="pd-row__status" :class="'is-' + deal.status">{{ statusText(deal.status) }}</span>
         </div>
 
-        <!-- Actions -->
-        <div class="pd-deal2__actions" @click.stop v-if="deal.status === 'pending'">
-          <button class="pd-deal2__act pd-deal2__act--share" @click.stop="$emit('shareDeal', deal)">
-            <div class="kit-icon" v-html="Icon.Reply"></div>
-          </button>
-          <button class="pd-deal2__act pd-deal2__act--cancel" @click.stop="$emit('cancelDeal', deal.id)">
-            <div class="kit-icon" v-html="Icon.Trash"></div>
-          </button>
+        <div class="pd-row__right">
+          <div class="pd-row__price">
+            <img :src="Image_Ton" alt="" />
+            <span>{{ nanoToTon(deal.price_nano) }}</span>
+          </div>
+          <div class="pd-row__acts" @click.stop v-if="deal.status === 'pending'">
+            <button type="button" class="pd-row__act" @click="$emit('shareDeal', deal)" aria-label="Share">
+              <div class="kit-icon" v-html="Icon.Reply"></div>
+            </button>
+            <button type="button" class="pd-row__act is-danger" @click="$emit('cancelDeal', deal.id)" aria-label="Cancel">
+              <div class="kit-icon" v-html="Icon.Trash"></div>
+            </button>
+          </div>
         </div>
       </div>
     </div>

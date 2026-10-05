@@ -1,561 +1,732 @@
 <template>
-  <div 
-    class="_direction _comp _item _profileGiftModal"
-    :class="[Key]"
-  >
-      <div 
-        v-if="isLoading" 
-        class="_skeleton"
-        :class="{ hide: !ModalActive }"
-        @touchstart.passive="onTouchStart($event, 'skeleton')"
-        @touchmove.prevent="onTouchMove"
-        @touchend="onTouchEnd"
-        :style="sheetStyleSkeleton"
+  <!-- ── платная пересылка в первые сутки ─────────────────────────── -->
+  <Teleport to="body">
+    <div
+      class="overlay pgm-fee-overlay"
+      :class="{ 'is-open is-dark': cooldownModalActive }"
+      @click="closeCooldownModal"
+    />
+
+    <!-- справка собрана из тех же кусков, что и шит подарка:
+         круглая кнопка закрытия, заголовок, синяя кнопка внизу -->
+    <div
+      v-if="cooldownIsRendered"
+      class="_direction _comp _item giftModal pgm-modal pgm-fee-modal"
+    >
+      <div
+        class="mgm-dock pgm-dock"
+        :class="{ hide: !cooldownModalActive, open: cooldownModalActive }"
+        @click.stop
       >
-        <div @click="closeModal" class="_profileGiftModalClose"></div>
-        <div class="_profileGiftModalContent">
-          <div class="_profileGiftModalContentImage"></div>
-          <div class="_profileGiftModalContentTitle"></div>
-        </div>
-        <div class="_profileGiftModalTable">
-          <div class="_profileGiftModalTableRow"></div>
-        </div>
-        <div class="_profileGiftModalButtons">
-          <div class="_profileGiftModalButtonsCollectable"></div>
-          <div class="_profileGiftModalButtonsSend"></div>
+        <div class="mgm-sheet">
+          <button type="button" class="mgm-close" @click="closeCooldownModal" aria-label="Close">
+            <div class="kit-icon" v-html="Icon.Close"></div>
+          </button>
+
+          <div class="mgm-body">
+            <div class="mgm-title">
+              <div class="mgm-title__left">
+                <h3>{{ $t('profile.profileTransferFee.title') }}</h3>
+              </div>
+            </div>
+
+            <p class="pgm-fee__descr">{{ $t('profile.profileTransferFee.descr') }}</p>
+
+            <div class="pgm-fee__rows">
+              <div class="pgm-fee__row">
+                <span class="pgm-fee__label">{{ $t('profile.profileTransferFee.now') }}</span>
+                <span class="pgm-fee__price">
+                  <img :src="Image_StarsWhite" alt="" />
+                  <span>25</span>
+                </span>
+              </div>
+              <div class="pgm-fee__row">
+                <span class="pgm-fee__label">{{ $t('profile.profileTransferFee.free') }}</span>
+                <span class="pgm-fee__val">{{ transferCooldownText }}</span>
+              </div>
+            </div>
+
+            <div class="mgm-footer market pgm-transfer-footer">
+              <button type="button" class="mgm-footer__buy" @click="closeCooldownModal">
+                <span class="pgm-send-button__content">
+                  <span>{{ $t('profile.profileTransferFee.ok') }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      <div 
-        v-if="!isLoading" 
-        class="_content"
-        :class="{ hide: !ModalActive }"
-        @touchstart.passive="onTouchStart($event, 'content')"
-        @touchmove.prevent="onTouchMove"
-        @touchend="onTouchEnd"
-        :style="sheetStyleContent"
+    </div>
+  </Teleport>
+
+  <!-- ── возврат NFT в приложение: инструкция ─────────────────────── -->
+  <Teleport to="body">
+    <div
+      class="overlay pgm-fee-overlay"
+      :class="{ 'is-open is-dark': returnModalActive }"
+      @click="closeReturnModal"
+    />
+
+    <!-- собрана из тех же кусков, что справка о платной пересылке:
+         лежит поверх шита подарка (слои .pgm-fee-modal) -->
+    <div
+      v-if="returnIsRendered"
+      class="_direction _comp _item giftModal pgm-modal pgm-fee-modal"
+    >
+      <div
+        class="mgm-dock pgm-dock"
+        :class="{ hide: !returnModalActive, open: returnModalActive }"
+        @click.stop
       >
-        <div @click="closeModal" class="_profileGiftModalClose">
-          <div class="kit-icon" v-html="Icon.Close"></div>
+        <div class="mgm-sheet">
+          <button type="button" class="mgm-close" @click="closeReturnModal" aria-label="Close">
+            <div class="kit-icon" v-html="Icon.Close"></div>
+          </button>
+
+          <div class="mgm-body">
+            <div class="mgm-title">
+              <div class="mgm-title__left">
+                <h3>{{ $t('profile.profileMintFlow.returnTitle') }}</h3>
+              </div>
+            </div>
+
+            <p class="pgm-fee__descr">{{ $t('profile.profileMintFlow.chainReturnHint') }}</p>
+
+            <!-- та же таблица, что в справке о пересылке: адрес — тап-копия -->
+            <div class="pgm-fee__rows">
+              <div
+                class="pgm-fee__row pgm-chainrow"
+                @click="copyMintAddress(ModalComp.Mint?.return_address)"
+              >
+                <span class="pgm-fee__label">{{ $t('profile.profileMintFlow.chainReturn') }}</span>
+                <span class="pgm-fee__val pgm-chainrow__addr">{{ shortAddr(ModalComp.Mint?.return_address) }}</span>
+              </div>
+              <div class="pgm-fee__row">
+                <span class="pgm-fee__label">{{ $t('profile.profileMintFlow.returnNetwork') }}</span>
+                <span class="pgm-fee__val">TON</span>
+              </div>
+              <div class="pgm-fee__row">
+                <span class="pgm-fee__label">{{ $t('profile.profileMintFlow.returnUnlock') }}</span>
+                <span class="pgm-fee__val">{{ $t('profile.profileMintFlow.returnUnlockVal') }}</span>
+              </div>
+            </div>
+
+            <div class="mgm-footer market pgm-transfer-footer">
+              <button
+                type="button"
+                class="mgm-footer__buy"
+                @click="copyMintAddress(ModalComp.Mint?.return_address)"
+              >
+                <span class="pgm-send-button__content">
+                  <span>{{ $t('profile.profileMintFlow.returnCopy') }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div 
-          class="_profileGiftModalContent" 
-          :class="ModalComp.NftRarity"
-        >
-          <div 
-            v-if="isUpgraded" 
-            class="_profileGiftModalGradient"
-            :style="{
-              '--center-color': UpgradedNft?.BackgroundColors?.Center,
-              '--around-color': UpgradedNft?.BackgroundColors?.Around
-            }"
-          ></div>
-          <div class="_symbols">
-            <img :src="Image_GiftBg" :class="{ _show: !isUpgraded }" alt="rarity" />
-             <img :src="UpgradedNft?.SymbolImage" :class="{ _show: isUpgraded }" alt="rarity" />
-          </div>
-          <div class="_profileGiftModalContentImage">
-            <img 
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'svg'"
-              :src="ModalComp.NftImage"
-              alt="nft"
-              class="modalImage"
-              v-bind:class="{ _hide: isUpgraded }"
-            />
-            <GiftLottie
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'lottie'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _hide: isUpgraded }"
-              class="_lottie"
-              :path="`/gifts/lottie/${ModalComp.NftKey}.json`"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
-            <img 
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'svg'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: isUpgraded }"
-              :src="UpgradedNft?.ModelImage"
-              alt="nft"
-              class="upgradedImage"
-            />
-            <GiftLottie
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'lottie'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: isUpgraded }"
-              class="_lottie upgraded"
-              :path="UpgradedNft?.ModelImage"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
-          </div>
+      </div>
+    </div>
+  </Teleport>
 
-          <div class="_profileGiftModalContentTitle">
-            <h4 v-if="!isUpgraded">{{ ModalComp.NftName }}</h4>
-            <h4 v-if="isUpgraded">{{ UpgradedNft?.ModelName }}</h4>
-          </div>
+  <!-- ── минт в кошелёк ───────────────────────────────────────────── -->
+  <Teleport to="body">
+    <div
+      class="overlay pgm-mint-overlay"
+      :class="{ 'is-open is-dark': mintModalActive }"
+      @click="closeMintModal"
+    />
 
-          <div v-if="isUpgraded" class="_profileGiftModalContentNumber">
-            <h4>#{{ UpgradedNft?.ModelNumber }}</h4>
-          </div>
+    <div
+      v-if="mintIsRendered"
+      class="_direction _comp _item giftModal pgm-modal pgm-mint-modal"
+    >
+      <div
+        class="mgm-dock pgm-dock pgm-mint-dock"
+        :class="{ hide: !mintModalActive, open: mintModalActive }"
+        @click.stop
+      >
+        <div class="mgm-sheet">
+          <button type="button" class="mgm-close" @click="closeMintModal" aria-label="Close">
+            <div class="kit-icon" v-html="Icon.Close"></div>
+          </button>
 
-          <div class="_profileGiftModalContentButtons">
-            <button 
-              v-if="ModalComp.NftStatus === 'received' && !ModalComp.NftUpgraded" 
-              @click="upgradeNft(ModalComp.NftId)"
-              :disabled="!ModalComp.NftUpgradeSupport"
+          <div class="mgm-body pgm-mint">
+            <!-- иконка-статус: стекло + GetGems, при минте — спиннер-кольцо -->
+            <div
+              class="pgm-mint__badge"
+              :class="{
+                'is-spin': mintState === 'processing',
+                'is-ok': mintState === 'success',
+                'is-err': mintState === 'failed',
+              }"
             >
-              <img src="/upgrade.svg" alt="upgrade" />
-              <span>
-                {{ $t('profile.profileMint') }}
-              </span>
-            </button>
-            <button v-if="ModalComp.NftStatus !== 'received'" @click="transferNft">
-              <img src="/move.svg" alt="move" />
-              <span>
-                {{ $t('profile.profileTransfer') }}
-              </span>
-            </button>
-            <button v-if="isUpgraded && !ModalComp.Market.MarketOn" @click="sellGift">
-              <img :src="MarketImg" alt="market" />
-              <span>
-                {{ $t('profile.profileSell') }}
-              </span>
-            </button>
-            <button @click="shareGiftLink">
-              <img src="/forward.svg" alt="forward" />
-              <span>
-                {{ $t('profile.profileShare') }}
-              </span>
-            </button>
-            <button class="_disabled" disabled>
-              <svg style="width:16px;height:16px;min-width:16px;min-height:16px" viewBox="0 0 24 24" fill="none"><path d="M20.9888 4.28491L19.6405 2.93089C18.4045 1.6897 16.4944 1.6897 15.2584 2.93089L13.0112 5.30042L18.7416 11.055L21.1011 8.68547C21.6629 8.1213 22 7.33145 22 6.54161C22 5.75176 21.5506 4.84908 20.9888 4.28491Z" fill="white"/><path d="M16.2697 10.9422L11.7753 6.42877L2.89888 15.3427C2.33708 15.9069 2 16.6968 2 17.5994V21.0973C2 21.5487 2.33708 22 2.89888 22H6.49438C7.2809 22 8.06742 21.6615 8.74157 21.0973L17.618 12.1834L16.2697 10.9422Z" fill="white"/></svg>
-              <span>
-                {{ $t('profile.profileCraft') }}
-              </span>
-            </button>
-          </div>
-        </div>
-        <div class="_profileGiftModalTable" :class="{ _show: !isUpgraded }">
-          <div class="_profileGiftModalTableRow">
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem1') }}</h4>
+              <div class="pgm-mint__badge-ring"></div>
+              <div class="kit-icon" v-html="Icon.MintChain"></div>
+            </div>
+
+            <h3 class="pgm-mint__title">{{ mintTitle }}</h3>
+            <p class="pgm-mint__descr">{{ mintDescr }}</p>
+
+            <!-- детали: плоский блок как списки в фильтр-шитах -->
+            <div v-if="mintWalletReady || mintState !== 'none'" class="pgm-mint__rows">
+              <div class="pgm-mint__row" @click="copyMintAddress(mintWalletAddress)">
+                <span class="pgm-mint__row-label">{{ $t('profile.profileMintFlow.walletLabel') }}</span>
+                <span class="pgm-mint__row-val">{{ mintShortAddress }}</span>
               </div>
-              <div class="profile_gift_preview_table_item_right">
-                <div
-                  v-if="Table.OwnerAvatar && OwnerImage"
-                  class="avatar_null"
-                >
-                  <img 
-                    @load="Table.OwnerAvatarLoading = false"
-                    @error="OwnerImage = false"
-                    :src="Table.OwnerAvatar"
-                    alt="avatar" 
-                  />
-                </div>
-                <div v-else class="avatar_null">
-                  <h4>{{ Table.OwnerName[0] }}</h4>
-                </div>
-                <span>{{ Table.OwnerName }}</span>
+              <div
+                v-if="ModalComp.Mint?.nft_address"
+                class="pgm-mint__row"
+                @click="copyMintAddress(ModalComp.Mint.nft_address)"
+              >
+                <span class="pgm-mint__row-label">NFT</span>
+                <span class="pgm-mint__row-val">{{ shortAddr(ModalComp.Mint.nft_address) }}</span>
+              </div>
+              <div v-if="mintState === 'failed' && ModalComp.Mint?.error" class="pgm-mint__row">
+                <span class="pgm-mint__row-label">{{ $t('profile.profileMintFlow.failedTitle') }}</span>
+                <span class="pgm-mint__row-val is-err">{{ ModalComp.Mint.error }}</span>
               </div>
             </div>
-            <div v-if="Table.NftOldOwner.user_full_name" class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem0') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <span>{{ Table.NftOldOwner.user_full_name }}</span>
-                <div
-                  v-if="Table.NftOldOwner.user_photo && OwnerImage"
-                  class="avatar_null"
-                >
-                  <img 
-                    @load="Table.OwnerAvatarLoading = false"
-                    @error="OwnerImage = false"
-                    :src="Table.NftOldOwner.user_photo"
-                    alt="avatar" 
-                  />
-                </div>
-                <div v-else class="avatar_null">
-                  <h4>{{ Table.NftOldOwner.user_full_name[0] }}</h4>
-                </div>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem2') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ Table.NftDate }}</p>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem3') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ Table.NftPrice }}</p>
-                <img loading="lazy" class="_stars" :src="Image_Stars" alt="avatar" />
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left last">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem4') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right last">
-                <p>{{ Table.NftSupply }}</p>
-              </div>
+
+            <div class="pgm-mint__actions">
+              <!-- кошелёк не подключён -->
+              <button
+                v-if="!mintWalletReady && mintState === 'none'"
+                type="button"
+                class="pgm-mint__cta"
+                @click="connectWalletFromMint"
+              >
+                <span>{{ $t('profile.profileMintFlow.connectButton') }}</span>
+              </button>
+
+              <!-- готов к минту / повтор после ошибки -->
+              <button
+                v-else-if="mintState === 'none' || mintState === 'failed'"
+                type="button"
+                class="pgm-mint__cta"
+                :disabled="isMinting"
+                @click="doMint"
+              >
+                <div class="kit-icon" v-html="Icon.MintChain"></div>
+                <span>{{ isMinting ? '…' : (mintState === 'failed' ? $t('profile.profileMintFlow.retryButton') : $t('profile.profileMintFlow.mintButton')) }}</span>
+              </button>
+
+              <!-- готово: страница NFT на GetGems -->
+              <button
+                v-else-if="mintState === 'success' && ModalComp.Mint?.getgems_url"
+                type="button"
+                class="pgm-mint__cta"
+                @click="openGetgems"
+              >
+                <div class="kit-icon" v-html="Icon.GetGems"></div>
+                <span>{{ $t('profile.profileMintFlow.viewButton') }}</span>
+              </button>
+
+              <button type="button" class="pgm-mint__ghost" @click="closeMintModal">
+                <span>{{ $t('profile.profileGiftButtonOk') }}</span>
+              </button>
             </div>
           </div>
         </div>
-        <div class="_profileGiftModalTable" :class="{ _show: isUpgraded }">
-          <div class="_profileGiftModalTableRow">
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem1') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <span>{{ Table.OwnerName }}</span>
-                <div
-                  v-if="Table.OwnerAvatar && OwnerImage"
-                  class="avatar_null"
-                >
-                  <img 
-                    @load="Table.OwnerAvatarLoading = false"
-                    @error="OwnerImage = false"
-                    :src="Table.OwnerAvatar"
-                    alt="avatar" 
-                  />
-                </div>
-                <div v-else class="avatar_null">
-                  <h4>{{ Table.OwnerName[0] }}</h4>
-                </div>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableMintedItem1') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ UpgradedNft?.ModelName }}</p>
-                <span>{{ UpgradedNft?.ModelDropRate }}%</span>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableMintedItem2') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ UpgradedNft?.SymbolName }}</p>
-                <span>{{ UpgradedNft?.SymbolDropRate }}%</span>
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <h4>{{ $t('profile.profileGiftPreviewTableMintedItem3') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ UpgradedNft?.BackgroundName }}</p>
-                <span>{{ UpgradedNft?.BackgroundDropRate }}%</span>
-              </div>
-            </div>
-            <div v-if="ModalComp.Market.MarketOn" class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left">
-                <div class="marker">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.9389 5.335L14.0091 2.96973C13.8712 2.61904 13.8023 2.44367 13.6912 2.31496C13.5931 2.20119 13.4719 2.11406 13.3373 2.06055C13.1851 2 13.0101 2 12.6601 2H6.33999C5.98999 2 5.81499 2 5.66273 2.06055C5.52816 2.11406 5.40695 2.20119 5.30882 2.31496C5.19779 2.44368 5.12886 2.61903 4.99099 2.96973L4.06114 5.335H14.9389Z" fill="#6691FF"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4.91357 8.26029C5.16377 8.36037 5.43412 8.415 5.71619 8.415C6.18083 8.415 6.61405 8.26632 6.97747 8.01087C7.34089 8.26632 7.77411 8.415 8.23875 8.415C8.70339 8.415 9.13661 8.26632 9.50003 8.01087C9.86345 8.26632 10.2967 8.415 10.7613 8.415C11.2259 8.415 11.6592 8.26632 12.0226 8.01087C12.386 8.26632 12.8192 8.415 13.2839 8.415C13.5659 8.415 13.8363 8.36037 14.0865 8.26029V11.4C14.0865 11.9601 14.0865 12.2401 13.9865 12.454C13.8986 12.6422 13.7583 12.7951 13.5857 12.891C13.3894 13 13.1326 13 12.6188 13H6.38124C5.8675 13 5.61064 13 5.41442 12.891C5.24182 12.7951 5.10149 12.6422 5.01354 12.454C4.91357 12.2401 4.91357 11.9601 4.91357 11.4V8.26029ZM5.83084 10.3C5.83084 10.02 5.83084 9.87996 5.88083 9.773C5.9248 9.67892 5.99496 9.60243 6.08126 9.5545C6.17937 9.5 6.3078 9.5 6.56467 9.5H8.30753C8.5644 9.5 8.69283 9.5 8.79094 9.5545C8.87724 9.60243 8.9474 9.67892 8.99137 9.773C9.04136 9.87996 9.04136 10.02 9.04136 10.3V11.2C9.04136 11.48 9.04136 11.62 8.99137 11.727C8.9474 11.8211 8.87724 11.8976 8.79094 11.9455C8.69283 12 8.5644 12 8.30753 12H6.56467C6.3078 12 6.17937 12 6.08126 11.9455C5.99496 11.8976 5.9248 11.8211 5.88083 11.727C5.83084 11.62 5.83084 11.48 5.83084 11.2V10.3Z" fill="#6691FF"/>
-                    <path d="M5.71616 7.75C4.80481 7.75 4.059 6.97725 4 6H15C14.941 6.97725 14.1952 7.75 13.2838 7.75C12.7855 7.75 12.3367 7.51896 12.0226 7.14977C11.7084 7.51896 11.2596 7.75 10.7613 7.75C10.2629 7.75 9.81412 7.51896 9.5 7.14977C9.18589 7.51896 8.73705 7.75 8.23872 7.75C7.74039 7.75 7.29156 7.51896 6.97744 7.14977C6.66333 7.51896 6.2145 7.75 5.71616 7.75Z" fill="#6691FF"/>
-                  </svg>
-                  <p>{{ $t('profile.market') }}</p>
-                  <Icon class="kit-icon" v-html="Icon.ChevroneRight"></Icon>
-                </div>
-              </div>
-              <div class="profile_gift_preview_table_item_right">
-                <p>{{ $t('profile.sellFor') }} {{ cutNumber(ModalComp.Market.TonPrice) }}</p>
-                <img :src="TonImg" alt="ton" />
-              </div>
-            </div>
-            <div class="profile_gift_preview_table_item">
-              <div class="profile_gift_preview_table_item_left last">
-                <h4>{{ $t('profile.profileGiftPreviewTableItem4') }}</h4>
-              </div>
-              <div class="profile_gift_preview_table_item_right last">
-                <p>{{ Table.NftSupply }}</p>
-              </div>
-            </div>
-          </div>
+      </div>
+    </div>
+  </Teleport>
+
+  <Teleport to="body">
+  <!-- Market-style gift sheet — teleported so menu (z-index 999) cannot cover it -->
+  <div class="overlay mgm-overlay" :class="{ 'is-open is-dark': isVisible }" @click="closeModal" />
+
+  <div
+    v-if="isRendered"
+    class="_direction _comp _item giftModal pgm-modal pgm-own"
+  >
+    <div
+      class="mgm-dock pgm-dock"
+      :class="{ hide: !isVisible, open: isVisible }"
+      @touchstart.passive="onTouchStart"
+      @touchmove.prevent="onTouchMove"
+      @touchend="onTouchEnd"
+      :style="sheetStyle"
+    >
+      <div class="mgm-sheet">
+        <button type="button" class="mgm-close" @click="closeModal" aria-label="Close">
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </button>
+
+        <div v-if="isLoading" class="mgm-skel">
+          <div class="mgm-skel__card"></div>
+          <div class="mgm-skel__block"></div>
+          <div class="mgm-skel__btn"></div>
         </div>
 
-        <div v-if="ModalComp.NftStatus === 'received'" class="_profileGiftModalButtons">
-          <div @click="closeModal()" class="_profileGiftModalButtonsClose">
-            <button :class="{ _loading: ActiveButton }">
-              <h4>{{ $t('profile.profileGiftButtonOk') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
-          </div>
-          <div v-if="!ModalComp.Market.MarketOn" @click="useTransferModal" class="_profileGiftModalButtonsSend">
-            <button :class="{ _loading: ActiveButton }">
-              <div class="kit-icon" v-html="Icon.Gift"></div>
-              <h4>{{ $t('profile.profileGiftPreviewButtonSend') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
-          </div>
-          <div v-if="ModalComp.Market.MarketOn" class="_profileGiftModalButtonsSend remove">
-            <button :class="{ _loading: ActiveButton }" @click="removeGiftLot">
-              <div class="kit-icon" v-html="Icon.Close"></div>
-              <h4>{{ $t('profile.removeListing') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
-          </div>
-        </div>
-        <div v-if="['sended', 'purchased'].includes(ModalComp.NftStatus)" class="_profileGiftModalButtons">
-          <div @click="closeModal()" class="_profileGiftModalButtonsClose">
-            <button :class="{ _loading: ActiveButton }">
-              <h4>{{ $t('profile.profileGiftButtonOk') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
-          </div>
-          <div @click="sendNft" class="_profileGiftModalButtonsSend">
-            <button :class="{ _loading: ActiveButton }">
-              <h4>{{ $t('profile.profileGiftPreviewButtonSend') }}</h4>
-              <Lottie 
-                class="lt" 
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-              <div class="tickets">
-                <p>+{{ storeCache.NftsAppData[ModalComp.NftUniqueKey]?.Tickets }}</p>
-                <img src="/profile/ticket.svg" alt="tickets" />
+        <div v-else class="mgm-body">
+          <div class="mgm-card">
+            <div
+              class="mgm-card__head"
+              :class="[isUpgraded ? 'is-upg' : normalizedRarity]"
+              :style="cardHeadStyle"
+            >
+              <div class="mgm-card__bg"></div>
+              <div class="mgm-card__symbol">
+                <img
+                  v-if="isUpgraded && UpgradedNft?.SymbolImage"
+                  :src="UpgradedNft.SymbolImage"
+                  alt=""
+                />
+                <img v-else :src="Image_GiftBg" alt="" />
               </div>
+              <div v-if="isUpgraded && UpgradedNft?.ModelNumber != null" class="mgm-card__mark">
+                <p>#{{ UpgradedNft.ModelNumber }}</p>
+              </div>
+              <div class="mgm-card__model">
+                <GiftLottie
+                  v-if="showLottie && lottiePath && isVisible"
+                  :key="`${lottiePath}:${isVisible}`"
+                  class="mgm-card__lottie"
+                  :path="lottiePath"
+                  :loop="true"
+                  :autoplay="true"
+                  width="0"
+                  height="0"
+                  renderer="canvas"
+                />
+                <img
+                  v-else
+                  class="mgm-card__model-img"
+                  :src="modelImageSrc"
+                  alt="nft"
+                />
+              </div>
+              <div class="mgm-card__tickers">
+                <div
+                  v-if="!isUpgraded"
+                  class="mgm-card__tickers-i"
+                  :class="{ disabled: !ModalComp.NftUpgradeSupport, loading: isLoadingUpgrade }"
+                  @click="onTickerClick('upgrade')"
+                >
+                  <Icon class="kit-icon" v-html="Icon.Flash"></Icon>
+                  <p>{{ isLoadingUpgrade ? '...' : $t('profile.profileTickers.upgrade') }}</p>
+                </div>
+                <!-- заминчен: вместо тикера минта — ссылки GetGems и Tonscan -->
+                <template v-if="mintState === 'success'">
+                  <div class="mgm-card__tickers-i is-mint is-gg" @click="openGetgems">
+                    <Icon class="kit-icon" v-html="Icon.GetGems"></Icon>
+                    <p>GetGems</p>
+                  </div>
+                  <div class="mgm-card__tickers-i is-mint" @click="openTonviewer">
+                    <Icon class="kit-icon" v-html="Icon.Tonviewer"></Icon>
+                    <p>Tonviewer</p>
+                  </div>
+                </template>
+                <!-- минт — слева от «продать». после возврата из кошелька
+                     повторный минт недоступен (дубликат номера в коллекции) -->
+                <div
+                  v-else-if="isUpgraded && ModalComp.Mint?.status !== 'returned'"
+                  class="mgm-card__tickers-i is-mint"
+                  :class="{ minting: mintState === 'processing' }"
+                  @click="onTickerClick('mint')"
+                >
+                  <Icon class="kit-icon" v-html="Icon.MintChain"></Icon>
+                  <p>{{ mintTickerLabel }}</p>
+                </div>
+                <div
+                  v-if="(isUpgraded || ModalComp.Market?.MarketOn) && !isMintedOrMinting"
+                  class="mgm-card__tickers-i"
+                  :class="{ disabled: isRemovingLot, loading: isRemovingLot }"
+                  @click="onTickerClick(ModalComp.Market?.MarketOn ? 'remove' : 'sell')"
+                >
+                  <Icon class="kit-icon" v-html="ModalComp.Market?.MarketOn ? Icon.MarketOff : Icon.MenuMarket"></Icon>
+                  <p>{{ isRemovingLot ? '...' : (ModalComp.Market?.MarketOn ? $t('profile.profileTickers.unlist') : $t('profile.profileTickers.sell')) }}</p>
+                </div>
+                <div
+                  v-if="!isMintedOrMinting"
+                  class="mgm-card__tickers-i"
+                  :class="{ disabled: ModalComp.Market?.MarketOn }"
+                  @click="onTickerClick('send')"
+                >
+                  <Icon class="kit-icon" v-html="Icon.Direct"></Icon>
+                  <p>{{ $t('profile.profileTickers.send') }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Title + tools -->
+          <div class="mgm-title">
+            <div class="mgm-title__left">
+              <h3>{{ displayName }}</h3>
+              <div v-if="ModalComp.Market?.MarketOn" class="mgm-title__price">
+                <Icon class="kit-icon" v-html="Icon.Gram" />
+                <span>{{ cutNumber(ModalComp.Market.TonPrice) }}</span>
+              </div>
+            </div>
+            <div class="mgm-title__tools">
+              <button type="button" class="mgm-tool" @click="shareGiftLink">
+                <img :src="ForwardImg" alt="" />
+              </button>
+              <button type="button" class="mgm-tool" @click="copyGiftLink">
+                <img :src="CopyImg" alt="" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Статус лота — отдельным блоком над характеристиками -->
+          <Transition name="pgm-market">
+            <button
+              v-if="ModalComp.Market?.MarketOn"
+              type="button"
+              class="pgm-market"
+              @click="$router.push('/m')"
+            >
+              <span class="pgm-market__tile">
+                <Icon class="kit-icon" v-html="Icon.MenuMarket" />
+              </span>
+              <span class="pgm-market__title">{{ $t('profile.profileMarketOnDesc') }}</span>
+              <span class="pgm-market__go" aria-hidden="true">
+                <svg viewBox="0 0 8 14" fill="none">
+                  <path d="M1 1.5L6.5 7 1 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </button>
+          </Transition>
+
+          <!-- Ончейн-паспорт: подарок заминчен — вместо таблицы характеристик
+               показываем адреса контрактов и ссылки на обозреватели -->
+          <template v-if="mintState === 'success'">
+            <!-- та же таблица, что и у характеристик, только с адресами: тап — копия -->
+            <div class="mgm-info">
+              <div class="mgm-info__row pgm-chainrow" @click="copyMintAddress(ModalComp.Mint?.nft_address)">
+                <span class="mgm-info__label">{{ $t('profile.profileMintFlow.chainItem') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val pgm-chainrow__addr">{{ shortAddr(ModalComp.Mint?.nft_address) }}</span>
+                  <img class="pgm-chainrow__copy" :src="CopyImg" alt="" />
+                </div>
+              </div>
+              <div
+                v-if="mintCollectionAddress"
+                class="mgm-info__row pgm-chainrow"
+                @click="copyMintAddress(mintCollectionAddress)"
+              >
+                <span class="mgm-info__label">{{ $t('profile.profileMintFlow.chainCollection') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val pgm-chainrow__addr">{{ shortAddr(mintCollectionAddress) }}</span>
+                  <img class="pgm-chainrow__copy" :src="CopyImg" alt="" />
+                </div>
+              </div>
+              <div class="mgm-info__row pgm-chainrow" @click="copyMintAddress(ModalComp.Mint?.wallet_address)">
+                <span class="mgm-info__label">{{ $t('profile.profileMintFlow.chainOwner') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val pgm-chainrow__addr pgm-chainrow__addr--owner">{{ shortAddr(ModalComp.Mint?.wallet_address) }}</span>
+                  <img class="pgm-chainrow__copy" :src="CopyImg" alt="" />
+                </div>
+              </div>
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileMintFlow.chainMinted') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ mintedAtText }}</span>
+                </div>
+              </div>
+            </div>
+
+          </template>
+
+          <!-- Info table -->
+          <div v-else class="mgm-info">
+            <template v-if="isUpgraded">
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem1') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ modelNameText }}</span>
+                  <span v-if="modelDropRate" class="mgm-info__pct">{{ modelDropRate }}%</span>
+                </div>
+              </div>
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem2') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ symbolNameText }}</span>
+                  <span v-if="UpgradedNft?.SymbolDropRate" class="mgm-info__pct">{{ UpgradedNft.SymbolDropRate }}%</span>
+                </div>
+              </div>
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem3') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ backgroundNameText }}</span>
+                  <span v-if="UpgradedNft?.BackgroundDropRate" class="mgm-info__pct">{{ UpgradedNft.BackgroundDropRate }}%</span>
+                </div>
+              </div>
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem4') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ Table?.NftSupply || '—' }}</span>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem1') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ Table?.OwnerName || '—' }}</span>
+                </div>
+              </div>
+              <div class="mgm-info__row">
+                <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem4') }}</span>
+                <div class="mgm-info__right">
+                  <span class="mgm-info__val">{{ Table?.NftSupply || '—' }}</span>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- Footer: у заминченного — «Закрыть» + «Возврат», иначе только закрыть -->
+          <div class="pgm-footer">
+            <button
+              type="button"
+              class="pgm-footer__btn pgm-footer__btn--close"
+              @click="closeModal"
+            >
+              <span>{{ $t('profile.profileGiftButtonOk') }}</span>
+            </button>
+            <button
+              v-if="mintState === 'success' && ModalComp.Mint?.return_address"
+              type="button"
+              class="pgm-footer__btn pgm-footer__btn--return"
+              @click="openReturnModal"
+            >
+              <span>{{ $t('profile.profileMintFlow.chainReturn') }}</span>
             </button>
           </div>
         </div>
       </div>
+    </div>
   </div>
-  
-  <div 
-    class="_direction _comp _item _profileGiftModal _modalTransfer"
-    :class="[Key]"
+
+  <div
+    v-if="transferIsRendered"
+    class="overlay mgm-overlay"
+    :class="{ 'is-open is-dark': transferIsVisible }"
+    @click="closeTransferModal"
+  />
+  <div
+    v-if="transferIsRendered"
+    class="_direction _comp _item giftModal pgm-transfer-modal"
   >
-      <div 
-        v-if="isLoading" 
-        class="_skeleton"
-        :class="{ hide: !ModalTransferActive }"
+    <div
+      class="mgm-dock pgm-dock pgm-transfer-dock"
+      :class="{ hide: !transferIsVisible, open: transferIsVisible }"
+      :style="transferSheetStyle"
+      @touchstart.passive="onTransferTouchStart"
+      @touchmove.prevent="onTransferTouchMove"
+      @touchend="onTransferTouchEnd"
+    >
+      <div
+        class="mgm-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="profile-transfer-title"
+        :aria-busy="ActiveButton"
       >
-        <div @click="closeModal" class="_profileGiftModalClose"></div>
-        <div class="_profileGiftModalContent">
-          <div class="_profileGiftModalContentImage"></div>
-          <div class="_profileGiftModalContentTitle"></div>
-        </div>
-        <div class="_profileGiftModalTable">
-          <div class="_profileGiftModalTableRow"></div>
-        </div>
-        <div class="_profileGiftModalButtons">
-          <div class="_profileGiftModalButtonsCollectable"></div>
-          <div class="_profileGiftModalButtonsSend"></div>
-        </div>
-      </div>
-      <div 
-        v-if="!isLoading"
-        class="_content"
-        :class="{ hide: !ModalTransferActive }"
-      >
-        <div @click="closeTransferModal" class="_profileGiftModalClose">
-          <div class="kit-icon" v-html="Icon.Close"></div>
-        </div>
-        <div 
-          class="_profileGiftModalContent" 
-          :class="ModalComp.NftRarity"
+        <button
+          type="button"
+          class="mgm-close"
+          :aria-label="$t('profile.profileTransferClose')"
+          :disabled="ActiveButton"
+          @click="closeTransferModal"
         >
-          <div 
-            v-if="isUpgraded" 
-            class="_profileGiftModalGradient"
-            :style="{
-              '--center-color': UpgradedNft?.BackgroundColors?.Center,
-              '--around-color': UpgradedNft?.BackgroundColors?.Around
-            }"
-          ></div>
-          <div class="_symbols">
-            <img :src="Image_GiftBg" :class="{ _show: !isUpgraded }" alt="rarity" />
-             <img :src="UpgradedNft?.SymbolImage" :class="{ _show: isUpgraded }" alt="rarity" />
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </button>
+
+        <div v-if="isLoading" class="mgm-skel">
+          <div class="mgm-skel__card"></div>
+          <div class="mgm-skel__block"></div>
+          <div class="mgm-skel__btn"></div>
+        </div>
+
+        <div v-else class="mgm-body">
+          <div class="mgm-card market">
+            <div
+              class="mgm-card__head"
+              :class="[isUpgraded ? 'is-upg' : normalizedRarity]"
+              :style="cardHeadStyle"
+            >
+              <div class="mgm-card__bg"></div>
+              <div class="mgm-card__symbol">
+                <img :src="isUpgraded ? UpgradedNft?.SymbolImage : Image_GiftBg" alt="" />
+              </div>
+              <div v-if="isUpgraded && UpgradedNft?.ModelNumber != null" class="mgm-card__mark">
+                <p>#{{ UpgradedNft.ModelNumber }}</p>
+              </div>
+              <div class="mgm-card__model">
+                <GiftLottie
+                  v-if="showLottie && lottiePath && transferIsVisible"
+                  :key="`${lottiePath}:${transferIsVisible}`"
+                  class="mgm-card__lottie"
+                  :path="lottiePath"
+                  :loop="true"
+                  :autoplay="true"
+                  width="0"
+                  height="0"
+                  renderer="canvas"
+                />
+                <img v-else class="mgm-card__model-img" :src="modelImageSrc" alt="nft" />
+              </div>
+            </div>
           </div>
-          <div 
-            v-if="isUpgraded"
-            class="_number"
+
+          <div class="mgm-title">
+            <div class="mgm-title__left">
+              <h3 id="profile-transfer-title">{{ displayName }}</h3>
+            </div>
+          </div>
+
+          <!-- подарок получен меньше суток назад: отправка платная.
+               вся плашка — кнопка, по ней открывается справка -->
+          <button
+            v-if="transferCooldownLeft > 0"
+            type="button"
+            class="pgm-lock"
+            @click="openCooldownModal"
           >
-            <span>#{{ UpgradedNft?.ModelNumber }}</span>
-          </div>
-          <div class="_profileGiftModalContentImage">
-            <img 
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'svg'"
-              :src="ModalComp.NftImage"
-              alt="nft"
-              class="modalImage"
-              v-bind:class="{ _hide: isUpgraded }"
-            />
-            <GiftLottie
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'lottie'"
-              v-bind:class="{ _hide: isUpgraded }"
-              class="_lottie"
-              :path="`/gifts/lottie/${ModalComp.NftKey}.json`"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
-            <img 
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'svg'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: isUpgraded }"
-              :src="UpgradedNft?.ModelImage"
-              alt="nft"
-              class="upgradedImage"
-            />
-            <GiftLottie
-              v-if="ModalComp.NftKey && ModalComp.NftMedia === 'lottie'"
-              v-bind:class="{ _loading: isLoadingUpgradeImage, _show: isUpgraded }"
-              class="_lottie upgraded"
-              :path="UpgradedNft?.ModelImage"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
-          </div>
-          <div class="_profileGiftModalContentTitle">
-            <h4 v-if="!isUpgraded">{{ ModalComp.NftName }}</h4>
-            <h4 v-if="isUpgraded">{{ UpgradedNft?.ModelName }}</h4>
-          </div>
-        </div>
-        <div class="_profileGiftModalSearch">
-          <div class="_profileGiftModalSearchFlexed">
-            <label>{{ $t('profile.profileTransferLabel') }}</label>
-            <p></p>
-          </div>
-          <div class="_profileGiftModalSections">
-            <div 
-              v-for="section in transferSections.items" 
-              @click="setActiveTransferTab(section.value)"
-              class="_profileGiftModalSection" 
-              :class="{ active: transferSections.active.value === section.value }"
-            >
-              <h4>{{ section.label }}</h4>
-            </div>
-          </div>
+            <span class="pgm-lock__ico" v-html="Icon.Lock"></span>
+            <span class="pgm-lock__text">
+              <span class="pgm-lock__title">{{ $t('profile.profileTransferFee.lockTitle') }}</span>
+              <span class="pgm-lock__hint">{{ $t('profile.profileTransferFee.lockHint', { time: transferCooldownText }) }}</span>
+            </span>
+            <span class="pgm-lock__chev" v-html="Icon.ChevroneRight"></span>
+          </button>
 
-          <div v-if="transferYourselfError" class="error">
-            <p>{{ $t('profile.profileGiftModalTransferError') }}</p>
-          </div>
+          <section class="pgm-recipient" :aria-label="$t('profile.profileTransferRecipientLabel')">
+                <div
+                  class="pgm-recipient-search"
+                  :class="{
+                    selected: isTransferInputSuccess,
+                    error: transferYourselfError || transferSearchError,
+                  }"
+                >
+                  <div v-if="isTransferInputSuccess" class="pgm-recipient-selected">
+                    <img v-if="transferData.avatar && !showDefaultAvatar" :src="transferData.avatar" alt="" @error="showDefaultAvatar = true" />
+                    <span v-else class="pgm-recipient-avatar">{{ transferData.name?.[0] }}</span>
+                    <span class="pgm-recipient-selected__name">{{ transferData.name }}</span>
+                    <button type="button" :aria-label="$t('profile.profileTransferClear')" :disabled="ActiveButton" @click="closeTransferData">
+                      <span class="kit-icon" v-html="Icon.Close"></span>
+                    </button>
+                  </div>
+                  <template v-else>
+                    <input
+                      id="profile-transfer-input"
+                      ref="transferInput"
+                      type="text"
+                      autocomplete="off"
+                      :placeholder="$t('profile.profileTransferSearchPlaceholder')"
+                      :disabled="ActiveButton"
+                      @input="keyTransferInput"
+                      @keyup.enter="blurTransferInput"
+                    />
+                    <Transition name="pgm-fade">
+                      <div v-if="isTransferSearching" class="pgm-recipient-search__loader"></div>
+                    </Transition>
+                  </template>
+                </div>
 
-          <div class="_profileGiftModalButtonsInput">
-            <div v-if="isTransferInputSuccess" class="_profileGiftModalButtonsInputContent">
-              
-              <img 
-                v-if="transferData.avatar && !showDefaultAvatar" 
-                :src="transferData.avatar" 
-                alt="avatar"
-                @error="showDefaultAvatar = true"
-              />
-              <div v-else class="avatar_null">
-                <h4 v-if="transferData.name">{{ transferData.name[0] }}</h4>
+                <Transition name="pgm-status">
+                  <p
+                    v-if="transferStatus"
+                    class="pgm-recipient-status"
+                    :class="transferStatus.error ? 'pgm-recipient-error' : 'pgm-recipient-empty'"
+                    aria-live="polite"
+                  >{{ transferStatus.text }}</p>
+                </Transition>
+
+                <div v-if="!isTransferInputSuccess" class="pgm-recipient-list">
+                  <Transition name="pgm-list">
+                    <div v-if="isTransferSearching && transferData.query && !isTransferInputSuccess" key="loading" class="pgm-recipient-card pgm-recipient-card--loading" aria-hidden="true">
+                      <div v-for="n in 3" :key="`recipient-skeleton-${n}`" class="pgm-recipient-row pgm-recipient-row--skeleton" :style="{ '--i': n - 1 }">
+                        <span class="pgm-recipient-row__ava"></span>
+                        <span class="pgm-recipient-row__mid">
+                          <span class="pgm-recipient-row__skeleton-line"></span>
+                          <span class="pgm-recipient-row__skeleton-line small"></span>
+                        </span>
+                        <span class="pgm-recipient-row__action"></span>
+                      </div>
+                    </div>
+
+                    <div v-else-if="transferUsers.length && !isTransferInputSuccess" key="list" class="pgm-recipient-card" role="listbox" :aria-label="$t('profile.profileTransferRecipientLabel')">
+                      <button
+                        v-for="(user, index) in transferUsers"
+                        :key="user.user_id"
+                        type="button"
+                        class="pgm-recipient-row"
+                        :class="{ selected: transferUserSelected === user.user_id }"
+                        :style="{ '--i': index }"
+                        role="option"
+                        :aria-selected="transferUserSelected === user.user_id"
+                        @click="selectTransferUser(user)"
+                      >
+                        <span class="pgm-recipient-row__ava">
+                          <img v-if="user.user_photo" :src="user.user_photo" alt="" />
+                          <span v-else>{{ user.name?.[0] }}</span>
+                        </span>
+                        <span class="pgm-recipient-row__mid">
+                          <span class="pgm-recipient-row__name">{{ user.name }}</span>
+                          <span class="pgm-recipient-row__id">
+                            {{ user.username ? `@${user.username}` : `ID ${user.user_id}` }}
+                          </span>
+                        </span>
+                        <span class="pgm-recipient-row__action">
+                          <template v-if="transferUserSelected === user.user_id">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                          </template>
+                          <template v-else>
+                            {{ $t('profile.profileTransferSelect') }}
+                          </template>
+                        </span>
+                      </button>
+                    </div>
+                  </Transition>
+                </div>
+              </section>
+
+              <div class="mgm-footer market pgm-transfer-footer">
+                <button
+                  type="button"
+                  class="mgm-footer__buy"
+                  :class="{ _loading: ActiveButton }"
+                  :disabled="!transferData.success || ActiveButton"
+                  @click="transferGift"
+                >
+                  <span class="pgm-send-button__content" :class="{ hidden: ActiveButton }">
+                    <span>{{ $t('profile.profileGiftPreviewButtonSendFor') }}</span>
+                    <span class="pgm-transfer-cost">
+                      <img :src="Image_StarsWhite" alt="" />
+                      <span>{{ transferPrice }}</span>
+                    </span>
+                  </span>
+                  <span class="pgm-send-button__loading" :class="{ visible: ActiveButton }">
+                    <Lottie class="mgm-footer__spin" slug="loading-spin" :loop="true" width="75" height="75" renderer="svg" />
+                    <span>{{ $t('profile.profileTransferSending') }}</span>
+                  </span>
+                </button>
               </div>
-              
-              <h4>{{ transferData.name }}</h4>
-              <div @click="closeTransferData" class="kit-icon" v-html="Icon.Close"></div>
-            </div>
-
-            <input 
-              ref="transferInput"
-              :class="{ noPlaceholder: isTransferInputSuccess }"
-              type="text"
-              :placeholder="$t('profile.profileTransferInputPlaceholder') + ' ' + transferSections.active.label"
-              @input="keyTransferInput"
-              @blur="blurTransferInput"
-              @keyup.enter="blurTransferInput"
-            />
-          </div>
-
-          <div class="_profileGiftModalUsers">
-            <div 
-              v-for="user in transferUsers" 
-              @click="selectTransferUser(user)"
-              class="_profileGiftModalUser" 
-              :class="{ active: transferUserSelected === user.user_id }"
-            >
-              <img :src="user.user_photo" alt="avatar" />
-              <h4>{{ user.name }}</h4>
-            </div>
-          </div>
-
-        </div>
-        <div class="_profileGiftModalButtons">
-          <div @click="transferGift()" class="_profileGiftModalButtonsSend">
-            <button :class="{ _loading: ActiveButton }" :disabled="!transferData.success">
-              <h4>{{ $t('profile.profileGiftPreviewButtonSendFor') }}</h4>
-              <div class="stars">
-                <img :src="Image_StarsWhite" alt="avatar" />
-                <span v-if="ModalComp.NftStatus === 'received'">25</span>
-                <span v-else>0</span>
-              </div>
-              <Lottie 
-                class="lt"
-                slug="loading-spin" 
-                :loop="true"
-                width="75"
-                height="75"
-                renderer="svg"
-              />
-            </button>
-          </div>
         </div>
       </div>
+    </div>
   </div>
+  </Teleport>
 </template>
 
 <script>
 import * as nftApi from '../../api/nftApi';
-import * as telegramApi from '../../api/telegramApi';
 import * as invoiceApi from '../../api/invoiceApi';
 import * as userApi from '../../api/userApi';
+import * as walletApi from '../../api/walletApi';
+
+import { tonConnectUI } from '@/hooks/useTonConnect';
+import { toUserFriendlyAddress } from 'ton-ui-vue';
 
 import * as MarketLotsApi from '../../api/market/lots';
 
 import { Icon } from '../Icon';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
-import { fireFromBottom, shootConfetti } from '../../utils/useConfetti';
-import { getUpgradedModel, getUpgradedSymbol } from '../../utils/useGift';
+import { fireFromBottom } from '../../utils/useConfetti';
+import { getUpgradedModel } from '../../utils/useGift';
 import { showToast } from '../../utils/toastManager';
 import { copyToClipboard } from '../../utils/copyToClipboard';
 import { cutNumber } from '../../utils/useTon';
@@ -569,40 +740,21 @@ import Lottie from '../Lottie.vue';
 import GiftLottie from '../GiftLottie.vue';
 import Notiflix from 'notiflix';
 
-// Images
-import MarketImg from '@/assets/images/market.svg';
-import TonImg from '@/assets/images/market/ton.svg';
+import ForwardImg from '@/assets/images/forward.svg';
+import CopyImg from '@/assets/images/copy.svg';
+
+// задержка поиска получателя: было 1500мс, поле казалось зависшим
+const SEARCH_DEBOUNCE_MS = 320;
 
 export default {
   props: {
-    Skeleton: {
-      type: Boolean,
-      required: true,
-    },
-    SkeletonTime: {
-      type: Number,
-      required: true,
-    },
-    ModalActive: {
-      type: Boolean,
-      required: true,
-    },
-    ModalTransferActive: {
-      type: Boolean,
-      required: true,
-    },
-    ModalComp: {
-      type: Object,
-      required: true,
-    },
-    UpgradedNft: {
-      type: Object,
-      required: true,
-    },
-    Table: {
-      type: Object,
-      required: true,
-    },
+    Skeleton: { type: Boolean, required: true },
+    SkeletonTime: { type: Number, required: true },
+    ModalActive: { type: Boolean, required: true },
+    ModalTransferActive: { type: Boolean, required: true },
+    ModalComp: { type: Object, required: true },
+    UpgradedNft: { type: Object, required: true },
+    Table: { type: Object, required: true },
   },
 
   components: {
@@ -612,17 +764,12 @@ export default {
 
   data() {
     return {
-      MarketImg,
-      TonImg,
+      ForwardImg,
+      CopyImg,
 
       storeCache: useCacheStore(),
 
-      isLoading: this.$props.Skeleton,
-      isLoadingModalImage: true,
-
-      isTransferOpen: false,
       isTransferInputSuccess: false,
-      isTransferSuccess: false,
       transferTimeout: null,
 
       showDefaultAvatar: false,
@@ -630,145 +777,388 @@ export default {
       transferUserSelected: null,
       transferData: { query: null, userId: null, avatar: null, name: null, success: false },
       transferYourselfError: false,
+      transferSearchError: '',
+      isTransferSearching: false,
+      transferRequestId: 0,
       transferSections: {
         active: {
           label: this.$t('profile.profileTransferSections.name'),
-          value: 'name'
+          value: 'name',
         },
         items: [
           { label: this.$t('profile.profileTransferSections.name'), value: 'name' },
           { label: this.$t('profile.profileTransferSections.username'), value: 'username' },
           { label: this.$t('profile.profileTransferSections.telegram_id'), value: 'telegram_id' },
-        ]
+        ],
       },
 
-      keyboardHeight: 0,
-
-      OwnerImage: true,
       ActiveButton: false,
 
       isLoadingUpgrade: false,
       isLoadingUpgradeImage: false,
-      isUpgraded: false,
+      isRemovingLot: false,
 
+      // возврат NFT: шит-инструкция
+      returnModalActive: false,
+      returnIsRendered: false,
+      returnCloseTimer: null,
+
+      // минт в кошелёк
+      // привязка кошелька по данным бэка: null — ещё не спрашивали
+      mintBoundWallet: null,
+      mintModalActive: false,
+      mintIsRendered: false,
+      mintCloseTimer: null,
+      isMinting: false,
+      mintPollTimer: null,
+      mintWalletConnectPoll: null,
+      cooldownModalActive: false,
+      cooldownIsRendered: false,
+      cooldownCloseTimer: null,
+      isPayingTransfer: false,
+      cooldownNowMs: Date.now(),
+      cooldownTimer: null,
+
+      // Sheet animation (market-style)
       dragY: 0,
       startY: 0,
       startX: 0,
       isDragging: false,
-      dragFrom: null,
       startTimeMs: 0,
-      lastY: 0,
-      
+      isRendered: false,
+      isVisible: false,
+      closeTimer: null,
+      transferIsRendered: false,
+      transferIsVisible: false,
+      transferCloseTimer: null,
+      transferDragY: 0,
+      transferStartY: 0,
+      transferStartX: 0,
+      transferStartTimeMs: 0,
+      transferIsDragging: false,
+
       Icon,
       Image_Stars,
       Image_StarsWhite,
       Image_GiftBg,
-
       getUpgradedModel,
       cutNumber,
     };
   },
 
   mounted() {
+    // остаток до бесплатной пересылки должен идти вживую, а не застывать
+    this.cooldownTimer = setInterval(() => { this.cooldownNowMs = Date.now(); }, 30000);
     this.loadResources();
+    if (this.ModalActive) {
+      this.openSheet();
+    }
   },
 
   beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside);
+    if (this.cooldownTimer) clearInterval(this.cooldownTimer);
+    if (this.returnCloseTimer) clearTimeout(this.returnCloseTimer);
+    if (this.mintCloseTimer) clearTimeout(this.mintCloseTimer);
+    if (this.mintPollTimer) clearInterval(this.mintPollTimer);
+    if (this.mintWalletConnectPoll) clearInterval(this.mintWalletConnectPoll);
+    if (this.closeTimer) clearTimeout(this.closeTimer);
+    if (this.transferCloseTimer) clearTimeout(this.transferCloseTimer);
+    if (this.cooldownCloseTimer) clearTimeout(this.cooldownCloseTimer);
+    if (this.transferTimeout) clearTimeout(this.transferTimeout);
+    this.transferRequestId += 1;
+  },
+
+  watch: {
+    ModalActive(val) {
+      if (val) this.openSheet();
+      else if (this.isRendered && this.isVisible) this.startClose(false);
+    },
+    ModalTransferActive(val) {
+      if (val) this.openTransferSheet();
+      else if (this.transferIsRendered && this.transferIsVisible) this.startTransferClose(false);
+    },
   },
 
   computed: {
     isLoading() {
       return this.Skeleton;
     },
-    isUpgraded() {
-      if (!this.ModalComp.NftUpgraded) return false;
-      return true;
+
+    // ── минт ──────────────────────────────────────────────────────
+    mintState() {
+      const s = this.ModalComp.Mint?.status;
+      if (s === 'success' || s === 'processing' || s === 'failed') return s;
+      return 'none';
     },
-    sheetStyleContent() {
-      if (!this.isDragging || !this.ModalActive || this.dragFrom !== 'content') return null;
+    isMintedOrMinting() {
+      return this.mintState === 'success' || this.mintState === 'processing';
+    },
+    mintTickerLabel() {
+      if (this.mintState === 'success') return this.$t('profile.profileMintFlow.tickerMinted');
+      if (this.mintState === 'processing') return this.$t('profile.profileMintFlow.tickerMinting');
+      return this.$t('profile.profileMintFlow.ticker');
+    },
+    mintDescr() {
+      if (this.mintState === 'success') return this.$t('profile.profileMintFlow.mintedDescr');
+      if (this.mintState === 'processing') return this.$t('profile.profileMintFlow.mintingDescr');
+      if (!this.mintWalletReady) return this.$t('profile.profileMintFlow.connectDescr');
+      return this.$t('profile.profileMintFlow.descr');
+    },
+    mintTitle() {
+      if (this.mintState === 'success') return this.$t('profile.profileMintFlow.mintedTitle');
+      if (this.mintState === 'processing') return this.$t('profile.profileMintFlow.mintingTitle');
+      if (this.mintState === 'failed') return this.$t('profile.profileMintFlow.failedTitle');
+      if (!this.mintWalletReady) return this.$t('profile.profileMintFlow.connectTitle');
+      return this.$t('profile.profileMintFlow.title');
+    },
+    // адрес: у существующей заявки — зафиксированный, иначе — привязка с бэка.
+    // локальную сессию TonConnect не смотрим: она переживает отвязку кошелька
+    mintWalletAddress() {
+      if (this.ModalComp.Mint?.wallet_address) return this.ModalComp.Mint.wallet_address;
+      return this.mintBoundWallet || '';
+    },
+    mintWalletReady() {
+      return !!this.mintWalletAddress;
+    },
+    mintShortAddress() {
+      const a = this.mintWalletAddress;
+      if (!a) return '';
+      return a.length > 12 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a;
+    },
+    // адрес коллекции достаём из ссылки getgems: …/collection/<addr>/<item>
+    mintCollectionAddress() {
+      const url = this.ModalComp.Mint?.getgems_url || '';
+      const m = url.match(/\/collection\/([^/]+)/);
+      return m ? m[1] : '';
+    },
+    mintedAtText() {
+      const ms = this.ModalComp.Mint?.created_at;
+      if (!ms) return '—';
+      try {
+        return new Date(ms).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+      } catch {
+        return '—';
+      }
+    },
+    // один элемент на все состояния: при смене текста узел не пересоздаётся,
+    // поэтому уходящий и приходящий блоки больше не складываются по высоте
+    transferStatus() {
+      if (this.isTransferInputSuccess) return null;
+      if (this.transferYourselfError) {
+        return { error: true, text: this.$t('profile.profileGiftModalTransferError') };
+      }
+      if (this.transferSearchError) {
+        return { error: true, text: this.transferSearchError };
+      }
+      if (this.transferData.query && !this.transferUsers.length && !this.isTransferSearching) {
+        return { error: false, text: this.$t('profile.profileTransferEmpty') };
+      }
+      return null;
+    },
+    isUpgraded() {
+      return !!this.ModalComp?.NftUpgraded;
+    },
+    normalizedRarity() {
+      let rarity = String(this.ModalComp?.NftRarity || '').toLowerCase().replace(/[\s_-]+/g, '');
+      if (rarity === 'legendary') rarity = 'legend';
+      if (rarity === 'veryrarity') rarity = 'veryrare';
+      return rarity;
+    },
+    sheetStyle() {
+      if (!this.isDragging || !this.isVisible) return null;
       return {
         transform: `translate(-50%, ${Math.max(0, this.dragY)}px)`,
         transition: 'none',
         willChange: 'transform',
+        animation: 'none',
       };
     },
-    sheetStyleSkeleton() {
-      if (!this.isDragging || !this.ModalActive || this.dragFrom !== 'skeleton') return null;
+    transferSheetStyle() {
+      if (!this.transferIsDragging || !this.transferIsVisible) return null;
       return {
-        transform: `translateY(${Math.max(0, this.dragY)}px)`,
+        transform: `translate(-50%, ${Math.max(0, this.transferDragY)}px)`,
         transition: 'none',
         willChange: 'transform',
+        animation: 'none',
       };
     },
-  },
-
-  watch: {
-    isLoadingUpgradeImage(newValue) {
-      if (newValue === false) {
-        this.isUpgraded = true;
-        this.ModalComp.NftUpgraded = true;
-        this.$emit(
-          'upgradedNftModal', 
-          this.ModalComp.NftId, 
-          this.UpgradedNft.ModelName, 
-          this.UpgradedNft.SymbolName, 
-          this.UpgradedNft.BackgroundName,
-          this.UpgradedNft.ModelNumber
-        );
-      }
-    }
-  },
-  
-  methods: {
-    handleClickOutside(event) {
-      if (!this.$refs.transferInput.contains(event.target)) {
-        this.blurTransferInput();
-      }
+    // в заголовке всегда оригинальный подарок: у улучшенных моделей вид
+    // может не иметь ничего общего с коллекцией, и люди не понимают,
+    // что именно у них в руках. имя модели остаётся в строке «Модель»
+    // сколько миллисекунд осталось до бесплатной пересылки
+    transferCooldownLeft() {
+      const until = Number(this.ModalComp?.FreeTransferAt || 0);
+      if (!until) return 0;
+      return Math.max(0, until - this.cooldownNowMs);
     },
 
+    // в первые сутки отправка стоит 25 звёзд, дальше бесплатна
+    transferPrice() {
+      return this.transferCooldownLeft > 0 ? 25 : 0;
+    },
+
+    // «3 ч 20 мин» — округляем вверх, чтобы не обещать раньше времени
+    transferCooldownText() {
+      const left = this.transferCooldownLeft;
+      if (left <= 0) return '';
+      const totalMin = Math.ceil(left / 60000);
+      const h = Math.floor(totalMin / 60);
+      const m = totalMin % 60;
+      if (h > 0) return `${h} ${this.$t('profile.profileTransferFee.hours')} ${m} ${this.$t('profile.profileTransferFee.minutes')}`;
+      return `${m} ${this.$t('profile.profileTransferFee.minutes')}`;
+    },
+
+    displayName() {
+      return this.ModalComp.GiftName || this.ModalComp.NftName || '';
+    },
+    modelNameText() {
+      const raw = this.UpgradedNft?.ModelName;
+      if (!raw) return this.ModalComp.NftName || '';
+      if (typeof raw === 'object') return raw.name || raw.Name || '';
+      return String(raw);
+    },
+    modelDropRate() {
+      const raw = this.UpgradedNft?.ModelDropRate ?? this.UpgradedNft?.ModelName?.drop_rate;
+      return raw || null;
+    },
+    symbolNameText() {
+      const raw = this.UpgradedNft?.SymbolName;
+      if (!raw) return '—';
+      if (typeof raw === 'object') return raw.name || raw.Name || '—';
+      return String(raw);
+    },
+    backgroundNameText() {
+      const raw = this.UpgradedNft?.BackgroundName;
+      if (!raw) return '—';
+      if (typeof raw === 'object') return raw.name || raw.Name || '—';
+      return String(raw);
+    },
+    cardHeadStyle() {
+      if (!this.isUpgraded) return null;
+      const center = this.UpgradedNft?.BackgroundColors?.Center;
+      const around = this.UpgradedNft?.BackgroundColors?.Around;
+      if (!center && !around) return null;
+      return {
+        '--center-color': center || '#666',
+        '--around-color': around || '#1a1a1a',
+      };
+    },
+    showLottie() {
+      const media = this.ModalComp?.NftMedia;
+      if (this.isUpgraded) {
+        const image = this.UpgradedNft?.ModelImage || '';
+        return media === 'lottie' || /\.json(\?|$)/i.test(String(image));
+      }
+      return media === 'lottie';
+    },
+    modelImageSrc() {
+      if (this.isUpgraded) {
+        const apiImage = this.UpgradedNft?.ModelImage || '';
+        if (apiImage && !/\.json(\?|$)/i.test(apiImage)) {
+          return apiImage;
+        }
+        const uKey = this.ModalComp.NftUniqueKey;
+        const modelName = this.modelNameText;
+        return getUpgradedModel(uKey, modelName, 'svg') || apiImage || this.ModalComp.NftImage || '';
+      }
+      return this.ModalComp.NftImage || '';
+    },
+    lottiePath() {
+      if (this.isUpgraded) {
+        const apiImage = this.UpgradedNft?.ModelImage || '';
+        if (apiImage && /\.json(\?|$)/i.test(apiImage)) {
+          return apiImage;
+        }
+        if (this.ModalComp.NftMedia !== 'lottie') return '';
+        if (apiImage && /\.svg(\?|$)/i.test(apiImage)) {
+          return apiImage.replace(/\.svg(\?|$)/i, '.json$1');
+        }
+        const uKey = this.ModalComp.NftUniqueKey;
+        const modelName = this.modelNameText;
+        return getUpgradedModel(uKey, modelName, 'json') || '';
+      }
+      if (this.ModalComp.NftMedia !== 'lottie' || !this.ModalComp.NftKey) return '';
+      return `/gifts/lottie/${this.ModalComp.NftKey}.json`;
+    },
+    canSend() {
+      return true;
+    },
+    showMint() {
+      return !this.isUpgraded;
+    },
+    showSell() {
+      return this.isUpgraded && !this.ModalComp?.Market?.MarketOn;
+    },
+    showRemove() {
+      return !!this.ModalComp?.Market?.MarketOn;
+    },
+  },
+
+  methods: {
     async loadResources() {
       try {
-        await Promise.all([this.loadFonts(), this.loadImages()]);
-        this.isLoading = false;
-        this.$emit("loadSuccess");
+        await Promise.all([document.fonts.ready, this.loadImages()]);
+        this.$emit('loadSuccess');
       } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
+        console.error('Ошибка при загрузке ресурсов:', error);
       }
-    },
-
-    loadFonts() {
-      return document.fonts.ready;
     },
 
     loadImages() {
-      const staticImages = [
-        Image_Stars
-      ].map((src) => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.src = src;
-          img.onload = resolve;
-          img.onerror = reject;
+      return Promise.all(
+        [Image_Stars].map(
+          (src) =>
+            new Promise((resolve, reject) => {
+              const img = new Image();
+              img.src = src;
+              img.onload = resolve;
+              img.onerror = reject;
+            })
+        )
+      );
+    },
+
+    openSheet() {
+      if (this.closeTimer) {
+        clearTimeout(this.closeTimer);
+        this.closeTimer = null;
+      }
+      this.isRendered = true;
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          this.isVisible = true;
         });
       });
+    },
 
-      return Promise.all([...staticImages]);
+    startClose(emitParent = true) {
+      if (!this.isRendered) {
+        if (emitParent) this.$emit('closeModal');
+        return;
+      }
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.isVisible = false;
+      this.isDragging = false;
+      this.dragY = 0;
+      if (this.closeTimer) clearTimeout(this.closeTimer);
+      this.closeTimer = setTimeout(() => {
+        this.isRendered = false;
+        this.closeTimer = null;
+        if (emitParent) this.$emit('closeModal');
+      }, 340);
     },
 
     closeModal() {
-      this.$emit('closeModal');
+      this.startClose(true);
     },
 
-    handleResize() {
-      const viewportHeight = window.innerHeight;
-      const fullHeight = document.documentElement.clientHeight;
-      this.keyboardHeight = fullHeight - viewportHeight;
+    onPrimarySend() {
+      this.useTransferModal();
     },
 
     async transferNft() {
       if (!this.ModalComp.NftUuid) return;
-      
+
       Notiflix.Confirm.show(
         this.$t('profile.profileConfirmTransfer.title'),
         this.$t('profile.profileConfirmTransfer.descr'),
@@ -780,39 +1170,160 @@ export default {
           if (!updateNft) return;
           if (updateNft.status === 'received') {
             this.closeModal();
-          };
+          }
 
           this.$emit('transferNft');
           this.closeModal();
         },
-        () => {
-          // cancel
-        }
+        () => {}
       );
     },
 
-    async sendNft(giftUniqueKey, giftUuid) {
+    async sendNft() {
       if (!this.ModalComp.NftId) return;
       this.useTransferModal();
     },
 
+    // шит платной отправки открывается вместо модалки подарка,
+    // ровно как форма отправки: две карточки одновременно на экране
+    // выглядят нагромождением
+    // справка о платной отправке. открывается поверх формы отправки
+    // и ничего не закрывает: человек читает и возвращается к выбору
+    openCooldownModal() {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      if (this.cooldownCloseTimer) {
+        clearTimeout(this.cooldownCloseTimer);
+        this.cooldownCloseTimer = null;
+      }
+      // шит должен выехать снизу, поэтому сначала рисуем его закрытым
+      // и только следующим кадром открываем
+      this.cooldownIsRendered = true;
+      this.$nextTick(() => requestAnimationFrame(() => {
+        this.cooldownModalActive = true;
+      }));
+    },
+
+    closeCooldownModal() {
+      this.cooldownModalActive = false;
+      if (this.cooldownCloseTimer) clearTimeout(this.cooldownCloseTimer);
+      // ждём анимацию ухода, иначе шит пропадает рывком
+      this.cooldownCloseTimer = setTimeout(() => {
+        this.cooldownIsRendered = false;
+        this.cooldownCloseTimer = null;
+      }, 260);
+    },
+
+    // оплата 25 звёзд: счёт создаёт бэкенд, дальше подарок уходит сам
+    async payTransferFee() {
+      if (this.isPayingTransfer) return;
+      // без получателя счёт выставить не на кого
+      if (!this.transferData.userId) return;
+
+      this.isPayingTransfer = true;
+      try {
+        const invoice = await invoiceApi.createInvoiceNftTransfer(
+          this.ModalComp.NftUuid,
+          this.ModalComp.NftUniqueKey,
+          Number(this.transferData.userId),
+        );
+        if (!invoice || !invoice.link) {
+          showToast(this.$t('profile.profileTransferErrors.common'), 'error');
+          return;
+        }
+        TelegramModule.useInvoice(
+          invoice.link,
+          () => {
+            const uuid = this.ModalComp.NftUuid;
+            // имя запоминаем заранее: закрытие формы очищает transferData
+            const name = this.transferData.name;
+            this.closeCooldownModal();
+            // форма отправки могла остаться открытой — уводим её,
+            // и только потом убираем карточку из списка
+            this.ActiveButton = false;
+            if (this.transferIsRendered) this.startTransferClose(true);
+            this.storeCache.UserData.sent_user++;
+            showToast(this.$t('profile.profileTransferSuccess', { name }), 'success');
+            setTimeout(() => this.$emit('useTransfered', uuid), 220);
+          },
+          () => {},
+        );
+      } catch {
+        showToast(this.$t('profile.profileTransferErrors.common'), 'error');
+      } finally {
+        this.isPayingTransfer = false;
+      }
+    },
+
     useTransferModal() {
-      this.closeModal();
+      // форма открывается всегда: про платную отправку в первые сутки
+      // говорит плашка внутри формы и цена на кнопке отправки
+      // Close gift sheet immediately, open transfer
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      if (this.closeTimer) {
+        clearTimeout(this.closeTimer);
+        this.closeTimer = null;
+      }
+      this.isVisible = false;
+      this.isRendered = false;
+      this.$emit('closeModal');
       this.$emit('useTransferModal');
     },
 
+    openTransferSheet() {
+      if (this.transferCloseTimer) clearTimeout(this.transferCloseTimer);
+      // сбрасываем прошлый поиск, иначе шит открывается с чужим получателем
+      this.resetTransferSearch();
+      this.transferIsRendered = true;
+      this.$nextTick(() => requestAnimationFrame(() => { this.transferIsVisible = true; }));
+    },
+
+    startTransferClose(emitParent = true) {
+      this.transferIsVisible = false;
+      this.transferIsDragging = false;
+      this.transferDragY = 0;
+      // справка живёт вместе с формой: закрылась форма — закрылась и она
+      if (this.cooldownIsRendered) this.closeCooldownModal();
+      this.resetTransferSearch();
+      if (this.transferCloseTimer) clearTimeout(this.transferCloseTimer);
+      this.transferCloseTimer = setTimeout(() => {
+        this.transferIsRendered = false;
+        this.transferCloseTimer = null;
+        if (emitParent) {
+          this.$emit('closeTransferModal');
+          this.$emit('closeModal');
+        }
+      }, 340);
+    },
+
     closeTransferModal() {
-      this.closeModal();
-      this.$emit('closeTransferModal');
+      if (this.ActiveButton) return;
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.startTransferClose(true);
+    },
+
+    resetTransferSearch() {
+      if (this.transferTimeout) {
+        clearTimeout(this.transferTimeout);
+        this.transferTimeout = null;
+      }
+      this.transferRequestId += 1;
+      this.isTransferSearching = false;
+      this.transferUsers = [];
+      this.transferUserSelected = null;
+      this.isTransferInputSuccess = false;
+      this.transferYourselfError = false;
+      this.transferSearchError = '';
+      this.clearTransferData();
     },
 
     clearTransferData() {
       try {
         this.transferData = {
           query: null,
+          userId: null,
           avatar: null,
           name: null,
-          success: false
+          success: false,
         };
       } catch {}
     },
@@ -824,181 +1335,223 @@ export default {
     },
 
     keyTransferInput(event) {
-      document.addEventListener('click', this.handleClickOutside);
+      const raw = typeof event?.target?.value === 'string' ? event.target.value : '';
+      const eventText = raw.trim();
 
-      const eventText = event.target.value.trim();
       this.transferYourselfError = false;
+      this.transferSearchError = '';
 
-      if (eventText !== "") {
-        if (eventText.startsWith("@")) {
-          this.setActiveTransferTab("username");
-          if (eventText === '@' + this.storeCache.UserData.user.Username) {
-            this.transferYourselfError = true;
-            return;
-          };
-        } else if (!isNaN(eventText)) {
-          this.setActiveTransferTab("telegram_id");
-          if (eventText === this.storeCache.UserData.user.Tld.toString()) {
-            this.transferYourselfError = true;
-            return;
-          };
-        } else {
-          this.setActiveTransferTab("name");
-          if ((eventText.toLowerCase() === this.storeCache.UserData.user.Name.toLowerCase()) || (eventText.toLowerCase() === this.storeCache.UserData.user.Username.toLowerCase())) {
-            this.transferYourselfError = true;
-            return;
-          };
-        }
+      // любой новый ввод отменяет запланированный и уже летящий запрос,
+      // иначе ответ по старой строке перетирал актуальный список
+      if (this.transferTimeout) {
+        clearTimeout(this.transferTimeout);
+        this.transferTimeout = null;
+      }
+      this.transferRequestId += 1;
 
-        this.transferData.query = eventText;
-
-        if (this.transferTimeout) {
-          clearTimeout(this.transferTimeout);
-        }
-
-        this.transferTimeout = setTimeout(() => {
-          this.getTransferData();
-        }, 1500);
-      } else {
+      if (eventText === '') {
+        this.isTransferSearching = false;
         this.transferUsers = [];
         this.transferUserSelected = null;
         this.isTransferInputSuccess = false;
         this.clearTransferData();
+        return;
       }
+
+      const me = this.storeCache.UserData.user;
+
+      if (eventText.startsWith('@')) {
+        this.setActiveTransferTab('username');
+        if (eventText === '@' + me.Username) this.transferYourselfError = true;
+      } else if (!isNaN(eventText)) {
+        this.setActiveTransferTab('telegram_id');
+        if (eventText === String(me.Tld)) this.transferYourselfError = true;
+      } else {
+        this.setActiveTransferTab('name');
+        const lower = eventText.toLowerCase();
+        if (lower === String(me.Name || '').toLowerCase() ||
+            lower === String(me.Username || '').toLowerCase()) {
+          this.transferYourselfError = true;
+        }
+      }
+
+      // раньше здесь стоял return без сброса — отложенный запрос всё равно
+      // улетал со старой строкой и подмешивал чужие результаты к ошибке
+      if (this.transferYourselfError) {
+        this.isTransferSearching = false;
+        this.transferUsers = [];
+        this.clearTransferData();
+        return;
+      }
+
+      this.transferData.query = eventText;
+      // индикатор включаем сразу, а не через задержку: раньше поле
+      // 1.5 секунды выглядело мёртвым
+      this.isTransferSearching = true;
+
+      this.transferTimeout = setTimeout(() => {
+        this.transferTimeout = null;
+        this.getTransferData();
+      }, SEARCH_DEBOUNCE_MS);
     },
 
-    async blurTransferInput(event) {
-      this.keyTransferInput(event);
-      if (this.transferData.query) { await this.getTransferData(); }
+    async blurTransferInput() {
+      // Enter ищет немедленно и снимает отложенный запрос,
+      // раньше уходили сразу два: этот и запланированный
+      if (this.transferTimeout) {
+        clearTimeout(this.transferTimeout);
+        this.transferTimeout = null;
+      }
+      if (this.transferData.query) {
+        this.isTransferSearching = true;
+        await this.getTransferData();
+      }
     },
 
     async getTransferData() {
       if (!this.transferData.query) return;
-      if (this.transferData.query === this.storeCache.UserData.user.Tld.toString()) {
+      let query = String(this.transferData.query);
+      if (query === this.storeCache.UserData.user.Tld.toString()) {
         this.transferYourselfError = true;
         return;
-      };
-      if (this.transferData.query.startsWith("@")) {
-        this.transferData.query = this.transferData.query.slice(1);
       }
-      const response = await userApi.searchUser(this.transferData.query);
-      if (response) {
-        this.transferUsers = response;
-      } else {
-        this.transferData.success = false;
+      if (query.startsWith('@')) query = query.slice(1);
+
+      const requestId = ++this.transferRequestId;
+      this.isTransferSearching = true;
+      this.transferSearchError = '';
+      try {
+        const response = await userApi.searchUser(query);
+        if (requestId !== this.transferRequestId) return;
+        this.transferUsers = Array.isArray(response) ? response : [];
+        if (!response) this.transferSearchError = this.$t('profile.profileTransferSearchError');
+      } catch {
+        if (requestId === this.transferRequestId) {
+          this.transferUsers = [];
+          this.transferSearchError = this.$t('profile.profileTransferSearchError');
+        }
+      } finally {
+        if (requestId === this.transferRequestId) this.isTransferSearching = false;
       }
     },
 
     async transferGift() {
       if (!this.transferData.success) return;
 
-      const data = await this.transferInvoiceSendGift();
+      // первые сутки после получения отправка платная: вместо
+      // бесплатного перевода выставляем счёт на 25 звёзд
+      if (this.transferCooldownLeft > 0) {
+        if (parseInt(this.transferData.userId) === parseInt(this.storeCache.TelegramData.user.id)) {
+          this.transferYourselfError = true;
+          return;
+        }
+        this.ActiveButton = true;
+        try {
+          await this.payTransferFee();
+        } finally {
+          this.ActiveButton = false;
+        }
+        return;
+      }
+
+      await this.transferInvoiceSendGift();
+    },
+
+    // причины отказа с сервера — человеческим языком
+    transferErrorText(reason) {
+      const r = String(reason || '');
+      if (r.includes('transfer cooldown')) return this.$t('profile.profileTransferErrors.cooldown');
+      if (r.includes('recipient is blocked')) return this.$t('profile.profileTransferErrors.blocked');
+      if (r.includes('locked in a deal')) return this.$t('profile.profileTransferErrors.locked');
+      if (r.includes('listed on the market')) return this.$t('profile.profileTransferErrors.onMarket');
+      if (r.includes('target user not found')) return this.$t('profile.profileTransferErrors.noTarget');
+      if (r.includes('forbidden') || r.includes('owner')) return this.$t('profile.profileTransferErrors.notOwner');
+      return this.$t('profile.profileTransferErrors.common');
     },
 
     async transferInvoiceSendGift() {
       if (!this.transferData.success) return;
+
       if (parseInt(this.transferData.userId) === parseInt(this.storeCache.TelegramData.user.id)) {
         this.transferYourselfError = true;
         return;
-      };
+      }
 
-      if (this.ModalComp.NftStatus === 'purchased' || this.ModalComp.NftStatus === 'sended') {
-        this.ActiveButton = true;
-        const nftsToTransfer = [this.ModalComp.NftUuid]
+      this.ActiveButton = true;
+      const nftsToTransfer = [this.ModalComp.NftUuid];
+      try {
         const transfer = await nftApi.transfer(nftsToTransfer, this.transferData.userId);
-        if (!transfer) {
-          showToast('Error transfering gift', 'error');
-          this.ActiveButton = false;
-        };
-
-        this.ActiveButton = false;
-        this.storeCache.UserData.sent_user++;
-
-        if (transfer.tickets_rewarded) {
-          this.storeCache.UserData.user.Tickets += transfer.tickets_rewarded;
+        if (!transfer || transfer.error) {
+          showToast(this.transferErrorText(transfer?.reason), 'error');
+          return;
         }
 
-        this.$emit('useTransfered', nftsToTransfer[0]);
+        this.storeCache.UserData.sent_user++;
+        showToast(this.$t('profile.profileTransferSuccess', { name: this.transferData.name }), 'success');
+
+        // closeTransferModal() выходит молча, пока ActiveButton === true,
+        // поэтому снимаем флаг до закрытия — иначе шит остаётся висеть
+        this.ActiveButton = false;
+
+        // сначала уводим шит, и только потом убираем карточку из списка:
+        // иначе она пропадает под ещё открытой модалкой и анимации не видно
         this.closeTransferModal();
-      };
-
-      if (this.ModalComp.NftStatus === 'received') {
-        this.ActiveButton = true;
-
-        const invoice = await invoiceApi.createInvoiceNftTransfer(
-          this.ModalComp.NftUuid,
-          this.ModalComp.NftUniqueKey,
-          this.transferData.userId,
-        );
-
-        TelegramModule.useInvoice(
-          invoice.link, 
-          () => {
-            this.ActiveButton = false;
-            this.storeCache.UserData.sent_user++;
-            this.$emit('useTransfered', this.ModalComp.NftUuid);
-            this.closeTransferModal();
-          }, 
-          () => {
-          }
-        );
+        setTimeout(() => this.$emit('useTransfered', nftsToTransfer[0]), 220);
+      } catch {
+        showToast('Error transferring gift', 'error');
+      } finally {
+        this.ActiveButton = false;
       }
     },
 
-    async checkUpgradedNft() {
-      if (this.UpgradedNft.ModelImage) {
-        this.isUpgraded = true;
-      };
-    },
-
-    async upgradeNft(NftId) {
-      // if (this.isLoadingUpgrade) return;
-      // if (!this.ModalComp.NftUpgradeSupport) return;
-      // if (!this.ModalComp.NftUuid || !this.ModalComp.NftUpgradePrice) return;
-
-      this.isUpgraded = false;
+    async upgradeNft() {
       this.isLoadingUpgrade = true;
 
       const invoice = await invoiceApi.createInvoiceNftUpgrade(this.ModalComp.NftUuid);
       const paymentId = invoice.payment_upgrade_id;
 
       if (!invoice.success) {
-          const webSocketLink = import.meta.env.VITE_APP_SOCKET_URL;
-          const idDontSuccess = invoice?.payment_upgrade_id || invoice?.UUID;
-          if (!idDontSuccess) return;
+        const idDontSuccess = invoice?.payment_upgrade_id || invoice?.UUID;
+        if (!idDontSuccess) {
+          this.isLoadingUpgrade = false;
+          return;
+        }
 
-          const upgrade = await nftApi.upgrade(idDontSuccess);
-          if (!upgrade) return;
-          if (upgrade.ok) {
-            const upgradeData = upgrade.data;
-            this.$emit("UPGRADE", { 
+        const upgrade = await nftApi.upgrade(idDontSuccess);
+        if (!upgrade) {
+          this.isLoadingUpgrade = false;
+          return;
+        }
+        if (upgrade.ok) {
+          const upgradeData = upgrade.data;
+          this.$emit('UPGRADE', {
             GiftUuid: this.ModalComp.NftId,
             GiftMedia: this.ModalComp.NftMedia,
-            ...upgradeData
+            ...upgradeData,
           });
 
           setTimeout(() => {
             this.isLoadingUpgrade = false;
             this.isLoadingUpgradeImage = false;
-            this.isUpgraded = true;
-            this.ModalComp.NftUpgraded = true;
+            // объект апгрейда, а не true: иначе продажа получает пустые поля
+            this.ModalComp.NftUpgraded = upgradeData;
             this.$emit(
-              'upgradedNftModal', 
-              this.ModalComp.NftId, 
-              this.UpgradedNft.ModelName, 
-              this.UpgradedNft.SymbolName, 
+              'upgradedNftModal',
+              this.ModalComp.NftId,
+              this.UpgradedNft.ModelName,
+              this.UpgradedNft.SymbolName,
               this.UpgradedNft.BackgroundName,
               this.UpgradedNft.ModelNumber
             );
             fireFromBottom();
           }, 400);
-          
+
           return;
         }
       }
 
       TelegramModule.useInvoice(
-        invoice.link, 
+        invoice.link,
         async () => {
           const webSocketLink = import.meta.env.VITE_APP_SOCKET_URL;
           const socket = new WebSocket(`${webSocketLink}/payments/ws/${paymentId}`);
@@ -1012,22 +1565,23 @@ export default {
               if (!upgrade) return;
               if (upgrade.ok) {
                 const upgradeData = upgrade.data;
-                this.$emit("UPGRADE", { 
+                this.$emit('UPGRADE', {
                   GiftUuid: this.ModalComp.NftId,
                   GiftMedia: this.ModalComp.NftMedia,
-                  ...upgradeData
+                  ...upgradeData,
                 });
 
                 setTimeout(() => {
                   this.isLoadingUpgrade = false;
                   this.isLoadingUpgradeImage = false;
-                  this.isUpgraded = true;
-                  this.ModalComp.NftUpgraded = true;
+                  // объект апгрейда, а не true: sellGift() его разворачивает
+                  // спредом, и с булевым значением лот уходил без модели и номера
+                  this.ModalComp.NftUpgraded = upgradeData;
                   this.$emit(
-                    'upgradedNftModal', 
-                    this.ModalComp.NftId, 
-                    this.UpgradedNft.ModelName, 
-                    this.UpgradedNft.SymbolName, 
+                    'upgradedNftModal',
+                    this.ModalComp.NftId,
+                    this.UpgradedNft.ModelName,
+                    this.UpgradedNft.SymbolName,
                     this.UpgradedNft.BackgroundName,
                     this.UpgradedNft.ModelNumber
                   );
@@ -1036,11 +1590,12 @@ export default {
               }
             }
           };
-          socket.onclose = () => { console.log("❌ WebSocket closed"); };
-          socket.onerror = (err) => { console.error("⚠️ WebSocket error:", err); };
-        }, 
+          socket.onclose = () => {};
+          socket.onerror = (err) => {
+            console.error('WebSocket error:', err);
+          };
+        },
         () => {
-          this.isUpgraded = false;
           this.isLoadingUpgrade = false;
         }
       );
@@ -1048,7 +1603,7 @@ export default {
 
     shareGiftLink() {
       const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=gift_${this.ModalComp.NftId}`;
-      const message = `I recommend checking out "${this.ModalComp.NftName ?? this.UpgradedNft?.ModelName}" NFT.`;
+      const message = `I recommend checking out "${this.displayName}" NFT.`;
       TelegramModule.useShare(url, message);
     },
 
@@ -1059,8 +1614,14 @@ export default {
     },
 
     setActiveTransferTab(value) {
-      this.transferSections.active.label = this.transferSections.items.find(item => item.value === value).label;
+      const section = this.transferSections.items.find((item) => item.value === value);
+      if (!section || this.transferSections.active.value === value) return;
+      this.transferSections.active.label = section.label;
       this.transferSections.active.value = value;
+      if (this.transferTimeout) clearTimeout(this.transferTimeout);
+      this.transferRequestId += 1;
+      this.isTransferSearching = false;
+      this.transferSearchError = '';
       this.transferUsers = [];
       this.transferUserSelected = null;
       this.isTransferInputSuccess = false;
@@ -1075,17 +1636,14 @@ export default {
       this.transferData.success = true;
       this.$refs.transferInput?.blur();
       this.isTransferInputSuccess = true;
-      document.removeEventListener('click', this.handleClickOutside);
-    },
-    
-    onTouchStart(e, from) {
-      if (!this.ModalActive) return;
+      },
+
+    onTouchStart(e) {
+      if (!this.isVisible) return;
       const t = e.touches?.[0] ?? e;
-      this.dragFrom = from;
       this.isDragging = true;
       this.startY = t.clientY;
       this.startX = t.clientX;
-      this.lastY = t.clientY;
       this.dragY = 0;
       this.startTimeMs = performance.now();
     },
@@ -1094,69 +1652,287 @@ export default {
       if (!this.isDragging) return;
       const t = e.touches?.[0] ?? e;
       const dy = t.clientY - this.startY;
-      const dx = Math.abs(t.clientX - this.startX);
-
-      // Игнорим горизонтальные жесты
-      if (dx > Math.abs(dy)) return;
-
-      // Тянем только вниз
+      if (Math.abs(t.clientX - this.startX) > Math.abs(dy)) return;
       this.dragY = dy > 0 ? dy : 0;
-      this.lastY = t.clientY;
     },
 
     onTouchEnd() {
       if (!this.isDragging) return;
-
-      // Порог/скорость для закрытия
-      const elapsed = Math.max(1, performance.now() - this.startTimeMs); // ms
-      const distance = Math.max(0, this.dragY); // px
-      const velocity = distance / elapsed; // px/ms
-
-      // контентная высота ~ 86vh, возьмём безопасный порог
-      const CLOSE_DISTANCE = 120;   // px
-      const CLOSE_VELOCITY = 0.6;   // px/ms (~быстрый "флик")
-
-      const shouldClose = distance > CLOSE_DISTANCE || velocity > CLOSE_VELOCITY;
-
-      // Сброс инлайна — вернёт CSS-анимацию
+      const elapsed = Math.max(1, performance.now() - this.startTimeMs);
+      const distance = Math.max(0, this.dragY);
       this.isDragging = false;
-
-      if (shouldClose) {
+      if (distance > 120 || distance / elapsed > 0.6) {
         this.closeModal();
       } else {
-        // Отпружиниваем назад (CSS сам вернёт по transition)
         this.dragY = 0;
-        // Небольшой тик, чтобы убрать инлайн-стили после кадра
-        requestAnimationFrame(() => {
-          this.dragFrom = null;
-        });
+      }
+    },
+
+    onTransferTouchStart(e) {
+      if (!this.transferIsVisible || this.ActiveButton) return;
+      const t = e.touches?.[0] ?? e;
+      this.transferIsDragging = true;
+      this.transferStartY = t.clientY;
+      this.transferStartX = t.clientX;
+      this.transferDragY = 0;
+      this.transferStartTimeMs = performance.now();
+    },
+
+    onTransferTouchMove(e) {
+      if (!this.transferIsDragging) return;
+      const t = e.touches?.[0] ?? e;
+      const dy = t.clientY - this.transferStartY;
+      if (Math.abs(t.clientX - this.transferStartX) > Math.abs(dy)) return;
+      this.transferDragY = Math.max(0, dy);
+    },
+
+    onTransferTouchEnd() {
+      if (!this.transferIsDragging) return;
+      const elapsed = Math.max(1, performance.now() - this.transferStartTimeMs);
+      const distance = this.transferDragY;
+      this.transferIsDragging = false;
+      if (distance > 120 || distance / elapsed > 0.6) this.closeTransferModal();
+      else this.transferDragY = 0;
+    },
+
+    onTickerClick(action) {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+
+      switch (action) {
+        case 'upgrade':
+          if (!this.ModalComp.NftUpgradeSupport) {
+            showToast(this.$t('profile.profileUpgradeNotSupported'), 'error');
+            return;
+          }
+          this.upgradeNft();
+          break;
+
+        case 'mint':
+          this.onMintButton();
+          break;
+
+        case 'sell':
+          if (this.isMintedOrMinting) return;
+          if (!this.isUpgraded) {
+            showToast(this.$t('profile.profileSellUpgradeRequired'), 'error');
+            return;
+          }
+          this.sellGift();
+          break;
+
+        case 'remove':
+          this.removeGiftLot();
+          break;
+
+        case 'send':
+          if (this.isMintedOrMinting) return;
+          if (this.ModalComp.Market?.MarketOn) {
+            showToast(this.$t('profile.profileSendRemoveFromMarket'), 'error');
+            return;
+          }
+          this.useTransferModal();
+          break;
+
+        default:
+          break;
+      }
+    },
+
+    // ── возврат NFT: инструкция ────────────────────────────────────
+    openReturnModal() {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      if (this.returnCloseTimer) { clearTimeout(this.returnCloseTimer); this.returnCloseTimer = null; }
+      this.returnIsRendered = true;
+      requestAnimationFrame(() => { this.returnModalActive = true; });
+    },
+
+    closeReturnModal() {
+      this.returnModalActive = false;
+      this.returnCloseTimer = setTimeout(() => { this.returnIsRendered = false; }, 360);
+    },
+
+    // ── минт в кошелёк ─────────────────────────────────────────────
+    // минт-шит заменяет шит подарка: старый закрываем, новый — поверх
+    onMintButton() {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      // с маркета минтить нельзя — лот повиснет без предмета
+      if (this.ModalComp.Market?.MarketOn && this.mintState === 'none') {
+        showToast(this.$t('profile.profileMintFlow.marketBlock'), 'error');
+        return;
+      }
+      this.closeModal();
+      this.openMintModal();
+    },
+
+    copyMintAddress(addr) {
+      if (!addr) return;
+      try {
+        copyToClipboard(addr);
+        try { TelegramModule.useSoftHaptic(); } catch {}
+        showToast(this.$t('profile.profileMintFlow.chainCopied'), 'success');
+      } catch {}
+    },
+
+    shortAddr(a) {
+      if (!a) return '';
+      return a.length > 12 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a;
+    },
+
+    openMintModal() {
+      if (this.mintCloseTimer) { clearTimeout(this.mintCloseTimer); this.mintCloseTimer = null; }
+      this.mintIsRendered = true;
+      requestAnimationFrame(() => { this.mintModalActive = true; });
+      // если минт уже идёт — сразу продолжаем следить за статусом
+      if (this.mintState === 'processing') this.startMintPoll();
+      // актуальная привязка кошелька с бэка
+      this.refreshBoundWallet();
+    },
+
+    async refreshBoundWallet() {
+      const res = await walletApi.get();
+      if (res && res.ok) this.mintBoundWallet = res.wallet_address || '';
+    },
+
+    closeMintModal() {
+      this.mintModalActive = false;
+      this.stopMintPoll();
+      if (this.mintWalletConnectPoll) { clearInterval(this.mintWalletConnectPoll); this.mintWalletConnectPoll = null; }
+      this.mintCloseTimer = setTimeout(() => { this.mintIsRendered = false; }, 360);
+    },
+
+    // подключение кошелька, не выходя из минт-шита (механика — как в User.vue)
+    connectWalletFromMint() {
+      try { TelegramModule.useMediumHaptic(); } catch {}
+      tonConnectUI.openModal();
+      if (this.mintWalletConnectPoll) clearInterval(this.mintWalletConnectPoll);
+      this.mintWalletConnectPoll = setInterval(async () => {
+        if (!tonConnectUI.connected || !tonConnectUI.account?.address) return;
+        clearInterval(this.mintWalletConnectPoll);
+        this.mintWalletConnectPoll = null;
+        try {
+          const addr = toUserFriendlyAddress(tonConnectUI.account.address);
+          if (addr) {
+            const res = await walletApi.create(addr);
+            if (res && res.WalletAddress) this.mintBoundWallet = res.WalletAddress;
+            else this.mintBoundWallet = addr;
+          }
+        } catch { /* следующий refreshBoundWallet подтянет */ }
+      }, 1000);
+    },
+
+    async doMint() {
+      if (this.isMinting) return;
+      this.isMinting = true;
+      try { TelegramModule.useMediumHaptic(); } catch {}
+      try {
+        const res = await nftApi.mintNft(this.ModalComp.NftUuid);
+        if (!res || res.ok === false) {
+          showToast(res?.error || this.$t('profile.profileMintFlow.failedTitle'), 'error');
+          return;
+        }
+        this.$emit('mintUpdated', this.ModalComp.NftUuid, res.mint);
+        this.startMintPoll();
+      } finally {
+        this.isMinting = false;
+      }
+    },
+
+    startMintPoll() {
+      this.stopMintPoll();
+      this.mintPollTimer = setInterval(async () => {
+        const res = await nftApi.mintStatus(this.ModalComp.NftUuid);
+        if (!res || !res.mint) return;
+        this.$emit('mintUpdated', this.ModalComp.NftUuid, res.mint);
+        if (res.mint.status === 'success') {
+          this.stopMintPoll();
+          try { fireFromBottom(); } catch {}
+        } else if (res.mint.status === 'failed') {
+          this.stopMintPoll();
+        }
+      }, 4000);
+    },
+
+    stopMintPoll() {
+      if (this.mintPollTimer) { clearInterval(this.mintPollTimer); this.mintPollTimer = null; }
+    },
+
+    openTonviewer() {
+      const addr = this.ModalComp.Mint?.nft_address;
+      if (!addr) return;
+      const url = `https://tonviewer.com/${addr}`;
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      try {
+        window.Telegram?.WebApp?.openLink ? window.Telegram.WebApp.openLink(url) : window.open(url, '_blank');
+      } catch {
+        window.open(url, '_blank');
+      }
+    },
+
+    openTonscan() {
+      const addr = this.ModalComp.Mint?.nft_address;
+      if (!addr) return;
+      const url = `https://tonscan.org/nft/${addr}`;
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      try {
+        window.Telegram?.WebApp?.openLink ? window.Telegram.WebApp.openLink(url) : window.open(url, '_blank');
+      } catch {
+        window.open(url, '_blank');
+      }
+    },
+
+    openGetgems() {
+      const url = this.ModalComp.Mint?.getgems_url;
+      if (!url) return;
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      try {
+        window.Telegram?.WebApp?.openLink ? window.Telegram.WebApp.openLink(url) : window.open(url, '_blank');
+      } catch {
+        window.open(url, '_blank');
       }
     },
 
     sellGift() {
       if (!this.ModalComp.NftUpgraded) return;
       this.closeModal();
-      const obj = { 
+      const obj = {
         ton_price: 0,
         gift_media: this.ModalComp.NftMedia,
         gift_ukey: this.ModalComp.NftUniqueKey,
-        gift_uuid: this.ModalComp.NftUuid, 
-        ...this.ModalComp.NftUpgraded 
-      }
+        gift_uuid: this.ModalComp.NftUuid,
+        ...this.ModalComp.NftUpgraded,
+      };
       this.$emit('openSellModal', obj);
     },
 
     async removeGiftLot() {
-      console.log(this.ModalComp)
-      if (!this.ModalComp.Market.LotId) return;
-      const res = await MarketLotsApi.remove(this.ModalComp.Market.LotId);
-      if (!res) return;
-      this.$emit('removeGiftLot', this.ModalComp.NftUuid);
-      this.closeModal();
+      if (!this.ModalComp.Market?.LotId || this.isRemovingLot) return;
+      this.isRemovingLot = true;
+      try {
+        const res = await MarketLotsApi.remove(this.ModalComp.Market.LotId);
+        if (!res) {
+          showToast('Could not remove this gift from the market', 'error');
+          return;
+        }
+        this.$emit('removeGiftLot', this.ModalComp.NftUuid);
+      } catch {
+        showToast('Could not remove this gift from the market', 'error');
+      } finally {
+        this.isRemovingLot = false;
+      }
     },
   },
 };
 </script>
 
-<style>
+<style lang="sass" scoped>
+@use "../Market/Modal.sass"
+@use "./ProfileGiftModal.sass"
+
+// Герой только своей модалки. Класс .pgm-own есть лишь здесь — модалка чужого
+// профиля (.vgm-modal) и модалка маркета этих правил не видят.
+.pgm-own .mgm-card__model
+    width: 52%
+    height: 52%
+    // базовые 35% плюс ровно 10px вниз
+    top: calc(35% + 10px)
 </style>

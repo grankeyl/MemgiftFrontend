@@ -38,6 +38,8 @@ html
     --tg-content-safe-area-inset-bottom: 0px
     --tg-content-safe-area-inset-left: 0px
     --tg-content-safe-area-inset-right: 0px
+    // Combined top offset: device notch + TG header bar
+    --tg-top-offset: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px))
 
 html, body
     isolation: isolate;
@@ -89,7 +91,6 @@ body
     height: 100%
     overflow-y: auto
     max-width: $app-max-width
-    animation: page-in $app-transition-page
     overflow: hidden
 
 
@@ -281,3 +282,10 @@ body.rtl
 
     ._wrap ._view
         direction: rtl
+// Модалка TonConnect должна открываться поверх наших шитов (у минт-шита
+// z-index 1015). Виджет рендерится в #tc-widget-root в конце body — сам
+// по себе он без z-index и проигрывает контекст любому нашему оверлею
+// выше любых наших шитов, включая справки (9995)
+#tc-widget-root
+    position: relative
+    z-index: 99999

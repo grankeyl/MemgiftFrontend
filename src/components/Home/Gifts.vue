@@ -1,158 +1,155 @@
 <template>
-  <div ref="filtersEl" class="_filters" :class="containerClasses">
-    <div v-if="isLoading" class="_skeleton">
-      <div class="_pill-skel"></div>
-      <div class="_pill-skel"></div>
-      <div class="_pill-skel _short"></div>
-    </div>
-    <div v-else class="_content">
-      <div class="_filters-top">
-        <div class="_pills-wrap">
-          <button class="_filter-pill" :class="{ _open: selectRarityOpened }" @click="toggleSelectRarityDropdown">
-            <span>{{ selectedRarityLabel }}</span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <button class="_filter-pill" :class="{ _open: selectSortbyOpened }" @click="toggleSelectSortbyDropdown">
-            <span>{{ selectedSortbyLabel }}</span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-        </div>
+  <div class="overlay" :class="{ 'is-open is-dark': rarityModalActive }" @click="rarityModalActive = false" />
+  <div class="overlay" :class="{ 'is-open is-dark': sortModalActive }" @click="sortModalActive = false" />
 
-        <div class="_filter-dropdown" :class="{ _visible: selectRarityOpened }">
-          <div
-            v-for="option in selectRarityOptions"
-            :key="option.value"
-            class="_filter-option"
-            :class="{ _selected: option.value === selectRarityValue }"
-            @click.stop="selectRarityOption(option)"
-          >
-            <span>{{ option.label }}</span>
-            <svg v-if="option.value === selectRarityValue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
-        </div>
+  <SelectModal
+    :ModalActive="rarityModalActive"
+    :Title="$t('home.category_1')"
+    :IconHtml="Icon.Gift"
+    :Items="rarityItems"
+    :Selected="selectRarityValue"
+    @closeModal="rarityModalActive = false"
+    @apply="applyRarity"
+  />
 
-        <div class="_filter-dropdown" :class="{ _visible: selectSortbyOpened }">
-          <div
-            v-for="option in selectSortbyOptions"
-            :key="option.value"
-            class="_filter-option"
-            :class="{ _selected: option.value === selectSortbyValue }"
-            @click.stop="selectSortbyOption(option)"
-          >
-            <span>{{ option.label }}</span>
-            <svg v-if="option.value === selectSortbyValue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  <SelectModal
+    :ModalActive="sortModalActive"
+    :Title="$t('profile.profileFilterModal.title')"
+    :IconHtml="Icon.Sort"
+    :Items="sortItems"
+    :Selected="selectSortbyValue"
+    @closeModal="sortModalActive = false"
+    @apply="applySort"
+  />
+
+  <!-- One root block so home ._view gap doesn't separate filters and gifts -->
+  <div class="home-gifts-block _lefting">
+    <div ref="filtersEl" class="_filters" :class="containerClasses">
+      <div v-if="isLoading" class="_skeleton">
+        <div class="_pill-skel"></div>
+        <div class="_pill-skel"></div>
+        <div class="_pill-skel _short"></div>
+      </div>
+      <div v-else class="_content">
+        <div class="_filters-top">
+          <div class="_pills-wrap">
+            <button type="button" class="_filter-pill" @click="openRarityModal">
+              <span>{{ selectedRarityLabel }}</span>
+              <div class="border"></div>
+              <Icon class="kit-icon" v-html="Icon.Gift"></Icon>
+            </button>
+            <button type="button" class="_filter-pill" @click="openSortModal">
+              <span>{{ selectedSortbyLabel }}</span>
+              <div class="border"></div>
+              <Icon class="kit-icon sort" v-html="Icon.Sort"></Icon>
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="_checkbox" @click="toggleHideSoldOut">
-        <div class="_checkbox-box" :class="{ _checked: checkboxHideSoldOut }"></div>
-        <span class="_checkbox-label">{{ $t('home.hideGifts') }}</span>
+    <div
+      v-if="isLoading || isEmptyStore || filteredNfts.length > 0"
+      ref="giftsContainer"
+      :class="['_direction', '_comp', '_item', '_gifts', Key]"
+    >
+      <div v-if="isLoading || isEmptyStore" class="_skeleton">
+        <div class="_gift"></div>
+        <div class="_gift"></div>
+        <div class="_gift"></div>
+        <div class="_gift"></div>
+      </div>
+      <div v-else class="_content _anim-stagger">
+        <div
+          v-for="(gift, index) in filteredNfts"
+          :key="gift.UKey"
+          @click="openCollection(gift.UKey)"
+          class="_gift _anim-press"
+          :class="{
+            [gift.Rarity]: true,
+            ['giftNew_' + gift.New]: true
+          }"
+        >
+          <div v-if="gift.New" class="nftNewMark">
+            <p>{{ $t('home.giftNew') }}</p>
+          </div>
+          <div class="_symbols">
+            <img :src="Image_giftBg" />
+          </div>
+          <div v-if="gift.soldOut" class="_rarity">
+            <div class="_image">
+              <img :src="checkRarityImage('soldout')" />
+            </div>
+            <div class="_text">
+              <span>{{ checkRarity('soldout') }}</span>
+            </div>
+          </div>
+          <div v-else class="_rarity">
+            <div class="_image">
+              <img :src="checkRarityImage(gift.Rarity)" />
+            </div>
+            <div class="_text">
+              <span>{{ checkRarity(gift.Rarity) }}</span>
+            </div>
+          </div>
+
+          <div class="_nft" :class="{ nftLoading: gift.nftOnLoading }">
+            <img
+              @load="giftOnLoad(gift)"
+              @error="giftOnError(gift)"
+              :src="gift.ImageMain"
+              v-bind:class="{ nftLoading: gift.nftOnLoading }"
+              loading="lazy"
+            />
+            <div class="loader-icon" :class="{ active: gift.nftOnLoading }"></div>
+          </div>
+
+          <div v-if="!gift.Locked" class="_buy">
+            <button v-if="gift.Price">
+              <img class="starsSmall" :src="Image_starsPng" alt="stars" />
+              <p>{{ checkPriceNumber(gift.Price) }}</p>
+            </button>
+            <button v-else>
+              <p>{{ $t('app.price_free') }}</p>
+            </button>
+          </div>
+
+          <div v-if="gift.Locked" class="_buy locked">
+            <button>
+              <div class="kit-icon" v-html="Icon.Lock"></div>
+              <p>{{ $t('app.locked') }}</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="!isLoading && !isEmptyStore && filteredNfts.length === 0" class="_direction _comp _item _nftNull">
+      <div class="_null">
+        <div class="_left">
+          <div class="_title">
+            <h4>{{ $t('home.nullGiftsTitle') }}</h4>
+          </div>
+          <div class="_descr">
+            <p>{{ $t('home.nullGiftsDescr') }}</p>
+          </div>
+        </div>
+        <div class="_right">
+          <div class="_null_buy">
+            <button type="button" @click="resetFilters">
+              <p>{{ $t('home.nullGiftsButton') }}</p>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <div ref="giftsContainer" :class="['_direction', '_comp', '_item', '_gifts', '_lefting', Key]">
-    <div v-if="isLoading || isEmptyStore" class="_skeleton">
-      <div class="_gift"></div>
-      <div class="_gift"></div>
-      <div class="_gift"></div>
-      <div class="_gift"></div>
-    </div>
-    <div v-else class="_content _anim-stagger">
-      <div 
-        v-for="(gift, index) in otherGifts" 
-        :key="gift.UKey"
-        @click="openCollection(gift.UKey)"
-        class="_gift _anim-press"
-        :class="{ 
-          [gift.Rarity]: true, 
-          ['giftNew_' + gift.New]: true
-        }"
-      >
-        <div v-if="gift.New" class="nftNewMark">
-          <p>{{ $t('home.giftNew') }}</p>
-        </div>
-        <div class="_symbols">
-          <img :src="Image_giftBg" />
-        </div>
-        <div v-if="gift.soldOut" class="_rarity">
-          <div class="_image">
-            <img :src="checkRarityImage('soldout')" />
-          </div>
-          <div class="_text">
-            <span>{{ checkRarity('soldout') }}</span>
-          </div>
-        </div>
-        <div v-else class="_rarity">
-          <div class="_image">
-            <img :src="checkRarityImage(gift.Rarity)" />
-          </div>
-          <div class="_text">
-            <span>{{ checkRarity(gift.Rarity) }}</span>
-          </div>
-        </div>
-
-        <div class="_nft" :class="{ nftLoading: gift.nftOnLoading }">
-          <img 
-            @load="giftOnLoad(gift)"
-            @error="giftOnError(gift)"
-            :src="gift.ImageMain"
-            v-bind:class="{ nftLoading: gift.nftOnLoading }"
-            loading="lazy"
-          />
-          <div class="loader-icon" :class="{ active: gift.nftOnLoading }"></div>
-        </div>
-        
-        <div v-if="!gift.Locked" class="_buy">
-          <button v-if="gift.Price">
-            <p>{{ checkPriceNumber(gift.Price) }}</p>
-            <img class="starsSmall" :src="Image_starsPng" alt="stars" />
-          </button>
-          <button v-else>
-            <p>{{ $t('app.price_free') }}</p>
-          </button>
-        </div>
-        
-        <div v-if="gift.Locked" class="_buy locked">
-          <button>
-            <p>Locked</p>
-            <div class="kit-icon" v-html="Icon.Lock"></div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div v-if="!isLoading && filteredNfts.length === 0" class="_direction _comp _item _nftNull _lefting">
-    <div class="_null">
-      <div class="_left">
-        <div class="_title">
-          <h4>{{ $t('home.nullGiftsTitle') }}</h4>
-        </div>
-        <div class="_descr">
-          <p>{{ $t('home.nullGiftsDescr') }}</p>
-        </div>
-      </div>
-      <div class="_right">
-        <div class="_null_buy">
-          <button @click="resetFilters">
-            <p>{{ $t('home.nullGiftsButton') }}</p>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </template>
 
 <script>
-import { toRaw } from 'vue';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { checkRarityImage, checkRarity, checkPriceNumber } from '../../utils/useGift';
 import { Icon } from '../Icon';
-
-import * as nftApi from '../../api/nftApi';
 
 import TelegramModule from '../../hooks/useTelegram';
 
@@ -161,7 +158,7 @@ import Image_starsPng from '@/assets/images/stars.png';
 import Image_TicketSodaSvg from '@/assets/images/soda-ticket.svg';
 
 import Button from '../Button.vue';
-
+import SelectModal from './SelectModal.vue';
 
 export default {
   props: {
@@ -181,6 +178,7 @@ export default {
 
   components: {
     Button,
+    SelectModal,
   },
 
   data() {
@@ -191,10 +189,13 @@ export default {
       isLoading: this.$props.Skeleton,
       activeCategory: 'all',
 
-      selectRarityOpened: false,
+      rarityModalActive: false,
+      sortModalActive: false,
+
       selectRarityValue: 'all',
       selectRarityOptions: [
         { value: 'all', label: this.$t('home.category_1') },
+        { value: 'new', label: this.$t('home.category_2') },
         { value: 'rare', label: this.$t('home.category_3') },
         { value: 'veryrare', label: this.$t('home.category_4') },
         { value: 'epic', label: this.$t('home.category_5') },
@@ -203,7 +204,6 @@ export default {
         { value: 'soldout', label: this.$t('home.category_7') },
       ],
 
-      selectSortbyOpened: false,
       selectSortbyValue: 'new',
       selectSortbyOptions: [
         { value: 'new', label: this.$t('home.sortby_1') },
@@ -214,8 +214,6 @@ export default {
         { value: 'supply_high_to_low', label: this.$t('home.sortby_6') },
         { value: 'supply_low_to_high', label: this.$t('home.sortby_7') },
       ],
-
-      sodaEvent: {},
 
       checkboxHideSoldOut: true,
 
@@ -231,10 +229,6 @@ export default {
   },
 
   computed: {
-    otherGifts() {
-      return this.filteredNfts;
-    },
-
     isLoading() {
       return this.Skeleton;
     },
@@ -249,8 +243,14 @@ export default {
       const found = this.selectSortbyOptions.find(opt => opt.value === this.selectSortbyValue);
       return found ? found.label : '';
     },
+    rarityItems() {
+      return this.selectRarityOptions.map(o => ({ id: o.value, label: o.label }));
+    },
+    sortItems() {
+      return this.selectSortbyOptions.map(o => ({ id: o.value, label: o.label }));
+    },
     containerClasses() {
-      return ['_direction', '_comp', '_item', '_filters', '_lefting'];
+      return ['_direction', '_comp', '_item', '_filters'];
     },
     nftArray() {
       return Array.isArray(this.storeNftsApp) ? this.storeNftsApp : Object.values(this.storeNftsApp || {});
@@ -264,8 +264,7 @@ export default {
         if (this.activeCategory === 'new') {
           filtered = filtered.filter((nft) => nft.New === true);
         } else if (this.activeCategory === 'soldout') {
-          this.checkboxHideSoldOut = false;
-          filtered = filtered.filter((nft) => nft.nftSupplyUsers >= nft.nftSupply);
+          filtered = filtered.filter((nft) => nft.nftSupplyUsers >= nft.nftSupply || nft.soldOut);
         } else if (this.activeCategory !== 'all') {
           filtered = filtered.filter(
             (nft) => (nft.Rarity || '').toLowerCase() === this.activeCategory.toLowerCase()
@@ -273,7 +272,7 @@ export default {
         }
       }
 
-      if (this.checkboxHideSoldOut) {
+      if (this.checkboxHideSoldOut && this.activeCategory !== 'soldout') {
         filtered = filtered.filter((nft) => !nft.soldOut);
       }
 
@@ -313,15 +312,11 @@ export default {
     this.loadFiltersFromLocalStorage();
     this.storeNftsApp = this.storeCache.NftsApp;
     this.loadResources();
-    this.getSodaEvent();
 
     this.$watch(() => this.storeCache.NftsApp, () => {
       this.storeNftsApp = this.storeCache.NftsApp;
       this.loadResources();
-      this.getSodaEvent();
     });
-
-    document.addEventListener('click', this._onClickOutside);
   },
 
   methods: {
@@ -342,7 +337,7 @@ export default {
       const imagePromises = this.nftArray.map((gift) => {
         return new Promise((resolve, reject) => {
           const img = new Image();
-          img.src = gift.nftImages.imageMain;
+          img.src = gift.nftImages?.imageMain || gift.ImageMain;
           img.onload = resolve;
           img.onerror = reject;
         });
@@ -362,8 +357,8 @@ export default {
 
     openCollection(UKey) {
       TelegramModule.useSoftHaptic();
-      this.$router.push({ 
-        name: 'collection', 
+      this.$router.push({
+        name: 'collection',
         params: { nft: UKey }
       });
     },
@@ -376,49 +371,38 @@ export default {
       gift.nftOnLoading = true;
     },
 
-    toggleSelectRarityDropdown() {
-      this.selectRarityOpened = !this.selectRarityOpened;
-      this.selectSortbyOpened = false;
+    openRarityModal() {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.sortModalActive = false;
+      this.rarityModalActive = true;
     },
 
-    selectRarityOption(option) {
-      this.selectRarityValue = option.value;
-      this.activeCategory = option.value === 'all_gifts' ? 'all' : option.value;
-      this.selectRarityOpened = false;
-      this.saveFiltersToLocalStorage();
+    openSortModal() {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.rarityModalActive = false;
+      this.sortModalActive = true;
     },
 
-    _onClickOutside(e) {
-      const el = this.$refs.filtersEl;
-      if (el && !el.contains(e.target)) {
-        this.selectRarityOpened = false;
-        this.selectSortbyOpened = false;
+    applyRarity(value) {
+      this.selectRarityValue = value;
+      this.activeCategory = value === 'all_gifts' ? 'all' : value;
+      if (value !== 'soldout') {
+        this.checkboxHideSoldOut = true;
       }
-    },
-
-    toggleSelectSortbyDropdown() {
-      this.selectSortbyOpened = !this.selectSortbyOpened;
-      this.selectRarityOpened = false;
-    },
-
-    selectSortbyOption(option) {
-      this.selectSortbyValue = option.value;
-      this.selectSortbyOpened = false;
-      this.selectRarityOpened = false;
       this.saveFiltersToLocalStorage();
     },
 
-    toggleHideSoldOut() {
-      this.checkboxHideSoldOut = !this.checkboxHideSoldOut;
+    applySort(value) {
+      this.selectSortbyValue = value;
       this.saveFiltersToLocalStorage();
     },
 
     resetFilters() {
       this.selectRarityValue = 'all';
-      this.selectSortbyValue = 'old';
+      this.selectSortbyValue = 'new';
       this.activeCategory = 'all';
-      this.selectRarityOpened = false;
-      this.selectSortbyOpened = false;
+      this.rarityModalActive = false;
+      this.sortModalActive = false;
       this.checkboxHideSoldOut = true;
       this.saveFiltersToLocalStorage();
     },
@@ -433,29 +417,16 @@ export default {
     },
 
     loadFiltersFromLocalStorage() {
-      const filters = JSON.parse(localStorage.getItem('giftFilters'));
-      if (filters) {
-        this.selectRarityValue = filters.selectRarityValue || 'all';
-        this.selectSortbyValue = filters.selectSortbyValue || 'old';
-        this.checkboxHideSoldOut = filters.checkboxHideSoldOut !== false;
-        this.activeCategory = this.selectRarityValue === 'all_gifts' ? 'all' : this.selectRarityValue;
-      }
+      try {
+        const filters = JSON.parse(localStorage.getItem('giftFilters'));
+        if (filters) {
+          this.selectRarityValue = filters.selectRarityValue || 'all';
+          this.selectSortbyValue = filters.selectSortbyValue || 'new';
+          this.checkboxHideSoldOut = filters.checkboxHideSoldOut !== false;
+          this.activeCategory = this.selectRarityValue === 'all_gifts' ? 'all' : this.selectRarityValue;
+        }
+      } catch {}
     },
-
-    async getSodaEvent() {
-      const sodaEvent = await nftApi.sodaEvent();
-      if (!sodaEvent) return;
-
-      this.sodaEvent = sodaEvent;
-    },
-
-    openSodaEvent() {
-      this.$router.push({ name: 'soda' });
-    },
-  },
-
-  beforeUnmount() {
-    document.removeEventListener('click', this._onClickOutside);
   },
 };
 </script>

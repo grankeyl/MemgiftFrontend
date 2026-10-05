@@ -1,8 +1,15 @@
 <template>
-  <div class="_direction _comp _item _othersTasks" :class="Key">
+  <div class="_direction _comp _item _othersTasks blockTasks" :class="Key">
       <div v-if="isLoading" class="_skeleton">
         <div class="_list-skel">
-          <div class="_row-skel"></div>
+          <div class="_row-skel">
+            <div class="_avatar-skel _load-shimmer"></div>
+            <div class="_info-skel">
+              <div class="_title-skel _load-shimmer"></div>
+              <div class="_reward-skel _load-shimmer"></div>
+            </div>
+            <div class="_action-skel _load-shimmer"></div>
+          </div>
         </div>
       </div>
       <div v-else class="_content">
@@ -26,20 +33,14 @@
                 ) }}
               </h4>
               <div class="_task-reward">
-                <img :src="Image_Ticket" alt="tickets" />
-                <p>+{{ task?.rewards?.[0]?.amount }}</p>
-              </div>
-              <div v-if="task.user_status !== 'completed'" class="_task-progress">
-                <div class="_task-progress-bar">
-                  <div class="_task-progress-fill" :style="{ width: progressPercent(task) + '%' }"></div>
-                </div>
-                <span class="_task-progress-text">{{ progressCurrent(task) }}/{{ task.config.SendCount }}</span>
+                  <Icon class="kit-icon" v-html="Icon.Ticket"></Icon>
+                  <p>{{ task?.rewards?.[0]?.amount }}</p>
               </div>
             </div>
 
             <div v-if="task.type === 'send_gift'" class="_task-action">
               <button v-if="(!task.user_status || task.user_status === 'new') && !task.isLoading && !SendGiftTaskCheck(task)" @click="openProfile()" class="_btn _count">
-                <span>{{ $t('tickets.taskButtonStart') }}</span>
+                <span>{{ progressCurrent(task) }}/{{ task.config.SendCount }}</span>
               </button>
               <button v-if="task.user_status !== 'completed' && SendGiftTaskCheck(task) && !task.isLoading" @click="clickTask(task)" class="_btn _claim">
                 <span>{{ $t('tickets.taskButtonClaim') }}</span>

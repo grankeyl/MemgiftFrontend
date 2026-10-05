@@ -1,19 +1,24 @@
 <template>
   <section class="_wrap _rating" :class="{ desktop: isDesktop() }">
+    <div class="bluring-t"></div>
+    <div class="bluring-b"></div>
     <div class="_view">
-
-      <Context
-        @loadSuccess="handleLoadSuccess"
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-      />
-
-      <Top
-        @loadSuccess="handleLoadSuccess"
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-      />
-
+      <div class="title">
+        <h4>
+          {{ $t('menu.rating') }}
+        </h4>
+        <div class="balance">
+          <Icon class="kit-icon" v-html="Icon.Gram" />
+          <span>{{ cutNumber(getBalance.toString()) }}</span>
+        </div>
+      </div>
+      <div class="_second">
+        <Top
+          @loadSuccess="handleLoadSuccess"
+          :Skeleton="isPageLoading"
+          :SkeletonTime="configApp.skeletonTime"
+        />
+      </div>
     </div>
   </section>
 </template>
@@ -25,9 +30,8 @@ import { useCacheStore } from '../stores/pinia/piniaStore';
 import { isDesktop } from '../utils/checkDevice';
 import { Icon } from '../components/Icon';
 import { getConfig } from '../config';
+import { cutNumber } from '@/utils/useTon';
 
-import Context from '../components/Rating/Context.vue';
-import YourTop from '../components/Rating/YourTop.vue';
 import Top from '../components/Rating/Top.vue';
 
 export default {
@@ -39,8 +43,6 @@ export default {
   },
 
   components: {
-    Context,
-    YourTop,
     Top,
   },
 
@@ -53,52 +55,31 @@ export default {
       propsSuccess: this.$props.success,
       isPageLoading: true,
 
-      YourTopComp: {
-        YourPhoto: null as any,
-        YourName: null as any,
-        YourGiftsCount: 0,
-      },
-      
       Icon,
       isDesktop,
+      cutNumber,
     };
+  },
+
+  computed: {
+    getBalance() {
+      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
   },
 
   mounted() {
     TelegramModule.hideBackButton();
-    this.YourTopCompInit();
-
-    this.$watch(() => this.storeCache.TelegramData, () => {
-      this.YourTopCompInit();
-    });
-
-    this.$watch(() => this.storeCache.UserData, () => {
-      this.YourTopCompInit();
-    });
   },
 
   methods: {
     handleLoadSuccess() {
       this.handleLoads ++;
 
-      if (this.handleLoads >= 2) {
+      if (this.handleLoads >= 1) {
         setTimeout(() => {
           this.isPageLoading = false;
         }, this.configApp.skeletonTime);
       };
-    },
-
-    YourTopCompInit() {
-      if (!this.storeCache.TelegramData?.user) {
-        return;
-      }
-
-      const Image = this.storeCache.TelegramData.user.photoUrl || '';
-      const FullName = `${this.storeCache.TelegramData.user.firstName} ${this.storeCache.TelegramData.user.lastName}`;
-
-      this.YourTopComp.YourPhoto = Image;
-      this.YourTopComp.YourName = FullName;
-      this.YourTopComp.YourGiftsCount = this.storeCache.UserData;
     },
   },
 };

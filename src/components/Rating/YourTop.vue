@@ -7,25 +7,21 @@
       <div class="_block">
         <div class="_user">
           <div class="_user_left">
-            <div 
-              v-if="Comp.YourPhoto"
-              class="_user_avatar"
-            >
+            <div v-if="Comp.YourPhoto" class="_user_avatar">
               <img 
-                v-if="Comp.YourPhoto"
                 @error="Comp.YourPhoto = false"
                 :src="Comp.YourPhoto"
-                alt=""
+                alt="avatar"
               />
             </div>
-            <div v-else class="_user_avatar">
-              <h4>{{ Comp.YourName[0] }}</h4>
+            <div v-else class="_user_avatar avatar_null">
+              <h4>{{ Comp.YourName ? Comp.YourName[0] : 'U' }}</h4>
             </div>
           </div>
           <div class="_user_center">
             <div class="_user_center_name">
-              <h4 v-if="Comp.YourName && Comp.YourName.trim()">{{ Comp.YourName }}</h4>
-              <h4 v-else>No Name</h4>
+              <h4>{{ Comp.YourName && Comp.YourName.trim() ? Comp.YourName : 'You' }}</h4>
+              <span class="_you_badge">YOU</span>
             </div>
             <div class="_user_center_gifts">
               <div class="kit-icon" v-html="Icon.Gift"></div>
@@ -34,11 +30,16 @@
                 {{ pluralizeGift(
                     $t('app.sendGiftText'),
                     UserNftsCount, 
-                    storeCache.TelegramData.user.language
+                    storeCache.TelegramData?.user?.language || 'en'
                   ) 
                 }}
               </p>
-              </div>
+            </div>
+          </div>
+          <div class="_user_right" v-if="storeCache?.UserData?.Rating?.rankNumber">
+            <div class="_rank_tag">
+              <span>#{{ storeCache.UserData.Rating.rankNumber }}</span>
+            </div>
           </div>
         </div>
       </div>

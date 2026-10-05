@@ -55,11 +55,20 @@ export default {
     },
 
     mounted() {
-        if (this.$route.query.type === 'viewPage') {
-            TelegramModule.useBackButton(() => this.$router.push('/view/' + this.$route.query.key));
-        } else {
-            TelegramModule.useBackButton(() => this.$router.push('/'));
-        }
+        // та же история, что и на чужом профиле: маршрут возврата был
+        // прибит к одному сценарию. возвращаемся по истории, а жёсткий
+        // путь оставляем запасным — для захода по прямой ссылке
+        TelegramModule.useBackButton(() => {
+            if (window.history.state?.back) {
+                this.$router.back();
+                return;
+            }
+            if (this.$route.query.type === 'viewPage' && this.$route.query.key) {
+                this.$router.push('/view/' + this.$route.query.key);
+                return;
+            }
+            this.$router.push('/');
+        });
 
         const uuid = this.$route.params.id as string | undefined;
         if (!uuid) return;
@@ -118,6 +127,7 @@ export default {
             this.NftData.NftMedia = nftData.Media;
             this.NftData.NftImage = nftData.ImageMain;
             this.NftData.NftName = nftData.Name;
+            this.NftData.GiftName = nftData.Name;
             this.NftData.NftPrice = nftData.Price;
             this.NftData.NftRarity = nftData.Rarity;
             this.NftData.NftUpgradePrice = nftData.UpgradePrice;
@@ -130,4 +140,9 @@ export default {
 <style lang="sass">
 @use "@/assets/styles/gift/_main.sass"
 @use "@/assets/styles/gift/_comp.sass"
+
+// материалы карточки, таблицы и кнопок берём у модалки подарка,
+// чтобы страница выглядела с ней одинаково
+@use "@/components/Market/Modal.sass"
+@use "@/components/Profile/ProfileGiftModal.sass"
 </style>

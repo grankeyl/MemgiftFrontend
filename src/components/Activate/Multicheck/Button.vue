@@ -232,13 +232,7 @@
       },
 
       openProfile() {
-        if (this.$props.ButtonType === 'received') {
-          this.$router.push({ name: 'profile', hash: '#received' });
-        } else if (this.$props.ButtonType === 'purchased') {
-          this.$router.push({ name: 'profile', hash: '#purchased' });
-        } else {
-          this.$router.push({ name: 'profile' });
-        }
+        this.$router.push({ name: 'profile' });
       },
 
       openShop() {

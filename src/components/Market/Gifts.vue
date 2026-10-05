@@ -13,49 +13,45 @@
             class="item"
             :ref="el => setLastItemRef(el, index, GiftsList.length)"
           >
-            <div class="mark">
-              <p>#{{ gift.core.upgrade.seq }}</p>
-            </div>
+            <div class="item-head">
+              <div class="mark">
+                <p>#{{ gift.core.upgrade.seq }}</p>
+              </div>
 
-            <div
-              @click="openGift(gift)"
-              class="background upg"
-              :style="{
-                '--center-color': gift.core.upgrade.background.colors_center,
-                '--around-color': gift.core.upgrade.background.colors_around,
-              }"
-            ></div>
+              <div
+                @click="openGift(gift)"
+                class="background upg"
+                :style="{
+                  '--center-color': gift.core.upgrade.background.colors_center,
+                  '--around-color': gift.core.upgrade.background.colors_around,
+                }"
+              ></div>
 
-            <div @click="openGift(gift)" class="symbol upg">
-              <img :src="gift.core.upgrade.symbol.image" :alt="gift.core.upgrade.symbol.name" />
-            </div>
+              <div @click="openGift(gift)" class="symbol upg">
+                <img :src="gift.core.upgrade.symbol.image" :alt="gift.core.upgrade.symbol.name" />
+              </div>
 
-            <div @click="openGift(gift)" class="model">
-              <div class="upg">
-                <div v-if="gift.core.gift.media === 'svg'" class="image">
-                  <img :src="gift.core.upgrade.nft_name.image" alt="model" />
-                </div>
-                <div v-if="gift.core.gift.media === 'lottie'" class="image">
-                  <img :src="getUpgradedModel(gift.core.gift.u_key, gift.core.upgrade.nft_name.name, 'svg')" alt="model" />
+              <div @click="openGift(gift)" class="model">
+                <div class="upg">
+                  <div v-if="gift.core.gift.media === 'svg'" class="image">
+                    <img :src="gift.core.upgrade.nft_name.image" alt="model" />
+                  </div>
+                  <div v-if="gift.core.gift.media === 'lottie'" class="image">
+                    <img :src="getUpgradedModel(gift.core.gift.u_key, gift.core.upgrade.nft_name.name, 'svg')" alt="model" />
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="name">
-              <h4>{{ gift.core.upgrade.nft_name.name }}</h4>
+              <!-- показываем сам подарок, а не модель -->
+              <h4>{{ gift.core.gift?.name || gift.core.upgrade?.nft_name?.name }}</h4>
             </div>
 
             <div class="buttons" :class="{ owner: iOwner(gift.balance_owner_id) }">
               <button @click="openGift(gift)">
+                <Icon class="kit-icon" v-html="Icon.Gram" />
                 <h5>{{ cutNumber(gift.price_ton) }}</h5> 
-                <img :src="TonWhiteImg" alt="ton" />
-              </button>
-              <button 
-                @click="addToBasket(gift)"
-                :class="{ added: checkGiftInBasket(gift) }"
-              >
-                <img :src="BasketWhiteImg" alt="basket" />
-                <img :src="DoneImg" alt="basket" />
               </button>
             </div>
           </div>

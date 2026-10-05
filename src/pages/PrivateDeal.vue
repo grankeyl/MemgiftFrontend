@@ -1,50 +1,40 @@
 <template>
-  <section class="_wrap _privateDeal" :class="{ desktop: isDesktop() }">
+  <div class="_wrap pd-page" :class="{ desktop: isDesktop() }">
     <div class="_view">
-      <div class="pd-bg">
-        <div class="pd-orb pd-orb--1"></div>
-        <div class="pd-orb pd-orb--2"></div>
-      </div>
-
       <div class="display">
-        <div class="pd-header _lefting">
-          <button class="pd-header__back" @click.stop="goBack">
-            <svg width="11" height="18" viewBox="0 0 11 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.5 1.5L2 9L9.5 16.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <h2>{{ $t('privateDeal.title') }}</h2>
+        <div class="pd-top">
+          <h1>{{ $t('privateDeal.title') }}</h1>
+          <p>{{ $t('privateDeal.subtitle') }}</p>
         </div>
 
-        <!-- Tabs -->
-        <div class="pd-tabs3 _lefting">
+        <div class="pd-tabs">
           <button
-            class="pd-tabs3__btn"
+            type="button"
+            class="pd-tabs__item"
             :class="{ active: Section === 'Create' }"
             @click="setSection('Create')"
           >
             {{ $t('privateDeal.tabCreate') }}
           </button>
           <button
-            class="pd-tabs3__btn"
+            type="button"
+            class="pd-tabs__item"
             :class="{ active: Section === 'Deals' }"
             @click="setSection('Deals')"
           >
             {{ $t('privateDeal.tabDeals') }}
-            <span v-if="deals.length > 0" class="pd-tabs3__dot">{{ deals.length }}</span>
+            <span v-if="deals.length > 0" class="pd-tabs__count">{{ deals.length }}</span>
           </button>
         </div>
 
         <Create
           v-if="Section === 'Create'"
-          class="_lefting"
           :storeCache="storeCache"
           @createDeal="onCreateDeal"
         />
 
         <Deals
           v-if="Section === 'Deals'"
-          class="_lefting"
           :deals="deals"
           :loading="dealsLoading"
           @cancelDeal="onCancelDeal"
@@ -52,16 +42,16 @@
           @openDeal="onOpenDeal"
         />
       </div>
-
-      <ShareOverlay
-        v-if="shareOverlay.active"
-        :deal="shareOverlay.deal"
-        @close="shareOverlay.active = false"
-        @copy="onCopyLink"
-        @share="onTelegramShare"
-      />
     </div>
-  </section>
+
+    <ShareOverlay
+      v-if="shareOverlay.active"
+      :deal="shareOverlay.deal"
+      @close="shareOverlay.active = false"
+      @copy="onCopyLink"
+      @share="onTelegramShare"
+    />
+  </div>
 </template>
 
 <script>
@@ -93,17 +83,17 @@ export default {
   },
 
   mounted() {
-    TelegramModule.useBackButton(() => this.$router.push('/profile'));
+    TelegramModule.useBackButton(() => this.goBack());
     this.loadDeals();
     this.$watch(
       () => this.storeCache.TelegramData,
-      () => this.loadDeals(),
+      () => this.loadDeals()
     );
   },
 
   methods: {
     goBack() {
-      this.$router.push('/profile');
+      this.$router.push({ name: 'profile' });
     },
 
     setSection(s) {
@@ -179,5 +169,4 @@ export default {
 <style lang="sass">
 @use "@/assets/styles/private_deal/_main.sass"
 @use "@/assets/styles/private_deal/_comp.sass"
-@use "@/assets/styles/profile/_comp.sass" as profileComp
 </style>

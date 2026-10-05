@@ -1,322 +1,331 @@
 @use "./../_variables" as *
 
-@keyframes wl-pulse
-    0%, 100%
-        box-shadow: 0 0 4px rgba(34, 197, 94, 0.4)
-    50%
-        box-shadow: 0 0 10px rgba(34, 197, 94, 0.7)
 
-// ─── Header ───
-.wl-header
-    display: flex
-    align-items: center
-    justify-content: space-between
-    margin-top: 28px
-    margin-bottom: 0
+// быстрый выход из-под низа, без пружин: та же кривая, что у переходов страниц
+$wl-ease: cubic-bezier(0.22, 1, 0.36, 1)
 
-    &__left h2
-        font-size: 22px
-        font-weight: 700
-        color: $app-text-color
+@keyframes wlRise
+    from
+        opacity: 0
+        transform: translateY(10px)
+    to
+        opacity: 1
+        transform: translateY(0)
 
-    &__back
-        display: flex
-        align-items: center
-        gap: 6px
-        height: 32px
-        padding: 0 12px 0 10px
-        background: rgba(255, 255, 255, 0.07)
-        border: 1px solid rgba(255, 255, 255, 0.08)
-        border-radius: 50px
-        cursor: pointer
-        transition: transform 0.15s ease, background 0.15s ease
 
-        &:active
-            transform: scale(0.95)
-            background: rgba(255, 255, 255, 0.12)
-
-        & svg
-            color: rgba($app-text-color, 0.7)
-
-        & span
-            font-size: 13px
-            font-weight: 600
-            color: $app-text-color
-            opacity: 0.85
-
-// ─── Balance card ───
-.wl-balance
+// ── баланс: карточка того же материала, что .blockTasks ──
+.wl-hero
+    animation: wlRise .42s $wl-ease both
     width: 100%
+    box-sizing: border-box
+    padding: 16px 14px 14px
+    background: #171717
+    border-radius: 29px
+    display: flex
+    flex-direction: column
+    align-items: center
 
-    ._content
-        width: 100%
-
-    &__block
-        width: 100%
-        display: flex
-        flex-direction: column
-        align-items: center
-        gap: 14px
-        background: $app-background-secondary
-        border-radius: 16px
-        padding: 18px 16px 14px
-        text-align: center
-
+    // строка состояния кошелька
     &__wallet
         display: flex
         align-items: center
-        gap: 6px
-
-        & p
-            font-size: 13px
-            font-weight: 600
-            color: $app-text-color-descr-primary
-
-    &__dot
-        width: 8px
-        height: 8px
-        min-width: 8px
-        border-radius: 50%
+        gap: 8px
+        height: 34px
+        padding: 0 6px 0 14px
+        border-radius: 99em
+        background: rgba($app-text-color, .05)
 
         &--on
-            background: $app-background-green-secondary
-            animation: wl-pulse 2s ease-in-out infinite
+            padding-right: 6px
 
-        &--off
-            background: rgba($app-text-color, 0.2)
+    &__addr
+        font-size: 13px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+        font-variant-numeric: tabular-nums
 
-    &__disconnect
-        width: 28px
-        height: 22px
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 50px
-        background: rgba($app-text-color, 0.1)
-        color: rgba($app-text-color, 0.5)
-        cursor: pointer
-
-        &:active
-            background: rgba($app-text-color-red, 0.2)
-            color: $app-text-color-red
-
+    // раньше был синий чип — теперь то же стекло, что у пилюль приложения
     &__connect
         height: 26px
         padding: 0 12px
-        border-radius: 13px
-        background: rgba($app-background-blue-secondary, 0.2)
-        color: $app-background-blue-secondary
+        border: none
+        border-radius: 99em
+        cursor: pointer
         font-size: 13px
         font-weight: 600
-        cursor: pointer
-        margin-left: 4px
+        color: $app-text-color
+        background: linear-gradient(180deg, #232323 0%, #1b1b1b 100%)
+        box-shadow: $app-glass-shadow-2
+        -webkit-tap-highlight-color: transparent
 
-        &:active
-            transform: scale(0.94)
-
-    &__amount
+    // глобальное правило button даёт padding: 8px 23px — из-за него
+    // круглая кнопка растягивалась в широкую пилюлю
+    &__disconnect
+        width: 22px
+        height: 22px
+        min-width: 22px
+        padding: 0
+        box-sizing: border-box
+        flex-shrink: 0
         display: flex
         align-items: center
-        gap: 4px
+        justify-content: center
+        border: none
+        border-radius: 50%
+        cursor: pointer
+        color: rgba($app-text-color, .5)
+        background: rgba($app-text-color, .07)
+        -webkit-tap-highlight-color: transparent
 
-        & h1
-            font-size: 40px
-            font-weight: 700
-            color: $app-text-color
-            line-height: 1
-
-        & img
-            width: 38px
-            height: 38px
-
-    &__buttons
-        width: 100%
+    &__amount
+        margin-top: 18px
         display: flex
-        gap: 8px
+        align-items: center
+        justify-content: center
+        gap: 9px
 
-        & button
-            flex: 1
-            height: 48px
+        h1
+            margin: 0
+            font-size: 44px
+            font-weight: 600
+            letter-spacing: -1.4px
+            line-height: 1
+            color: $app-text-color
+            font-variant-numeric: tabular-nums
+
+        .kit-icon
             display: flex
             align-items: center
-            justify-content: center
-            gap: 7px
-            border-radius: 13px
-            cursor: pointer
-            transition: transform 0.2s ease
-            background: $app-background-blue-secondary
 
-            &:first-child
-                background: rgba($app-text-color, 0.15)
+            svg
+                width: 26px
+                height: 26px
 
-            &:active
-                transform: scale(0.95)
+            path
+                fill: $app-text-color
 
-            & h4
-                font-size: 15px
-                font-weight: 600
-                color: $app-text-color
-                white-space: nowrap
+    &__label
+        margin: 8px 0 0
+        font-size: 14px
+        font-weight: 500
+        letter-spacing: .2px
+        color: $app-text-color-descr-primary
 
-            & svg
-                flex-shrink: 0
-                color: $app-text-color
 
-// ─── Title ───
-.wl-title-block
-    margin-top: 10px
-    margin-bottom: -4px !important
-
-// ─── Tabs ───
-.wl-tabs
+// ── внести / вывести: одинаковые стеклянные пилюли ──
+.wl-actions
+    width: 100%
+    margin-top: 18px
     display: flex
+    align-items: stretch
+    gap: 10px
+
+    &__btn
+        flex: 1 1 50%
+        min-width: 0
+        height: 52px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 7px
+        padding: 0 12px
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        color: $app-text-color
+        background: linear-gradient(180deg, #232323 0%, #1b1b1b 100%)
+        backdrop-filter: blur(28px) saturate(60%)
+        -webkit-backdrop-filter: blur(28px) saturate(60%)
+        box-shadow: $app-glass-shadow-2
+        -webkit-tap-highlight-color: transparent
+        transition: transform .18s $wl-ease
+
+        &:active
+            transform: scale(.965)
+
+        span
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+
+        svg
+            flex-shrink: 0
+            color: rgba($app-text-color, .65)
+
+
+// ── история ──
+.wl-hist
+    // чуть позже верхушки, чтобы блоки читались как один поток, а не рывок
+    animation: wlRise .42s .07s $wl-ease both
+    width: 100%
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+    &__head
+        padding: 0 2px
+
+        h4
+            margin: 0
+            font-size: 20px
+            font-weight: 600
+            color: $app-text-color
+
+
+.wl-filters
+    display: flex
+    align-items: center
     gap: 8px
     overflow-x: auto
-    -webkit-overflow-scrolling: touch
     scrollbar-width: none
+    padding: 0 2px 2px
 
     &::-webkit-scrollbar
         display: none
 
     &__item
-        height: 34px
-        padding: 0 16px
-        border-radius: 10px
-        background: $app-background-secondary
-        color: $app-text-color-descr-primary
-        font-size: 14px
-        font-weight: 600
-        white-space: nowrap
-        cursor: pointer
-        transition: all 0.18s ease
         flex-shrink: 0
-
-        &.active
-            background: $app-background-blue-secondary
-            color: $app-text-color
+        height: 36px
+        padding: 0 16px
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        background: $app-background-secondary
+        -webkit-tap-highlight-color: transparent
+        transition: background .22s ease, transform .18s $wl-ease
 
         &:active
-            transform: scale(0.95)
+            transform: scale(.95)
 
-// ─── Card wrapper (groups list items) ───
-.wl-card
-    background: $app-background-secondary
-    border-radius: 14px
-    overflow: hidden
+        &.active
+            background: $app-button-blue-background
 
-    &--empty
-        padding: 0
+            .wl-filters__title
+                color: $app-button-blue-text-color
 
-// ─── Row (single history item inside card) ───
-.wl-row
-    display: flex
-    align-items: center
-    gap: 12px
-    padding: 0 14px
-    height: 60px
-    cursor: pointer
-    transition: background 0.12s ease
-    position: relative
+    &__title
+        font-size: 14px
+        font-weight: 600
+        color: $app-text-color-descr-primary
+        white-space: nowrap
+        transition: color .22s ease
 
-    &:active
-        background: rgba(255, 255, 255, 0.03)
 
-    &:not(.wl-row--last)::after
-        content: ''
-        position: absolute
-        bottom: 0
-        left: 66px
-        right: 14px
-        height: 0.5px
-        background: rgba(255, 255, 255, 0.06)
+.wl-list
+    width: 100%
 
-    &__icon
-        width: 40px
-        height: 40px
-        min-width: 40px
-        border-radius: 10px
+    .item
+        position: relative
+        display: flex
+        align-items: center
+        gap: 12px
+        padding: 12px 2px
+        cursor: pointer
+        -webkit-tap-highlight-color: transparent
+        transition: opacity .18s ease
+
+        &:active
+            opacity: .55
+
+        & + .item::before
+            content: ''
+            position: absolute
+            top: 0
+            left: 58px
+            right: 0
+            height: 1px
+            background: rgba($app-text-color, .07)
+
+    .nft
+        width: 44px
+        height: 44px
+        flex-shrink: 0
+        border-radius: 12px
+        overflow: hidden
         display: flex
         align-items: center
         justify-content: center
-        overflow: hidden
-        flex-shrink: 0
+        background: $app-background-secondary
+        color: rgba($app-text-color, .55)
 
-        & img
+        img
             width: 100%
             height: 100%
             object-fit: cover
-            border-radius: 10px
 
-        &--gift
-            background: rgba($app-text-color-phiolete, 0.1)
-            color: $app-text-color-phiolete
-
-        &--deposit
-            background: rgba($app-background-green-secondary, 0.1)
-            color: $app-background-green-secondary
-
-        &--withdraw
-            background: rgba($app-text-color-red, 0.1)
-            color: $app-text-color-red
-
-    &__body
-        flex: 1
+    .mid
         min-width: 0
-        display: flex
-        align-items: center
-        justify-content: space-between
-        gap: 10px
-
-    &__info
         flex: 1
-        min-width: 0
         display: flex
         flex-direction: column
-        gap: 2px
+        gap: 3px
 
-        & h4
-            font-size: 15px
+    .title-row
+        min-width: 0
+
+        .name
+            margin: 0
+            font-size: 16px
             font-weight: 600
             color: $app-text-color
-            white-space: nowrap
             overflow: hidden
+            white-space: nowrap
             text-overflow: ellipsis
 
-        & p
-            font-size: 12px
-            font-weight: 500
-            color: $app-text-color-descr-primary
-
-    &__amount
-        flex-shrink: 0
-        text-align: right
-
-        & span
-            font-size: 14px
-            font-weight: 600
-            color: $app-text-color-descr-primary
-
-        &--plus span
-            color: $app-background-green-secondary
-
-        &--minus span
-            color: $app-text-color-red
-
-// ─── Empty state ───
-.wl-empty
-    display: flex
-    flex-direction: column
-    align-items: center
-    justify-content: center
-    gap: 12px
-    padding: 48px 20px
-
-    & svg
-        color: $app-text-color-descr
-        opacity: 0.4
-
-    & p
-        font-size: 14px
+    .meta-row
+        display: flex
+        align-items: center
+        gap: 5px
+        font-size: 13px
         font-weight: 500
-        color: $app-text-color-descr
-        text-align: center
+        color: $app-text-color-descr-primary
+
+        .dot
+            opacity: .5
+
+        .price
+            font-variant-numeric: tabular-nums
+
+            &.is-plus
+                color: #4fd08a
+
+            &.is-minus
+                color: $app-text-color
+
+    .right
+        flex-shrink: 0
+        display: flex
+        align-items: center
+
+        .status
+            font-size: 14px
+            font-weight: 500
+            color: $app-button-blue-text-color
+            white-space: nowrap
+
+
+.wl-empty
+    width: 100%
+    box-sizing: border-box
+    padding: 40px 24px
+    text-align: center
+
+    p
+        margin: 0 auto
+        max-width: 260px
+        font-size: 15px
+        font-weight: 500
+        line-height: 1.35
+        color: $app-text-color-descr-primary
+
+
+// системная настройка важнее любой нашей анимации
+@media (prefers-reduced-motion: reduce)
+    .wl-hero,
+    .wl-hist
+        animation: none
+
+    .wl-actions__btn,
+    .wl-filters__item,
+    .wl-list .item
+        transition: none

@@ -1,430 +1,474 @@
 @use "./../_variables" as *
 
-@keyframes fadeIn
-  0%
-    opacity: 0
-  100%
-    opacity: 1
+// ── Header ───────────────────────────────────────────────────────────────────
+.mc-header
+    display: flex
+    align-items: center
+    margin-top: 4px
 
-@keyframes mcUp
-  0%
-    opacity: 0
-    transform: translateY(8px)
-  100%
-    opacity: 1
-    transform: translateY(0)
-
-@keyframes shimmer
-  0%
-    background-position: -200% 0
-  100%
-    background-position: 200% 0
-
-._skeleton
-    animation: fadeIn 0.72s
-
-._content
-    animation: fadeIn 0.32s
-
-
-._comp._item._multicheckGifts
-    width: 100%
-    margin-bottom: 15px
-
-    .mc-skel
-        display: flex
-        flex-direction: column
-        gap: 8px
-
-        &__row
-            width: 100%
-            height: 68px
-            border-radius: 14px
-            background: linear-gradient(90deg, rgba($app-text-color, 0.03) 25%, rgba($app-text-color, 0.07) 50%, rgba($app-text-color, 0.03) 75%)
-            background-size: 200% 100%
-            animation: shimmer 1.4s ease infinite
-
-    ._content
-        width: 100%
-        display: flex
-        flex-direction: column
-        gap: 12px
-
-        // ── Tabs ──
-        .mc-tabs
-            width: 100%
-            height: 38px
-            display: flex
-            align-items: center
-            position: relative
-            border-radius: 10px
-            background: rgba($app-text-color, 0.05)
-            padding: 3px
-
-            &__item
-                position: relative
-                z-index: 1
-                flex: 1
-                height: 100%
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 5px
-                font-size: 13px
-                font-weight: 600
-                color: rgba($app-text-color, 0.4)
-                cursor: pointer
-                transition: color 0.2s
-                white-space: nowrap
-
-                &.active
-                    color: $app-text-color
-
-            &__badge
-                font-size: 10px
-                font-weight: 700
-                color: $app-text-color-phiolete
-                background: rgba($app-text-color-phiolete, 0.12)
-                padding: 1px 5px
-                border-radius: 5px
-
-            &__bg
-                position: absolute
-                left: 3px
-                top: 3px
-                width: calc(50% - 3px)
-                height: calc(100% - 6px)
-                background: $app-background-secondary
-                border-radius: 8px
-                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)
-
-                &.right
-                    transform: translateX(100%)
-
-        // ── List ──
-        .mc-list
-            display: flex
-            flex-direction: column
-            gap: 6px
-
-        .mc-row
-            display: flex
-            align-items: center
-            gap: 12px
-            padding: 10px 12px
-            border-radius: 14px
-            background: $app-background-secondary
-            animation: mcUp 0.3s ease both
-            transition: opacity 0.2s, background 0.2s
-
-            &.picked
-                background: rgba($app-text-color-phiolete, 0.06)
-
-            &.idle
-                opacity: 0.45
-
-            &__img
-                width: 44px
-                height: 44px
-                flex-shrink: 0
-                border-radius: 10px
-                overflow: hidden
-                background: rgba($app-text-color, 0.04)
-
-                img
-                    width: 100%
-                    height: 100%
-                    object-fit: cover
-
-            &__body
-                flex: 1
-                min-width: 0
-
-            &__name
-                font-size: 14px
-                font-weight: 600
-                color: $app-text-color
-                white-space: nowrap
-                overflow: hidden
-                text-overflow: ellipsis
-
-            &__sub
-                font-size: 11px
-                color: rgba($app-text-color, 0.35)
-                margin-top: 1px
-
-            &__ctrls
-                display: flex
-                align-items: center
-                gap: 0
-                flex-shrink: 0
-                background: rgba($app-text-color, 0.05)
-                border-radius: 10px
-                height: 36px
-                padding: 0 2px
-
-            &__btn
-                width: 32px
-                height: 32px
-                display: flex !important
-                align-items: center !important
-                justify-content: center !important
-                border-radius: 8px !important
-                color: $app-text-color
-                cursor: pointer
-                background: transparent !important
-                padding: 0 !important
-                transition: opacity 0.15s
-
-                &.off
-                    opacity: 0.2
-                    pointer-events: none
-
-                svg
-                    display: block
-
-            &__num
-                min-width: 28px
-                text-align: center
-                font-size: 15px
-                font-weight: 700
-                color: rgba($app-text-color, 0.3)
-                user-select: none
-
-                &.accent
-                    color: $app-text-color-phiolete
-
-        // ── Empty ──
-        .mc-empty
-            padding: 36px 0
-            text-align: center
-
-            p
-                font-size: 13px
-                color: rgba($app-text-color, 0.35)
-
-        // ── Footer summary ──
-        .mc-footer
-            display: flex
-            flex-direction: column
-            gap: 4px
-            padding: 10px 14px
-            border-radius: 12px
-            background: rgba($app-text-color, 0.03)
-
-            &__line
-                display: flex
-                align-items: center
-                justify-content: space-between
-                font-size: 13px
-                color: rgba($app-text-color, 0.45)
-
-                &--accent
-                    color: $app-text-color-phiolete
-                    font-weight: 600
-
-            &__val
-                font-weight: 700
-                color: $app-text-color
-
-
-// ── Button component ──
-._comp._item._multicheckButton
-    width: 100%
-    height: fit-content
-    margin-bottom: 15px
-    z-index: 10000
-    
-    ._skeleton
-        max-width: $app-max-preview-width
-        margin: auto
-        width: 100%
-        display: flex
+    &__back
+        width: 42px !important
+        min-width: 42px !important
+        height: 42px !important
+        display: flex !important
         align-items: center
-        gap: 10px
-        z-index: 100
-        animation: none !important
+        justify-content: center
+        padding: 0 !important
+        margin: 0
+        border: none !important
+        outline: none
+        border-radius: 50% !important
+        cursor: pointer
+        box-sizing: border-box
+        background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%) !important
+        box-shadow: $app-glass-shadow-2
+        color: $app-text-color
+        -webkit-tap-highlight-color: transparent
+        transition: transform 0.15s ease
+        flex-shrink: 0
 
-        ._blockButton
-            width: 100%
-            height: fit-content
-            max-width: $app-max-preview-width
-            padding-top: 11px
-            padding-left: 13px
-            padding-right: 13px
-            padding-bottom: 20px
-            position: absolute
-            bottom: calc($app-menu-height)
-            background: $app-background
-            z-index: 100
-            display: flex
-            flex-direction: column
-            gap: 11px
+        &:active
+            transform: scale(0.92)
 
-            & button
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                background: $app-background-secondary
-                padding: 0 15px
-                border-radius: 13px
-                cursor: pointer
-    
-    ._content
-        width: 100%
-        max-width: $app-max-preview-width
-        margin: auto
-        height: 100%
-        display: flex
-        align-items: center
-        gap: 10px
-        z-index: 100
-        animation: none !important
+        svg
+            display: block
+            width: 18px
+            height: 18px
+            opacity: 0.85
+            pointer-events: none
 
-        ._blockButton
-            width: 100%
-            height: fit-content
-            max-width: $app-max-preview-width
-            padding-top: 11px
-            padding-left: 13px
-            padding-right: 13px
-            padding-bottom: 20px
-            position: absolute
-            bottom: calc($app-menu-height)
-            background: $app-background
-            z-index: 100
-            display: flex
-            flex-direction: column
-            gap: 10px
+            path
+                stroke: $app-text-color
 
-            .mc-btn-info
-                display: flex
-                flex-direction: column
-                gap: 4px
-                padding: 10px 14px
-                border-radius: 12px
-                background: rgba($app-text-color, 0.03)
-                animation: mcUp 0.25s ease both
-
-                &__row
-                    display: flex
-                    align-items: center
-                    gap: 8px
-                    font-size: 13px
-                    font-weight: 500
-                    color: rgba($app-text-color, 0.5)
-
-                    svg
-                        flex-shrink: 0
-                        color: rgba($app-text-color, 0.35)
-
-                    &--accent
-                        color: $app-text-color-phiolete
-
-                        svg
-                            color: $app-text-color-phiolete
-
-                    &--free
-                        color: #34C759
-
-                        svg
-                            color: #34C759
-
-            .mc-btn-hint
-                display: flex
-                align-items: center
-                gap: 10px
-                padding: 12px 14px
-                border-radius: 12px
-                background: rgba($app-text-color, 0.03)
-
-                svg
-                    flex-shrink: 0
-                    color: rgba($app-text-color, 0.25)
-
-                span
-                    font-size: 13px
-                    font-weight: 500
-                    color: rgba($app-text-color, 0.4)
-                    line-height: 1.35
-
-            & button
-                width: 100%
-                height: 53px
-                display: flex
-                align-items: center
-                justify-content: center
-                gap: 7px
-                background: $app-big-button-background
-                padding: 0 15px
-                border-radius: 13px
-                cursor: pointer
-                transition: transform 0.22s ease
-
-                &._opacity
-                  opacity: 0.45
-
-                &._primary
-                  background: $app-big-button-background
-
-                & h4
-                    font-size: 16px
-                    font-weight: 600
-                    color: $app-big-button-text-color
-                    margin-right: 3px
-                    line-height: 1.2
-                    max-height: 2.4em
-                    overflow: hidden
-                    text-overflow: ellipsis
-
-                    @supports (-webkit-line-clamp: 2)
-                        display: -webkit-box
-                        -webkit-line-clamp: 2
-                        -webkit-box-orient: vertical
-
-                    @media (max-width: 400px)
-                        font-size: 14px
-
-                & .lt
-                    display: none
-
-                &._loading
-                    pointer-events: none
-
-                    & h4
-                        display: none
-                    & .lt
-                        width: 30px
-                        height: 30px
-                        pointer-events: none
-                        display: block
-
-                        svg
-                            width: 100%
-                            height: 100%
-
-
-._notfound
-    width: 100%
-    height: 85%
+// ── Title ────────────────────────────────────────────────────────────────────
+.mc-top
     display: flex
     flex-direction: column
-    align-items: center
-    justify-content: center
-    position: absolute
-    inset: 0
+    gap: 6px
+    padding: 2px 0 0
 
-    img
-        width: 120px
-        height: 70px
+    h1
+        margin: 0
+        font-size: 26px
+        font-weight: 700
+        letter-spacing: -0.6px
+        color: $app-text-color
+        line-height: 1.12
+
+    p
+        margin: 0
+        font-size: 14px
+        font-weight: 500
+        line-height: 1.4
+        color: $app-text-color-descr-primary
+        max-width: 320px
+
+// ── Body ─────────────────────────────────────────────────────────────────────
+.mc-body
+    width: 100%
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+// Tabs — profile text tabs
+.mc-tabs
+    width: 100%
+    display: flex
+    align-items: baseline
+    gap: 16px
+    padding: 4px 0 0
+    box-sizing: border-box
+
+    &__item
+        border: none
+        outline: none
+        background: transparent
+        padding: 0
+        margin: 0
+        cursor: pointer
+        font-family: inherit
+        font-size: 24px
+        font-weight: 700
+        letter-spacing: -0.5px
+        color: $app-text-color
         opacity: 0.2
-        margin-bottom: 8px
+        white-space: nowrap
+        line-height: 1.1
+        -webkit-tap-highlight-color: transparent
+        transition: opacity 0.16s ease
+
+        @media screen and (max-width: 400px)
+            font-size: 22px
+
+        &.active
+            opacity: 1
+
+        &:active
+            opacity: 0.55
+
+// Meta bar — count left, action right (symmetric with profile filters info)
+.mc-bar
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 12px
+    min-height: 28px
+    padding: 0
+
+    &__count
+        font-size: 14px
+        font-weight: 600
+        color: $app-text-color-descr-primary
+        letter-spacing: -0.15px
+        line-height: 1.2
+
+    &__action
+        flex-shrink: 0
+        border: none
+        outline: none
+        background: transparent
+        padding: 0
+        margin: 0
+        cursor: pointer
+        font-family: inherit
+        font-size: 14px
+        font-weight: 600
+        color: $app-button-blue-text-color
+        -webkit-tap-highlight-color: transparent
+        line-height: 1.2
+
+        &:active
+            opacity: 0.7
+
+// Grid — match profile nfts padding/gap
+.mc-grid
+    width: 100%
+    display: grid
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    gap: 12px
+    padding: 2px
+    min-width: 0
+    overflow: visible
+    box-sizing: border-box
+
+    @media screen and (max-width: 377px)
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+        gap: 10px
+
+// Gift card — profile structure: outer visible, inner clips + colored bg
+.mc-gift
+    position: relative
+    width: 100%
+    aspect-ratio: 1 / 1
+    border: none
+    outline: none
+    margin: 0
+    padding: 0
+    background: transparent
+    cursor: pointer
+    -webkit-tap-highlight-color: transparent
+    transition: transform 0.15s ease
+    overflow: visible
+
+    &:active
+        transform: scale(0.97)
+
+    &__inner
+        position: absolute
+        inset: 0
+        border-radius: 20px
+        overflow: hidden
+        // default; inline giftCardStyle overrides with rarity/upgrade colors
+        background: $app-background-secondary
+        box-sizing: border-box
+        transition: box-shadow 0.15s ease
+
+    // Selected — market gift blue (#0083FD)
+    &.selected &__inner
+        box-shadow: inset 0 0 0 2px $app-background-blue-secondary
+
+    &__symbols
+        position: absolute
+        inset: 0
+        overflow: hidden
+        opacity: 0.18
+        z-index: 1
+        pointer-events: none
+        border-radius: 20px
+
+        img
+            position: absolute
+            left: 50%
+            top: 50%
+            width: 100%
+            height: 100%
+            transform: translate(-50%, -50%)
+            object-fit: cover
+            display: block
+
+    &.is-upgraded &__symbols
+        opacity: 0.38
+
+        img
+            width: 110%
+            height: 110%
+
+    &__badge
+        position: absolute
+        z-index: 7
+        top: 8px
+        left: 8px
+        height: 20px
+        display: flex
+        align-items: center
+        border-radius: 50px
+        padding: 0 7px
+        backdrop-filter: blur(12px)
+        -webkit-backdrop-filter: blur(12px)
+        background: rgba(0, 0, 0, 0.34)
+
+        span
+            font-size: 10px
+            font-weight: 600
+            color: $app-text-color
+            line-height: 1
+            letter-spacing: -0.15px
+
+    &__nft
+        position: absolute
+        inset: 0
+        z-index: 5
+        pointer-events: none
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 20px
+        overflow: hidden
+
+        img
+            width: 70%
+            height: 70%
+            object-fit: contain
+            display: block
+
+    &.is-upgraded &__nft img
+        width: 74%
+        height: 74%
+
+    // diagonal rarity ribbon — outside clip stack (profile)
+    &__rarity
+        width: fit-content
+        height: fit-content
+        position: absolute
+        top: 22px
+        right: 24px
+        text-align: center
+        transform: rotate(45deg) translate(2px, 0)
+        z-index: 12
+        pointer-events: none
+
+    &__rarity-img
+        width: 88px
+        height: 36px
+        position: absolute
+        z-index: 1
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -50%)
+
+        img
+            width: 100%
+            height: 100%
+            display: block
+
+    &__rarity-txt
+        position: absolute
+        z-index: 2
+        white-space: nowrap
+        transform: translate(-50%, -53%)
+        max-width: 64px
+        overflow: hidden
+        text-overflow: ellipsis
+
+        span
+            font-size: 12px
+            font-weight: 600
+            color: $app-text-color
+
+    // check — bottom right, market buy blue
+    &__pick
+        position: absolute
+        right: 8px
+        bottom: 8px
+        top: auto
+        z-index: 30
+        width: 26px
+        height: 26px
+        border-radius: 50%
+        display: flex
+        align-items: center
+        justify-content: center
+        box-sizing: border-box
+        pointer-events: none
+        color: #fff
+        background: $app-background-blue-secondary
+        border: none
+        box-shadow: none
+
+        svg
+            display: block
+            width: 11px
+            height: 9px
+            color: #fff
+
+            path
+                stroke: currentColor
+
+// Empty
+.mc-empty
+    width: 100%
+    padding: 40px 20px
+    border-radius: 20px
+    background: #191919
+    box-sizing: border-box
+    text-align: center
 
     h4
+        margin: 0
+        font-size: 15px
+        font-weight: 600
+        color: $app-text-color-descr-primary
+        letter-spacing: -0.15px
+
+// Skeleton
+.mc-skel
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+    &__line
+        width: 160px
+        height: 28px
+        border-radius: 10px
+        background: linear-gradient(90deg, rgba($app-text-color, 0.04), rgba($app-text-color, 0.08), rgba($app-text-color, 0.04))
+        background-size: 200% 100%
+        animation: mc-shimmer 1.2s ease infinite
+
+    &__grid
+        width: 100%
+        display: grid
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+        gap: 12px
+        padding: 2px
+        box-sizing: border-box
+
+        @media screen and (max-width: 377px)
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+            gap: 10px
+
+    &__card
+        width: 100%
+        aspect-ratio: 1 / 1
+        border-radius: 20px
+        background: linear-gradient(90deg, rgba($app-text-color, 0.04), rgba($app-text-color, 0.08), rgba($app-text-color, 0.04))
+        background-size: 200% 100%
+        animation: mc-shimmer 1.2s ease infinite
+
+@keyframes mc-shimmer
+    0%
+        background-position: 100% 0
+    100%
+        background-position: -100% 0
+
+// ── Dock: single CTA pill (no heavy panel) ───────────────────────────────────
+.mc-dock
+    position: fixed
+    left: 50%
+    bottom: 0
+    transform: translateX(-50%)
+    width: 100%
+    max-width: $app-max-preview-width
+    z-index: 1100
+    padding: 14px 16px calc(20px + env(safe-area-inset-bottom, 0px))
+    box-sizing: border-box
+    // soft fade only — no big card
+    background: linear-gradient(180deg, rgba($app-background, 0) 0%, rgba($app-background, 0.82) 35%, $app-background 70%)
+    pointer-events: none
+
+    &__btn
+        pointer-events: auto
+        width: 100%
+        height: 54px
+        min-height: 54px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 7px
+        border: none
+        outline: none
+        border-radius: 99em
+        font-family: inherit
         font-size: 16px
         font-weight: 600
-        color: $app-text-color-descr
-        opacity: 0.6
+        letter-spacing: -0.2px
+        line-height: 1
+        cursor: pointer
+        -webkit-tap-highlight-color: transparent
+        transition: transform 0.15s ease, opacity 0.15s ease
+        box-sizing: border-box
+        overflow: hidden
+        box-shadow: none
+
+        .lt
+            width: 28px !important
+            height: 28px !important
+            min-width: 28px
+            min-height: 28px
+            max-width: 28px
+            max-height: 28px
+            opacity: 1 !important
+            position: static !important
+            overflow: hidden
+            display: flex
+            align-items: center
+            justify-content: center
+
+            svg, canvas
+                width: 28px !important
+                height: 28px !important
+
+        &:active:not(:disabled)
+            transform: scale(0.98)
+
+        &--on
+            color: #fff
+            background: $app-background-blue-secondary
+            // no glow
+            box-shadow: none
+            -webkit-box-shadow: none
+
+            &.loading
+                pointer-events: none
+
+        &--off
+            color: rgba($app-text-color, 0.4)
+            background: #191919
+            cursor: default
+            box-shadow: none
+
+    &__label
+        color: inherit
+
+    &__dot
+        color: inherit
+        opacity: 0.45
+        font-weight: 500
+
+    &__n
+        color: inherit
+        font-variant-numeric: tabular-nums
+
+    &__stars
+        color: inherit
+        opacity: 0.92
+        font-variant-numeric: tabular-nums

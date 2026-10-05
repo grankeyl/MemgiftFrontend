@@ -7,244 +7,219 @@
   100%
     opacity: 1
 
-
-@keyframes showButton
+@keyframes activity-shimmer
   0%
-    transform: scale(0.77)
+    background-position: -200% 0
   100%
-    transform: scale(1.00)
-
-
-@keyframes bumpNft
-  0%
-    transform: scale(0.77)
-  65%
-    transform: scale(0.77)
-  73%
-    transform: scale(0.79)
-  85%
-    transform: scale(0.77)
-  100%
-    transform: scale(0.77)
-
+    background-position: 200% 0
 
 ._skeleton
-    animation: fadeIn 0.72s
+    animation: fadeIn .72s
 
 ._content
-    animation: fadeIn 0.32s
-    
+    animation: fadeIn .32s
 
 ._comp._item._activityRecents
     width: 100%
     height: fit-content
-    margin-top: 15px
-    margin-bottom: 15px
-    
-    ._skeleton
+    margin: 15px 0
+    padding: 12px 8px 8px
+    background: #171717
+    border-radius: 22px
+
+    ._section-head
+        padding: 0 10px 4px
+
+        h4
+            margin: 0
+            color: $app-text-color
+            font-size: 18px
+            font-weight: 600
+            letter-spacing: -.25px
+
+    ._task-list
+        display: flex
+        flex-direction: column
+        gap: 0
+
+    ._task-row._activity-row
         width: 100%
         display: flex
         align-items: center
-        gap: 10px
+        gap: 12px
+        padding: 10px 10px
+        cursor: pointer
+        transition: opacity .18s cubic-bezier(.22, 1, .36, 1)
 
-        ._items
+        &:active
+            opacity: .82
+
+    ._task-avatar._activity-avatar
+        width: 48px
+        min-width: 48px
+        height: 48px
+        display: flex
+        align-items: center
+        justify-content: center
+        overflow: hidden
+        border-radius: 12px
+        background: rgba($app-text-color, .06)
+        position: relative
+
+        &::before
+            content: ''
+            position: absolute
+            inset: 0
+            background: transparent
+            border-radius: 12px
+            pointer-events: none
+
+        &.rare::before
+            background: $app-rarity-background-rare
+            opacity: .3
+
+        &.veryrare::before
+            background: $app-rarity-background-very-rare
+            opacity: .3
+
+        &.epic::before
+            background: $app-rarity-background-epic
+            opacity: .3
+
+        &.legend::before
+            background: $app-rarity-background-legendary
+            opacity: .3
+
+        &.author::before
+            background: $app-rarity-background-author
+            opacity: .3
+
+        img
             width: 100%
             height: 100%
-            display: flex
-            flex-direction: column
-            gap: 11px
+            object-fit: cover
+            border-radius: 12px
+            position: relative
+            z-index: 1
 
-            ._item
-                width: 100%
-                height: 60px
-                background: $app-span-gray-background
-                border-radius: 16px
-                opacity: .2
-    
-    ._content
-        width: 100%
-        height: 100%
+        .kit-icon
+            width: 22px
+            height: 22px
+            position: relative
+            z-index: 1
+            opacity: .55
+
+            svg
+                width: 22px
+                height: 22px
+
+                path
+                    fill: $app-text-color
+
+    ._task-info
+        flex: 1
+        min-width: 0
         display: flex
         flex-direction: column
-        gap: 16px
+        justify-content: center
+        gap: 4px
 
-        ._items
-            width: 100%
-            height: 100%
+        h4
+            margin: 0
+            color: $app-text-color
+            font-size: 15px
+            font-weight: 500
+            letter-spacing: -.15px
+            line-height: 1.25
+            display: block
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+
+            span
+                color: $app-text-color-primary
+                font-weight: 500
+
+        ._activity-time
+            margin: 0
+            color: $app-text-color-descr-primary
+            font-size: 13px
+            font-weight: 500
+            line-height: 1.2
+            letter-spacing: -.1px
+
+    ._activity-action
+        flex-shrink: 0
+        display: flex
+        align-items: center
+
+    ._activity-chevron
+        width: 32px
+        height: 32px
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 50%
+        background: rgba($app-text-color, .06)
+        color: $app-text-color
+
+        svg
+            width: 8px
+            height: 13px
+            opacity: .5
+
+    ._skeleton
+        width: 100%
+
+        ._list-skel
             display: flex
             flex-direction: column
-            z-index: 0
-            
-            ._comp._item._lastActivity
-                width: 100%
-                height: fit-content
-                margin-bottom: 15px
+            gap: 10px
 
-                ._skeleton
-                    width: 100%
-                    display: flex
-                    align-items: center
-                    gap: 10px
+        ._row-skel
+            width: 100%
+            display: flex
+            align-items: center
+            gap: 12px
+            padding: 10px 10px
 
-                    ._block
-                        width: 100%
-                        height: 30px
-                        background: $app-background-secondary
-                        border-radius: 50px
-                
-                ._content
-                    width: 100%
-                    display: flex
-                    align-items: center
-                    gap: 10px
+        ._avatar-skel
+            width: 48px
+            height: 48px
+            min-width: 48px
+            border-radius: 12px
 
-                    ._block
-                        width: 100%
-                        height: 60px
-                        border-radius: 13px
-                        display: flex
-                        align-items: center
-                        gap: 6px
-                        position: relative
-                        overflow: hidden
-                        padding: 0px 5px
+        ._info-skel
+            flex: 1
+            display: flex
+            flex-direction: column
+            gap: 8px
 
-                        &.rare::before
-                            content: ''
-                            position: absolute
-                            top: 0
-                            left: 0
-                            width: 100%
-                            height: 135%
-                            background: $app-rarity-background-rare
-                            opacity: 0.25
-                            z-index: 0
-                            border-radius: 13px
+            ._title-skel
+                width: 62%
+                height: 12px
+                border-radius: 6px
 
-                        &.veryrare::before
-                            content: ''
-                            position: absolute
-                            top: 0
-                            left: 0
-                            width: 100%
-                            height: 135%
-                            background: $app-rarity-background-very-rare
-                            opacity: 0.25
-                            z-index: 0
-                            border-radius: 13px
+            ._reward-skel
+                width: 34%
+                height: 10px
+                border-radius: 6px
 
-                        &.epic::before
-                            content: ''
-                            position: absolute
-                            top: 0
-                            left: 0
-                            width: 100%
-                            height: 135%
-                            background: $app-rarity-background-epic
-                            opacity: 0.25
-                            z-index: 0
-                            border-radius: 13px
+        ._action-skel
+            width: 32px
+            height: 32px
+            border-radius: 50%
 
-                        &.legend::before
-                            content: ''
-                            position: absolute
-                            top: 0
-                            left: 0
-                            width: 100%
-                            height: 135%
-                            background: $app-rarity-background-legendary
-                            opacity: 0.25
-                            z-index: 0
-                            border-radius: 13px
-                          
-                        &.author::before
-                            content: ''
-                            position: absolute
-                            top: 0
-                            left: 0
-                            width: 100%
-                            height: 135%
-                            background: $app-rarity-background-author
-                            opacity: 0.25
-                            z-index: 0
-                            border-radius: 13px
-
-                        *
-                            position: relative
-                            z-index: 1
-
-                        ._image
-                            width: 52px
-                            height: 52px
-                            
-                            & img
-                                width: 100%
-                                height: 100%
-                        
-                        ._title
-                            width: fit-content
-                            height: fit-content
-                            display: flex
-                            flex-direction: column
-                            align-items: start
-                            gap: 5px
-
-                            & h4
-                                width: auto
-                                height: auto
-                                font-size: 15px
-                                font-weight: 500
-                                color: $app-text-color
-                                max-width: 220px
-                                overflow: hidden
-                                text-overflow: ellipsis
-                                white-space: nowrap
-                                display: flex
-                                align-items: center
-                                gap: 5px
-
-                                & p
-                                    font-size: 15px
-                                    font-weight: 500
-                                    color: $app-text-color
-                                    opacity: 1
-
-                                & span
-                                    color: $app-text-color-primary
-                                
-                            & p
-                                width: auto
-                                height: auto
-                                font-size: 13px
-                                font-weight: 500
-                                color: $app-text-color
-                                opacity: .5
-                        
-                        ._button
-                            width: 38px
-                            height: 38px
-                            margin-left: auto
-                            margin-right: 5px
-
-                            & button
-                                width: 38px
-                                height: 38px
-                                background: none
-                                border-radius: 50px
-                                
-                                .kit-icon
-                                    width: 100%
-                                    height: 100%
-                                    opacity: .4
-
-                                    & svg
-                                        margin-top: 4px
-                                        margin-left: -3px
+        ._load-shimmer
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba($app-text-color, .06) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: activity-shimmer 1.8s ease-in-out infinite
 
 
 .fade-history-enter-active,
 .fade-history-leave-active
-  transition: opacity 0.25s ease
+  transition: opacity .25s ease
 
 .fade-history-enter-from,
 .fade-history-leave-to
@@ -253,3 +228,7 @@
 .fade-history-enter-to,
 .fade-history-leave-from
   opacity: 1
+
+@media (prefers-reduced-motion: reduce)
+    ._activityRecents ._load-shimmer
+        animation: none

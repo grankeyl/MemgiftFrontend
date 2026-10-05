@@ -2,37 +2,63 @@
     <div class="_direction _comp _item _button">
         <div v-if="isLoading" class="_skeleton">
           <div class="_button">
-            <button></button>
+            <div class="pgm-footer">
+              <button class="pgm-footer__btn pgm-footer__btn--skel" disabled></button>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
           <div class="checker">
             <div v-if="!isTermsCompleted" class="_button">
-              <button :class="{ _loading: isLoadingButton }" style="opacity: .3; pointer-events: none;">
-                <h4>{{ $t('collection.buttonConditions') }}</h4>
-              </button>
+              <div class="pgm-footer">
+                <button
+                  type="button"
+                  class="pgm-footer__btn pgm-footer__btn--close"
+                  disabled
+                >
+                  <span>{{ $t('collection.buttonConditions') }}</span>
+                </button>
+              </div>
             </div>
             <div v-if="isTermsCompleted" class="_button">
-              <button v-if="!isMaxAmount" :class="{ _loading: isLoadingButton }" @click="useButton()">
-                <h4>{{ $t('collection.buttonBuy1') }} {{ NftBuyCount }} {{ $t('collection.buttonBuy2') }}</h4>
-
-                <img src="/src/assets/images/stars-white.png" alt="stars" />
-
-                <p>{{ buyGiftCount }}</p>
-
-                <Lottie 
-                  class="lt" 
-                  slug="loading-spin" 
-                  :loop="true"
-                  width="75"
-                  height="75"
-                  renderer="svg"
-                />
-                
-                <div v-if="isTicketsNotNull" class="saleBlock">
-                  <h4>- {{ useTicketsCount }}</h4>
+              <div class="pgm-footer">
+                <div class="pgm-footer__qty">
+                  <button
+                    type="button"
+                    class="pgm-footer__qty-btn"
+                    :disabled="NftBuyCount <= 1"
+                    @click="onMinus"
+                    aria-label="minus"
+                  >
+                    <span class="kit-icon" v-html="Icon.Minus"></span>
+                  </button>
+                  <span class="pgm-footer__qty-value">{{ NftBuyCount }}</span>
+                  <button
+                    type="button"
+                    class="pgm-footer__qty-btn"
+                    @click="onPlus"
+                    aria-label="plus"
+                  >
+                    <span class="kit-icon" v-html="Icon.Plus"></span>
+                  </button>
                 </div>
-              </button>
+                <button
+                  type="button"
+                  class="pgm-footer__btn pgm-footer__btn--primary"
+                  :class="{ _loading: isLoadingButton }"
+                  :disabled="isLoadingButton"
+                  @click="useButton()"
+                >
+                  <template v-if="!isLoadingButton">
+                    <span class="pgm-footer__title">{{ $t('collection.buttonBuy1') }}</span>
+                    <span class="pgm-footer__price">
+                      <img :src="Image_StarsWhite" alt="stars" />
+                      <span>{{ buyGiftCount }}</span>
+                    </span>
+                  </template>
+                  <Lottie v-else class="pgm-footer__spin" slug="loading-spin" :loop="true" width="26" height="26" renderer="svg" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -48,6 +74,9 @@
 
   import TelegramModule from '../../hooks/useTelegram';
   import Lottie from '../Lottie.vue';
+  import { Icon } from '../Icon';
+
+  import Image_StarsWhite from '@/assets/images/stars-white.png';
   
 
   export default {
@@ -80,14 +109,6 @@
         type: Object,
         required: true,
       },
-      isUseTickets: {
-        type: Boolean,
-        required: true,
-      },
-      useTicketsCount: {
-        type: Number,
-        required: true,
-      }
     },
 
     components: {
@@ -102,6 +123,9 @@
         NftGetFree: false,
 
         isLoadingButton: false,
+
+        Icon,
+        Image_StarsWhite,
       };
     },
   
@@ -133,27 +157,20 @@
         return this.NftData?.nftPriceCurrent;
       },
 
-      isTicketsNotNull() {
-        return this.useTicketsCount > 0;
-      },
-
-      useTicketsCount() {
-        return Math.max(0, Math.min(this.NftData?.nftPriceCurrent, this.useTicketsCount));
-      },
-
       buyGiftCount() {
-        if (this.isUseTickets) {
-          const tickets = Math.max(1, Math.min(this.NftData?.nftPriceCurrent, this.useTicketsCount));
-          const total = Math.max(0, this.NftData?.nftPriceCurrent) - tickets;
-          
-          return total;
-        }
-
         return this.NftData?.nftPriceCurrent;
       }
     },
 
     methods: {
+      onPlus() {
+        TelegramModule.useSoftHaptic();
+        this.$emit('buyCountPlus', 1);
+      },
+      onMinus() {
+        TelegramModule.useSoftHaptic();
+        this.$emit('buyCountMinus', 1);
+      },
       async loadResources() {
         try {
           await Promise.all([this.loadFonts(), this.loadIcons()]);
@@ -192,13 +209,6 @@
       },
 
       checkToNullTokenBuy() {
-        if (this.isUseTickets) {
-          const tickets = Math.max(1, Math.min(this.NftData?.nftPriceCurrent, this.useTicketsCount));
-          const total = Math.max(0, this.NftData?.nftPriceCurrent) - tickets;
-          
-          return total <= 0;
-        }
-
         return this.NftData?.nftPriceCurrent <= 0;
       },
 
@@ -206,8 +216,7 @@
         if (this.isLoadingButton) return;
         this.isLoadingButton = true;
 
-        const finalTickets = this.initTicketsCount();
-        const finalPrice = this.initNftPrice();
+        const finalPrice = this.NftData?.nftPriceCurrent;
 
         const token = await tokenApi.createTokenStars(
           this.storeCache.TelegramData.user.id,
@@ -224,8 +233,8 @@
           this.NftData.nftUniqueKey,
           this.$props.NftBuyCount,
           token,
-          this.isUseTickets,
-          finalTickets
+          false,
+          0
         );
         if (!invoice) return;
 
@@ -250,13 +259,12 @@
         if (this.isLoadingButton) return;
         this.isLoadingButton = true;
 
-        const finalTickets = this.initTicketsCount();
         const finalPrice = this.NftData?.nftPriceCurrent;
 
         const invoice = await createInvoiceNft(
           this.NftUniqueKey, 
           this.$props.NftBuyCount,
-          finalTickets
+          0
         );
         if (!invoice) return;
 
@@ -264,7 +272,6 @@
         if (!initData) return;
 
         if (!invoice.link && invoice.Status === 'success') {
-          this.storeCache.UserData.user.Tickets -= invoice.TicketsOut;
           this.$router.push({ 
             name: 'receive', 
             params: { 
@@ -279,7 +286,6 @@
             invoice.link, 
             () => {
               this.isLoadingButton = false;
-              this.storeCache.UserData.user.Tickets -= finalTickets;
               this.$router.push({ 
                 name: 'receive', 
                 params: { 
@@ -297,21 +303,6 @@
 
       async goToStore() {
         this.$router.push('/');
-      },
-
-      initTicketsCount() {
-        return Math.max(0, Math.min(this.NftData?.nftPriceCurrent, this.useTicketsCount));
-      },
-
-      initNftPrice() {
-        if (this.isUseTickets) {
-          const tickets = Math.max(1, Math.min(this.NftData?.nftPriceCurrent, this.useTicketsCount));
-          const total = Math.max(0, this.NftData?.nftPriceCurrent) - tickets;
-
-          return total;
-        }
-
-        return this.NftData?.nftPriceCurrent;
       },
 
       async checkNftFree() {

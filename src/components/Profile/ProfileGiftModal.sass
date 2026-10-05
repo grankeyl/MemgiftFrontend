@@ -1,0 +1,1209 @@
+@use "./../../assets/styles/_variables" as *
+
+.mgm-overlay
+    z-index: 1100 !important
+    transition: opacity .18s cubic-bezier(.25, 1, .5, 1), visibility 0s linear .18s, backdrop-filter .18s ease !important
+
+    &.is-open
+        transition: opacity .22s cubic-bezier(.25, 1, .5, 1), visibility 0s linear 0s, backdrop-filter .22s ease !important
+
+.mgm-dock
+    z-index: 1105 !important
+
+.pgm-modal .mgm-card
+    width: 100%
+    max-width: 100%
+    padding: 0
+    border-radius: 24px 0 0
+    background: transparent
+    border: none
+    box-shadow: none
+
+    &__head
+        border-radius: 20px 0 0
+
+.pgm-footer
+    display: flex
+    align-items: stretch
+    gap: 10px
+    width: 100%
+    margin-top: 2px
+
+    &__btn
+        flex: 1 1 100%
+        min-width: 0
+        height: 56px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        padding: 0 14px
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        transition: transform 0.15s ease, opacity 0.15s ease
+
+        &:active
+            transform: scale(0.97)
+
+        &:disabled
+            opacity: 0.4
+            pointer-events: none
+
+        span
+            font-size: 16px
+            font-weight: 600
+
+        &--close
+            background: $app-background-secondary-2
+            box-shadow: $app-glass-shadow
+
+            span
+                color: $app-text-color
+
+.mgm-card__head
+    &.rare .mgm-card__bg
+        background: $app-rarity-background-rare
+
+    &.veryrare .mgm-card__bg
+        background: $app-rarity-background-very-rare
+
+    &.epic .mgm-card__bg
+        background: $app-rarity-background-epic
+
+    &.legend .mgm-card__bg
+        background: $app-rarity-background-legendary
+
+    &.author .mgm-card__bg
+        background: $app-rarity-background-author
+
+    &.is-upg .mgm-card__bg
+        background: radial-gradient(circle, var(--center-color, #666), var(--around-color, #1a1a1a))
+
+.pgm-sell-empty
+    padding: 70px 24px calc(34px + env(safe-area-inset-bottom, 0px))
+    text-align: center
+
+    h3
+        color: $app-text-color
+        font-size: 18px
+        font-weight: 600
+
+    p
+        margin-top: 8px
+        color: $app-text-color-descr-primary
+
+.pgm-sell-form
+    width: calc(100% - 32px)
+    margin: 0 16px
+    display: flex
+    flex-direction: column
+    gap: 10px
+
+.pgm-sell-input
+    padding: 0 8px 0 18px
+
+    input
+        text-align: left
+
+    &__unit
+        display: flex
+        align-items: center
+        flex-shrink: 0
+        gap: 6px
+        padding: 0 6px 0 4px
+        color: $app-text-color
+        font-size: 14px
+        font-weight: 600
+        letter-spacing: -.2px
+
+        img
+            width: 18px
+            height: 18px
+
+        span
+            opacity: .8
+
+.pgm-sell-summary
+    width: 100%
+    display: flex
+    flex-direction: column
+    overflow: hidden
+    border-radius: 18px
+    background: #191919
+
+    &__row
+        position: relative
+        min-height: 52px
+        display: flex
+        align-items: center
+        justify-content: space-between
+        gap: 12px
+        padding: 12px 16px
+
+        &:not(:last-child)::after
+            content: ''
+            position: absolute
+            left: 16px
+            right: 16px
+            bottom: 0
+            height: 1px
+            background: rgba($app-text-color, .08)
+
+    &__label
+        color: $app-text-color-descr-primary
+        font-size: 14px
+        font-weight: 500
+        letter-spacing: -.15px
+
+    &__value
+        color: $app-text-color
+        font-size: 15px
+        font-weight: 600
+        letter-spacing: -.2px
+        font-variant-numeric: tabular-nums
+
+// цена лота под названием — блок из модалки маркета (Market/Modal.sass:453)
+.mgm-title__price
+    display: flex
+    align-items: center
+    gap: 5px
+
+    .kit-icon
+        width: 16px
+        height: 16px
+        display: flex
+        opacity: 0.9
+
+        svg
+            width: 16px
+            height: 16px
+
+    span
+        font-size: 17px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.3px
+
+
+// Блок статуса лота. Тот же материал, что у таблицы характеристик ниже
+// (.mgm-info из Market/Modal.sass) — отдельная карточка, но не чужая по стилю
+.pgm-market
+    width: calc(100% - 32px)
+    margin: 0 16px 3px
+    box-sizing: border-box
+    display: flex
+    align-items: center
+    gap: 10px
+    padding: 11px 12px
+    text-align: left
+    cursor: pointer
+    background: rgba($app-background-secondary-2, 0.2)
+    border: 1px solid $app-background-secondary
+    border-radius: 20px
+    transition: transform .16s cubic-bezier(.22, 1, .36, 1)
+    -webkit-tap-highlight-color: transparent
+
+    &:active
+        transform: scale(.985)
+
+    // левый и правый край — одинаковые боксы 26px, тогда строка симметрична
+    &__tile
+        width: 26px
+        height: 26px
+        flex-shrink: 0
+        display: flex
+        align-items: center
+        justify-content: center
+
+        // иконка приходит через v-html, поэтому у неё нет data-v-атрибута
+        // и обычные scoped-селекторы до неё не достают — нужен :deep()
+        .kit-icon
+            display: flex
+            line-height: 0
+
+            :deep(svg)
+                width: 18px
+                height: 18px
+                display: block
+
+            :deep(path)
+                fill: $app-text-color
+
+    &__title
+        min-width: 0
+        flex: 1
+        font-size: 15px
+        font-weight: 600
+        line-height: 26px
+        color: $app-text-color
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
+
+    &__go
+        width: 26px
+        height: 26px
+        flex-shrink: 0
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 50%
+        background: rgba($app-text-color, .06)
+        color: rgba($app-text-color, .5)
+
+        svg
+            width: 7px
+            height: 12px
+
+// блок снимается плавно, а не исчезает рывком вместе со сдвигом таблицы
+.pgm-market-enter-active,
+.pgm-market-leave-active
+    transition: opacity .22s ease, transform .26s cubic-bezier(.22, 1, .36, 1)
+
+.pgm-market-enter-from,
+.pgm-market-leave-to
+    opacity: 0
+    transform: translate3d(0, -6px, 0)
+
+
+.pgm-recipient
+    width: calc(100% - 32px)
+    margin: 6px 16px 0
+    display: flex
+    flex-direction: column
+    gap: 6px
+
+.pgm-recipient-search
+    position: relative
+    width: 100%
+    height: 60px
+    display: flex
+    align-items: center
+    padding: 0 18px
+    border: 1px solid transparent
+    border-radius: 99em
+    background: $app-background-secondary-2
+    box-shadow: $app-glass-shadow-2
+    -webkit-box-shadow: $app-glass-shadow-2
+    box-sizing: border-box
+    transition: border-color .18s cubic-bezier(.22, 1, .36, 1), box-shadow .18s cubic-bezier(.22, 1, .36, 1), transform .18s cubic-bezier(.22, 1, .36, 1)
+
+    &:focus-within
+        border-color: transparent
+        box-shadow: $app-glass-shadow-2
+        -webkit-box-shadow: $app-glass-shadow-2
+
+    &.error
+        border-color: rgba($app-text-color-red, .55)
+        box-shadow: $app-glass-shadow-2
+        -webkit-box-shadow: $app-glass-shadow-2
+
+    &.selected
+        padding: 0 12px
+
+    input
+        width: 100%
+        min-width: 0
+        height: 100%
+        padding: 0
+        border: none
+        outline: none
+        background: transparent
+        color: $app-text-color
+        font-family: $app-fontface
+        font-size: 16px
+        font-weight: 500
+        letter-spacing: -.15px
+        line-height: 1.2
+
+        &::placeholder
+            color: $app-text-color
+            opacity: .32
+            font-size: 16px
+            font-weight: 500
+
+    &__loader
+        width: 19px
+        height: 19px
+        flex-shrink: 0
+        margin-left: 12px
+        border: 2px solid $app-span-gray-background
+        border-top-color: $app-text-color
+        border-radius: 50%
+        animation: spinner 1s linear infinite
+
+.pgm-recipient-selected
+    width: 100%
+    min-width: 0
+    height: 46px
+    display: flex
+    align-items: center
+    gap: 12px
+    animation: pgm-recipient-in .24s cubic-bezier(.22, 1, .36, 1)
+
+    > img,
+    > .pgm-recipient-avatar
+        width: 38px
+        height: 38px
+        flex-shrink: 0
+        border-radius: 50%
+        object-fit: cover
+
+    &__name
+        min-width: 0
+        flex: 1
+        overflow: hidden
+        color: $app-text-color
+        font-size: 15px
+        font-weight: 600
+        text-overflow: ellipsis
+        white-space: nowrap
+
+    button
+        width: 28px
+        min-width: 28px
+        height: 28px
+        display: flex
+        flex-shrink: 0
+        align-items: center
+        justify-content: center
+        padding: 0
+        border: none
+        border-radius: 50%
+        background: transparent
+        color: $app-text-color
+        line-height: 0
+        transition: opacity .18s cubic-bezier(.22, 1, .36, 1)
+
+        &:active
+            opacity: .55
+
+        &:disabled
+            opacity: .35
+            pointer-events: none
+
+        .kit-icon
+            width: 11px
+            height: 11px
+            display: flex
+            align-items: center
+            justify-content: center
+            line-height: 0
+            opacity: .4
+
+            :deep(svg)
+                width: 11px
+                height: 11px
+                display: block
+                margin: 0
+
+                path
+                    stroke: $app-text-color
+                    stroke-width: 2
+                    stroke-linecap: round
+
+.pgm-recipient-avatar
+    display: flex
+    align-items: center
+    justify-content: center
+    background: rgba($app-text-color, .08)
+    color: $app-text-color
+    font-size: 14px
+    font-weight: 700
+    text-transform: uppercase
+
+.pgm-recipient-error,
+.pgm-recipient-empty
+    margin: 0 2px
+    font-size: 13px
+    font-weight: 500
+    line-height: 1.35
+
+.pgm-recipient-error
+    color: $app-text-color-red
+
+.pgm-recipient-empty
+    color: $app-text-color-descr-primary
+
+.pgm-fade-enter-active,
+.pgm-fade-leave-active
+    transition: opacity .18s ease, transform .18s cubic-bezier(.22, 1, .36, 1)
+
+.pgm-fade-enter-from,
+.pgm-fade-leave-to
+    opacity: 0
+    transform: scale(0.82)
+
+.pgm-status-enter-active
+    transition: opacity .2s cubic-bezier(.22, 1, .36, 1), transform .2s cubic-bezier(.22, 1, .36, 1)
+
+.pgm-status-enter-from
+    opacity: 0
+    transform: translateY(-3px)
+
+// уходит мгновенно: анимация ухода держала бы высоту строки,
+// а потом схлопывала её — это и читалось как скачок отступа
+.pgm-status-leave-active
+    display: none
+
+.pgm-list-enter-active
+    transition: opacity .2s cubic-bezier(.22, 1, .36, 1), transform .2s cubic-bezier(.22, 1, .36, 1)
+
+.pgm-list-leave-active
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    transition: opacity .16s ease
+
+.pgm-list-enter-from
+    opacity: 0
+    transform: translateY(6px)
+
+.pgm-list-leave-to
+    opacity: 0
+
+.pgm-recipient-list
+    position: relative
+
+.pgm-recipient-card
+    width: 100%
+    max-height: 260px
+    display: flex
+    flex-direction: column
+    overflow-x: hidden
+    overflow-y: auto
+    padding: 6px 16px
+    background: #171717
+    border-radius: 22px
+
+.pgm-recipient-row
+    position: relative
+    width: 100%
+    display: flex
+    align-items: center
+    gap: 12px
+    padding: 10px 0
+    margin: 0
+    border: none
+    border-radius: 0
+    text-align: left
+    cursor: pointer
+    box-sizing: border-box
+    background: transparent
+    transition: opacity .18s cubic-bezier(.22, 1, .36, 1)
+    animation: pgm-recipient-row-in .24s cubic-bezier(.22, 1, .36, 1) both
+    // каскад ограничен: раньше десятый ряд ждал 400мс и список «доезжал»
+    animation-delay: calc(min(var(--i, 0), 5) * 26ms)
+
+    &:active
+        opacity: .82
+
+    &__ava
+        width: 42px
+        min-width: 42px
+        height: 42px
+        display: flex
+        align-items: center
+        justify-content: center
+        overflow: hidden
+        flex-shrink: 0
+        border-radius: 11px
+        background: rgba($app-text-color, .06)
+
+        img
+            width: 100%
+            height: 100%
+            display: block
+            object-fit: cover
+            border-radius: 11px
+
+        > span
+            color: $app-text-color
+            font-size: 15px
+            font-weight: 700
+            line-height: 1
+            opacity: .5
+            text-transform: uppercase
+
+    &__mid
+        min-width: 0
+        min-height: 42px
+        display: flex
+        flex: 1
+        flex-direction: column
+        justify-content: center
+        gap: 4px
+
+    &__name
+        overflow: hidden
+        color: $app-text-color
+        font-size: 15px
+        font-weight: 500
+        letter-spacing: -.2px
+        line-height: 1.2
+        text-overflow: ellipsis
+        white-space: nowrap
+
+    &__id
+        width: fit-content
+        max-width: 100%
+        overflow: hidden
+        color: $app-text-color-descr-primary
+        font-size: 13px
+        font-weight: 500
+        letter-spacing: -.1px
+        line-height: 1.2
+        text-overflow: ellipsis
+        white-space: nowrap
+
+    &__action
+        flex-shrink: 0
+        height: 35px
+        min-width: 68px
+        display: inline-flex
+        align-items: center
+        justify-content: center
+        padding: 0 15px
+        border-radius: 99em
+        background: linear-gradient(180deg, #232323 0%, #1b1b1b 100%)
+        box-shadow: $app-glass-shadow-2
+        -webkit-box-shadow: $app-glass-shadow-2
+        color: $app-text-color
+        font-size: 14px
+        font-weight: 600
+        letter-spacing: -.1px
+        white-space: nowrap
+        transition: background .18s cubic-bezier(.22, 1, .36, 1)
+
+        svg
+            width: 16px
+            height: 16px
+            display: block
+
+    &.selected .pgm-recipient-row__action
+        min-width: 40px
+        padding: 0
+        background: rgba($app-background-green-secondary, .18)
+        color: $app-background-green-secondary
+        box-shadow: none
+
+    &--skeleton
+        pointer-events: none
+
+        .pgm-recipient-row__ava,
+        .pgm-recipient-row__action,
+        .pgm-recipient-row__skeleton-line
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba($app-text-color, .06) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        .pgm-recipient-row__action
+            width: 68px
+            box-shadow: none
+
+    &__skeleton-line
+        width: 58%
+        height: 12px
+        border-radius: 6px
+
+        &.small
+            width: 38%
+            height: 10px
+
+@keyframes pgm-recipient-in
+    0%
+        opacity: 0
+        transform: translateY(4px)
+    100%
+        opacity: 1
+        transform: translateY(0)
+
+@keyframes pgm-recipient-row-in
+    0%
+        opacity: 0
+        transform: translate3d(0, 6px, 0)
+    100%
+        opacity: 1
+        transform: translate3d(0, 0, 0)
+
+@keyframes pgm-send-sweep
+    0%
+        transform: translateX(-140%) skewX(-18deg)
+        opacity: 0
+    18%
+        opacity: .55
+    100%
+        transform: translateX(240%) skewX(-18deg)
+        opacity: 0
+
+.pgm-transfer-footer .mgm-footer__buy
+    position: relative
+    width: 100%
+    overflow: hidden
+    isolation: isolate
+    transition: transform 120ms cubic-bezier(.25, 1, .5, 1), background 220ms cubic-bezier(.22, 1, .36, 1), box-shadow 220ms cubic-bezier(.22, 1, .36, 1)
+
+    &:active:not(:disabled)
+        transform: scale(.965)
+
+    &._loading
+        background: #0878e5
+        box-shadow: inset 0 0 0 1px rgba($app-text-color, .08), $app-glass-shadow
+
+        &::after
+            content: ''
+            position: absolute
+            z-index: -1
+            top: -30%
+            bottom: -30%
+            left: 0
+            width: 34%
+            background: linear-gradient(90deg, transparent, rgba($app-text-color, .24), transparent)
+            animation: pgm-send-sweep 1.35s cubic-bezier(.22, 1, .36, 1) infinite
+            pointer-events: none
+
+.pgm-send-button__content,
+.pgm-send-button__loading
+    position: absolute
+    inset: 0
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 7px
+    transition: opacity 160ms ease, transform 220ms cubic-bezier(.22, 1, .36, 1), filter 180ms ease
+
+.pgm-send-button__content
+    opacity: 1
+    transform: translateY(0) scale(1)
+
+    &.hidden
+        opacity: 0
+        transform: translateY(-6px) scale(.96)
+        filter: blur(3px)
+
+.pgm-send-button__loading
+    opacity: 0
+    transform: translateY(7px) scale(.96)
+    pointer-events: none
+
+    &.visible
+        opacity: 1
+        transform: translateY(0) scale(1)
+
+    > span
+        font-size: 15px
+        font-weight: 600
+        letter-spacing: -.15px
+
+    .mgm-footer__spin
+        width: 22px
+        height: 22px
+
+.pgm-transfer-cost
+    display: flex
+    align-items: center
+    gap: 4px
+
+    img
+        width: 17px
+        height: 17px
+
+    span
+        font-size: 16px
+        font-weight: 600
+
+@media screen and (max-height: 650px)
+    .pgm-recipient-card
+        max-height: 132px
+
+@media (prefers-reduced-motion: reduce)
+    .pgm-transfer-footer .mgm-footer__buy,
+    .pgm-send-button__content,
+    .pgm-send-button__loading
+        transition: none
+
+    .pgm-transfer-footer .mgm-footer__buy._loading::after
+        animation: none
+        display: none
+
+    .pgm-send-button__content.hidden
+        filter: none
+
+    .pgm-recipient-search__loader
+        animation-duration: 1.8s
+
+    .pgm-recipient-row--skeleton
+        .pgm-recipient-row__ava,
+        .pgm-recipient-row__go,
+        .pgm-recipient-row__skeleton-line
+            animation: none
+
+    .pgm-recipient-row,
+    .pgm-recipient-selected,
+    .pgm-fade-enter-active,
+    .pgm-fade-leave-active,
+    .pgm-status-enter-active,
+    .pgm-status-leave-active,
+    .pgm-list-enter-active,
+    .pgm-list-leave-active
+        animation: none
+        transition: none
+
+
+// ── плашка «подарок в локе» внутри формы отправки ──
+// плашка повторяет поле ввода получателя: та же высота, скругление,
+// фон и тень — блоки формы должны читаться как один ряд
+.pgm-lock
+    display: flex
+    align-items: center
+    gap: 12px
+    width: calc(100% - 32px)
+    height: 60px
+    margin: 8px 16px 0
+    // слева меньше, чем в поле ввода: там текст, а тут круглая иконка,
+    // и при равных полях она смотрится вдавленной вглубь
+    padding: 0 18px 0 12px
+    box-sizing: border-box
+    text-align: left
+    background: $app-background-secondary-2
+    border: 1px solid transparent
+    border-radius: 99em
+    box-shadow: $app-glass-shadow-2
+    -webkit-box-shadow: $app-glass-shadow-2
+    cursor: pointer
+    transition: transform .18s cubic-bezier(.22, 1, .36, 1)
+
+    &:active
+        transform: scale(.99)
+
+    &__ico
+        flex-shrink: 0
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 36px
+        height: 36px
+        border-radius: 50%
+        background: $app-span-gray-background
+        color: $app-text-color
+
+        // иконка вставлена через v-html, а scoped-стили до её содержимого
+        // не дотягиваются — размер задаём только через :deep
+        :deep(svg)
+            width: 16px
+            height: 16px
+
+    &__text
+        display: flex
+        flex-direction: column
+        gap: 1px
+        min-width: 0
+        flex: 1
+
+    &__title
+        font-size: 15px
+        font-weight: 600
+        line-height: 1.25
+        color: $app-text-color
+
+    // остаток всегда в одну строку: «20 ч 40 мин» переносилось
+    // по последнему слову и распирало плашку на три строки
+    &__hint
+        font-size: 13px
+        font-weight: 500
+        line-height: 1.3
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+        color: $app-text-color-descr-primary
+
+    // шеврон в исходнике 8×14 — тянуть его в квадрат нельзя
+    &__chev
+        flex-shrink: 0
+        display: flex
+        align-items: center
+        opacity: .5
+
+        :deep(svg)
+            width: 7px
+            height: 12px
+
+// справка открывается поверх формы отправки (её шит — z-index 1105),
+// поэтому и затемнение поднимаем выше неё
+.pgm-fee-overlay
+    z-index: 9990 !important
+
+// справка — такой же шит, как модалка подарка, поэтому лежит выше её
+// дока (1105) и не уводит форму отправки со сцены
+.pgm-fee-modal
+    .mgm-dock
+        z-index: 9995 !important
+
+    // заголовок по центру и на одной оси с крестиком: 12px отступа сверху
+    // плюс половина строки в 34px дают ровно центр кнопки закрытия.
+    // боковые 56px не дают длинному заголовку залезть под неё
+    .mgm-sheet
+        padding-top: 12px
+
+    .mgm-title
+        justify-content: center
+        min-height: 34px
+        padding: 0 56px
+        margin: 0 0 16px
+        text-align: center
+
+        &__left
+            align-items: center
+
+// ── содержимое справки ──
+// в шите нет боковых полей, поэтому текст и таблицу отступаем сами —
+// ровно как плашку и поле ввода в форме отправки
+.pgm-fee
+    &__descr
+        width: calc(100% - 32px)
+        margin: 0 16px
+        font-size: 15px
+        font-weight: 500
+        line-height: 1.4
+        color: $app-text-color-descr-primary
+
+    &__rows
+        width: calc(100% - 32px)
+        margin: 14px 16px 4px
+        box-sizing: border-box
+        background: rgba($app-background-secondary-2, 0.2)
+        border: 1px solid $app-background-secondary
+        border-radius: 20px
+        overflow: hidden
+
+    &__row
+        display: flex
+        align-items: center
+        justify-content: space-between
+        gap: 12px
+        min-height: 50px
+        padding: 0 16px
+
+        & + &
+            border-top: 1px solid $app-background-secondary
+
+    &__label
+        font-size: 15px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+
+    &__val
+        font-size: 15px
+        font-weight: 600
+        color: $app-text-color
+        font-variant-numeric: tabular-nums
+
+    &__price
+        display: inline-flex
+        align-items: center
+        gap: 5px
+        font-size: 16px
+        font-weight: 700
+        color: $app-text-color
+        font-variant-numeric: tabular-nums
+
+        img
+            width: 15px
+            height: 15px
+            display: block
+
+    // «Оплатить ★ 25» одной строкой. Не полагаемся на display родителя:
+    // у .buttons button h4 свои правила, и блочная картинка внутри
+    // разрывала строку — поэтому звезда именно inline-block
+    &__pay
+        white-space: nowrap
+
+        img
+            width: 15px
+            height: 15px
+            display: inline-block
+            vertical-align: -2px
+            margin: 0 5px 0 6px
+
+        span
+            font-variant-numeric: tabular-nums
+
+// ── минт в кошелёк ───────────────────────────────────────────────────
+
+// тикер минта: иконка заметно крупнее стандартных 17px
+.mgm-card__tickers-i.is-mint
+    .kit-icon
+        width: 17px
+        height: 17px
+        margin: 0
+
+// лого GetGems визуально плотнее остальных — чуть ужимаем
+.mgm-card__tickers-i.is-mint.is-gg
+    .kit-icon
+        width: 17px
+        height: 17px
+        margin: 0.5px 0
+
+// тикер минта: статусные акценты
+.mgm-card__tickers-i.minted
+    p
+        color: #4ADE80
+
+    .kit-icon
+        opacity: 1
+
+.mgm-card__tickers-i.minting
+    p
+        color: #7CB3FF
+
+// минт-шит поверх шита подарка: оба телепортированы в body,
+// поэтому разводим слоями, а не порядком в DOM
+.pgm-mint-overlay
+    z-index: 1110 !important
+
+// перебиваем общий .mgm-dock (1105 !important): минт-шит выше шита подарка
+.pgm-mint-modal .pgm-mint-dock
+    z-index: 1115 !important
+
+// ── содержимое минт-шита ─────────────────────────────────────────────
+.pgm-mint
+    display: flex
+    flex-direction: column
+    align-items: center
+    text-align: center
+    padding: 46px 20px calc(30px + env(safe-area-inset-bottom, 14px))
+    gap: 0
+
+    // иконка-статус: стеклянный круг, вокруг — кольцо-спиннер при минте
+    &__badge
+        position: relative
+        width: 68px
+        height: 68px
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 50%
+        background: linear-gradient(180deg, $app-background-secondary-2 0%, #191919 100%)
+        box-shadow: $app-glass-shadow-2, 0 10px 28px rgba(0, 0, 0, 0.35)
+        margin-bottom: 22px
+
+        .kit-icon
+            width: 30px
+            height: 30px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            svg
+                width: 30px
+                height: 30px
+
+        &-ring
+            position: absolute
+            inset: -5px
+            border-radius: 50%
+            border: 2px solid transparent
+            opacity: 0
+            transition: opacity 0.2s ease
+
+        &.is-spin .pgm-mint__badge-ring
+            opacity: 1
+            border-color: rgba($app-background-blue-secondary, 0.15)
+            border-top-color: $app-background-blue-secondary
+            animation: pgm-mint-spin 0.9s linear infinite
+
+        &.is-ok
+            background: linear-gradient(180deg, rgba($app-background-green-secondary, 0.2) 0%, #191919 100%)
+
+        &.is-err
+            background: linear-gradient(180deg, rgba(#EF4444, 0.18) 0%, #191919 100%)
+
+    &__title
+        font-size: 19px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.3px
+        margin-bottom: 10px
+
+    &__descr
+        font-size: 14px
+        font-weight: 500
+        line-height: 1.4
+        color: $app-text-color-descr-primary
+        max-width: 300px
+        text-wrap: pretty
+        margin-bottom: 26px
+
+    // детали — плоский блок как списки в фильтр-шитах
+    &__rows
+        width: 100%
+        background: #171717
+        border-radius: 20px
+        padding: 6px 16px
+        margin-bottom: 20px
+
+    &__row
+        width: 100%
+        min-height: 48px
+        display: flex
+        align-items: center
+        justify-content: space-between
+        gap: 12px
+        border-bottom: 1px solid rgba($app-text-color, 0.04)
+        cursor: pointer
+        -webkit-tap-highlight-color: transparent
+
+        &:last-child
+            border-bottom: none
+
+        &:active
+            opacity: 0.7
+
+        &-label
+            font-size: 14px
+            font-weight: 500
+            color: $app-text-color-descr-primary
+            white-space: nowrap
+
+        &-val
+            font-size: 14px
+            font-weight: 600
+            color: $app-text-color
+            font-variant-numeric: tabular-nums
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+
+            &.is-err
+                color: #EF4444
+                font-weight: 500
+
+    &__actions
+        width: 100%
+        display: flex
+        flex-direction: column
+        gap: 12px
+
+    // главная кнопка — сплошной TON-синий, как Apply в фильтрах
+    &__cta
+        width: 100%
+        height: 53px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        background: $app-background-blue-secondary
+        transition: transform 0.15s ease, opacity 0.15s ease
+        -webkit-tap-highlight-color: transparent
+
+        &:active
+            transform: scale(0.97)
+
+        &:disabled
+            opacity: 0.4
+            pointer-events: none
+
+        .kit-icon
+            width: 18px
+            height: 18px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            svg
+                width: 18px
+                height: 18px
+
+        span
+            font-size: 16px
+            font-weight: 600
+            color: #FFFFFF
+            letter-spacing: -0.2px
+
+    // вторичная — стекло
+    &__ghost
+        width: 100%
+        height: 50px
+        display: flex
+        align-items: center
+        justify-content: center
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+        box-shadow: $app-glass-shadow-2
+        transition: transform 0.15s ease
+        -webkit-tap-highlight-color: transparent
+
+        &:active
+            transform: scale(0.97)
+
+        span
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+
+@keyframes pgm-mint-spin
+    to
+        transform: rotate(360deg)
+
+@media (prefers-reduced-motion: reduce)
+    .pgm-mint__badge.is-spin .pgm-mint__badge-ring
+        animation: none
+
+// ── ончейн-таблица заминченного подарка ─────────────────────────────
+// сама таблица — стандартный .mgm-info; здесь только иконка копирования
+.pgm-chainrow
+    cursor: pointer
+    -webkit-tap-highlight-color: transparent
+
+    &:active
+        opacity: 0.7
+
+    &__addr
+        font-variant-numeric: tabular-nums
+
+        // только владелец — насыщенно-синий и подчёркнут
+        &--owner
+            color: $app-button-blue-text-color !important
+            text-decoration: underline
+            text-underline-offset: 3px
+            text-decoration-color: rgba($app-button-blue-text-color, 0.55)
+
+    &__copy
+        width: 13px
+        height: 13px
+        margin-left: auto
+        opacity: 0.35
+        flex-shrink: 0
+
+
+
+
+// блок возврата NFT + подсказка под ним
+.pgm-return
+    margin-top: 10px
+
+.pgm-return__hint
+    width: calc(100% - 32px)
+    margin: 8px 16px 0
+    font-size: 12px
+    font-weight: 500
+    line-height: 1.45
+    color: $app-text-color-descr
+    text-wrap: pretty
+
+// кнопка «Возврат» в футере — TON-синяя, парой к «Закрыть»
+.pgm-footer__btn--return
+    background: $app-background-blue-secondary
+
+    span
+        color: #FFFFFF
+
+

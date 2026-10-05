@@ -64,6 +64,7 @@ export const getGifts = async (
     nftBackdrop: string,
     offset: number,
     limit: number,
+    minted: string = '', // '' | 'only' | 'exclude' — таб «в кошельке»
 ) => {
     try {
         const tokenBearer = Cookies.get("token");
@@ -75,6 +76,7 @@ export const getGifts = async (
             `&nft_name=${nftName}` +
             `&symbol=${nftSymbol}` +
             `&background=${nftBackdrop}` +
+            `&minted=${minted}` +
             `&offset=${offset}&limit=${limit}`,
             { headers: { Authorization: `${tokenBearer}` } }
         );
@@ -91,7 +93,8 @@ export const getUserGifts = async (
     filter: string,
     gift_ukey: string,
     offset: number,
-    limit: number
+    limit: number,
+    minted: '' | 'only' | 'exclude' = ''
 ) => {
     try {
         const tokenBearer = Cookies.get("token");
@@ -100,7 +103,8 @@ export const getUserGifts = async (
             `${API_URL}/nft/m_u/${userId}?status=${status}` +
             `&filter=${filter}` +
             `&gift_ukey=${gift_ukey}` +
-            `&offset=${offset}&limit=${limit}`,
+            `&offset=${offset}&limit=${limit}` +
+            (minted ? `&minted=${minted}` : ''),
             { headers: { Authorization: `${tokenBearer}` } }
         );
         const nfts = response.data;
@@ -158,7 +162,6 @@ export const getAllStacksPurchased = async (
             { userId, offset, limit },
             { headers: { Authorization: `Bearer ${tokenBearer}` } }
         );
-        console.log(response.data)
         const nfts = response.data;
         return nfts;
     } catch (error) {
@@ -488,7 +491,6 @@ export const transfer = async (
     UUIDs: string[],
     ToTld: string
 ) => {
-    console.log(UUIDs, ToTld);
     try {
         const tokenBearer = Cookies.get("token");
         const response = await axios.post(
@@ -496,10 +498,12 @@ export const transfer = async (
             { uuids: UUIDs, to_tld: ToTld },
             { headers: { Authorization: `${tokenBearer}` } }
         );
-        const count = response.data;
-        return count;
-    } catch (error) {
-        return false;
+        return response.data;
+    } catch (error: any) {
+        // сервер объясняет причину текстом — раньше она терялась
+        // и пользователь всегда видел одинаковое «ошибка отправки»
+        const reason = String(error?.response?.data || '').trim();
+        return { error: true, reason };
     }
 };
 
@@ -597,6 +601,52 @@ export const sodaEventConfirm = async () => {
         );
         const data = response.data;
         return data;
+    } catch (error) {
+        return false;
+    }
+};
+// ── минт улучшенного подарка в NFT (кошелёк TON) ──────────────────────
+
+export const mintNft = async (uuid: string) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.post(
+            `${API_URL}/nft/${uuid}/mint`,
+            {},
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error: any) {
+        // ошибки валидации приходят с текстом — отдаём его наверх для тоста
+        if (error?.response?.data?.error) {
+            return { ok: false, error: error.response.data.error };
+        }
+        return false;
+    }
+};
+
+export const mintStatus = async (uuid: string) => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/nft/${uuid}/mint`,
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
+// моя строка лидерборда: ранги по холду и рефералам
+export const getRatingMe = async () => {
+    try {
+        const tokenBearer = Cookies.get("token");
+        const response = await axios.get(
+            `${API_URL}/leader/hold/me`,
+            { headers: { Authorization: `${tokenBearer}` } }
+        );
+        return response.data;
     } catch (error) {
         return false;
     }

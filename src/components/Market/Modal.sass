@@ -6,436 +6,715 @@
     100%
         background-position: 200% 0
 
-@keyframes fadeUp
-    from
-        opacity: 0
-        transform: translateY(8px)
-    to
-        opacity: 1
-        transform: translateY(0)
+// Clean iOS sheet motion — pure slide, no bounce/scale
+$mgm-sheet-ease: cubic-bezier(0.32, 0.72, 0, 1)
+$mgm-sheet-duration: 0.34s
 
-// Balance pill at top
-.mkt-balance
-    width: fit-content
-    height: 32px
-    display: flex
-    align-items: center
-    gap: 6px
-    padding: 0 4px 0 12px
-    background: $app-background-secondary
-    border-radius: 25px
-    cursor: pointer
-    position: fixed
-    top: 40px
-    left: 50%
-    transform: translateX(-50%)
-    z-index: 1001
+.mgm-overlay
+    z-index: 1000 !important
+    transition: opacity 0.28s ease, visibility 0s linear 0.28s !important
 
-    &__ctx
-        display: flex
-        align-items: center
-        gap: 2px
+    &.is-open
+        transition: opacity 0.28s ease, visibility 0s linear 0s !important
 
-        h4
-            font-size: 12px
-            font-weight: 600
-            color: $app-text-color
-
-        img
-            width: 18px
-            height: 18px
-
-    &__btn
-        width: 24px
-        height: 24px
-        min-width: 24px
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 50%
-        background: $app-background-blue-secondary
-        transition: transform 0.15s ease
-
-        &:active
-            transform: scale(0.9)
-
-        img
-            width: 20px
-            height: 20px
-
-// Main gift modal
 .giftModal
     width: 100%
-    height: fit-content
     max-width: $app-max-width
     position: relative
 
-.mkt-sheet
+// ── Dock: chrome (outside) + sheet ───────────────────────────────────────────
+
+.mgm-dock
     max-width: $app-max-preview-width
     width: 100%
-    height: auto
-    max-height: 90vh
     position: fixed
-    overflow-y: auto
-    overflow-x: hidden
-    background: $app-background
-    z-index: 1000
+    z-index: 1005
     bottom: 0
     left: 50%
-    transform: translate(-50%, 0%)
-    border-radius: 24px 24px 0 0
-    transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1)
+    transform: translate(-50%, 100%)
+    display: flex
+    flex-direction: column
+    align-items: stretch
+    pointer-events: none
+    will-change: transform
+    transition: transform $mgm-sheet-duration $mgm-sheet-ease
+
+    &.open:not(.hide)
+        transform: translate(-50%, 0)
+        visibility: visible
 
     &.hide
         transform: translate(-50%, 100%)
-        transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1)
+        pointer-events: none
+        visibility: hidden
+        transition: transform $mgm-sheet-duration $mgm-sheet-ease, visibility 0s linear $mgm-sheet-duration
+
+// Floating balance just above the sheet (centered)
+.mgm-chrome
+    position: relative
+    width: 100%
+    height: 44px
+    margin-bottom: 10px
+    padding: 0 16px
+    box-sizing: border-box
+    pointer-events: none
+    display: flex
+    align-items: center
+    justify-content: center
+
+.mgm-balance
+    display: flex
+    align-items: center
+    gap: 7px
+    height: 38px
+    padding: 0 14px
+    border: none
+    border-radius: 99em
+    cursor: pointer
+    pointer-events: auto
+    background: linear-gradient(180deg, $app-background-secondary-2 0%, #191919 100%)
+    backdrop-filter: blur(28px) saturate(140%)
+    -webkit-backdrop-filter: blur(28px) saturate(140%)
+    box-shadow: $app-glass-shadow-2, 0 8px 24px rgba(0, 0, 0, 0.35)
+    -webkit-box-shadow: $app-glass-shadow-2, 0 8px 24px rgba(0, 0, 0, 0.35)
+    transition: transform 0.15s ease
+    -webkit-tap-highlight-color: transparent
+
+    &:active
+        transform: scale(0.96)
+
+    .kit-icon
+        width: 16px
+        height: 16px
+        display: flex
+        flex-shrink: 0
+
+        :deep(svg)
+            width: 16px
+            height: 16px
+
+            path
+                fill: $app-text-color
+
+    span
+        font-size: 15px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.2px
+        line-height: 1
+
+// ── Sheet ────────────────────────────────────────────────────────────────────
+
+.mgm-sheet
+    position: relative
+    width: 100%
+    max-height: min(82vh, 760px)
+    overflow-y: auto
+    overflow-x: hidden
+    background: $app-background
+    border-radius: 24px 24px 0 0
+    box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.5)
+    -webkit-overflow-scrolling: touch
+    overscroll-behavior: contain
+    pointer-events: auto
+
+    &::-webkit-scrollbar
+        display: none
 
     &__handle
-        width: 100%
-        height: 20px
+        width: 36px
+        height: 4px
+        background: rgba($app-text-color, 0.12)
+        border-radius: 2px
+        margin: 10px auto 14px
+        cursor: grab
+        position: fixed
+        top: 0
+        left: 0
+
+// Close — glass circle like balance chip
+.mgm-close
+    position: absolute
+    top: 12px
+    right: 12px
+    z-index: 5
+    width: 34px
+    min-width: 34px
+    height: 34px
+    box-sizing: border-box
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0
+    margin: 0
+    border: none
+    outline: none
+    border-radius: 50%
+    cursor: pointer
+    overflow: hidden
+    background: linear-gradient(
+        180deg,
+        rgba($app-background-secondary-2, 0.35) 0%,
+        rgba(#1919198a, 0.35) 100%
+    );
+    backdrop-filter: blur(28px) saturate($app-saturation)
+    -webkit-backdrop-filter: blur(28px) saturate($app-saturation)
+    box-shadow: $app-glass-shadow-2, 0 4px 12px rgba(0, 0, 0, 0.2)
+    -webkit-box-shadow: $app-glass-shadow-2, 0 4px 12px rgba(0, 0, 0, 0.2)
+    transition: transform 0.15s ease
+    -webkit-tap-highlight-color: transparent
+
+    &:active
+        transform: scale(0.9)
+
+    .kit-icon
+        width: 12px
+        height: 12px
         display: flex
         align-items: center
         justify-content: center
-        position: sticky
-        top: 0
-        z-index: 10
-        cursor: grab
+        line-height: 0
+        opacity: 1
 
-    &__bar
-        width: 36px
-        height: 4px
-        background: rgba($app-text-color, 0.15)
-        border-radius: 2px
+        :deep(svg)
+            width: 12px
+            height: 12px
+            display: block
 
-    // ========= SKELETON =========
-    &__skel
-        padding: 0 16px 32px
-        animation: fadeUp 0.2s ease
+            path
+                fill: none !important
+                stroke: $app-text-color !important
+                stroke-width: 2
+                stroke-linecap: round
+                opacity: 0.75
 
-        .skel-hero
-            width: 100%
-            height: 220px
-            border-radius: 20px
-            margin-bottom: 16px
-            background: $app-background-secondary
-            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
-            background-size: 200% 100%
-            animation: shimmer 1.8s ease-in-out infinite
-
-        .skel-lines
-            display: flex
-            flex-direction: column
-            gap: 10px
-            margin-bottom: 20px
-
-        .skel-l
-            height: 16px
-            border-radius: 8px
-            background: $app-background-secondary
-            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
-            background-size: 200% 100%
-            animation: shimmer 1.8s ease-in-out infinite
-
-            &.skel-w60
-                width: 60%
-
-            &.skel-w30
-                width: 30%
-
-        .skel-table
-            display: flex
-            flex-direction: column
-            gap: 8px
-            margin-bottom: 20px
-
-        .skel-row
-            width: 100%
-            height: 44px
-            border-radius: 12px
-            background: $app-background-secondary
-            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
-            background-size: 200% 100%
-            animation: shimmer 1.8s ease-in-out infinite
-
-        .skel-btns
-            display: flex
-            gap: 8px
-
-        .skel-btn
-            flex: 1
-            height: 52px
-            border-radius: 14px
-            background: $app-background-secondary
-            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
-            background-size: 200% 100%
-            animation: shimmer 1.8s ease-in-out infinite
-
-            &.skel-primary
-                flex: 1.5
-
-    // ========= BODY =========
-    &__body
-        animation: fadeUp 0.25s ease
-
-// ========= HERO =========
-.mkt-hero
-    width: 100%
+.mgm-skel
     display: flex
     flex-direction: column
-    align-items: center
-    position: relative
-    overflow: hidden
-    padding: 8px 0 20px
-    background: $app-rarity-background-rare
+    gap: 16px
+    padding-top: 4px
 
-    &__gradient
+    &__card
+        width: 56%
+        max-width: 200px
+        aspect-ratio: 1
+        margin: 0 auto
+        border-radius: 24px
+        background: $app-background-secondary
+        background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+        background-size: 200% 100%
+        animation: shimmer 1.8s ease-in-out infinite
+
+    &__block
+        height: 150px
+        border-radius: 29px
+        background: #171717
+        opacity: 0.65
+
+    &__btn
+        height: 50px
+        border-radius: 99em
+        background: $app-background-secondary
+        background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+        background-size: 200% 100%
+        animation: shimmer 1.8s ease-in-out infinite
+
+.mgm-body
+    display: flex
+    flex-direction: column
+    gap: 16px
+    padding-top: 2px
+
+
+// Compact square gift
+.mgm-card
+    width: 100%
+    height: 280px
+    overflow: hidden
+
+    &__head
+        width: 100%
+        height: 280px
+        position: relative
+        overflow: hidden
+        border-radius: 24px 0 0
+
+    &.market
+        height: 210px
+
+        & .mgm-card__head
+            height: 210px
+
+            & .mgm-card__symbol
+                width: 60%
+                height: 100%
+                top: 49%
+
+            & .mgm-card__model
+                top: 46%
+                width: 66%
+                height: 66%
+
+    &__bg
         position: absolute
         inset: 0
         z-index: 0
-        opacity: 0
-        animation: fade-in-gradient 0.8s ease forwards
-        background: linear-gradient(180deg, var(--center-color) 0%, var(--around-color) 100%)
-        pointer-events: none
+        background: radial-gradient(circle, var(--center-color), var(--around-color))
 
     &__symbol
         position: absolute
-        width: 80%
-        height: 80%
-        overflow: hidden
-        opacity: 0.25
+        inset: 0
         z-index: 1
+        overflow: hidden
+        opacity: 0.22
+        mix-blend-mode: luminosity
+        pointer-events: none
+        width: 70%
+        height: 84%
+        top: 36%
+        left: 50%
+        transform: translate(-50%, -50%)
 
         img
             position: absolute
             left: 50%
             top: 50%
             width: 100%
-            transform: translate(-50%, -55%)
+            height: calc(100% - 28px)
+            transform: translate(-50%, -50%)
             object-fit: cover
 
-    &__badge
+    &__mark
         position: absolute
-        top: 10px
-        left: 14px
+        top: 12px
+        left: 12px
         z-index: 5
-        background: rgba(0,0,0, 0.25)
-        -webkit-backdrop-filter: blur(16px)
-        backdrop-filter: blur(16px)
+        width: fit-content
+        min-width: 54px
+        height: 34px
+        box-sizing: border-box
+        display: flex
+        align-items: center
+        justify-content: center
+        padding: 0 12px
+        margin: 0
+        border: none
+        outline: none
         border-radius: 50px
-        padding: 4px 10px
+        cursor: pointer
+        overflow: hidden
+        background: linear-gradient(
+            180deg,
+            rgba($app-background-secondary-2, 0.35) 0%,
+            rgba(#1919198a, 0.35) 100%
+        );
+        backdrop-filter: blur(28px) saturate($app-saturation)
+        -webkit-backdrop-filter: blur(28px) saturate($app-saturation)
+        box-shadow: $app-glass-shadow-2, 0 4px 12px rgba(0, 0, 0, 0.2)
+        -webkit-box-shadow: $app-glass-shadow-2, 0 4px 12px rgba(0, 0, 0, 0.2)
+        transition: transform 0.15s ease
+        -webkit-tap-highlight-color: transparent
 
-        span
+        p
             font-size: 13px
             font-weight: 600
             color: $app-text-color
-            opacity: 0.85
+            letter-spacing: -0.2px
 
-    &__img
-        width: 160px
-        height: 160px
+    &__model
+        position: absolute
+        left: 50%
+        top: 35%
+        transform: translate(-50%, -50%)
+        width: 46%
+        height: 46%
+        z-index: 2
         display: flex
-        justify-content: center
         align-items: center
-        z-index: 5
+        justify-content: center
+        overflow: visible
 
-        img
-            width: 155px
-            height: 155px
-            object-fit: cover
+        img,
+        &-img
+            display: block
+            width: 100%
+            height: 100%
+            object-fit: contain
+            object-position: center
 
     &__lottie
-        width: 155px
-        height: 155px
+        display: block
+        width: 100% !important
+        height: 100% !important
+        flex: 0 0 100%
+        background: transparent
 
-    &__name
-        font-size: 20px
-        font-weight: 700
-        color: $app-text-color
-        z-index: 5
-        margin-top: -4px
-        letter-spacing: -0.3px
+        :deep(svg),
+        :deep(canvas)
+            display: block
+            width: 100% !important
+            height: 100% !important
+            object-fit: contain
 
-    &__actions
+    &__tickers
         display: flex
-        gap: 6px
-        margin-top: 12px
-        z-index: 5
+        align-items: center
+        gap: 13px
+        position: absolute
+        bottom: 32px
+        left: 50%
+        transform: translateX(-50%)
+        width: 100%
+        height: 28px
+        padding: 0 16px
+        box-sizing: border-box
+        z-index: 1
 
-        button
-            width: 40px
-            height: 40px
+        &-i
+            width: 100%
+            height: 62px
+            box-sizing: border-box
             display: flex
             align-items: center
             justify-content: center
-            background: rgba($app-text-color, 0.12)
-            -webkit-backdrop-filter: blur(16px)
-            backdrop-filter: blur(16px)
-            border-radius: 12px
+            flex-direction: column
+            margin: 0
+            gap: 5px
+            border: none
+            outline: none
+            border-radius: 18px
             cursor: pointer
+            overflow: hidden
+            background: linear-gradient(
+                180deg,
+                rgba(#000, 0.22) 0%,
+                rgba(#000, 0.22) 100%
+            );
+            backdrop-filter: blur(22px) saturate($app-saturation)
+            -webkit-backdrop-filter: blur(22px) saturate($app-saturation)
+            box-shadow: $app-glass-shadow-2, 0 6px 10px rgba(0, 0, 0, 0.2)
+            -webkit-box-shadow: $app-glass-shadow-2, 0 6px 12px rgba(0, 0, 0, 0.07)
             transition: transform 0.15s ease
+            -webkit-tap-highlight-color: transparent
 
             &:active
-                transform: scale(0.9)
+                transform: scale(0.97)
 
-            img
-                width: 18px
-                height: 18px
+            &.disabled
+                pointer-events: none
+                opacity: 0.65
 
-// ========= PRICE =========
-.mkt-price
-    padding: 16px 16px 0
+                .kit-icon
+                    opacity: 0.55
+                
+                p
+                    opacity: 0.55
+
+            .kit-icon
+                width: 17px
+                height: 17px
+
+                :deep(svg)
+                    width: 100%
+                    height: 100%
+
+                    path
+                        fill: $app-text-color
+            
+            p
+                font-size: 13px
+                font-weight: 600
+                color: $app-text-color
+                letter-spacing: -0.2px
+
+.mgm-title
     display: flex
-    flex-direction: column
-    gap: 4px
+    align-items: center
+    justify-content: space-between
+    gap: 14px
+    padding: 0 16px
 
-    &__main
+    &__left
+        flex: 1
+        min-width: 0
+        display: flex
+        flex-direction: column
+        gap: 8px
+
+    h3
+        font-size: 18px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.35px
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+
+    &__price
         display: flex
         align-items: center
         gap: 5px
 
-        h2
-            font-size: 26px
+        .kit-icon
+            width: 16px
+            height: 16px
+            display: flex
+            opacity: 0.9
+
+            :deep(svg)
+                width: 16px
+                height: 16px
+
+        span
+            font-size: 17px
             font-weight: 700
             color: $app-text-color
-            letter-spacing: -0.5px
+            letter-spacing: -0.3px
 
-        img
-            width: 22px
-            height: 22px
-
-    &__hint
-        font-size: 13px
-        font-weight: 500
-        color: $app-text-color-red
-        opacity: 0.85
-
-// ========= INFO CHIPS =========
-.mkt-chips
-    display: flex
-    flex-direction: column
-    gap: 0
-    padding: 12px 16px 0
-    border-radius: 16px
-    margin: 12px 16px 0
-    background: $app-mark-bg
-    overflow: hidden
-
-.mkt-chip
-    display: flex
-    align-items: center
-    padding: 11px 0
-    border-bottom: 1px solid rgba($app-text-color, 0.04)
-    gap: 8px
-
-    &:last-child
-        border-bottom: none
-
-    &__label
-        font-size: 13px
-        font-weight: 500
-        color: $app-text-color-descr-primary
-        min-width: 80px
+    &__tools
+        display: flex
+        gap: 8px
         flex-shrink: 0
 
-    &__val
-        font-size: 14px
-        font-weight: 600
+.mgm-tool
+    width: 40px
+    height: 40px
+    display: flex
+    align-items: center
+    justify-content: center
+    border: none
+    border-radius: 14px
+    cursor: pointer
+    background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+    backdrop-filter: blur(28px) saturate(60%)
+    -webkit-backdrop-filter: blur(28px) saturate(60%)
+    transition: transform 0.15s ease
+    -webkit-tap-highlight-color: transparent
+
+    &:active
+        transform: scale(0.93)
+
+    img
+        width: 16px
+        height: 16px
+        opacity: 0.85
+
+.mgm-info
+    width: calc(100% - 32px)
+    margin: 0 16px 0
+    padding: 0
+    display: flex
+    flex-direction: column
+    background: rgba($app-background-secondary-2, 0.2)
+    border: 1px solid $app-background-secondary
+    border-radius: 24px
+    overflow: hidden
+    box-sizing: border-box
+
+    &__row
+        display: grid
+        grid-template-columns: 108px minmax(0, 1fr)
+        align-items: stretch
+
+        min-height: 50px
+        padding: 0
+        gap: 0
+
+        border-bottom: 1px solid $app-background-secondary
+
+        &:last-child
+            border-bottom: none
+
+    &__label
+        display: flex
+        align-items: center
+
+        padding: 0 18px
+
+        font-size: 15px
+        font-weight: 500
         color: $app-text-color
-        flex: 1
-        text-align: right
+
+        background: rgba(255, 255, 255, 0.015)
+        border-right: 1px solid $app-background-secondary
+
+    &__right
+        display: flex
+        align-items: center
+        justify-content: flex-start
+
+        min-width: 0
+        padding: 0 20px
+        gap: 10px
+
+    &__val
+        min-width: 0
+        max-width: 100%
+
+        font-size: 15px
+        font-weight: 500
+        line-height: 1.3
+        color: $app-text-color
+
         white-space: nowrap
         overflow: hidden
         text-overflow: ellipsis
 
     &__pct
+        flex-shrink: 0
+
+        padding: 5px 7px
+        border-radius: 99px
+
         font-size: 12px
         font-weight: 500
-        color: $app-text-color-descr-primary
-        background: rgba($app-text-color, 0.06)
-        padding: 2px 7px
-        border-radius: 50px
-        white-space: nowrap
+        line-height: 1
 
-// ========= BUTTONS =========
-.mkt-btns
+        color: $app-button-blue-text-color
+        background: $app-button-blue-background
+
+// GetGems CTA
+.mgm-getgems
+    width: calc(100% - 32px)
+    height: 52px
     display: flex
+    align-items: center
+    justify-content: center
     gap: 8px
-    padding: 16px 16px 32px
-    margin-top: 4px
+    border: none
+    border-radius: 99em
+    cursor: pointer
+    background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+    backdrop-filter: blur(28px) saturate(60%)
+    -webkit-backdrop-filter: blur(28px) saturate(60%)
+    box-shadow: $app-glass-shadow-2
+    -webkit-box-shadow: $app-glass-shadow-2
+    transition: transform 0.15s ease
+    -webkit-tap-highlight-color: transparent
+    margin-bottom: 6px
+    margin-left: 16px
+
+    &:active
+        transform: scale(0.97)
+
+    .kit-icon
+        width: 20px
+        height: 20px
+        display: flex
+        flex-shrink: 0
+
+        :deep(svg)
+            width: 20px
+            height: 20px
+
+    span
+        font-size: 15px
+        font-weight: 600
+        color: $app-text-color
+        letter-spacing: -0.15px
+
+// Footer — slightly tighter under GetGems
+.pgm-footer
+    padding: 0 16px calc(28px + env(safe-area-inset-bottom, 14px))
+
+.mgm-footer
+    display: flex
+    gap: 10px
+    align-items: center
+    margin-top: 2px
+    padding: 0 16px calc(28px + env(safe-area-inset-bottom, 14px))
 
     &__basket
+        width: 50px
+        height: 50px
+        min-width: 50px
+        display: flex
+        align-items: center
+        justify-content: center
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+        backdrop-filter: blur(28px) saturate(60%)
+        -webkit-backdrop-filter: blur(28px) saturate(60%)
+        box-shadow: $app-glass-shadow-2
+        -webkit-box-shadow: $app-glass-shadow-2
+        transition: transform 0.15s ease, background 0.18s ease
+        -webkit-tap-highlight-color: transparent
+
+        &:active
+            transform: scale(0.94)
+
+        img
+            width: 20px
+            height: 20px
+
+        &.added
+            background: rgba($app-background-green-secondary, 0.16)
+            box-shadow: none
+
+            img
+                filter: brightness(0) saturate(100%) invert(62%) sepia(53%) saturate(467%) hue-rotate(85deg) brightness(94%) contrast(88%)
+
+    &__buy
         flex: 1
-        height: 52px
+        height: 50px
         display: flex
         align-items: center
         justify-content: center
         gap: 6px
-        background: $app-table-button
-        border-radius: 14px
+        border: none
+        border-radius: 99em
         cursor: pointer
-        transition: transform 0.15s ease, background 0.2s ease
-
-        &:active
-            transform: scale(0.96)
-
-        &.added
-            background: rgba($app-background-green-secondary, 0.18)
-
-            h4
-                color: $app-background-green-secondary
-
-        img
-            width: 18px
-            height: 18px
-
-        h4
-            font-size: 14px
-            font-weight: 600
-            color: $app-text-color
-            white-space: nowrap
-
-            @media screen and (max-width: 370px)
-                font-size: 13px
-
-    &__buy
-        flex: 1.4
-        height: 52px
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 4px
-        background: $app-big-button-background
-        border-radius: 14px
-        cursor: pointer
-        transition: transform 0.15s ease
-
-        &:active
-            transform: scale(0.96)
+        background: $app-background-blue-secondary
+        backdrop-filter: none
+        -webkit-backdrop-filter: none
+        box-shadow: none
+        -webkit-box-shadow: none
+        transition: transform 0.15s ease, opacity 0.15s ease
+        -webkit-tap-highlight-color: transparent
+        backdrop-filter: blur(28px) saturate($app-saturation)
+        -webkit-backdrop-filter: blur(28px) saturate($app-saturation)
+        box-shadow: $app-glass-shadow
+        -webkit-box-shadow: $app-glass-shadow
 
         &:disabled
-            opacity: 0.45
+            opacity: 0.4
             pointer-events: none
 
         &._loading
             pointer-events: none
 
-        h4
-            font-size: 15px
+        span
+            font-size: 16px
             font-weight: 600
-            color: $app-big-button-text-color
-            white-space: nowrap
+            color: $app-text-color
+            letter-spacing: -0.2px
 
-            @media screen and (max-width: 370px)
-                font-size: 14px
+        .kit-icon
+            width: 17px
+            height: 17px
+            display: flex
+            margin-top: 2px
 
-        img
-            width: 18px
-            height: 18px
+            :deep(svg)
+                width: 17px
+                height: 17px
 
-    &__spinner
-        width: 28px
-        height: 28px
+    &__spin
+        width: 26px
+        height: 26px
 
-        svg
+        :deep(svg)
             width: 100%
             height: 100%
+
+@media (prefers-reduced-motion: reduce)
+    .mgm-dock
+        transition: none !important
+
+        &.open:not(.hide)
+            transform: translate(-50%, 0) !important
+
+        &.hide
+            transform: translate(-50%, 100%) !important

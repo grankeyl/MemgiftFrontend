@@ -1,0 +1,594 @@
+@use "./_variables" as *
+
+@keyframes shimmer
+    0%
+        background-position: -200% 0
+    100%
+        background-position: 200% 0
+
+// Clean iOS sheet — pure slide both ways
+$mkt-sheet-ease: cubic-bezier(0.32, 0.72, 0, 1)
+$mkt-sheet-duration: 0.34s
+
+@keyframes spinner
+    to
+        transform: rotate(360deg)
+
+// ========= FILTER / SELECTION MODALS =========
+// Shared by: Model, ModelGift, Sort, Status, Symbol, Backdrop, Home SelectModal
+
+._comp._item._modelModal
+    width: 100%
+    height: fit-content
+    max-width: $app-max-width
+
+    &.sell
+        ._content
+            height: 60%
+
+            & .buttons
+                height: fit-content
+                position: fixed
+                bottom: 40px
+                left: 0
+                padding: 0px 16px
+
+    // ------ SKELETON ------
+    ._skeleton
+        max-width: $app-max-preview-width
+        width: 100%
+        position: fixed
+        overflow: hidden
+        background: $app-background
+        z-index: 10000
+        bottom: 0
+        left: 50%
+        transform: translate(-50%, 100%)
+        border-radius: 32px 32px 0 0
+        padding: 0 16px calc(28px + env(safe-area-inset-bottom, 14px))
+        box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.5)
+        transition: transform $mkt-sheet-duration $mkt-sheet-ease, box-shadow $mkt-sheet-duration ease, visibility 0s linear 0s
+
+        &:not(.hide)
+            transform: translate(-50%, 0)
+            visibility: visible
+
+        &.hide
+            transform: translate(-50%, 100%)
+            box-shadow: none
+            pointer-events: none
+            visibility: hidden
+            transition: transform $mkt-sheet-duration $mkt-sheet-ease, box-shadow 0.15s ease, visibility 0s linear $mkt-sheet-duration
+
+        .modal-skel__handle
+            width: 100%
+            height: 24px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            &::after
+                content: ''
+                width: 36px
+                height: 4px
+                background: rgba($app-text-color, 0.12)
+                border-radius: 99em
+
+        .modal-skel__head
+            width: 40%
+            height: 16px
+            border-radius: 8px
+            margin: 8px auto 16px
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        .modal-skel__item
+            width: 100%
+            height: 52px
+            display: flex
+            align-items: center
+            gap: 10px
+            padding: 0 4px
+            border-bottom: 1px solid rgba($app-text-color, 0.04)
+
+            &:last-child
+                border-bottom: none
+
+            .modal-skel__circle
+                width: 36px
+                min-width: 36px
+                height: 36px
+                border-radius: 12px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            .modal-skel__text
+                flex: 1
+                height: 14px
+                border-radius: 7px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            .modal-skel__check
+                width: 22px
+                height: 22px
+                border-radius: 7px
+                background: $app-background-secondary
+
+        .modal-skel__btns
+            display: flex
+            gap: 10px
+            margin-top: 16px
+
+            div
+                flex: 1
+                height: 50px
+                border-radius: 999px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+    // ------ CONTENT SHEET ------
+    ._content
+        max-width: $app-max-preview-width
+        width: 100%
+        height: auto
+        max-height: min(78vh, 720px)
+        position: fixed
+        overflow-y: auto
+        overflow-x: hidden
+        background: $app-background
+        z-index: 10000
+        bottom: 0
+        left: 50%
+        transform: translate(-50%, 100%)
+        border-radius: 32px 32px 0 0
+        padding: 0 16px calc(24px + env(safe-area-inset-bottom, 14px))
+        box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.5)
+        -webkit-overflow-scrolling: touch
+        overscroll-behavior: contain
+        will-change: transform
+        transition: transform $mkt-sheet-duration $mkt-sheet-ease, box-shadow $mkt-sheet-duration ease, visibility 0s linear 0s
+
+        &::-webkit-scrollbar
+            display: none
+
+        &:not(.hide)
+            transform: translate(-50%, 0)
+            visibility: visible
+
+        &.hide
+            transform: translate(-50%, 100%)
+            box-shadow: none
+            pointer-events: none
+            visibility: hidden
+            transition: transform $mkt-sheet-duration $mkt-sheet-ease, box-shadow 0.15s ease, visibility 0s linear $mkt-sheet-duration
+
+        // Handle
+        &::before
+            content: ''
+            display: block
+            width: 36px
+            height: 4px
+            background: rgba($app-text-color, 0.14)
+            border-radius: 99em
+            margin: 10px auto 0
+
+        .head
+            position: relative
+            width: 100%
+            height: 48px
+            display: flex
+            align-items: center
+            justify-content: center
+            margin-bottom: 8px
+            margin-top: 4px
+
+            .centered
+                width: fit-content
+                display: flex
+                align-items: center
+                gap: 7px
+                max-width: calc(100% - 72px)
+
+                h4
+                    font-size: 16px
+                    font-weight: 600
+                    color: $app-text-color
+                    letter-spacing: -0.2px
+                    white-space: nowrap
+                    overflow: hidden
+                    text-overflow: ellipsis
+
+                .kit-icon
+                    width: 16px
+                    height: 16px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    opacity: 0.55
+                    flex-shrink: 0
+
+                    svg
+                        width: 16px
+                        height: 16px
+                        display: block
+
+                        path
+                            stroke: $app-text-color
+                            fill: $app-text-color
+
+                .kit-icon.pen
+                    svg path
+                        fill: $app-text-color
+                        opacity: 0.55
+
+            // Close — glass circle like gift modal balance/close
+            .close
+                position: absolute
+                top: 50%
+                right: 0
+                transform: translateY(-50%)
+                width: 34px
+                min-width: 34px
+                height: 34px
+                box-sizing: border-box
+                display: flex
+                align-items: center
+                justify-content: center
+                padding: 0
+                margin: 0
+                border: none
+                outline: none
+                border-radius: 50%
+                cursor: pointer
+                overflow: hidden
+                background: linear-gradient(180deg, $app-background-secondary-2 0%, #191919 100%)
+                backdrop-filter: blur(28px) saturate($app-saturation)
+                -webkit-backdrop-filter: blur(28px) saturate($app-saturation)
+                box-shadow: $app-glass-shadow-2, 0 6px 18px rgba(0, 0, 0, 0.3)
+                -webkit-box-shadow: $app-glass-shadow-2, 0 6px 18px rgba(0, 0, 0, 0.3)
+                transition: transform 0.15s ease
+                -webkit-tap-highlight-color: transparent
+
+                &:active
+                    transform: translateY(-50%) scale(0.9)
+
+                .kit-icon
+                    width: 12px
+                    height: 12px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    line-height: 0
+                    opacity: 1
+
+                    svg
+                        width: 12px
+                        height: 12px
+                        display: block
+                        overflow: visible
+
+                        path
+                            fill: none !important
+                            stroke: $app-text-color !important
+                            stroke-width: 2
+                            stroke-linecap: round
+                            opacity: 0.75
+
+        // Inline skeleton while API data loads
+        .items-skeleton
+            width: 100%
+            display: flex
+            flex-direction: column
+            margin-bottom: 8px
+            background: #171717
+            border-radius: 22px
+            padding: 4px 12px
+
+            &__row
+                width: 100%
+                height: 52px
+                display: flex
+                align-items: center
+                gap: 10px
+                border-bottom: 1px solid rgba($app-text-color, 0.04)
+
+                &:last-child
+                    border-bottom: none
+
+            &__circle
+                width: 36px
+                min-width: 36px
+                height: 36px
+                border-radius: 12px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            &__line
+                height: 14px
+                border-radius: 7px
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255,255,255,0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+            &__box
+                width: 22px
+                min-width: 22px
+                height: 22px
+                border-radius: 7px
+                margin-left: auto
+                background: $app-background-secondary
+
+        // Search
+        .modal-search
+            width: 100%
+            display: flex
+            align-items: center
+            gap: 8px
+            margin-bottom: 12px
+            position: relative
+
+            input
+                width: 100%
+                height: 44px
+                background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+                backdrop-filter: blur(28px) saturate(60%)
+                -webkit-backdrop-filter: blur(28px) saturate(60%)
+                box-shadow: $app-glass-shadow-2
+                -webkit-box-shadow: $app-glass-shadow-2
+                border: none
+                border-radius: 999px
+                padding: 0 44px 0 16px
+                font-size: 15px
+                font-weight: 500
+                color: $app-text-color
+                font-family: $app-fontface
+                outline: none
+
+                &::placeholder
+                    color: $app-text-color
+                    opacity: 0.3
+                    font-weight: 500
+
+            &__count
+                position: absolute
+                right: 12px
+                top: 50%
+                transform: translateY(-50%)
+                background: $app-background-blue-secondary
+                color: $app-text-color
+                font-size: 11px
+                font-weight: 700
+                min-width: 22px
+                height: 22px
+                display: flex
+                align-items: center
+                justify-content: center
+                border-radius: 99em
+                padding: 0 7px
+
+        // Items list — flat block, no gradient / shadow
+        .items
+            width: 100%
+            display: flex
+            flex-direction: column
+            max-height: 340px
+            overflow-y: auto
+            margin-bottom: 12px
+            background: #171717
+            border-radius: 22px
+            padding: 4px 8px
+
+            &::-webkit-scrollbar
+                display: none
+
+            .item
+                width: 100%
+                height: 52px
+                min-height: 52px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                gap: 10px
+                cursor: pointer
+                border-radius: 14px
+                transition: background 0.15s ease
+                padding: 0 8px
+                -webkit-tap-highlight-color: transparent
+
+                &:active
+                    background: rgba($app-text-color, 0.04)
+
+                .left
+                    display: flex
+                    align-items: center
+                    gap: 10px
+                    min-width: 0
+                    flex: 1
+
+                    img
+                        width: 36px
+                        height: 36px
+                        min-width: 36px
+                        border-radius: 10px
+                        object-fit: cover
+                        background: rgba($app-text-color, 0.05)
+
+                    .symbol,
+                    .backdrop
+                        width: 36px
+                        min-width: 36px
+                        height: 36px
+                        border-radius: 10px
+                        overflow: hidden
+                        flex-shrink: 0
+                        background: rgba($app-text-color, 0.06)
+
+                    .symbol img
+                        width: 100%
+                        height: 100%
+                        object-fit: cover
+                        display: block
+
+                    .backdrop
+                        background: radial-gradient(circle, var(--center-color), var(--around-color))
+
+                    h5
+                        font-size: 15px
+                        font-weight: 600
+                        color: $app-text-color
+                        letter-spacing: -0.15px
+                        white-space: nowrap
+                        overflow: hidden
+                        text-overflow: ellipsis
+
+                    p, span
+                        font-size: 12px
+                        font-weight: 500
+                        color: $app-text-color-descr-primary
+                        flex-shrink: 0
+
+                // Checkbox multi
+                .checkbox
+                    width: 24px
+                    height: 24px
+                    min-width: 24px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    border: 1.5px solid rgba($app-text-color, 0.14)
+                    border-radius: 8px
+                    transition: all 0.15s ease
+                    background: transparent
+                    margin-left: auto
+
+                    &.active
+                        background: $app-background-blue-secondary
+                        border-color: $app-background-blue-secondary
+
+                        .kit-icon
+                            display: flex
+
+                    .kit-icon
+                        display: none
+                        width: 12px
+                        height: 12px
+
+                        svg
+                            width: 12px
+                            height: 12px
+
+                            path
+                                stroke: $app-text-color
+                                fill: none
+
+                // Radio single
+                .select
+                    width: 24px
+                    height: 24px
+                    min-width: 24px
+                    border: 1.5px solid rgba($app-text-color, 0.18)
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    border-radius: 50%
+                    transition: border-color 0.15s ease
+                    background: transparent
+                    margin-left: auto
+
+                    .circle
+                        display: none
+
+                    &.active
+                        border-color: $app-background-blue-secondary
+
+                        .circle
+                            display: block
+                            width: 12px
+                            height: 12px
+                            border-radius: 50%
+                            background: $app-background-blue-secondary
+
+        // Action buttons — glass + blue pills
+        .buttons
+            display: flex
+            gap: 10px
+            margin-top: 4px
+
+            button
+                flex: 1
+                height: 50px
+                display: flex
+                align-items: center
+                justify-content: center
+                border: none
+                border-radius: 999px
+                cursor: pointer
+                transition: transform 0.15s ease, opacity 0.15s ease
+                -webkit-tap-highlight-color: transparent
+                background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+                backdrop-filter: blur(28px) saturate(60%)
+                -webkit-backdrop-filter: blur(28px) saturate(60%)
+                box-shadow: $app-glass-shadow-2
+                -webkit-box-shadow: $app-glass-shadow-2
+
+                &:active
+                    transform: scale(0.96)
+
+                &:disabled
+                    opacity: 0.45
+                    pointer-events: none
+
+                // Apply — solid blue CTA (no glow)
+                &:last-child
+                    background: $app-background-blue-secondary
+                    backdrop-filter: none
+                    -webkit-backdrop-filter: none
+                    box-shadow: none
+                    -webkit-box-shadow: none
+
+                h4
+                    font-size: 15px
+                    font-weight: 600
+                    color: $app-text-color
+                    white-space: nowrap
+                    letter-spacing: -0.15px
+
+        // Loading spinner
+        .load
+            width: 100%
+            height: 80px
+            display: flex
+            align-items: center
+            justify-content: center
+
+            .load-icon
+                width: 20px
+                height: 20px
+                border: 2px solid rgba($app-text-color, 0.1)
+                border-top-color: rgba($app-text-color, 0.5)
+                border-radius: 50%
+                animation: spinner 0.8s linear infinite
+
+@media (prefers-reduced-motion: reduce)
+    ._comp._item._modelModal
+        ._content,
+        ._skeleton
+            transition: none !important
+
+            &:not(.hide)
+                transform: translate(-50%, 0) !important
+
+            &.hide
+                transform: translate(-50%, 100%) !important

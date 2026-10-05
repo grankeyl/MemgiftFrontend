@@ -1,152 +1,162 @@
 <template>
-  <div class="overlay" :class="{ 'is-open is-dark': ModalActive }" @click="closeModal" />
+  <div class="overlay mgm-overlay" :class="{ 'is-open is-dark': isVisible }" @click="closeModal" />
 
-  <div v-if="ModalActive" class="mkt-balance" @click="openWallet">
-    <div class="mkt-balance__ctx">
-      <h4>{{ cutNumber(getBalance) }}</h4>
-      <img :src="TonImg" alt="ton" />
-    </div>
-    <div class="mkt-balance__btn">
-      <img :src="PlusImg" alt="plus" />
-    </div>
-  </div>
-
-  <div 
-    v-if="ModalComp.ModalActive"
+  <div
+    v-if="isRendered"
     class="_direction _comp _item giftModal"
     :class="[Key]"
   >
-    <div 
-      class="mkt-sheet"
-      :class="{ hide: !ModalActive }"
+    <!-- Dock: balance chrome above sheet -->
+    <div
+      class="mgm-dock"
+      :class="{ hide: !isVisible, open: isVisible }"
       @touchstart.passive="onTouchStart"
       @touchmove.prevent="onTouchMove"
       @touchend="onTouchEnd"
       :style="sheetStyle"
     >
-      <!-- Drag handle -->
-      <div class="mkt-sheet__handle">
-        <div class="mkt-sheet__bar"></div>
+      <div class="mgm-chrome">
+        <button type="button" class="mgm-balance" @click="openWallet">
+          <Icon class="kit-icon" v-html="Icon.Gram" />
+          <span>{{ cutNumber(getBalance) }}</span>
+        </button>
       </div>
 
-      <!-- Skeleton -->
-      <div v-if="isLoading" class="mkt-sheet__skel">
-        <div class="skel-hero"></div>
-        <div class="skel-lines">
-          <div class="skel-l skel-w60"></div>
-          <div class="skel-l skel-w30"></div>
-        </div>
-        <div class="skel-table">
-          <div class="skel-row" v-for="n in 3" :key="n"></div>
-        </div>
-        <div class="skel-btns">
-          <div class="skel-btn"></div>
-          <div class="skel-btn skel-primary"></div>
-        </div>
-      </div>
+      <div class="mgm-sheet">
+        <button type="button" class="mgm-close" @click="closeModal" aria-label="Close">
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </button>
 
-      <!-- Content -->
-      <div v-else class="mkt-sheet__body">
-        <!-- Hero -->
-        <div 
-          class="mkt-hero"
-          :style="{
-            '--center-color': ModalComp.Info.core.upgrade.background.colors_center,
-            '--around-color': ModalComp.Info.core.upgrade.background.colors_around
-          }"
-        >
-          <div class="mkt-hero__gradient"></div>
-          <div class="mkt-hero__symbol">
-            <img :src="ModalComp.Info.core.upgrade.symbol.image" alt="symbol" />
+        <div v-if="isLoading" class="mgm-skel">
+          <div class="mgm-skel__card"></div>
+          <div class="mgm-skel__block"></div>
+          <div class="mgm-skel__btn"></div>
+        </div>
+
+        <div v-else class="mgm-body">
+          <div class="mgm-card market">
+            <div
+              class="mgm-card__head"
+              :style="{
+                '--center-color': ModalComp.Info.core.upgrade.background.colors_center,
+                '--around-color': ModalComp.Info.core.upgrade.background.colors_around
+              }"
+            >
+              <div class="mgm-card__bg"></div>
+              <div class="mgm-card__symbol">
+                <img :src="ModalComp.Info.core.upgrade.symbol.image" alt="" />
+              </div>
+              <div class="mgm-card__mark">
+                <p>#{{ ModalComp.Info.core.upgrade.seq }}</p>
+              </div>
+              <div class="mgm-card__model">
+                <!-- One layer only: avoid size jump between static SVG and Lottie -->
+                <GiftLottie
+                  v-if="isLottieGift && lottiePath && isVisible"
+                  :key="`${lottiePath}:${isVisible}`"
+                  class="mgm-card__lottie"
+                  :path="lottiePath"
+                  :loop="true"
+                  :autoplay="true"
+                  width="0"
+                  height="0"
+                  renderer="canvas"
+                />
+                <img
+                  v-else
+                  class="mgm-card__model-img"
+                  :src="modelImageSrc"
+                  alt="nft"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="mkt-hero__badge">
-            <span>#{{ ModalComp.Info.core.upgrade.seq }}</span>
+          <div class="mgm-title">
+            <div class="mgm-title__left">
+              <!-- заголовок — сам подарок, а не модель: у части улучшений
+                   вид не похож на коллекцию, и покупатель не понимает,
+                   что берёт. модель осталась строкой в таблице ниже -->
+              <h3>{{ ModalComp.Info.core.gift?.name || ModalComp.Info.core.upgrade?.nft_name?.name }}</h3>
+              <div class="mgm-title__price">
+                <Icon class="kit-icon" v-html="Icon.Gram" />
+                <span>{{ cutNumber(ModalComp.Info.price_ton) }}</span>
+              </div>
+            </div>
+            <div class="mgm-title__tools">
+              <button type="button" class="mgm-tool" @click="shareGiftLink">
+                <img :src="ForwardImg" alt="" />
+              </button>
+              <button type="button" class="mgm-tool" @click="copyGiftLink">
+                <img :src="CopyImg" alt="" />
+              </button>
+            </div>
           </div>
 
-          <div class="mkt-hero__img">
-            <img 
-              v-if="ModalComp.Info.core.gift.media === 'svg'"
-              :src="ModalComp.Info.core.upgrade.nft_name.image"
-              alt="nft"
-            />
-            <GiftLottie
-              v-if="ModalComp.Info.core.gift.media === 'lottie'"
-              class="mkt-hero__lottie"
-              :path="ModalComp.Info.core.upgrade.nft_name.image"
-              :loop="true"
-              width="25"
-              height="25"
-              renderer="svg"
-            />
+          <div class="mgm-info">
+            <div class="mgm-info__row">
+              <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem1') }}</span>
+              <div class="mgm-info__right">
+                <span class="mgm-info__val">{{ ModalComp.Info.core.upgrade.nft_name.name }}</span>
+                <span class="mgm-info__pct">{{ ModalComp.Info.core.upgrade.nft_name.drop_rate }}%</span>
+              </div>
+            </div>
+            <div class="mgm-info__row">
+              <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem2') }}</span>
+              <div class="mgm-info__right">
+                <span class="mgm-info__val">{{ ModalComp.Info.core.upgrade.symbol.name }}</span>
+                <span class="mgm-info__pct">{{ ModalComp.Info.core.upgrade.symbol.drop_rate }}%</span>
+              </div>
+            </div>
+            <div class="mgm-info__row">
+              <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableMintedItem3') }}</span>
+              <div class="mgm-info__right">
+                <span class="mgm-info__val">{{ ModalComp.Info.core.upgrade.background.name }}</span>
+                <span class="mgm-info__pct">{{ ModalComp.Info.core.upgrade.background.drop_rate }}%</span>
+              </div>
+            </div>
+            <div class="mgm-info__row">
+              <span class="mgm-info__label">{{ $t('profile.profileGiftPreviewTableItem4') }}</span>
+              <div class="mgm-info__right">
+                <span class="mgm-info__val">{{ getSupply }}</span>
+              </div>
+            </div>
           </div>
 
-          <h3 class="mkt-hero__name">{{ ModalComp.Info.core.upgrade.nft_name.name }}</h3>
-
-          <div class="mkt-hero__actions">
-            <button @click="shareGiftLink">
-              <img :src="ForwardImg" alt="share" />
+          <div class="mgm-footer market">
+            <!-- кнопка корзины временно скрыта -->
+            <button
+              v-if="false"
+              type="button"
+              class="mgm-footer__basket"
+              :class="{ added: ModalComp.BasketStatus }"
+              @click="addToBasket(ModalComp.Info)"
+            >
+              <img :src="BasketWhiteImg" alt="" />
             </button>
-            <button @click="copyGiftLink">
-              <img :src="CopyImg" alt="copy" />
+            <button
+              type="button"
+              class="mgm-footer__buy"
+              :class="{ _loading: ActiveButton }"
+              :disabled="!checkBalanceAndPrice"
+              @click="buyGift(ModalComp.Info.id)"
+            >
+              <template v-if="!ActiveButton">
+                <span>{{ $t('market.buy') }}</span>
+                <Icon class="kit-icon" v-html="Icon.Gram" />
+                <span>{{ cutNumber(ModalComp.Info.price_ton) }}</span>
+              </template>
+              <Lottie
+                v-if="ActiveButton"
+                class="mgm-footer__spin"
+                slug="loading-spin"
+                :loop="true"
+                width="75"
+                height="75"
+                renderer="svg"
+              />
             </button>
           </div>
-        </div>
-
-        <!-- Price row -->
-        <div class="mkt-price">
-          <div class="mkt-price__main">
-            <h2>{{ cutNumber(ModalComp.Info.price_ton) }}</h2>
-            <img :src="TonImg" alt="ton" />
-          </div>
-          <p class="mkt-price__hint" v-if="!checkBalanceAndPrice">{{ $t('market.basket.insufficientBalance') }}</p>
-        </div>
-
-        <!-- Info chips -->
-        <div class="mkt-chips">
-          <div class="mkt-chip">
-            <span class="mkt-chip__label">{{ $t('profile.profileGiftPreviewTableMintedItem1') }}</span>
-            <span class="mkt-chip__val">{{ ModalComp.Info.core.upgrade.nft_name.name }}</span>
-            <span class="mkt-chip__pct">{{ ModalComp.Info.core.upgrade.nft_name.drop_rate }}%</span>
-          </div>
-          <div class="mkt-chip">
-            <span class="mkt-chip__label">{{ $t('profile.profileGiftPreviewTableMintedItem2') }}</span>
-            <span class="mkt-chip__val">{{ ModalComp.Info.core.upgrade.symbol.name }}</span>
-            <span class="mkt-chip__pct">{{ ModalComp.Info.core.upgrade.symbol.drop_rate }}%</span>
-          </div>
-          <div class="mkt-chip">
-            <span class="mkt-chip__label">{{ $t('profile.profileGiftPreviewTableMintedItem3') }}</span>
-            <span class="mkt-chip__val">{{ ModalComp.Info.core.upgrade.background.name }}</span>
-            <span class="mkt-chip__pct">{{ ModalComp.Info.core.upgrade.background.drop_rate }}%</span>
-          </div>
-          <div class="mkt-chip">
-            <span class="mkt-chip__label">{{ $t('profile.profileGiftPreviewTableItem4') }}</span>
-            <span class="mkt-chip__val">{{ getSupply }}</span>
-          </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="mkt-btns">
-          <button class="mkt-btns__basket" @click="addToBasket(ModalComp.Info)" :class="{ added: ModalComp.BasketStatus }">
-            <img :src="BasketWhiteImg" alt="basket" />
-            <h4 v-if="ModalComp.BasketStatus">{{ $t('market.modal.removeBasket') }}</h4>
-            <h4 v-else>{{ $t('market.modal.addBasket') }}</h4>
-          </button>
-          <button class="mkt-btns__buy" :class="{ _loading: ActiveButton }" :disabled="!checkBalanceAndPrice" @click="buyGift(ModalComp.Info.id)">
-            <template v-if="!ActiveButton">
-              <h4>{{ $t('market.buy') }} {{ cutNumber(ModalComp.Info.price_ton) }}</h4>
-              <img :src="TonWhiteImg" alt="ton" />
-            </template>
-            <Lottie 
-              v-if="ActiveButton"
-              class="mkt-btns__spinner" 
-              slug="loading-spin" 
-              :loop="true"
-              width="75"
-              height="75"
-              renderer="svg"
-            />
-          </button>
         </div>
       </div>
     </div>
@@ -154,6 +164,7 @@
 </template>
 
 <script>
+import WebApp from '@twa-dev/sdk';
 import { Icon } from '../Icon';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { getUpgradedModel } from '../../utils/useGift';
@@ -192,12 +203,32 @@ export default {
       isLoading: this.$props.Skeleton,
       ActiveButton: false,
       dragY: 0, startY: 0, startX: 0, isDragging: false, startTimeMs: 0,
+      isRendered: false,
+      isVisible: false,
+      closeTimer: null,
       Icon, Image_Stars, getUpgradedModel, cutNumber,
     };
   },
 
   mounted() {
     this.loadResources();
+    if (this.ModalActive || this.ModalComp?.ModalActive) {
+      this.openSheet();
+    }
+  },
+
+  beforeUnmount() {
+    if (this.closeTimer) clearTimeout(this.closeTimer);
+  },
+
+  watch: {
+    ModalActive(val) {
+      if (val) this.openSheet();
+      else if (this.isRendered && this.isVisible) this.startClose(false);
+    },
+    'ModalComp.ModalActive'(val) {
+      if (val) this.openSheet();
+    },
   },
 
   computed: {
@@ -208,11 +239,12 @@ export default {
     },
     isLoading() { return this.Skeleton },
     sheetStyle() {
-      if (!this.isDragging || !this.ModalActive) return null;
+      if (!this.isDragging || !this.isVisible) return null;
       return {
         transform: `translate(-50%, ${Math.max(0, this.dragY)}px)`,
         transition: 'none',
         willChange: 'transform',
+        animation: 'none',
       };
     },
     checkBalanceAndPrice() {
@@ -222,6 +254,68 @@ export default {
     },
     getBalance() {
       return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
+    isLottieGift() {
+      const media = this.ModalComp?.Info?.core?.gift?.media;
+      const image = this.ModalComp?.Info?.core?.upgrade?.nft_name?.image || '';
+      // API marks media=lottie; for upgraded models image is often already a .json URL
+      return media === 'lottie' || /\.json(\?|$)/i.test(String(image));
+    },
+    // Static svg preview (always available for cards / non-lottie)
+    modelImageSrc() {
+      const info = this.ModalComp?.Info;
+      if (!info?.core) return '';
+      const uKey = info.core.gift?.u_key || info.core.upgrade?.u_key;
+      const modelName = info.core.upgrade?.nft_name?.name;
+      const apiImage = info.core.upgrade?.nft_name?.image || '';
+      // Prefer explicit svg; if API image is .json, build .svg instead
+      if (apiImage && !/\.json(\?|$)/i.test(apiImage)) {
+        return apiImage;
+      }
+      return getUpgradedModel(uKey, modelName, 'svg') || apiImage || '';
+    },
+    // Lottie JSON: API already returns full .json URL for animated models
+    lottiePath() {
+      const info = this.ModalComp?.Info;
+      if (!info?.core) return '';
+      const apiImage = info.core.upgrade?.nft_name?.image || '';
+      if (apiImage && /\.json(\?|$)/i.test(apiImage)) {
+        return apiImage;
+      }
+      const media = info.core.gift?.media;
+      if (media !== 'lottie') return '';
+      const uKey = info.core.gift?.u_key || info.core.upgrade?.u_key;
+      const modelName = info.core.upgrade?.nft_name?.name;
+      // Convert svg API image → json, or construct S3 path
+      if (apiImage && /\.svg(\?|$)/i.test(apiImage)) {
+        return apiImage.replace(/\.svg(\?|$)/i, '.json$1');
+      }
+      return getUpgradedModel(uKey, modelName, 'json') || '';
+    },
+    getGemsUrl() {
+      const info = this.ModalComp?.Info || {};
+      const addr =
+        info.address ||
+        info.nft_address ||
+        info.item_address ||
+        info.core?.address ||
+        info.core?.nft_address ||
+        info.core?.gift?.address ||
+        info.core?.gift?.nft_address;
+
+      if (addr) {
+        return `https://getgems.io/nft/${addr}`;
+      }
+
+      // Fallback: open gift by TG slug (Name-123) — GetGems indexes these
+      const name = info.core?.upgrade?.nft_name?.name || '';
+      const seq = info.core?.upgrade?.seq;
+      if (name && seq != null && seq !== '') {
+        const slug = String(name).replace(/\s+/g, '');
+        return `https://getgems.io/nft/${slug}-${seq}`;
+      }
+
+      return 'https://getgems.io/';
     },
   },
 
@@ -238,7 +332,34 @@ export default {
         new Promise((res, rej) => { const img = new Image(); img.src = src; img.onload = res; img.onerror = rej; })
       ));
     },
-    closeModal() { this.$emit('closeModal'); },
+    openSheet() {
+      if (this.closeTimer) {
+        clearTimeout(this.closeTimer);
+        this.closeTimer = null;
+      }
+      this.isRendered = true;
+      this.$nextTick(() => {
+        requestAnimationFrame(() => {
+          this.isVisible = true;
+        });
+      });
+    },
+    startClose(emitParent = true) {
+      if (!this.isRendered) return;
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.isVisible = false;
+      this.isDragging = false;
+      this.dragY = 0;
+      if (this.closeTimer) clearTimeout(this.closeTimer);
+      this.closeTimer = setTimeout(() => {
+        this.isRendered = false;
+        this.closeTimer = null;
+        if (emitParent) this.$emit('closeModal');
+      }, 340);
+    },
+    closeModal() {
+      this.startClose(true);
+    },
     shareGiftLink() {
       const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=gift_${this.ModalComp.NftId}`;
       TelegramModule.useShare(url, `Check out "${this.ModalComp.Info?.core?.upgrade?.nft_name?.name}" NFT.`);
@@ -248,9 +369,25 @@ export default {
       copyToClipboard(url);
       showToast(this.$t('profile.profileCopiedLink'), 'success');
     },
-    addToBasket(gift) { this.$emit('addToBasket', gift); },
+    openOnGetGems() {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      const url = this.getGemsUrl;
+      try {
+        if (WebApp?.openLink) {
+          WebApp.openLink(url);
+        } else {
+          window.open(url, '_blank');
+        }
+      } catch {
+        window.open(url, '_blank');
+      }
+    },
+    addToBasket(gift) {
+      try { TelegramModule.useSoftHaptic(); } catch {}
+      this.$emit('addToBasket', gift);
+    },
     onTouchStart(e) {
-      if (!this.ModalActive) return;
+      if (!this.isVisible) return;
       const t = e.touches?.[0] ?? e;
       this.isDragging = true;
       this.startY = t.clientY;
@@ -278,6 +415,7 @@ export default {
     },
     buyGift(id) {
       if (!id || !this.checkBalanceAndPrice) return;
+      try { TelegramModule.useSoftHaptic(); } catch {}
       this.ActiveButton = true;
       MarketLotApi.buy(id)
         .then(async (data) => {
@@ -286,8 +424,8 @@ export default {
             if (this.storeCache.UserData.user.Balance.balance_ton) {
               this.storeCache.UserData.user.Balance.balance_ton = parseFloat(this.storeCache.UserData.user.Balance.balance_ton) - parseFloat(data.price_ton);
             }
-            this.closeModal();
             this.$emit('notifyBuyed', id);
+            this.startClose(true);
           } else {
             showToast(data.error, 'error');
           }

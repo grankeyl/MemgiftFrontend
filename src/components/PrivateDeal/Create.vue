@@ -1,173 +1,112 @@
 <template>
   <div class="pd-create">
-    <!-- Price input -->
-    <div class="pd-create__field">
-      <label>{{ $t('privateDeal.label1') }}</label>
-      <div class="pd-create__input-wrap">
-        <img :src="Image_Ton" alt="TON" />
-        <input
-          :value="priceStr"
-          @input="onPriceInput"
-          type="text"
-          inputmode="decimal"
-          :placeholder="$t('privateDeal.pricePlaceholder')"
-        />
-      </div>
+    <div class="pd-price">
+      <img :src="Image_Ton" alt="" class="pd-price__ton" />
+      <input
+        :value="priceStr"
+        @input="onPriceInput"
+        type="text"
+        inputmode="decimal"
+        :placeholder="$t('privateDeal.pricePlaceholder')"
+      />
+      <span class="pd-price__unit">TON</span>
     </div>
 
-    <!-- Tabs: purchased / received -->
-    <div class="_direction _comp _item _categoriesSelected pd-cats">
-      <div class="_content">
-        <div
-          class="_category"
-          :class="{ _active: activeTab === 'purchased' }"
-          @click="switchTab('purchased')"
-        >
-          <h4>{{ $t('profile.profileGiftsCategory2') }}</h4>
-        </div>
-        <div
-          class="_category"
-          :class="{ _active: activeTab === 'received' }"
-          @click="switchTab('received')"
-        >
-          <h4>{{ $t('profile.profileGiftsCategory1') }}</h4>
-        </div>
-      </div>
+    <div class="pd-tabs pd-tabs--sm">
+      <button
+        type="button"
+        class="pd-tabs__item"
+        :class="{ active: activeTab === 'purchased' }"
+        @click="switchTab('purchased')"
+      >
+        {{ $t('profile.profileGiftsCategory2') }}
+      </button>
+      <button
+        type="button"
+        class="pd-tabs__item"
+        :class="{ active: activeTab === 'received' }"
+        @click="switchTab('received')"
+      >
+        {{ $t('profile.profileGiftsCategory1') }}
+      </button>
     </div>
 
-    <!-- Info bar -->
-    <div class="pd-info" v-if="!loading && GiftsList.length > 0">
-      <span class="pd-info__count">{{ giftsCount }} {{ $t('profile.profileFilters.gifts') }}</span>
-      <span v-if="selectedIds.length > 0" class="pd-info__sel">{{ selectedIds.length }} {{ $t('multicheck.selected') }}</span>
+    <div class="pd-bar">
+      <span class="pd-bar__count">
+        {{ GiftsList.length }} {{ $t('profile.profileFilters.gifts') }}
+        <template v-if="selectedIds.length">
+          · {{ selectedIds.length }} {{ $t('multicheck.selected') }}
+        </template>
+      </span>
+      <button
+        v-if="GiftsList.length > 0"
+        type="button"
+        class="pd-bar__action"
+        @click="toggleSelectAll"
+      >
+        {{ allSelected ? $t('multicheck.clearSel') : $t('multicheck.selectAll') }}
+      </button>
     </div>
 
-    <!-- Gift grid (copied from profile blocks view) -->
-    <div class="_direction _comp _item _nfts pd-nfts">
-      <div v-if="loading" class="pd-skel">
-        <div class="pd-skel__grid">
-          <div v-for="i in 9" :key="i" class="pd-skel__card">
-            <div class="pd-skel__badge"></div>
-            <div class="pd-skel__circle"></div>
-            <div class="pd-skel__price"></div>
+    <div v-if="loading" class="pd-grid-skel">
+      <div v-for="i in 6" :key="i" class="pd-grid-skel__item"></div>
+    </div>
+
+    <div v-else-if="GiftsList.length > 0" class="pd-grid">
+      <button
+        v-for="item in GiftsList"
+        :key="item.uuid"
+        type="button"
+        class="pd-gift"
+        :class="{ selected: selectedIds.includes(item.uuid), 'is-upgraded': !!item.upgraded }"
+        @click="toggleGift(item)"
+      >
+        <div class="pd-gift__inner" :style="giftCardStyle(item)">
+          <div class="pd-gift__symbols">
+            <img
+              v-if="item.upgraded && item.upgrade?.symbol_image"
+              :src="item.upgrade.symbol_image"
+              alt=""
+            />
+            <img v-else src="/gift_bg.png" alt="" />
+          </div>
+          <div v-if="item.upgraded && item.upgrade?.seq != null" class="pd-gift__badge">
+            <span>#{{ item.upgrade.seq }}</span>
+          </div>
+          <div class="pd-gift__nft">
+            <img :src="giftImage(item)" alt="" />
           </div>
         </div>
-      </div>
-      <div v-else-if="GiftsList.length > 0" class="_content">
-        <div class="items blocks">
-          <div
-            v-for="item in GiftsList"
-            :key="item.uuid"
-            class="item"
-            :class="{ 'pd-selected': selectedIds.includes(item.uuid) }"
-            @click="toggleGift(item)"
-          >
-            <!-- Selection checkbox -->
-            <div class="pd-check">
-              <div class="pd-check__box" :class="{ on: selectedIds.includes(item.uuid) }">
-                <svg v-if="selectedIds.includes(item.uuid)" width="12" height="10" viewBox="0 0 12 10" fill="none">
-                  <path d="M1 5L4.5 8.5L11 1.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Rarity / seq badge -->
-            <div v-if="item.upgraded && !item.market" class="mark">
-              <p>#{{ item.upgrade.seq }}</p>
-            </div>
-            <div v-if="item.upgraded && item.market" class="mark">
-              <img :src="StoreImg" alt="store" />
-              <p>{{ $t('profile.market') }}</p>
-            </div>
-            <div v-if="!item.upgraded && !item.market" class="rarity">
-              <div class="image">
-                <img :src="checkRarityImage(storeCache.NftsAppData?.[item.gift_ukey]?.Rarity)" alt="" />
-              </div>
-              <div class="span">
-                <p>{{ checkRarity(storeCache.NftsAppData[item.gift_ukey]?.Rarity) }}</p>
-              </div>
-            </div>
-
-            <!-- Background -->
-            <div
-              v-if="item.upgraded && item.upgrade"
-              class="background upg"
-              :style="{
-                '--center-color': item.upgrade.background_colors_center,
-                '--around-color': item.upgrade.background_colors_around,
-              }"
-            ></div>
-            <div
-              v-else
-              class="background no-upg"
-              :class="storeCache.NftsAppData[item.gift_ukey]?.Rarity"
-            ></div>
-
-            <!-- Symbol -->
-            <div v-if="item.upgraded" class="symbol upg">
-              <img :src="item.upgrade.symbol_image" :alt="item.upgrade.symbol_name" />
-            </div>
-            <div v-else class="symbol no-upg">
-              <img src="/gift_bg.png" alt="gift_bg" />
-            </div>
-
-            <!-- Model -->
-            <div class="model">
-              <div v-if="item.upgraded && item.upgrade" class="upg">
-                <div v-if="item.gift_media === 'svg'" class="image">
-                  <img :src="item.upgrade.nft_image" alt="" />
-                </div>
-                <div v-else-if="item.gift_media === 'lottie'" class="image">
-                  <img :src="getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="" />
-                </div>
-                <div v-else class="image">
-                  <img :src="item.upgrade.nft_image || getUpgradedModel(item.gift_ukey, item.upgrade.nft_name, 'svg')" alt="" />
-                </div>
-              </div>
-              <div v-else class="no-upg">
-                <div class="image">
-                  <img :src="item.gift_image || storeCache.NftsAppData?.[item.gift_ukey]?.ImageMain" alt="" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Price -->
-            <div class="button">
-              <button v-if="!item.market">
-                <h5>{{ item.purchase_price }}</h5>
-                <img :src="StarsImg" alt="stars" />
-              </button>
-              <button v-else>
-                <h5>{{ cutNumber(item.market.price_ton) }}</h5>
-                <img :src="TonImg" alt="ton" />
-              </button>
-            </div>
-          </div>
+        <div class="pd-gift__pick" v-show="selectedIds.includes(item.uuid)" aria-hidden="true">
+          <svg viewBox="0 0 12 10" fill="none">
+            <path d="M1.2 5.1L4.5 8.3L10.8 1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-      </div>
+      </button>
     </div>
 
-    <!-- Empty state -->
-    <div v-if="!loading && GiftsList.length === 0" class="pd-create__empty">
+    <div v-else class="pd-empty">
       <p>{{ $t('privateDeal.notfoundText') }}</p>
     </div>
 
-    <!-- Bottom fixed buttons -->
-    <div class="pd-create__bottom">
+    <div class="pd-dock">
       <button
         v-if="canCreate"
-        class="pd-create__btn pd-create__btn--active"
+        type="button"
+        class="pd-dock__btn pd-dock__btn--on"
         :class="{ loading: creating }"
-        @click="handleCreate"
         :disabled="creating"
+        @click="handleCreate"
       >
-        <img :src="Image_TonWhite" alt="TON" />
-        <span>{{ $t('privateDeal.create') }} {{ selectedIds.length }} {{ $t('privateDeal.createGift') }} {{ priceStr }} TON</span>
+        <img :src="Image_TonWhite" alt="" />
+        <span>{{ $t('privateDeal.create') }} · {{ selectedIds.length }} · {{ priceStr }} TON</span>
       </button>
-      <button v-else-if="selectedIds.length > 0 && !priceNum" class="pd-create__btn pd-create__btn--off" disabled>
-        {{ $t('privateDeal.enterPrice') }}
-      </button>
-      <button v-else class="pd-create__btn pd-create__btn--off" disabled>
-        {{ $t('privateDeal.chooseNumberGifts') }}
+      <button v-else type="button" class="pd-dock__btn pd-dock__btn--off" disabled>
+        {{
+          selectedIds.length > 0 && !priceNum
+            ? $t('privateDeal.enterPrice')
+            : $t('privateDeal.chooseNumberGifts')
+        }}
       </button>
     </div>
   </div>
@@ -176,14 +115,11 @@
 <script>
 import * as nftApi from '../../api/nftApi';
 import { tonToNano } from '../../api/privateDealApi';
-import { checkRarity, checkRarityImage, getUpgradedModel } from '../../utils/useGift';
-import { cutNumber } from '../../utils/useTon';
+import { getUpgradedModel } from '../../utils/useGift';
+import TelegramModule from '../../hooks/useTelegram';
 
 import Image_Ton from '@/assets/images/market/ton.svg';
 import Image_TonWhite from '@/assets/images/market/ton-white.svg';
-import StarsImg from '@/assets/images/profile/stars.png';
-import TonImg from '@/assets/images/market/ton.svg';
-import StoreImg from '@/assets/images/market/store.svg';
 
 export default {
   props: {
@@ -197,18 +133,10 @@ export default {
       creating: false,
       activeTab: 'purchased',
       GiftsList: [],
-      giftsCount: 0,
       selectedIds: [],
       priceStr: '',
       Image_Ton,
       Image_TonWhite,
-      StarsImg,
-      TonImg,
-      StoreImg,
-      checkRarity,
-      checkRarityImage,
-      getUpgradedModel,
-      cutNumber,
     };
   },
 
@@ -220,23 +148,73 @@ export default {
     canCreate() {
       return this.selectedIds.length > 0 && this.priceNum > 0 && !this.creating;
     },
+    allSelected() {
+      return this.GiftsList.length > 0 && this.selectedIds.length === this.GiftsList.length;
+    },
   },
 
   mounted() {
     this.loadGifts();
     this.$watch(
       () => this.storeCache.TelegramData,
-      () => this.loadGifts(),
+      () => this.loadGifts()
     );
   },
 
   methods: {
+    giftRarity(item) {
+      return item?.rarity || this.storeCache?.NftsAppData?.[item.gift_ukey]?.Rarity || '';
+    },
+
+    giftImage(item) {
+      if (item.upgraded && item.upgrade) {
+        if (item.gift_media === 'svg') return item.upgrade.nft_image;
+        const name = item.upgrade.nft_name?.name || item.upgrade.nft_name;
+        return getUpgradedModel(item.gift_ukey, name, 'svg') || item.upgrade.nft_image || '';
+      }
+      return item.gift_image || this.storeCache.NftsAppData?.[item.gift_ukey]?.ImageMain || '';
+    },
+
+    boostColor(hex, amount = 0.28) {
+      try {
+        let h = String(hex || '').replace('#', '');
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return hex || '#666';
+        let r = parseInt(h.slice(0, 2), 16);
+        let g = parseInt(h.slice(2, 4), 16);
+        let b = parseInt(h.slice(4, 6), 16);
+        r = Math.min(255, Math.round(r + (255 - r) * amount));
+        g = Math.min(255, Math.round(g + (255 - g) * amount));
+        b = Math.min(255, Math.round(b + (255 - b) * amount));
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+      } catch {
+        return hex || '#666';
+      }
+    },
+
+    giftCardStyle(item) {
+      if (item.upgraded && item.upgrade) {
+        const c = item.upgrade.background_colors_center || item.upgrade.background?.colors_center || '#666';
+        const a = item.upgrade.background_colors_around || item.upgrade.background?.colors_around || '#1a1a1a';
+        const hot = this.boostColor(c, 0.28);
+        return { background: `radial-gradient(circle at 50% 40%, ${hot} 0%, ${c} 45%, ${a} 100%)` };
+      }
+      const r = this.giftRarity(item);
+      const map = {
+        rare: 'linear-gradient(180deg, #282867 0%, #131328 100%)',
+        veryrare: 'linear-gradient(180deg, #1D6132 0%, #0B2211 100%)',
+        epic: 'linear-gradient(180deg, #632475 0%, #19101D 100%)',
+        legend: 'linear-gradient(180deg, #6F480E 0%, #1D1710 100%)',
+        legendary: 'linear-gradient(180deg, #6F480E 0%, #1D1710 100%)',
+        author: 'linear-gradient(180deg, #762121 0%, #221111 100%)',
+      };
+      return { background: map[r] || '#252528' };
+    },
+
     onPriceInput(e) {
       let val = e.target.value.replace(/[^0-9.]/g, '');
       const parts = val.split('.');
-      if (parts.length > 2) {
-        val = parts[0] + '.' + parts.slice(1).join('');
-      }
+      if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
       if (parts.length === 2 && parts[1].length > 2) {
         val = parts[0] + '.' + parts[1].slice(0, 2);
       }
@@ -249,27 +227,17 @@ export default {
       this.activeTab = tab;
       this.selectedIds = [];
       this.loadGifts();
+      TelegramModule.useSoftHaptic?.();
     },
 
     async loadGifts() {
-      const userId = this.storeCache.TelegramData?.user?.id;
-      if (!userId) return;
-
+      if (!this.storeCache.TelegramData?.user?.id) return;
       this.loading = true;
       try {
-        const result = await nftApi.getGifts(
-          this.activeTab, '', '', '', '', '', 0, 50
-        );
-        if (result && result.items) {
-          this.GiftsList = result.items;
-          this.giftsCount = result.count || result.items.length;
-        } else {
-          this.GiftsList = [];
-          this.giftsCount = 0;
-        }
+        const result = await nftApi.getGifts(this.activeTab, '', '', '', '', '', 0, 100);
+        this.GiftsList = result?.items || [];
       } catch {
         this.GiftsList = [];
-        this.giftsCount = 0;
       } finally {
         this.loading = false;
       }
@@ -277,45 +245,47 @@ export default {
 
     toggleGift(item) {
       const idx = this.selectedIds.indexOf(item.uuid);
-      if (idx >= 0) {
-        this.selectedIds.splice(idx, 1);
-      } else {
-        this.selectedIds.push(item.uuid);
-      }
+      if (idx >= 0) this.selectedIds.splice(idx, 1);
+      else this.selectedIds.push(item.uuid);
+      TelegramModule.useSoftHaptic?.();
+    },
+
+    toggleSelectAll() {
+      if (this.allSelected) this.selectedIds = [];
+      else this.selectedIds = this.GiftsList.map((g) => g.uuid);
+      TelegramModule.useSoftHaptic?.();
     },
 
     handleCreate() {
       if (!this.canCreate || this.creating) return;
       this.creating = true;
 
-      const gifts = this.GiftsList
-        .filter(g => this.selectedIds.includes(g.uuid))
-        .map(g => {
-          const nftData = this.storeCache.NftsAppData?.[g.gift_ukey];
-          const isUpgraded = !!g.upgraded;
-          let image = '';
-          let symbol = '';
-          if (isUpgraded && g.upgrade) {
-            if (g.gift_media === 'lottie') {
-              image = getUpgradedModel(g.gift_ukey, g.upgrade.nft_name, 'svg');
-            } else {
-              image = g.upgrade.nft_image || getUpgradedModel(g.gift_ukey, g.upgrade.nft_name, 'svg') || '';
-            }
-            symbol = g.upgrade.symbol_image || '';
+      const gifts = this.GiftsList.filter((g) => this.selectedIds.includes(g.uuid)).map((g) => {
+        const nftData = this.storeCache.NftsAppData?.[g.gift_ukey];
+        const isUpgraded = !!g.upgraded;
+        let image = '';
+        let symbol = '';
+        if (isUpgraded && g.upgrade) {
+          if (g.gift_media === 'lottie') {
+            image = getUpgradedModel(g.gift_ukey, g.upgrade.nft_name, 'svg');
           } else {
-            image = g.gift_image || nftData?.ImageMain || '';
+            image = g.upgrade.nft_image || getUpgradedModel(g.gift_ukey, g.upgrade.nft_name, 'svg') || '';
           }
-          return {
-            uuid: g.uuid,
-            nft_unique_key: g.gift_ukey,
-            image,
-            symbol,
-            rarity: nftData?.Rarity || '',
-            upgraded: isUpgraded,
-            bg_center: isUpgraded ? (g.upgrade?.background_colors_center || '') : '',
-            bg_around: isUpgraded ? (g.upgrade?.background_colors_around || '') : '',
-          };
-        });
+          symbol = g.upgrade.symbol_image || '';
+        } else {
+          image = g.gift_image || nftData?.ImageMain || '';
+        }
+        return {
+          uuid: g.uuid,
+          nft_unique_key: g.gift_ukey,
+          image,
+          symbol,
+          rarity: nftData?.Rarity || '',
+          upgraded: isUpgraded,
+          bg_center: isUpgraded ? g.upgrade?.background_colors_center || '' : '',
+          bg_around: isUpgraded ? g.upgrade?.background_colors_around || '' : '',
+        };
+      });
 
       this.$emit('createDeal', { gifts, priceNano: tonToNano(this.priceNum) });
 

@@ -23,6 +23,12 @@
     transform: scale(1)
 
 
+@keyframes shimmer
+  0%
+    background-position: -200% 0
+  100%
+    background-position: 200% 0
+
 @keyframes tabShowBlocks
   0%
     opacity: 0
@@ -74,58 +80,73 @@
 ._comp._item._user
     width: 100%
     height: fit-content
-    margin-bottom: 20px
+    margin: 0
+    padding: 0 16px
+    box-sizing: border-box
 
     ._skeleton
-        width: fit-content
+        width: 100%
         display: flex
         flex-direction: column
         align-items: center
         margin: auto
-        gap: 10px
-        width: 100%
         position: relative
 
-        ._profileTickets
-            width: 74px
-            height: 32px
+        // общий шиммер вместо плоских серых блоков
+        ._shine
+            background: $app-background-secondary
+            background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba($app-text-color, .06) 50%, $app-background-secondary 75%)
+            background-size: 200% 100%
+            animation: shimmer 1.8s ease-in-out infinite
+
+        // повторяет верхний ряд: язык слева, балансы справа
+        ._ctrl-skel
+            width: 100%
             display: flex
             align-items: center
-            background: $app-background-secondary
-            border-radius: 50px
-            padding: 6px 12px
-            gap: 7px
-            position: absolute
-            top: 0
-            right: 0px
+            justify-content: space-between
+            margin-bottom: 22px
+            padding: 0 2px
+            box-sizing: border-box
+
+        ._lang-skel
+            width: 40px
+            height: 40px
+            border-radius: 50%
+
+        ._balances-skel
+            display: flex
+            align-items: center
+            gap: 18px
+
+        ._balance-skel
+            width: 62px
+            height: 20px
+            border-radius: 8px
 
         ._image
             width: 96px
             height: 96px
             border-radius: 50%
-            background: $app-background-secondary
-            display: flex
-            justify-content: center
-            align-items: center
-            position: relative
-            margin-bottom: 12px
+            margin-bottom: 14px
 
-            & img
-                width: 100%
-                height: 100%
-                border-radius: 50%
-        
         ._name
-            width: 150px
-            height: 30px
-            background: $app-background-secondary
-            border-radius: 10px
-        
+            width: 160px
+            height: 26px
+            border-radius: 9px
+            margin-bottom: 10px
+
         ._descr
-            width: 90px
-            height: 30px
-            background: $app-background-secondary
-            border-radius: 10px
+            width: 118px
+            height: 14px
+            border-radius: 7px
+            margin-bottom: 18px
+
+        ._wallet-skel
+            width: 176px
+            height: 42px
+            border-radius: 99em
+            margin-bottom: 12px
 
     ._content
         width: 100%
@@ -134,45 +155,58 @@
         align-items: center
         position: relative
 
-        // ===== TOP CONTROLS =====
+        // Top row: lang left · tickets + gram right (tickets page)
         .pu-ctrl
             width: 100%
             display: flex
             align-items: center
-            gap: 8px
-            margin-bottom: 24px
+            justify-content: space-between
+            gap: 12px
+            margin-bottom: 22px
+            padding: 0 2px
 
+            // Round glass chip (language)
             &__lang
-                width: 34px
-                height: 34px
+                width: 40px
+                height: 40px
+                min-width: 40px
                 display: flex
                 align-items: center
                 justify-content: center
+                border: none
                 border-radius: 50%
-                background: rgba($app-text-color, 0.06)
                 cursor: pointer
                 position: relative
+                padding: 0
+                background: linear-gradient(180deg, $app-background-secondary-2 0%, #191919 100%)
+                box-shadow: $app-glass-shadow-2
+                transition: transform 0.15s ease
+                -webkit-tap-highlight-color: transparent
 
-                & > span
-                    font-size: 16px
+                &:active
+                    transform: scale(0.94)
+
+                > span
+                    font-size: 18px
                     line-height: 1
 
             &__dd
-                width: 150px
+                width: 156px
                 display: flex
                 flex-direction: column
                 background: $app-background-secondary
                 border-radius: 14px
                 padding: 4px
                 position: absolute
-                top: 42px
+                top: 48px
                 left: 0
                 z-index: 50
                 opacity: 0
                 visibility: hidden
-                transform: translateY(-6px) scale(0.9)
+                transform: translateY(-6px) scale(0.96)
                 transform-origin: top left
                 transition: all 0.16s ease
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35)
 
                 &.open
                     opacity: 1
@@ -198,47 +232,65 @@
                     font-size: 13px
                     font-weight: 600
                     color: $app-text-color
+                    margin: 0
 
-            &__tickets
-                height: 34px
+            // Stolen from tickets ._view .title .balances / .balance
+            &__balances
                 display: flex
                 align-items: center
-                gap: 5px
-                padding: 0 10px
-                border-radius: 50px
-                background: rgba($app-text-color, 0.06)
+                gap: 18px
 
-                img
-                    width: 15px
-                    height: 15px
-
-                span
-                    font-size: 12px
-                    font-weight: 700
-                    color: $app-text-color
-
-            &__bal
-                height: 34px
+            &__balance
                 display: flex
                 align-items: center
-                gap: 4px
-                padding: 0 12px
-                border-radius: 50px
-                background: rgba($app-text-color, 0.06)
+                gap: 6px
+                height: 32px
+                border: none
+                background: transparent
+                padding: 0
                 cursor: pointer
-                margin-left: auto
+                transition: transform 0.15s ease
+                -webkit-user-select: none
+                user-select: none
+                -webkit-tap-highlight-color: transparent
 
                 &:active
-                    background: rgba($app-text-color, 0.1)
+                    transform: scale(0.97)
+
+                .kit-icon
+                    width: 17px
+                    height: 17px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    opacity: 0.8
+
+                    svg
+                        width: 17px
+                        height: 17px
+
+                        path
+                            fill: $app-text-color
+
+                    // tickets page: larger white ticket icon
+                    &.ticket
+                        width: 22px
+                        height: 22px
+                        transform: translateX(1.4px)
+                        opacity: 1
+
+                        svg
+                            width: 22px
+                            height: 22px
+
+                            path
+                                fill: $app-text-color
 
                 span
-                    font-size: 13px
-                    font-weight: 700
+                    font-size: 16px
+                    font-weight: 600
                     color: $app-text-color
-
-                img
-                    width: 15px
-                    height: 15px
+                    opacity: 0.85
 
         // ===== AVATAR =====
         .pu-ava
@@ -249,6 +301,7 @@
             &__img
                 width: 100%
                 height: 100%
+                position: relative
                 border-radius: 50%
                 overflow: hidden
                 background: $app-background-secondary
@@ -343,118 +396,230 @@
                     flex-shrink: 0
                     color: inherit
 
-        // ===== WALLET =====
+        // Wallet CTA — flat pill, no gradient
         .pu-wallet
-            width: 100%
+            width: auto
+            min-width: 0
+            max-width: 100%
             height: 42px
-            display: flex
+            display: inline-flex
             align-items: center
             justify-content: center
             gap: 7px
-            border-radius: 12px
-            background: rgba($app-background-blue-secondary, 0.1)
+            margin: 0 auto 12px
+            padding: 0 18px
+            border: none
+            border-radius: 99em
             cursor: pointer
-            transition: background 0.15s ease
-            margin-bottom: 4px
+            // материал кнопок со страницы заданий (._btn)
+            background: linear-gradient(180deg, #232323 0%, #1b1b1b 100%)
+            backdrop-filter: blur(28px) saturate(60%)
+            -webkit-backdrop-filter: blur(28px) saturate(60%)
+            box-shadow: $app-glass-shadow-2
+            -webkit-box-shadow: $app-glass-shadow-2
+            transition: transform 0.18s ease, background 0.18s ease
+            -webkit-tap-highlight-color: transparent
+            color: $app-text-color
+            box-sizing: border-box
 
             &:active
-                background: rgba($app-background-blue-secondary, 0.16)
+                transform: scale(0.95)
 
-            img
-                width: 17px
-                height: 17px
+
+            .kit-icon
+                width: 16px
+                height: 16px
+                display: flex
+                align-items: center
+                justify-content: center
+                flex-shrink: 0
+                opacity: 0.9
+                line-height: 0
+
+                svg
+                    width: 16px
+                    height: 16px
+                    display: block
 
             span
-                font-size: 13px
+                font-size: 14px
                 font-weight: 600
-                color: $app-background-blue-secondary
+                letter-spacing: -0.15px
+                line-height: 1
+                color: $app-text-color
+                white-space: nowrap
 
+            // подключён — синий тинт, как у кнопки «Забрать» в заданиях
             &--on
-                background: rgba($app-text-color, 0.04)
+                background: $app-button-blue-background
+                box-shadow: none
+                -webkit-box-shadow: none
+                padding: 0 14px
 
-                &:active
-                    background: rgba($app-text-color, 0.07)
+                .kit-icon
+                    opacity: 1
+
+                    svg path
+                        fill: $app-button-blue-text-color-active
 
                 span
-                    color: $app-text-color-descr-primary
+                    font-weight: 600
+                    color: $app-button-blue-text-color-active
+                    font-size: 13px
 
-// ===== ACTIONS LIST =====
+                &:active
+                    background: rgba($app-text-color, 0.09)
+                    opacity: 1
+
+// Actions — one glass card, rows separated by borders
 ._comp._item._funcers
     width: 100%
+    padding: 0 16px
+    box-sizing: border-box
+    margin: 0
 
     .prf-acts
         width: 100%
-        border-radius: 14px
+        display: flex
+        flex-direction: column
+        gap: 0
         overflow: hidden
+        border-radius: 18px
+        background: #191919
+        box-shadow: none
+        -webkit-box-shadow: none
 
-        &__row
+        // ряды-заглушки повторяют геометрию настоящих: раньше блок действий
+        // во время загрузки не рендерился вовсе и выпрыгивал целиком
+        &--skel
+            pointer-events: none
+
+            ._title-skel
+                width: 46%
+                height: 15px
+                border-radius: 7px
+
+            ._go-skel
+                width: 26px
+                height: 26px
+                border-radius: 50%
+                flex-shrink: 0
+
+            ._shine
+                background: $app-background-secondary
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba($app-text-color, .06) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
+        // like tickets ._section-head
+        &__head
+            display: flex
+            align-items: center
+            justify-content: space-between
+            margin-bottom: 4px
+            padding: 0 2px
+
+            h4
+                margin: 0
+                font-size: 18px
+                font-weight: 600
+                letter-spacing: -0.25px
+                color: $app-text-color
+
+        &__item
+            position: relative
             width: 100%
-            height: 48px
+            min-height: 56px
+            height: 56px
+            display: flex
+            align-items: center
+            gap: 14px
+            padding: 0 14px 0 18px
+            border: none
+            border-radius: 0
+            text-align: left
+            cursor: pointer
+            box-sizing: border-box
+            background: transparent
+            box-shadow: none
+            -webkit-box-shadow: none
+            -webkit-tap-highlight-color: transparent
+            transition: background 0.12s ease
+
+            // inset divider — cleaner than full-bleed border
+            &:not(:last-child)::after
+                content: ''
+                position: absolute
+                left: 18px
+                right: 14px
+                bottom: 0
+                height: 1px
+                background: rgba($app-text-color, 0.08)
+                pointer-events: none
+
+            &:active
+                background: rgba($app-text-color, 0.045)
+
+        &__text
+            flex: 1
+            min-width: 0
+
+        &__line
             display: flex
             align-items: center
             gap: 10px
-            padding: 0 14px
-            cursor: pointer
-            background: rgba($app-text-color, 0.04)
-            border-bottom: 1px solid rgba($app-text-color, 0.03)
-            transition: background 0.12s ease
+            min-width: 0
 
-            &:active
-                background: rgba($app-text-color, 0.07)
+        &__title
+            font-size: 16px
+            font-weight: 600
+            letter-spacing: -0.3px
+            color: $app-text-color
+            white-space: nowrap
+            overflow: hidden
+            text-overflow: ellipsis
+            min-width: 0
 
-            &--last
-                border-bottom: none
+        // “New” chip — flat, no glow
+        &__badge
+            flex-shrink: 0
+            display: inline-flex
+            align-items: center
+            justify-content: center
+            height: 22px
+            padding: 0 9px
+            border-radius: 99em
+            font-size: 11px
+            font-weight: 700
+            letter-spacing: 0.02em
+            line-height: 1
+            text-transform: none
+            color: $app-button-blue-text-color
+            background: $app-button-blue-background
+            box-shadow: none
 
-            &--off
-                opacity: 0.45
-                pointer-events: none
+            &.soon
+                background: $app-background-secondary
+                color: $app-text-color
 
-        &__ic
-            width: 20px
-            height: 20px
+        &__go
+            flex-shrink: 0
+            width: 32px
+            height: 32px
             display: flex
             align-items: center
             justify-content: center
-            flex-shrink: 0
-
-            .kit-icon
-                width: 20px
-                height: 20px
-
-                svg
-                    width: 20px
-                    height: 20px
-
-        &__txt
-            font-size: 14px
-            font-weight: 600
-            color: $app-text-color
-            flex: 1
-
-        &__new
-            font-size: 9px
-            font-weight: 700
-            padding: 2px 6px
-            border-radius: 5px
-            background: rgba($app-background-blue-secondary, 0.15)
-            color: $app-background-blue-secondary
-            text-transform: uppercase
-            letter-spacing: 0.3px
-
-        &__soon
-            font-size: 9px
-            font-weight: 700
-            padding: 2px 6px
-            border-radius: 5px
+            border-radius: 50%
             background: rgba($app-text-color, 0.06)
-            color: $app-text-color-descr-primary
-            text-transform: uppercase
-            letter-spacing: 0.3px
+            box-shadow: none
+            -webkit-box-shadow: none
+            color: $app-text-color
 
-        &__arr
-            color: $app-text-color-descr
-            flex-shrink: 0
-            margin-left: auto
+            svg
+                width: 8px
+                height: 13px
+                opacity: 0.5
+                display: block
 
 
 ._comp._item._nftTransferToReceived
@@ -1178,20 +1343,21 @@
         position: fixed
         overflow: auto
         background: $app-background
-        z-index: 1000
+        z-index: 1010
         opacity: 1
         visibility: visible
         pointer-events: all
-        bottom: 0%
-        border-radius: 20px 20px 0px 0px
-        padding: 0px 0px 42px 0px
+        bottom: 0
+        border-radius: 24px 24px 0 0
+        padding: 0 0 calc(28px + env(safe-area-inset-bottom, 14px))
         left: 50%
-        transform: translate(-50%, 0%)
-        transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.5, 1)
+        transform: translate(-50%, 0)
+        box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.45)
+        transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1)
 
         &.hide
             transform: translate(-50%, 100%)
-            transition: transform 0.53s cubic-bezier(0.25, 0.8, 0.5, 1)
+            transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1)
 
         ._profileGiftModalClose
             width: 33px
@@ -2548,19 +2714,11 @@
             &.last
                 border-bottom: none
 
+// legacy wallet-balance styles under _funcers (unused shell kept for safety)
 ._comp._item._funcers
-    width: 100%
-    height: fit-content
-    margin-bottom: 14px
-    display: flex
-    align-items: center
-    flex-direction: column
-    border-radius: 14px
-    overflow: hidden
-
     ._skeleton
         width: 100%
-        
+
         ._balance
             width: 100%
             height: 55px
@@ -2574,7 +2732,7 @@
     ._content
         width: 100%
 
-        ._balance 
+        ._balance
             width: 100%
             height: 55px
             display: flex
@@ -2767,118 +2925,195 @@
                         height: 18px
 
 
+// Profile gifts stack: tabs → filters → count/view → grid
+.prf-gifts
+    width: 100%
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+    // space above tabs
+    > ._categoriesSelected
+        padding-top: 10px !important
+
+    // space under tabs (filters sit after categories)
+    > ._categoriesSelected + ._filter
+        padding-top: 7px !important
+
+    // keep L/R inset in sync with gift grid on narrow screens
+    @media screen and (max-width: 377px)
+        > ._categoriesSelected
+            padding: 10px 12px 0 !important
+
+        > ._categoriesSelected + ._filter
+            padding: 7px 12px 0 !important
+
+        > ._filter
+            ._content
+                .cont .filtersItems
+                    margin: 0 -12px
+                    padding-left: 12px
+                    padding-right: 12px
+
+                .cheaps
+                    margin: 0 -12px
+                    padding-left: 12px
+                    padding-right: 12px
+
+// Identical to Market/Tabs.sass
 ._comp._item._categoriesSelected
     width: 100%
-    height: 46px
-    margin-bottom: 12px
-    
+    height: fit-content
+    padding: 0 16px
+    // top air is set on .prf-gifts > tabs
+    margin: 0
+    box-sizing: border-box
+
     ._skeleton
         width: 100%
         display: flex
         align-items: center
-        gap: 10px
+        justify-content: flex-start
 
-        ._category
-            width: 100%
-            height: 30px
-            background: $app-background-secondary
-            border-radius: 14px
-    
+        .items
+            display: flex
+            gap: 20px
+
+            .item
+                width: 80px
+                height: 32px
+                background: $app-background-secondary
+                border-radius: 8px
+                background-image: linear-gradient(90deg, $app-background-secondary 25%, rgba(255, 255, 255, 0.04) 50%, $app-background-secondary 75%)
+                background-size: 200% 100%
+                animation: shimmer 1.8s ease-in-out infinite
+
     ._content
         width: 100%
         display: flex
         align-items: center
-        justify-content: center
-        overflow-x: scroll
+        justify-content: flex-start
 
-        ._category
-            width: fit-content
-            height: 100%
+        .items
             display: flex
-            justify-content: center
-            align-items: center
-            padding: 0px 13px
-            position: relative
+            gap: 16px
+            align-items: baseline
+            min-width: 0
 
-            & h4
-                white-space: nowrap
-                font-size: 20px
-                font-weight: 600
-                color: $app-mark-background
-                transition: color 0.2s ease
-            
-            &._active
-                &::before
-                    content: ''
-                    position: absolute
-                    width: 33%
-                    height: 2px
-                    margin-top: 36px
-                    background: $app-button-blue-light-text-color
-                    border-radius: 3px
-                & h4
+            .item
+                cursor: pointer
+                position: relative
+                transition: opacity 0.18s ease
+
+                &:active
+                    opacity: 0.7
+
+                h4
+                    margin: 0
+                    font-size: 24px
+                    font-weight: 700
                     color: $app-text-color
+                    opacity: 0.2
+                    white-space: nowrap
+                    transition: opacity 0.18s ease
+                    letter-spacing: -0.5px
+
+                    @media screen and (max-width: 400px)
+                        font-size: 22px
+
+                &.active h4
+                    opacity: 1
 
 
+// Profile filters — practically identical to Market/Filters.sass
 ._comp._item._filter
     width: 100%
     height: fit-content
-    margin-bottom: 12px
-    
+    display: flex !important
+    opacity: 1 !important
+    margin: 0
+    // L/R inset; top space comes from .prf-gifts > tabs + filters rule
+    padding: 0 16px
+    box-sizing: border-box
+
     ._skeleton
         width: 100%
         display: flex
         align-items: center
         gap: 10px
-    
+
     ._content
         width: 100%
-        display: flex
+        display: flex !important
         flex-direction: column
         gap: 12px
+        opacity: 1 !important
+        pointer-events: all !important
+        position: relative !important
 
         .cont
-            display: block
-            align-items: center
-            justify-content: space-between
+            display: flex
+            flex-direction: column
+            gap: 0
+            position: relative !important
 
-            .lefted
-                display: grid
-                grid-template-columns: repeat(3, auto)
+            .filtersItems
+                display: flex
                 align-items: center
+                gap: 8px
+                overflow-x: auto
+                overflow-y: hidden
+                -webkit-overflow-scrolling: touch
+                scrollbar-width: none
+                -ms-overflow-style: none
                 position: relative !important
                 opacity: 1 !important
-                gap: 10px
-                overflow-x: none
-                overflow-y: scroll
-                
-                .item
-                    width: 100%
-                    height: fit-content
+                touch-action: pan-x
+                padding-bottom: 0
+                padding-right: 0
+                margin: 0 -16px
+                padding-left: 16px
+                padding-right: 16px
+                cursor: grab
+                user-select: none
+
+                &::after
+                    content: ""
+                    flex: 0 0 4px
+
+                &:active
+                    cursor: grabbing
+
+                &::-webkit-scrollbar
+                    display: none
+
+                .filtersItemsItem
+                    position: relative
+                    flex: 1
+                    width: fit-content
+                    min-width: fit-content
+                    height: 40px
+                    padding: 0 16px
                     display: flex
-                    justify-content: space-between
                     align-items: center
-                    gap: 6px
-                    position: relative
-                    overflow: hidden
-                    position: relative
-                    opacity: 1
-                    padding: 8px 10px
-                    background: rgba($app-background-secondary, 0.6)
-                    -webkit-backdrop-filter: blur(20px)
-                    backdrop-filter: blur(20px)
-                    border-radius: 14px
+                    justify-content: space-between
+                    border-radius: 99em
+                    background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%)
+                    backdrop-filter: blur(28px) saturate(60%)
+                    -webkit-backdrop-filter: blur(28px) saturate(60%)
+                    box-shadow: $app-glass-shadow-2
+                    -webkit-box-shadow: $app-glass-shadow-2
+                    border: none
+                    cursor: pointer
+                    box-sizing: border-box
+                    transition: background 0.18s ease, transform 0.18s ease
+
+                    &:active
+                        transform: scale(0.95)
 
                     &.disabled
                         pointer-events: none
-                        opacity: .5
-
-                    .flexer
-                        width: 100%
-                        height: 100%
-                        display: block
-                        align-items: center
-                        gap: 6px
+                        opacity: 0.35
 
                     .circle
                         width: 6px
@@ -2887,143 +3122,103 @@
                         background: $app-background-blue-secondary
                         position: absolute
                         top: 6px
-                        right: 7px
+                        right: 8px
                         z-index: 1
-                    
-                    .icon
-                        width: fit-content
-                        height: fit-content
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
 
-                        &.pen
-                            & .kit-icon
+                    .flexer
+                        display: flex
+                        align-items: center
+                        gap: 6px
+                        width: 100%
+                        justify-content: center
+
+                    .icon
+                        display: flex
+                        align-items: center
+                        flex-shrink: 0
+
+                        .kit-icon
+                            width: 16px
+                            height: 16px
+                            display: flex
+
+                            svg
                                 width: 16px
                                 height: 16px
 
-                                & svg
-                                    width: 100%
-                                    height: 100%
-
-                                    & path
-                                        fill: $app-text-color-descr-primary
-                        
-                        & .kit-icon
-                            width: 18px
-                            height: 18px
-
-                            & svg
-                                width: 100%
-                                height: 100%
-
                                 path
-                                    fill: $app-text-color-descr-primary
-                            
+                                    fill: $app-text-color
+                                    opacity: 0.5
+
                     .title
-                        width: fit-content
-                        height: fit-content
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        font-size: 16px
-                        font-weight: 600
-                        color: $app-text-color-descr-primary
+                        font-size: 15px
+                        font-weight: 500
+                        color: $app-text-color
                         white-space: nowrap
-                        margin-top: 4px
+                        overflow: hidden
+                        text-overflow: ellipsis
 
-                        @media screen and (max-width: 430px)
-                            font-size: 14px
-
-                        @media screen and (max-width: 387px)
-                            font-size: 12px
-                    
-                    .dropdown
-                        width: 19px
+                    .border
+                        width: 1px
                         height: 19px
-                        min-width: 19px
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        background: rgba($app-mark-background, 0.8)
-                        border-radius: 50px
+                        flex-shrink: 0
+                        background: $app-table-button
+                        margin-left: 5px
+                        margin-right: 5px
 
-                        & .kit-icon
-                            width: fit-content
-                            height: fit-content
-                            margin-top: 3px
-                            
-            .righted
-                width: fit-content
-                height: 100%
-                display: flex
-                align-items: center
-                gap: 10px
-                position: relative
-                
-                .gifts
-                    width: fit-content
-                    height: fit-content
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    position: relative
-                    
-                    & h5
-                        width: fit-content
-                        height: fit-content
-                        display: flex
-                        justify-content: center
-                        align-items: center
-                        position: relative
-                        font-size: 16px
-                        font-weight: 600
-                        color: $app-text-color-descr-primary
+                    .dropdown
+                        display: none
 
-                .display
-                    width: fit-content
-                    height: fit-content
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    position: relative
-                    
-                    & .kit-icon
-                        width: 28px
-                        height: 28px
-
-                        & svg
-                            width: 100%
-                            height: 100%
-        
         .information
             width: 100%
-            height: 100%
+            min-height: 28px
             display: flex
             justify-content: space-between
             align-items: center
-                
+            padding: 0
+            box-sizing: border-box
+
             .gifts
-                width: fit-content
-                height: fit-content
                 display: flex
-                justify-content: center
                 align-items: center
-                position: relative
-                    
-                & h5
-                    width: fit-content
-                    height: fit-content
-                    display: flex
-                    justify-content: center
-                    align-items: center
-                    position: relative
-                    font-size: 16px
+                min-height: 28px
+
+                h5
+                    margin: 0
+                    font-size: 14px
                     font-weight: 600
+                    line-height: 1
                     color: $app-text-color-descr-primary
+
+            .righted
+                display: flex
+                align-items: center
+                justify-content: center
+                min-height: 28px
+
+                .display
+                    width: 28px
+                    height: 28px
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    cursor: pointer
+                    -webkit-tap-highlight-color: transparent
+                    transition: opacity 0.15s ease, transform 0.15s ease
+
+                    &:active
+                        transform: scale(0.92)
+                        opacity: 0.75
+
+                    .kit-icon
+                        width: 20px
+                        height: 20px
+                        display: flex
+                        opacity: 0.5
+
+                        svg
+                            width: 20px
+                            height: 20px
 
         .cheaps
             width: 100%
@@ -3032,9 +3227,18 @@
             align-items: center
             justify-content: start
             position: relative
-            overflow-x: scroll
+            overflow-x: auto
             overflow-y: hidden
             gap: 8px
+            padding: 0
+            margin: 0 -16px
+            padding-left: 16px
+            padding-right: 16px
+            box-sizing: border-box
+            scrollbar-width: none
+
+            &::-webkit-scrollbar
+                display: none
 
             .cheap
                 width: fit-content
@@ -3118,215 +3322,213 @@
                                         fill: $app-text-color
                                         stroke: $app-text-color-descr
 
+// Gift cards — square, 3-col (>377px), 2-col (≤377px)
 ._comp._item._nfts
     width: 100%
-    height: 100%
-    
+    height: fit-content
+    padding: 0 16px
+    box-sizing: border-box
+    margin: 0
+
     ._skeleton
         width: 100%
-        display: flex
-        align-items: center
+        display: grid
+        grid-template-columns: repeat(3, minmax(0, 1fr))
         gap: 10px
-    
+        opacity: 0.4
+
+        .item
+            width: 100%
+            aspect-ratio: 1 / 1
+            background: $app-background-secondary
+            border-radius: 18px
+
     ._content
         width: 100%
         height: 100%
 
         .items.blocks
+            width: 100%
+            position: relative
             display: grid
             grid-template-columns: repeat(3, minmax(0, 1fr))
             gap: 12px
+            padding: 2px
             min-width: 0
-            transition: all 0.35s ease-in-out
-            animation: tabShowBlocks 0.25s linear
-            transform-origin: top
+            overflow: visible
 
-            .item
+            .item._gift
                 width: 100%
-                aspect-ratio: 114 / 127
-                border-radius: 0.7em
-                background: $app-background-secondary
-                overflow: hidden
+                aspect-ratio: 1 / 1
+                border-radius: 20px
                 position: relative
-                container-type: inline-size
-                transition: transform 0.2s ease-in-out
-                transform: scale(1)
+                // visible so rarity ribbon can stick out of the card
+                overflow: visible
                 cursor: pointer
+                background: $app-background-secondary
+                box-shadow: none
+                -webkit-box-shadow: none
+                filter: none
+                transition: transform 0.18s ease
+                -webkit-tap-highlight-color: transparent
+                animation: bubbleNft 0.2s linear
 
                 &:active
-                    transform: scale(0.94)
+                    transform: scale(0.97)
 
-                .mark
+                ._symbols
                     position: absolute
-                    top: 8px
-                    left: 8px
-                    height: 0.95em
-                    display: flex
-                    align-items: center
-                    gap: 0.25em
-                    background: rgba($app-text-color, 0.25)
-                    border-radius: 2em
-                    -webkit-backdrop-filter: blur(19px)
-                    backdrop-filter: blur(19px)
-                    padding: 0em 0.38em 0em 0.38em
-                    z-index: 3
+                    inset: 0
+                    overflow: hidden
+                    opacity: 0.18
+                    z-index: 1
+                    pointer-events: none
+                    border-radius: 20px
 
-                    & .kit-icon
-                        width: 0.65em
+                    img
+                        position: absolute
+                        left: 50%
+                        top: 50%
+                        width: 100%
+                        height: 100%
+                        transform: translate(-50%, -50%)
+                        object-fit: cover
 
-                        & svg
-                            width: 100%
-                            height: 100%
+                // Upgraded — richer color only, zero shadows/filters
+                &.is-upgraded
+                    box-shadow: none !important
+                    -webkit-box-shadow: none !important
+                    filter: none !important
 
-                    & p
-                        font-size: clamp(10px, 3cqw, 13px)
-                        font-weight: 600
-                        color: $app-text-color
-                
-                .rarity
+                    ._symbols
+                        opacity: 0.38
+                        mix-blend-mode: normal
+
+                        img
+                            width: 110%
+                            height: 110%
+                            filter: none !important
+
+                    ._nft img
+                        width: 74%
+                        height: 74%
+                        filter: none !important
+                        box-shadow: none !important
+
+                // Like home, barely peeks past the corner
+                ._rarity
                     width: fit-content
                     height: fit-content
                     position: absolute
-                    top: 1.35em
-                    right: 1.35em
+                    top: 22px
+                    right: 24px
                     text-align: center
-                    transform: rotate(45deg)
-                    z-index: 10
+                    transform: rotate(45deg) translate(2px, 0)
+                    z-index: 12
+                    pointer-events: none
 
-                    .image
-                        width: 10em
-                        height: 1.4em
+                    ._image
+                        width: 88px
+                        height: 36px
                         position: absolute
                         z-index: 1
                         top: 50%
                         left: 50%
                         transform: translate(-50%, -50%)
-                        & img
+
+                        img
                             width: 100%
                             height: 100%
                             z-index: 1
-                    
-                    .span
+                            display: block
+
+                    ._text
                         position: absolute
                         z-index: 2
                         white-space: nowrap
                         transform: translate(-50%, -53%)
-                        max-width: 70px
+                        max-width: 64px
                         overflow: hidden
-                        white-space: nowrap
                         text-overflow: ellipsis
-                                
-                        & p
-                            font-size: clamp(10px, 3cqw, 13px)
+
+                        span
+                            font-size: 12px
                             font-weight: 600
                             color: $app-text-color
 
-                .background.upg
-                    width: 100%
-                    height: 100%
-                    background: radial-gradient(circle, var(--center-color), var(--around-color))
+                ._badge
                     position: absolute
-                    top: 0
-                    left: 0
-                    z-index: 0
+                    z-index: 6
+                    height: 20px
+                    display: flex
+                    align-items: center
+                    border-radius: 50px
+                    padding: 0 7px
+                    -webkit-backdrop-filter: blur(12px)
+                    backdrop-filter: blur(12px)
+                    background: rgba(0, 0, 0, 0.34)
 
-                .background.no-upg
-                    width: 100%
-                    height: 100%
-                    position: absolute
-                    top: 0
-                    left: 0
-                    z-index: 0
-                    
-                    &.rare
-                        background: $app-rarity-background-rare
-                    
-                    &.veryrare
-                        background: $app-rarity-background-very-rare
-                    
-                    &.epic
-                        background: $app-rarity-background-epic
-                    
-                    &.legend
-                        background: $app-rarity-background-legendary
-                    
-                    &.author
-                        background: $app-rarity-background-author
+                    span
+                        font-size: 10px
+                        font-weight: 600
+                        color: $app-text-color
+                        line-height: 1
+                        letter-spacing: -0.15px
 
-                .symbol
+                    &--num
+                        top: 8px
+                        left: 8px
+                        // keep inside rounded card
+                        z-index: 7
+
+                    // выставлен на маркете. подложка та же, что у ._badge--num,
+                    // поэтому обе метки на карточке читаются одинаково
+                    &--market
+                        top: 8px
+                        right: 8px
+                        z-index: 7
+                        width: 20px
+                        padding: 0
+                        justify-content: center
+
+                        .kit-icon
+                            width: 11px
+                            height: 11px
+                            display: flex
+                            align-items: center
+                            justify-content: center
+                            line-height: 0
+
+                            svg
+                                width: 11px
+                                height: 11px
+                                display: block
+
+                                path
+                                    fill: $app-text-color
+
+                // Model dead-center (clipped to card radius)
+                ._nft
                     position: absolute
-                    width: 100%
-                    height: 100%
+                    inset: 0
+                    z-index: 5
+                    pointer-events: none
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    border-radius: 20px
                     overflow: hidden
-                    opacity: .6
-                    z-index: 1
-                    mix-blend-mode: luminosity
 
-                    &.no-upg
-                        opacity: .2
+                    img
+                        width: 70%
+                        height: 70%
+                        object-fit: contain
+                        display: block
 
-                    & img
-                        position: absolute
-                        left: 50%
-                        top: 50%
-                        width: 100%
-                        height: calc(100% - 20px)
-                        transform: translate(-50%, -59%)
-                        object-fit: cover
-                        z-index: -1
-
-                .model
-                    width: 80%
-                    height: 80%
-                    margin: auto
-                    margin-top: 5px
-                    position: relative
-                    z-index: 2
-
-                    .upg, .no-upg
-                        width: 100%
-                        height: 100%
-                        position: relative
-
-                        .image
-                            width: 100%
-                            height: 100%
-
-                            & img
-                                width: 100%
-                                height: 100%
-                                object-fit: cover
-
-                .button
-                    position: absolute
-                    bottom: 8px
-                    left: 50%
-                    transform: translateX(-50%)
-
-                    & button
-                        font-size: clamp(11px, 3cqw, 13px)
-                        padding: 0.45em 0.7em
-                        background: rgba(#393939, 0.2)
-                        border-radius: 2em
-                        display: inline-flex
-                        align-items: center
-                        gap: 0.2em
-                        cursor: pointer
-                        transform: scale(1)
-                        transition: transform 0.22s ease
-
-                        & h5
-                            font-size: 1em
-                            font-weight: 600
-                            color: $app-text-color
-                            line-height: 1
-
-                        & img
-                            width: 1.1em
-                            height: 1.1em
 
         .items.lists
             display: flex
+            position: relative
             flex-direction: column
             min-width: 0
             transition: all 0.25s ease-in-out
@@ -3533,7 +3735,21 @@
                         & svg
                             width: 11px
                             height: 11px
-                            
+
+    // ≤377px — 2 gifts per row (default above is 3)
+    @media screen and (max-width: 377px)
+        padding: 0 12px
+
+        ._skeleton
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+            gap: 10px
+
+        ._content
+            .items.blocks
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+                gap: 10px
+
+
 ._comp._item._empty
     .null
         width: fit-content
@@ -4168,3 +4384,207 @@
                     width: 16px
                     height: 16px
                     margin-top: 1px
+
+
+// ── уход подарка из списка после отправки ──
+// габариты фиксирует freezeLeavingCard(), иначе карточка схлопывается
+.giftgone-leave-active
+    // у .items.blocks .item._gift своя position: relative с большей
+    // специфичностью — без !important карточка не отрывается от потока,
+    // а инлайновые left/top от freezeLeavingCard() её просто сдвигают
+    position: absolute !important
+    z-index: 0
+    margin: 0
+    pointer-events: none
+    will-change: opacity, transform
+    transition: opacity .24s ease, transform .24s cubic-bezier(0.22, 1, 0.36, 1)
+
+.giftgone-leave-to
+    opacity: 0
+    transform: scale(0.94)
+
+// соседи подтягиваются на освободившееся место
+.giftgone-move
+    transition: transform .32s cubic-bezier(0.22, 1, 0.36, 1)
+
+// появление карточек (смена таба ремоунтит группу через :key, плюс appear):
+// каскад — каждая следующая чуть позже, как _anim-stagger
+.giftgone-enter-active
+    transition: opacity .34s cubic-bezier(0.22, 1, 0.36, 1), transform .38s cubic-bezier(0.22, 1, 0.36, 1)
+    transition-delay: calc(var(--gi, 0) * 0.035s)
+
+.giftgone-enter-from
+    opacity: 0
+    transform: translateY(14px) scale(0.96)
+
+@media (prefers-reduced-motion: reduce)
+    .giftgone-leave-active,
+    .giftgone-enter-active,
+    .giftgone-move
+        transition: none
+
+
+// ── метка «on sale» на карточке подарка ──
+// форму даёт маска, цвет приходит переменными из saleRibbonStyle(),
+// поэтому лента красится под сам подарок и картинок на каждый цвет не нужно
+._rarity._rarity--sale
+    ._image
+        background: linear-gradient(135deg, var(--sale-from, #4A4A52) 0%, var(--sale-to, #26262C) 100%)
+        -webkit-mask: url('@/assets/images/on-sale.svg') center / contain no-repeat
+        mask: url('@/assets/images/on-sale.svg') center / contain no-repeat
+
+        img
+            display: none
+
+// цвет текста задаётся по той же цепочке, что и у обычных лент:
+// правило ._comp._item._nfts ... ._rarity ._text span специфичнее короткого
+._comp._item._nfts ._content .items .item._gift ._rarity._rarity--sale ._text span,
+._comp._item._nfts ._content .items .item ._rarity._rarity--sale ._text span
+    color: var(--sale-text, #FFFFFF)
+
+
+// лента «on sale» появляется плавно, а не мигает.
+// анимируем только прозрачность: у ленты свой transform
+// (rotate(45deg) translate(2px, 0)), и кадры его бы перебили, сдвинув её
+._rarity._rarity--sale
+    animation: saleRibbonIn .22s ease both
+
+@keyframes saleRibbonIn
+    from
+        opacity: 0
+    to
+        opacity: 1
+
+@media (prefers-reduced-motion: reduce)
+    ._rarity._rarity--sale
+        animation: none
+
+// лента «в кошельке»: та же маска, что у on sale, но фиксированный
+// TON-синий градиент — цвет подарка тут не важен, важен статус
+._rarity._rarity--sale._rarity--mint
+    ._image
+        background: linear-gradient(135deg, #0083FD 0%, #2563EB 100%)
+
+._comp._item._nfts ._content .items .item._gift ._rarity._rarity--sale._rarity--mint ._text span,
+._comp._item._nfts ._content .items .item ._rarity._rarity--sale._rarity--mint ._text span
+    color: #FFFFFF
+
+// чип «в кошельке» в списочном виде подарков: как .marker у market-on,
+// но TON-синий — статус блокчейна, а не маркета
+._comp._item._nfts ._content .items.lists .item .content .info .mint-on
+    width: fit-content
+    height: fit-content
+    display: flex
+    align-items: center
+    justify-content: center
+    background: rgba(#0083FD, 0.16)
+    border-radius: 50px
+    padding: 4px 8px
+    gap: 4px
+
+    & .kit-icon
+        width: 11px
+        height: 11px
+        display: flex
+        align-items: center
+        justify-content: center
+
+        & svg
+            width: 11px
+            height: 11px
+
+    & p
+        color: #7CB3FF
+        font-size: 10px
+        font-weight: 600
+
+// табы профиля «подарки / в кошельке» — стеклянный сегмент со скользящим
+// индикатором, тот же материал и пружина, что у пилюли нижнего меню
+._comp._item.prf-tabs
+    width: 100%
+    margin-top: 3px
+    margin-bottom: 10px
+    padding: 0 16px
+    box-sizing: border-box
+
+    .prf-tabs__pill
+        position: relative
+        width: 100%
+        height: 52px
+        display: flex
+        align-items: stretch
+        padding: 4px
+        border-radius: 99em
+        box-sizing: border-box
+        background-color: color-mix(in srgb, $app-background-secondary-2 50%, transparent)
+        backdrop-filter: blur(13px) saturate($app-saturation)
+        -webkit-backdrop-filter: blur(13px) saturate($app-saturation)
+        box-shadow: $app-glass-shadow
+        -webkit-box-shadow: $app-glass-shadow
+
+        // два равных сегмента — индикатору хватает translateX(0|100%)
+        &.is-wallet .prf-tabs__indicator
+            transform: translateX(100%)
+
+    .prf-tabs__indicator
+        position: absolute
+        top: 4px
+        bottom: 4px
+        left: 4px
+        width: calc(50% - 4px)
+        border-radius: 999px
+        background: #ffffff16
+        pointer-events: none
+        transform: translateX(0)
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)
+        will-change: transform
+
+    .prf-tabs__tab
+        flex: 1 1 0
+        min-width: 0
+        height: 100%
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 6px
+        padding: 0
+
+        // иконка NFT-таба гаснет и зажигается вместе с текстом
+        .kit-icon
+            width: 15px
+            height: 15px
+            display: flex
+            align-items: center
+            justify-content: center
+            opacity: 0.4
+            transition: opacity 0.28s ease
+
+            svg
+                width: 15px
+                height: 15px
+
+        &.active .kit-icon
+            opacity: 1
+        border: none
+        border-radius: 999px
+        background: transparent
+        cursor: pointer
+        position: relative
+        z-index: 1
+        transition: transform 0.2s ease
+        -webkit-tap-highlight-color: transparent
+
+        &:active
+            transform: scale(0.97)
+
+        & span
+            font-size: 15px
+            font-weight: 600
+            color: $app-text-color
+            opacity: 0.4
+            letter-spacing: -0.2px
+            white-space: nowrap
+            transition: opacity 0.28s ease
+
+        &.active span
+            opacity: 1

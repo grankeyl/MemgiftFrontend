@@ -1,46 +1,23 @@
 <template>
-  <div class="_direction _comp _item _partnersTasks" :class="Key">
+  <div class="_direction _comp _item _partnersTasks blockTasks" :class="Key">
       <div v-if="isLoading" class="_skeleton">
         <div class="_list-skel">
-          <div class="_row-skel"></div>
-          <div class="_row-skel"></div>
-          <div class="_row-skel"></div>
+          <div class="_row-skel" v-for="i in 3" :key="i">
+            <div class="_avatar-skel _load-shimmer"></div>
+            <div class="_info-skel">
+              <div class="_title-skel _load-shimmer"></div>
+              <div class="_reward-skel _load-shimmer"></div>
+            </div>
+            <div class="_action-skel _load-shimmer"></div>
+          </div>
         </div>
       </div>
       <div v-else class="_content">
         <div class="_section-head">
-          <h4>{{ $t('tickets.partnersTitle') }}</h4>
-          <span @click="becomePartner()">
-            {{ $t('tickets.partnersSpan') }}
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </span>
+          <h4>{{ $t('tickets.partnersTitle') }} <b>({{ totalTasks }})</b></h4>
         </div>
 
         <div class="_task-list">
-          <!-- ScoobyVPN hardcoded task -->
-          <div class="_task-row">
-            <div class="_task-avatar">
-              <img src="/scooby_vpn.png" alt="ScoobyVPN" />
-            </div>
-            <div class="_task-info">
-              <h4>Scooby VPN</h4>
-              <div class="_task-reward">
-                <p style="color: rgba(255,255,255,0.5); font-size: 13px;">Активировать подписку в боте</p>
-              </div>
-            </div>
-            <div class="_task-action">
-              <button v-if="!scoobyVpnDone && !scoobyVpnLoading" @click="clickScoobyVpn()" class="_btn _start">
-                <span>{{ $t('tickets.taskButtonStart') }}</span>
-              </button>
-              <button v-if="scoobyVpnDone" class="_btn _done">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-              </button>
-              <button v-if="scoobyVpnLoading && !scoobyVpnDone" class="_btn _loading">
-                <Lottie class="lt" slug="loading-spin" :loop="true" width="25" height="25" renderer="svg" />
-              </button>
-            </div>
-          </div>
-
           <div v-for="(task, index) in TasksData" :key="index" class="_task-row">
             <template v-if="task.type === 'subscribe_channel'">
               <div class="_task-avatar">
@@ -49,8 +26,8 @@
               <div class="_task-info">
                 <h4>{{ task.config.ChannelName }}</h4>
                 <div class="_task-reward">
-                  <img :src="Image_Ticket" alt="tickets" />
-                  <p>+{{ task?.rewards?.[0]?.amount }}</p>
+                  <Icon class="kit-icon" v-html="Icon.Ticket"></Icon>
+                  <p>{{ task?.rewards?.[0]?.amount }}</p>
                 </div>
               </div>
               <div class="_task-action">
@@ -68,7 +45,6 @@
                 </button>
               </div>
             </template>
-
             <template v-if="task.type === 'join_mini_app'">
               <div class="_task-avatar">
                 <img :src="task.config.MiniAppAvatar" alt="" />
@@ -80,8 +56,8 @@
                     <b>{{ $t('tickets.stickerGift', { count: 1 }) }}</b>
                   </template>
                   <template v-else>
-                    <img :src="Image_Ticket" alt="tickets" />
-                    <p>+{{ task?.rewards?.[0]?.amount }}</p>
+                    <Icon class="kit-icon" v-html="Icon.Ticket"></Icon>
+                    <p>{{ task?.rewards?.[0]?.amount }}</p>
                   </template>
                 </div>
               </div>
@@ -149,6 +125,7 @@ export default {
       isLoading: this.$props.Skeleton,
 
       isUseInterval: false,
+      usePollTimers: [],
       useCheckInterval: false,
       useCheckTimeout: false,
 
@@ -170,7 +147,7 @@ export default {
     if (this.TasksData) {
       this.TasksData.forEach(task => {
         if (task.user_status === 'in_progress') {
-          this.startUse(task.id);
+          this.startUse(task);
         }
       });
     }
@@ -187,13 +164,20 @@ export default {
     );
   },
 
+  beforeUnmount() {
+    this.stopUse();
+  },
+
   computed: {
     isLoading() {
       return this.Skeleton;
     },
     TasksData() {
       return this.$props.TasksData;
-    }
+    },
+    totalTasks() {
+      return this.TasksData.length;
+    },
   },
   
   methods: {
@@ -341,26 +325,55 @@ export default {
       }
     },
 
+    // опрос статуса подписки. правки против вечной загрузки:
+    // 1) ждём не только in_review, но и completed — иначе уже засчитанное
+    //    задание крутится вечно, потому что нужный статус не наступит
+    // 2) есть предел попыток: сеть могла не ответить, кнопку надо вернуть
+    // 3) таймер свой на каждое задание, раньше общий id затирался
+    //    следующим заданием и предыдущий интервал жил вечно
     startUse(Task) {
-      return new Promise((resolve) => {
-        this.isUseInterval = true;
-        this.useCheckInterval = setInterval(async () => {
-          Task.isLoading = true;
-          const data = await taskApi.getAll();
-          const task = data.partners.find(task => task.id === Task.id);
+      if (!Task || typeof Task !== 'object') return Promise.resolve(false);
+      if (Task._polling) return Promise.resolve(false);
 
-          if (task && task.user_status === 'in_review') {
-            Task.user_status = task.user_status;
-            Task.isLoading = false;
-            this.stopUse();
-            resolve(true);
-          }
+      Task._polling = true;
+      Task.isLoading = true;
+      this.isUseInterval = true;
+
+      return new Promise((resolve) => {
+        let attempts = 0;
+
+        const finish = (ok) => {
+          clearInterval(timer);
+          this.usePollTimers = this.usePollTimers.filter((t) => t !== timer);
+          this.isUseInterval = this.usePollTimers.length > 0;
+          Task._polling = false;
+          Task.isLoading = false;
+          resolve(ok);
+        };
+
+        const timer = setInterval(async () => {
+          attempts += 1;
+          try {
+            const data = await taskApi.getAll();
+            const fresh = data?.partners?.find((t) => t.id === Task.id);
+            if (fresh && (fresh.user_status === 'in_review' || fresh.user_status === 'completed')) {
+              Task.user_status = fresh.user_status;
+              finish(true);
+              return;
+            }
+          } catch {}
+
+          // две минуты — дальше возвращаем кнопку, а не крутим вечно
+          if (attempts >= 24) finish(false);
         }, 5000);
+
+        this.usePollTimers.push(timer);
       });
     },
 
     stopUse() {
-      if (this.useCheckInterval) clearInterval(this.useCheckInterval);
+      this.usePollTimers.forEach((t) => clearInterval(t));
+      this.usePollTimers = [];
       if (this.useCheckTimeout) clearTimeout(this.useCheckTimeout);
       this.isUseInterval = false;
     },

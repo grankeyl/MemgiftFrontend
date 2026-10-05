@@ -69,7 +69,7 @@
 
           <div class="context">
             <div class="head">
-              <h4>{{ item.core.upgrade.nft_name.name }}</h4>
+              <h4>{{ item.core.gift?.name || item.core.upgrade?.nft_name?.name }}</h4>
               <p>#{{ item.core.upgrade.seq }}</p>
             </div>
           </div>

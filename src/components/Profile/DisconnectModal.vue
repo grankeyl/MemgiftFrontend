@@ -1,56 +1,50 @@
 <template>
-  <div 
-    class="_direction _comp _item _profileDisconnectModal"
-    :class="[Key]"
-  >
-      <div 
-        v-if="isLoading" 
-        class="_skeleton"
-        :class="{ hide: !ModalActive }"
-      >
-        <div @click="closeModal" class="_profileGiftModalClose"></div>
-      </div>
-      <div 
-        v-if="!isLoading" 
+  <Teleport to="body">
+    <!-- Same dark overlay as gift / filter sheets -->
+    <div
+      class="overlay"
+      :class="{ 'is-open is-dark': ModalActive }"
+      @click="closeModal"
+    />
+
+    <!-- Reuse shared filter-modal sheet (_modelModal from _filter-modals.sass) -->
+    <div class="_direction _comp _item _modelModal pdm">
+      <div
         class="_content"
         :class="{ hide: !ModalActive }"
+        @click.stop
       >
-        <div @click="closeModal" class="_profileGiftModalClose">
-          <div class="kit-icon" v-html="Icon.Close"></div>
-        </div>
-        <div class="_profileGiftModalTitle">
-          <h4>{{ $t('profile.profileDisconnectModalTitle') }}</h4>
-        </div>
-        <div class="_profileGiftModalDescr">
-          <p>{{ $t('profile.profileDisconnectModalDescr') }}</p>
-        </div>
-        <div class="_profileGiftModalButtons">
-          <div class="_profileGiftModalButtonsCollectable">
-            <button @click="() => walletDisconnect()">
-              <h4>{{ $t('profile.profileDisconnectModalButton') }}</h4>
-            </button>
+        <div class="head">
+          <div class="centered">
+            <div class="kit-icon" v-html="Icon.Gram"></div>
+            <h4>{{ $t('profile.profileDisconnectModalTitle') }}</h4>
+          </div>
+          <div class="close" @click="closeModal">
+            <div class="kit-icon" v-html="Icon.Close"></div>
           </div>
         </div>
+
+        <p class="pdm-descr">{{ $t('profile.profileDisconnectModalDescr') }}</p>
+
+        <div class="buttons">
+          <button type="button" @click="closeModal">
+            <h4>{{ $t('profile.profileFilterModal.cancel') }}</h4>
+          </button>
+          <button type="button" @click="walletDisconnect">
+            <h4>{{ $t('profile.profileDisconnectModalButton') }}</h4>
+          </button>
+        </div>
       </div>
-  </div>
+    </div>
+  </Teleport>
 </template>
 
 <script>
-import { ref } from 'vue';
 import { Icon } from '../Icon';
-import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { tonConnectUI } from '@/hooks/useTonConnect';
-import { toUserFriendlyAddress } from 'ton-ui-vue';
-
-import * as walletApi from '../../api/walletApi';
-
-import TelegramModule from '../../hooks/useTelegram';
-
-import Image_Stars from '@/assets/images/stars.png';
-import Image_StarsWhite from '@/assets/images/stars-white.png';
-import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
-import Lottie from '../Lottie.vue';
 import { showToast } from '../../utils/toastManager';
+import * as walletApi from '../../api/walletApi';
+import TelegramModule from '../../hooks/useTelegram';
 
 export default {
   props: {
@@ -68,132 +62,44 @@ export default {
     },
   },
 
-  components: {
-    Lottie,
-  },
-
-  setup() {
-    const walletConnected = ref(false);
-    const walletAddress = ref('');
-
-    const openTonWallet = () => {
-      tonConnectUI.openModal();
-      TelegramModule.useMediumHaptic();
-
-      const interval = setInterval(() => {
-        if (tonConnectUI.connected) {
-          walletConnected.value = true;
-          clearInterval(interval);
-          
-          const walletAddress = getTonWalletAddress();
-          walletApi.connect({ address: walletAddress });
-        }
-      }, 1000);
-    }
-
-    const checkTonWallet = () => {
-      const isTonWallet = tonConnectUI.connected;
-      walletConnected.value = isTonWallet;
-    }
-
-    const getTonWalletAddress = () => {
-      if (!tonConnectUI.account) return;
-      const rawAddress = tonConnectUI.account.address;
-      const walletAddressString = toUserFriendlyAddress(rawAddress);
-      walletAddress.value = walletAddressString;
-      return walletAddressString;
-    }
-
-    const disconnectTonWallet = async () => {
-      walletConnected.value = false;
-      showToast('Wallet disconnected', 'success');
-      tonConnectUI.disconnect();
-      await walletApi.disconnect();
-    }
-
-    getTonWalletAddress();
-    checkTonWallet();
-    
-    return {
-      tonConnectUI,
-      openTonWallet,
-      walletConnected,
-      disconnectTonWallet,
-
-      walletAddress,
-    };
-  },
-
   data() {
     return {
-      storeCache: useCacheStore(),
-
-      isLoading: this.$props.Skeleton,
-      isLoadingModalImage: true,
-
-      OwnerImage: true,
-      ActiveButton: false,
-      
       Icon,
-
-      Image_Stars,
-      Image_StarsWhite,
-      Image_GiftBg,
     };
   },
 
-  mounted() {
-    this.loadResources();
-  },
-
-  computed: {
-    isLoading() {
-      return this.Skeleton;
-    }
-  },
-  
   methods: {
-    async loadResources() {
-      try {
-        await Promise.all([this.loadFonts(), this.loadImages()]);
-        this.isLoading = false;
-        this.$emit("loadSuccess");
-      } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
-      }
-    },
-
-    loadFonts() {
-      return document.fonts.ready;
-    },
-
-    loadImages() {
-      const staticImages = [
-        Image_Stars
-      ].map((src) => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.src = src;
-          img.onload = resolve;
-          img.onerror = reject;
-        });
-      });
-
-      return Promise.all([...staticImages]);
-    },
-
     closeModal() {
       this.$emit('closeModal');
     },
 
-    walletDisconnect() {
-      this.disconnectTonWallet();
-      this.closeModal();
+    async walletDisconnect() {
       TelegramModule.useMediumHaptic();
+      try {
+        await tonConnectUI.disconnect();
+      } catch (e) {
+        console.error(e);
+      }
+      try {
+        await walletApi.disconnect();
+      } catch (e) {
+        console.error(e);
+      }
+      showToast('Wallet disconnected', 'success');
+      this.$emit('disconnected');
+      this.closeModal();
     },
   },
 };
 </script>
 
-<style>
+<style lang="sass" scoped>
+// Only description — sheet / head / buttons come from global _filter-modals
+.pdm-descr
+  margin: 8px 4px 20px
+  text-align: center
+  font-size: 14px
+  font-weight: 400
+  line-height: 1.45
+  color: rgba(255, 255, 255, 0.55)
 </style>

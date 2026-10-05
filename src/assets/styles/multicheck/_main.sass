@@ -1,17 +1,43 @@
 @use "./../_variables" as *
 
-._wrap._multicheck
-    padding-top: calc($app-menu-height + 30px)
+// Scroll lives on ._wrap (same as base app pages)
+._wrap.mc-page
+    // Keep fixed viewport height so overflow-y can scroll
+    height: 100dvh !important
+    max-height: 100dvh !important
+    min-height: 0 !important
+    padding-bottom: 0 !important
+    margin: auto
+    display: block
+    background: $app-background
+    overflow-x: hidden
+    overflow-y: auto !important
+    -webkit-overflow-scrolling: touch
+    overscroll-behavior-y: contain
+    padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 8px)
 
     &.desktop
-        padding-top: 30px
+        padding-top: 12px
+
+    &::-webkit-scrollbar
+        display: none
 
     ._view
+        position: relative
+        display: block
         height: auto !important
-        padding-bottom: calc($app-menu-height + 30%)
+        min-height: 0
+        // space for fixed CTA
+        padding-bottom: 132px
         padding-left: 0
         padding-right: 0
+        z-index: 1
 
-        ._lefting
+        .display
+            width: 100%
+            display: flex
+            flex-direction: column
+            gap: 14px
             padding-left: $app-page-padding-left
             padding-right: $app-page-padding-right
+            box-sizing: border-box

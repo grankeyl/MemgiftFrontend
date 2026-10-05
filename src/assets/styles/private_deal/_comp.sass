@@ -1,452 +1,468 @@
 @use "./../_variables" as *
 
-// ── Header ──
+// ── Header ───────────────────────────────────────────────────────────────────
 .pd-header
     display: flex
     align-items: center
-    gap: 12px
-    margin-bottom: 20px
+    margin-top: 4px
 
     &__back
-        width: 36px
-        height: 36px
-        min-width: 36px
-        max-width: 36px
-        min-height: 36px
-        max-height: 36px
-        border-radius: 50%
-        background: rgba(#fff, 0.06)
-        border: none
-        padding: 0
-        display: flex
+        width: 42px !important
+        min-width: 42px !important
+        height: 42px !important
+        display: flex !important
         align-items: center
         justify-content: center
+        padding: 0 !important
+        margin: 0
+        border: none !important
+        outline: none
+        border-radius: 50% !important
         cursor: pointer
+        box-sizing: border-box
+        background: linear-gradient(180deg, $app-background-secondary-2 50%, #191919 100%) !important
+        box-shadow: $app-glass-shadow-2
         color: $app-text-color
-        transition: all 0.12s ease
-        position: relative
-        z-index: 5
         -webkit-tap-highlight-color: transparent
+        transition: transform 0.15s ease
         flex-shrink: 0
+
+        &:active
+            transform: scale(0.92)
 
         svg
             display: block
+            width: 18px
+            height: 18px
             pointer-events: none
 
-        &:active
-            transform: scale(0.9)
-            background: rgba(#fff, 0.1)
+            path
+                stroke: $app-text-color
 
-    h2
-        font-size: 24px
+.pd-top
+    display: flex
+    flex-direction: column
+    gap: 6px
+    padding: 2px 0 0
+
+    h1
+        margin: 0
+        font-size: 26px
         font-weight: 700
+        letter-spacing: -0.6px
         color: $app-text-color
-
-.pd-desc
-    margin-bottom: 12px
+        line-height: 1.12
 
     p
+        margin: 0
         font-size: 14px
-        font-weight: 400
-        color: $app-text-color-descr
+        font-weight: 500
         line-height: 1.4
+        color: $app-text-color-descr-primary
+        max-width: 320px
 
-// ── Bottom back button ──
-.pd-bottom
-    margin-top: 24px
-    padding-bottom: 20px
-
-    &__back
-        width: 100%
-        height: 50px
-        border-radius: 14px
-        background: $app-background-secondary
-        border: 1px solid rgba(#fff, 0.04)
-        color: $app-text-color
-        font-size: 15px
-        font-weight: 500
-        cursor: pointer
-        transition: all 0.12s ease
-
-        &:active
-            transform: scale(0.97)
-            background: #2e2e31
-
-// ── Tabs v3 (minimal) ──
-.pd-tabs3
+// Tabs — profile text style
+.pd-tabs
+    width: 100%
     display: flex
-    gap: 24px
-    margin-bottom: 20px
-    border-bottom: 1px solid rgba(#fff, 0.06)
+    align-items: baseline
+    gap: 16px
+    padding: 4px 0 0
+    box-sizing: border-box
 
-    &__btn
-        padding: 0 0 12px
+    &--sm
+        .pd-tabs__item
+            font-size: 20px
+
+            @media screen and (max-width: 400px)
+                font-size: 18px
+
+    &__item
         border: none
+        outline: none
         background: transparent
-        color: $app-text-color-descr
-        font-size: 16px
-        font-weight: 500
+        padding: 0
+        margin: 0
         cursor: pointer
-        position: relative
-        display: flex
+        font-family: inherit
+        font-size: 24px
+        font-weight: 700
+        letter-spacing: -0.5px
+        color: $app-text-color
+        opacity: 0.2
+        white-space: nowrap
+        line-height: 1.1
+        display: inline-flex
         align-items: center
         gap: 8px
-        transition: color 0.15s ease
         -webkit-tap-highlight-color: transparent
+        transition: opacity 0.16s ease
+
+        @media screen and (max-width: 400px)
+            font-size: 22px
 
         &.active
-            color: $app-text-color
-
-            &::after
-                content: ''
-                position: absolute
-                bottom: -1px
-                left: 0
-                right: 0
-                height: 2px
-                background: $app-big-button-background
-                border-radius: 2px
+            opacity: 1
 
         &:active
-            opacity: 0.7
+            opacity: 0.55
 
-    &__dot
+    &__count
         min-width: 20px
         height: 20px
         padding: 0 6px
-        border-radius: 10px
-        background: $app-big-button-background
-        color: #fff
+        border-radius: 99em
         display: inline-flex
         align-items: center
         justify-content: center
         font-size: 12px
-        font-weight: 600
+        font-weight: 700
+        color: #fff
+        background: $app-background-blue-secondary
 
-// ── Create ──
+// Create
 .pd-create
-    &__field
-        margin-bottom: 20px
+    width: 100%
+    display: flex
+    flex-direction: column
+    gap: 12px
 
-        label
-            font-size: 15px
-            font-weight: 600
-            color: $app-text-color
-            display: block
-            margin-bottom: 8px
+// Price — clean field
+.pd-price
+    width: 100%
+    height: 54px
+    display: flex
+    align-items: center
+    gap: 10px
+    padding: 0 14px
+    border-radius: 16px
+    background: #191919
+    box-sizing: border-box
 
-    &__field-head
-        display: flex
-        align-items: center
-        justify-content: space-between
-        margin-bottom: 8px
+    &__ton
+        width: 24px
+        height: 24px
+        flex-shrink: 0
+        display: block
 
-        label
-            margin-bottom: 0
-
-    &__toggle
-        font-size: 14px
-        font-weight: 500
-        color: $app-text-color-primary-secondary
-        cursor: pointer
-        transition: opacity 0.15s ease
-
-        &:active
-            opacity: 0.6
-
-    &__input-wrap
-        position: relative
-
-        img
-            position: absolute
-            top: 50%
-            left: 14px
-            transform: translateY(-50%)
-            width: 20px
-            height: 20px
-            z-index: 2
-
-        input
-            width: 100%
-            height: 48px
-            background: $app-background-secondary
-            border-radius: 12px
-            border: none
-            padding: 0 16px 0 44px
-            font-size: 16px
-            font-weight: 500
-            color: $app-text-color
-            outline: none
-            transition: box-shadow 0.15s ease
-
-            &::placeholder
-                color: $app-text-color-descr
-
-            &:focus
-                box-shadow: 0 0 0 1.5px rgba($app-text-color-primary, 0.4)
-
-    &__empty
-        text-align: center
-        padding: 40px 0
-
-        p
-            font-size: 15px
-            color: $app-text-color-descr
-
-    &__bottom
-        position: fixed
-        bottom: 0
-        left: 50%
-        transform: translateX(-50%)
-        width: 100%
-        max-width: $app-max-preview-width
-        padding: 12px 16px calc(16px + env(safe-area-inset-bottom))
-        background: linear-gradient(0deg, $app-background 70%, transparent)
-        z-index: 10
-
-    &__btn
-        width: 100%
-        height: 52px
-        border-radius: 14px
+    input
+        flex: 1
+        min-width: 0
+        height: 100%
         border: none
-        font-size: 16px
+        outline: none
+        background: transparent
+        font-family: inherit
+        font-size: 20px
+        font-weight: 700
+        color: $app-text-color
+        letter-spacing: -0.3px
+        -webkit-appearance: none
+        appearance: none
+
+        &::placeholder
+            color: rgba($app-text-color, 0.28)
+            font-weight: 600
+
+        &:-webkit-autofill
+            -webkit-text-fill-color: $app-text-color
+            transition: background-color 9999s ease-in-out 0s
+
+    &__unit
+        font-size: 14px
         font-weight: 600
-        cursor: pointer
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 6px
-        transition: all 0.15s ease
+        color: $app-text-color-descr-primary
+        flex-shrink: 0
 
-        &--active
-            background: $app-big-button-background
-            color: #fff
-
-            img
-                width: 18px
-                height: 18px
-
-            &:active
-                transform: scale(0.97)
-
-            &.loading
-                opacity: 0.6
-                pointer-events: none
-
-        &--off
-            background: transparent
-            border: 1px solid rgba(#fff, 0.06)
-            color: $app-text-color-descr
-            cursor: default
-
-// ── Tabs override for private deal ──
-.pd-cats
-    padding-left: 0 !important
-    padding-right: 0 !important
-
-// ── Info bar ──
-.pd-info
+.pd-bar
     display: flex
     align-items: center
     justify-content: space-between
-    margin-bottom: 8px
+    gap: 12px
+    min-height: 28px
 
     &__count
         font-size: 14px
-        color: $app-text-color-descr
+        font-weight: 600
+        color: $app-text-color-descr-primary
 
-    &__sel
+    &__action
+        flex-shrink: 0
+        border: none
+        outline: none
+        background: transparent
+        padding: 0
+        margin: 0
+        cursor: pointer
+        font-family: inherit
         font-size: 14px
-        font-weight: 500
-        color: $app-text-color-primary
+        font-weight: 600
+        color: $app-button-blue-text-color
+        -webkit-tap-highlight-color: transparent
 
-// ── Nfts grid overrides for deal ──
-.pd-nfts
-    padding-left: 0 !important
-    padding-right: 0 !important
+        &:active
+            opacity: 0.7
 
-    ._content
-        width: 100%
+// Gift grid — multicheck style
+.pd-grid
+    width: 100%
+    display: grid
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    gap: 12px
+    padding: 2px
+    box-sizing: border-box
+    overflow: visible
 
-    .items.blocks
-        padding-bottom: 90px
+    @media screen and (max-width: 377px)
+        grid-template-columns: repeat(2, minmax(0, 1fr))
         gap: 10px
 
-// ── Selection checkbox on gift cards ──
-.pd-check
-    position: absolute
-    bottom: 8px
-    right: 6px
-    z-index: 10
-
-    &__box
-        width: 22px
-        height: 22px
-        border-radius: 6px
-        background: rgba(#000, 0.45)
-        backdrop-filter: blur(6px)
-        -webkit-backdrop-filter: blur(6px)
-        display: flex
-        align-items: center
-        justify-content: center
-        transition: all 0.15s ease
-
-        &.on
-            background: $app-big-button-background
-            box-shadow: 0 2px 8px rgba($app-big-button-background, 0.35)
-
-.pd-selected
-    outline: 2px solid $app-big-button-background
-    outline-offset: -2px
-
-// ── Skeleton ──
-.pd-skel
+.pd-gift
+    position: relative
+    width: 100%
+    aspect-ratio: 1 / 1
+    border: none
+    outline: none
+    margin: 0
     padding: 0
+    background: transparent
+    cursor: pointer
+    -webkit-tap-highlight-color: transparent
+    transition: transform 0.15s ease
+    overflow: visible
 
-    &__grid
-        display: grid
-        grid-template-columns: repeat(3, minmax(0, 1fr))
-        gap: 10px
+    &:active
+        transform: scale(0.97)
 
-    &__card
-        aspect-ratio: 114 / 127
-        background: $app-background-secondary
-        border-radius: 0.7em
-        position: relative
+    &__inner
+        position: absolute
+        inset: 0
+        border-radius: 20px
         overflow: hidden
+        background: $app-background-secondary
+        box-sizing: border-box
 
-        @for $i from 1 through 9
-            &:nth-child(#{$i})
-                animation: pd-shimmer 1.5s ease #{$i * 0.08}s infinite
+    &.selected &__inner
+        box-shadow: inset 0 0 0 2px $app-background-blue-secondary
+
+    &__symbols
+        position: absolute
+        inset: 0
+        overflow: hidden
+        opacity: 0.18
+        z-index: 1
+        pointer-events: none
+        border-radius: 20px
+
+        img
+            position: absolute
+            left: 50%
+            top: 50%
+            width: 100%
+            height: 100%
+            transform: translate(-50%, -50%)
+            object-fit: cover
+            display: block
+
+    &.is-upgraded &__symbols
+        opacity: 0.38
+
+        img
+            width: 110%
+            height: 110%
 
     &__badge
         position: absolute
+        z-index: 7
         top: 8px
-        right: 8px
-        width: 40px
-        height: 14px
-        border-radius: 8px
-        background: rgba(#fff, 0.05)
-
-    &__circle
-        position: absolute
-        top: 50%
-        left: 50%
-        transform: translate(-50%, -55%)
-        width: 55%
-        height: 50%
-        border-radius: 50%
-        background: rgba(#fff, 0.04)
-
-    &__price
-        position: absolute
-        bottom: 8px
-        left: 50%
-        transform: translateX(-50%)
-        width: 45px
+        left: 8px
         height: 20px
-        border-radius: 2em
-        background: rgba(#fff, 0.05)
-
-// ── Deals list v2 ──
-.pd-deals
-    &__loading
-        display: flex
-        flex-direction: column
-        gap: 10px
-
-    &__empty
-        display: flex
-        flex-direction: column
-        align-items: center
-        padding: 60px 0
-
-        &-ic
-            width: 48px
-            height: 48px
-            margin-bottom: 14px
-            opacity: 0.25
-
-            svg
-                width: 48px
-                height: 48px
-
-        p
-            font-size: 15px
-            color: $app-text-color-descr
-
-    &__list
-        display: flex
-        flex-direction: column
-        gap: 10px
-
-.pd-deal-skel
-    background: $app-background-secondary
-    border-radius: 16px
-    padding: 16px
-    animation: pd-shimmer 1.5s ease infinite
-
-    &:nth-child(2)
-        animation-delay: 0.15s
-
-    &:nth-child(3)
-        animation-delay: 0.3s
-
-    &__row
         display: flex
         align-items: center
-        gap: 12px
+        border-radius: 50px
+        padding: 0 7px
+        backdrop-filter: blur(12px)
+        -webkit-backdrop-filter: blur(12px)
+        background: rgba(0, 0, 0, 0.34)
 
-    &__icon
-        width: 40px
-        height: 40px
-        min-width: 40px
-        border-radius: 12px
-        background: rgba(#fff, 0.05)
+        span
+            font-size: 10px
+            font-weight: 600
+            color: $app-text-color
+            line-height: 1
 
-    &__lines
-        display: flex
-        flex-direction: column
-        gap: 8px
-        flex: 1
-
-    &__line
-        height: 12px
-        border-radius: 6px
-        background: rgba(#fff, 0.05)
-
-        &--w60
-            width: 60%
-
-        &--w40
-            width: 40%
-
-.pd-deal2
-    background: $app-background-secondary
-    border-radius: 16px
-    padding: 14px
-    cursor: pointer
-    transition: background 0.12s ease
-    animation: pd-pop 0.2s ease
-
-    &:active
-        background: #2e2e31
-
-    &__thumbs
-        display: flex
-        gap: 6px
-        margin-bottom: 12px
-
-    &__thumb
-        width: 44px
-        height: 44px
-        min-width: 44px
-        border-radius: 12px
-        background: $app-background
+    &__nft
+        position: absolute
+        inset: 0
+        z-index: 5
+        pointer-events: none
         display: flex
         align-items: center
         justify-content: center
+        border-radius: 20px
         overflow: hidden
+
+        img
+            width: 70%
+            height: 70%
+            object-fit: contain
+            display: block
+
+    &.is-upgraded &__nft img
+        width: 74%
+        height: 74%
+
+    &__pick
+        position: absolute
+        right: 8px
+        bottom: 8px
+        z-index: 30
+        width: 26px
+        height: 26px
+        border-radius: 50%
+        display: flex
+        align-items: center
+        justify-content: center
+        box-sizing: border-box
+        pointer-events: none
+        color: #fff
+        background: $app-background-blue-secondary
+
+        svg
+            display: block
+            width: 11px
+            height: 9px
+            color: #fff
+
+            path
+                stroke: currentColor
+
+.pd-grid-skel
+    width: 100%
+    display: grid
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    gap: 12px
+    padding: 2px
+    box-sizing: border-box
+
+    @media screen and (max-width: 377px)
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+        gap: 10px
+
+    &__item
+        aspect-ratio: 1 / 1
+        border-radius: 20px
+        background: rgba($app-text-color, 0.05)
+
+.pd-empty
+    width: 100%
+    padding: 36px 16px
+    border-radius: 18px
+    background: #191919
+    box-sizing: border-box
+    text-align: center
+
+    &--page
+        margin-top: 20px
+
+    h3
+        margin: 0 0 6px
+        font-size: 16px
+        font-weight: 700
+        color: $app-text-color
+
+    p
+        margin: 0
+        font-size: 14px
+        font-weight: 500
+        color: $app-text-color-descr-primary
+        line-height: 1.35
+
+    &__btn
+        margin-top: 14px
+        height: 42px
+        padding: 0 18px
+        border: none
+        border-radius: 99em
+        background: $app-background-blue-secondary
+        color: #fff
+        font-size: 14px
+        font-weight: 600
+        cursor: pointer
+        font-family: inherit
+
+// Deals list — flat like referral
+.pd-deals
+    width: 100%
+
+    &__skel
+        display: flex
+        flex-direction: column
+        gap: 0
+        border-radius: 18px
+        overflow: hidden
+        background: #191919
+
+    &__skel-row
+        height: 72px
+        border-bottom: 1px solid rgba($app-text-color, 0.06)
+        background: transparent
+
+        &:last-child
+            border-bottom: none
+
+.pd-list
+    width: 100%
+    display: flex
+    flex-direction: column
+    overflow: hidden
+    border-radius: 18px
+    background: #191919
+
+.pd-row
+    position: relative
+    display: flex
+    align-items: center
+    gap: 12px
+    padding: 13px 14px
+    cursor: pointer
+    -webkit-tap-highlight-color: transparent
+
+    &:not(:last-child)::after
+        content: ''
+        position: absolute
+        left: 14px
+        right: 14px
+        bottom: 0
+        height: 1px
+        background: rgba($app-text-color, 0.08)
+
+    &:active
+        background: rgba($app-text-color, 0.04)
+
+    &__thumbs
+        display: flex
+        align-items: center
+        flex-shrink: 0
+
+    &__thumb
+        width: 40px
+        height: 40px
+        border-radius: 12px
+        overflow: hidden
+        background: $app-background-secondary
+        margin-left: -10px
+        border: 1.5px solid #191919
+        box-sizing: border-box
+
+        &:first-child
+            margin-left: 0
+
+        img
+            width: 100%
+            height: 100%
+            object-fit: cover
+            display: block
 
         &.rare
             background: $app-rarity-background-rare
@@ -454,630 +470,506 @@
             background: $app-rarity-background-very-rare
         &.epic
             background: $app-rarity-background-epic
-        &.legend
+        &.legend, &.legendary
             background: $app-rarity-background-legendary
         &.author
             background: $app-rarity-background-author
 
-        img
-            width: 72%
-            height: 72%
-            object-fit: contain
+    &__more
+        margin-left: 6px
+        font-size: 12px
+        font-weight: 700
+        color: $app-text-color-descr-primary
 
-        &-ph
-            width: 20px
-            height: 20px
-            border-radius: 6px
-            background: rgba(#fff, 0.06)
-
-        &-more
-            width: 44px
-            height: 44px
-            min-width: 44px
-            border-radius: 12px
-            background: rgba(#fff, 0.04)
-            display: flex
-            align-items: center
-            justify-content: center
-            font-size: 13px
-            font-weight: 600
-            color: $app-text-color-descr
-
-    &__body
-        display: flex
-        flex-direction: column
-
-    &__top
-        display: flex
-        align-items: center
-        justify-content: space-between
-
-    &__info
+    &__mid
+        flex: 1
+        min-width: 0
         display: flex
         flex-direction: column
         gap: 3px
 
-        h4
-            font-size: 16px
-            font-weight: 600
-            color: $app-text-color
+    &__title
+        font-size: 15px
+        font-weight: 600
+        color: $app-text-color
+        letter-spacing: -0.2px
 
     &__status
-        font-size: 13px
-        font-weight: 400
+        font-size: 12px
+        font-weight: 600
 
-        &--pending
-            color: $app-text-color-primary
-        &--accepted
+        &.is-pending
+            color: $app-background-blue-secondary
+        &.is-accepted
             color: $app-background-green-secondary
-        &--cancelled, &--expired
-            color: $app-text-color-red
+        &.is-cancelled, &.is-expired
+            color: $app-text-color-descr-primary
+
+    &__right
+        display: flex
+        flex-direction: column
+        align-items: flex-end
+        gap: 6px
+        flex-shrink: 0
 
     &__price
-        display: flex
+        display: inline-flex
         align-items: center
-        gap: 5px
+        gap: 4px
 
         img
-            width: 16px
-            height: 16px
+            width: 14px
+            height: 14px
+            display: block
 
         span
-            font-size: 16px
-            font-weight: 600
-            color: $app-button-text-color
+            font-size: 14px
+            font-weight: 700
+            color: $app-text-color
+            font-variant-numeric: tabular-nums
 
-    &__actions
+    &__acts
         display: flex
         gap: 6px
-        margin-top: 12px
-        padding-top: 12px
-        border-top: 1px solid rgba(#fff, 0.06)
 
     &__act
-        flex: 1
-        height: 38px
-        border-radius: 10px
-        border: none
+        width: 30px
+        height: 30px
         display: flex
         align-items: center
         justify-content: center
+        border: none
+        padding: 0
+        border-radius: 50%
+        background: rgba($app-text-color, 0.07)
         cursor: pointer
-        transition: all 0.12s ease
+        color: $app-text-color
+        flex-shrink: 0
 
         .kit-icon
-            width: 16px
-            height: 16px
+            width: 14px
+            height: 14px
+            display: flex
+            align-items: center
+            justify-content: center
+            opacity: 0.8
+            line-height: 0
 
             svg
-                width: 16px
-                height: 16px
+                width: 14px
+                height: 14px
+                display: block
 
-        &--share
-            background: rgba($app-text-color-primary, 0.12)
-            color: $app-text-color-primary
+                path
+                    fill: currentColor
+                    stroke: currentColor
 
-        &--cancel
-            background: rgba($app-text-color-red, 0.1)
+        &.is-danger
             color: $app-text-color-red
+            background: rgba($app-text-color-red, 0.12)
 
-        &:active
-            transform: scale(0.95)
+// Dock
+.pd-dock
+    position: fixed
+    left: 50%
+    bottom: 0
+    transform: translateX(-50%)
+    width: 100%
+    max-width: $app-max-preview-width
+    z-index: 1100
+    padding: 14px 16px calc(20px + env(safe-area-inset-bottom, 0px))
+    box-sizing: border-box
+    background: linear-gradient(180deg, rgba($app-background, 0) 0%, rgba($app-background, 0.82) 35%, $app-background 70%)
+    pointer-events: none
+    display: flex
+    flex-direction: column
+    gap: 8px
 
-// ── Share overlay ──
+    &__btn
+        pointer-events: auto
+        width: 100%
+        height: 54px
+        min-height: 54px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        border: none
+        outline: none
+        border-radius: 99em
+        font-family: inherit
+        font-size: 16px
+        font-weight: 600
+        line-height: 1
+        cursor: pointer
+        -webkit-tap-highlight-color: transparent
+        transition: transform 0.15s ease
+        box-sizing: border-box
+        box-shadow: none
+
+        img
+            width: 18px
+            height: 18px
+            display: block
+            flex-shrink: 0
+
+        span
+            color: inherit
+            line-height: 1
+
+        &:active:not(:disabled)
+            transform: scale(0.98)
+
+        &:disabled
+            cursor: default
+
+        &--on
+            color: #fff
+            background: $app-background-blue-secondary
+
+            &.loading
+                pointer-events: none
+                opacity: 0.85
+
+        &--off
+            color: rgba($app-text-color, 0.4)
+            background: #191919
+
+        &--danger
+            color: $app-text-color-red
+            background: rgba($app-text-color-red, 0.12)
+
+    &__badge
+        pointer-events: auto
+        width: 100%
+        height: 48px
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 99em
+        font-size: 15px
+        font-weight: 600
+        background: #191919
+
+        &.is-ok
+            color: $app-background-green-secondary
+        &.is-bad
+            color: $app-text-color-descr-primary
+
+// Share
 .pd-share-overlay
     position: fixed
     inset: 0
-    z-index: 100
-    background: rgba(0, 0, 0, 0.5)
-    backdrop-filter: blur(8px)
+    z-index: 1300
+    background: rgba(0, 0, 0, 0.55)
     display: flex
     align-items: flex-end
     justify-content: center
-    animation: pd-fade 0.2s ease
 
 .pd-share
     width: 100%
     max-width: $app-max-preview-width
-    background: $app-background-secondary
-    border-radius: 20px 20px 0 0
-    border-top: 1px solid rgba(#fff, 0.06)
-    padding: 24px 20px calc(24px + env(safe-area-inset-bottom))
-    animation: pd-slide-up 0.25s ease
+    padding: 10px 16px calc(20px + env(safe-area-inset-bottom, 0px))
+    border-radius: 22px 22px 0 0
+    background: #151515
+    box-sizing: border-box
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+    &__grab
+        width: 36px
+        height: 4px
+        border-radius: 99em
+        background: rgba($app-text-color, 0.15)
+        margin: 0 auto 4px
 
     &__head
         display: flex
         align-items: center
         justify-content: space-between
-        margin-bottom: 20px
+        gap: 12px
 
         h3
-            font-size: 20px
+            margin: 0
+            font-size: 18px
             font-weight: 700
             color: $app-text-color
 
     &__close
-        width: 32px
-        height: 32px
-        border-radius: 50%
-        background: rgba(#fff, 0.08)
+        width: 34px
+        height: 34px
+        min-width: 34px
         border: none
+        border-radius: 50%
+        background: rgba($app-text-color, 0.07)
         display: flex
         align-items: center
         justify-content: center
         cursor: pointer
         color: $app-text-color
-        transition: background 0.12s ease
-
-        &:active
-            background: rgba(#fff, 0.14)
+        padding: 0
 
         .kit-icon
             width: 14px
             height: 14px
+            display: flex
+            opacity: 0.75
+            line-height: 0
 
             svg
                 width: 14px
                 height: 14px
 
-    &__info
-        display: flex
-        flex-direction: column
-        gap: 12px
-        margin-bottom: 20px
+                path
+                    fill: currentColor
+                    stroke: currentColor
+
+    &__card
+        border-radius: 16px
+        background: #191919
+        padding: 4px 14px
 
     &__row
         display: flex
         align-items: center
         justify-content: space-between
+        min-height: 44px
+        gap: 12px
 
         span
-            font-size: 15px
-            color: $app-text-color-descr
+            font-size: 14px
+            font-weight: 500
+            color: $app-text-color-descr-primary
 
         strong
             font-size: 15px
-            font-weight: 600
+            font-weight: 700
             color: $app-text-color
-            display: flex
-            align-items: center
-            gap: 5px
 
-    &__star
-        width: 16px
-        height: 16px
+    &__price
+        display: inline-flex
+        align-items: center
+        gap: 5px
+
+        img
+            width: 15px
+            height: 15px
 
     &__link
+        width: 100%
+        min-height: 48px
         display: flex
-        gap: 8px
-        margin-bottom: 16px
+        align-items: center
+        justify-content: space-between
+        gap: 10px
+        padding: 0 14px
+        border: none
+        border-radius: 14px
+        background: #191919
+        cursor: pointer
+        box-sizing: border-box
+        text-align: left
+        font-family: inherit
 
-        input
+        span
             flex: 1
-            height: 44px
-            background: rgba(#fff, 0.04)
-            border-radius: 12px
-            border: 1px solid rgba(#fff, 0.06)
-            padding: 0 14px
+            min-width: 0
             font-size: 13px
+            font-weight: 600
             color: $app-text-color
-            outline: none
+            white-space: nowrap
+            overflow: hidden
+            text-overflow: ellipsis
 
-        button
-            width: 44px
-            height: 44px
-            border-radius: 12px
-            background: rgba(#fff, 0.08)
-            border: none
+        .kit-icon
+            width: 16px
+            height: 16px
+            opacity: 0.55
+            flex-shrink: 0
             display: flex
-            align-items: center
-            justify-content: center
-            cursor: pointer
-            color: $app-text-color
-            transition: background 0.12s ease
 
-            .kit-icon
-                width: 18px
-                height: 18px
+            svg
+                width: 16px
+                height: 16px
 
-                svg
-                    width: 18px
-                    height: 18px
-
-            &:active
-                background: rgba(#fff, 0.14)
-
-    &__buttons
-        display: flex
-        gap: 8px
+                path
+                    fill: $app-text-color
 
     &__tg
-        flex: 1
-        height: 50px
-        border-radius: 14px
-        background: $app-big-button-background
-        border: none
-        color: #fff
-        font-size: 16px
-        font-weight: 600
-        cursor: pointer
+        width: 100%
+        height: 52px
         display: flex
         align-items: center
         justify-content: center
         gap: 8px
-        transition: all 0.12s ease
-
-        .kit-icon
-            width: 18px
-            height: 18px
-
-            svg
-                width: 18px
-                height: 18px
-
-        &:active
-            transform: scale(0.97)
-
-// ── Deal View v2 ──
-.pdv-loader
-    display: flex
-    flex-direction: column
-    gap: 16px
-    padding-top: 40px
-    align-items: center
-
-.pdv-skel
-    border-radius: 16px
-    background: $app-background-secondary
-    animation: pd-shimmer 1.5s ease infinite
-
-    &--ava
-        width: 120px
-        height: 24px
-        border-radius: 100px
-
-    &--gifts
-        width: 100%
-        height: 180px
-        border-radius: 20px
-
-    &--info
-        width: 100%
-        height: 80px
-        border-radius: 16px
-
-.pdv-empty
-    display: flex
-    flex-direction: column
-    align-items: center
-    text-align: center
-    padding: 80px 0
-
-    &__icon
-        width: 56px
-        height: 56px
-        opacity: 0.25
-        margin-bottom: 16px
-
-        svg
-            width: 56px
-            height: 56px
-
-    h3
-        font-size: 20px
-        font-weight: 700
-        color: $app-text-color
-        margin-bottom: 8px
-
-    p
-        font-size: 14px
-        color: $app-text-color-descr
-        margin-bottom: 24px
-
-    &__btn
-        height: 44px
-        padding: 0 24px
-        border-radius: 12px
-        background: $app-big-button-background
         border: none
+        border-radius: 99em
+        background: $app-background-blue-secondary
         color: #fff
-        font-size: 15px
+        font-family: inherit
+        font-size: 16px
         font-weight: 600
         cursor: pointer
 
-.pdv2
-    padding-top: 10px
+        svg path
+            stroke: currentColor
+
+// View page
+.pdv
+    width: 100%
+    display: flex
+    flex-direction: column
+    gap: 18px
+    padding-top: 8px
+
+    &__head
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: 10px
+        text-align: center
+
+        h1
+            margin: 0
+            font-size: 40px
+            font-weight: 800
+            letter-spacing: -1px
+            color: $app-text-color
+            line-height: 1
+            font-variant-numeric: tabular-nums
+
+            span
+                font-size: 16px
+                font-weight: 600
+                color: $app-text-color-descr-primary
+                margin-left: 4px
+
+    &__status
+        height: 28px
+        padding: 0 12px
+        border-radius: 99em
+        display: inline-flex
+        align-items: center
+        font-size: 13px
+        font-weight: 600
+        background: rgba($app-text-color, 0.06)
+
+        &.is-pending
+            color: $app-background-blue-secondary
+            background: rgba($app-background-blue-secondary, 0.14)
+        &.is-accepted
+            color: $app-background-green-secondary
+            background: rgba($app-background-green-secondary, 0.14)
+        &.is-cancelled, &.is-expired
+            color: $app-text-color-descr-primary
+
+    &__gifts
+        display: flex
+        flex-wrap: wrap
+        gap: 10px
+        justify-content: center
+        padding: 4px 0
+
+    &__gift
+        width: 88px
+        height: 88px
+        border-radius: 18px
+        overflow: hidden
+        position: relative
+        background: $app-background-secondary
+
+        img
+            position: absolute
+            left: 50%
+            top: 50%
+            transform: translate(-50%, -50%)
+            width: 70%
+            height: 70%
+            object-fit: contain
+
+    &__card
+        border-radius: 18px
+        background: #191919
+        padding: 4px 14px
+        display: flex
+        flex-direction: column
+
+    &__row
+        display: flex
+        align-items: center
+        justify-content: space-between
+        min-height: 52px
+        gap: 12px
+
+        > span
+            font-size: 14px
+            font-weight: 500
+            color: $app-text-color-descr-primary
+
+        > strong
+            font-size: 15px
+            font-weight: 700
+            color: $app-text-color
 
     &__seller
         display: flex
         align-items: center
         gap: 10px
-        margin-bottom: 24px
+        min-width: 0
 
-        &-photo
+        img, .pdv__ava
             width: 36px
             height: 36px
-            min-width: 36px
             border-radius: 50%
             object-fit: cover
+            flex-shrink: 0
 
-        &-ava
-            width: 36px
-            height: 36px
-            min-width: 36px
-            border-radius: 50%
-            background: linear-gradient(135deg, #6366f1, #3b82f6)
+        .pdv__ava
             display: flex
             align-items: center
             justify-content: center
+            background: $app-background-secondary
             font-size: 14px
             font-weight: 700
-            color: #fff
-
-        &-txt
-            display: flex
-            flex-direction: column
-            gap: 1px
-
-            span
-                font-size: 12px
-                color: $app-text-color-descr
-
-            strong
-                font-size: 15px
-                font-weight: 600
-                color: $app-text-color
-
-    &__showcase
-        display: flex
-        gap: 10px
-        flex-wrap: wrap
-        justify-content: center
-        margin-bottom: 24px
-
-    &__gift
-        width: 120px
-        height: 120px
-        border-radius: 20px
-        position: relative
-        overflow: hidden
-        display: flex
-        align-items: center
-        justify-content: center
-
-        &-bg
-            position: absolute
-            inset: 0
-            z-index: 0
-
-            &--upg
-                border-radius: 20px
-
-            &.rare
-                background: $app-rarity-background-rare
-            &.veryrare
-                background: $app-rarity-background-very-rare
-            &.epic
-                background: $app-rarity-background-epic
-            &.legend
-                background: $app-rarity-background-legendary
-            &.author
-                background: $app-rarity-background-author
-
-        &-symbol
-            position: absolute
-            width: 80%
-            height: 80%
-            object-fit: contain
-            z-index: 1
-            opacity: 0.35
-
-        &-img
-            width: 65%
-            height: 65%
-            object-fit: contain
-            position: relative
-            z-index: 2
-
-        &-placeholder
-            color: rgba(#fff, 0.15)
-            position: relative
-            z-index: 2
-
-    &__info
-        background: $app-background-secondary
-        border-radius: 16px
-        padding: 16px
-        margin-bottom: 16px
-
-        &-row
-            display: flex
-            align-items: center
-            justify-content: space-between
-            padding: 4px 0
-
-            span
-                font-size: 15px
-                color: $app-text-color-descr
-
-            strong
-                font-size: 16px
-                font-weight: 600
-                color: $app-text-color
-                display: flex
-                align-items: center
-                gap: 5px
-
-                img
-                    width: 18px
-                    height: 18px
-
-            &--price strong
-                color: $app-button-text-color
-
-        &-divider
-            height: 1px
-            background: rgba(#fff, 0.06)
-            margin: 10px 0
-
-    &__status
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 8px
-        font-size: 14px
-        font-weight: 500
-        padding: 12px 0
-        margin-bottom: 8px
-
-        &-dot
-            width: 8px
-            height: 8px
-            border-radius: 50%
-
-        &--pending
-            color: $app-text-color-primary
-            .pdv2__status-dot
-                background: $app-text-color-primary
-                box-shadow: 0 0 8px rgba($app-text-color-primary, 0.5)
-
-        &--accepted
-            color: $app-background-green-secondary
-            .pdv2__status-dot
-                background: $app-background-green-secondary
-                box-shadow: 0 0 8px rgba($app-background-green-secondary, 0.5)
-
-        &--cancelled, &--expired
-            color: $app-text-color-red
-            .pdv2__status-dot
-                background: $app-text-color-red
-                box-shadow: 0 0 8px rgba($app-text-color-red, 0.5)
-
-    &__bottom
-        position: fixed
-        bottom: 0
-        left: 50%
-        transform: translateX(-50%)
-        width: 100%
-        max-width: $app-max-preview-width
-        padding: 12px 16px calc(16px + env(safe-area-inset-bottom))
-        background: linear-gradient(0deg, $app-background 70%, transparent)
-        z-index: 10
-        display: flex
-        flex-direction: column
-        gap: 8px
-
-    &__btn
-        width: 100%
-        height: 52px
-        border-radius: 14px
-        border: none
-        font-size: 16px
-        font-weight: 600
-        cursor: pointer
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 8px
-        transition: all 0.12s ease
-
-        &--primary
-            background: $app-big-button-background
-            color: #fff
-
-            img
-                width: 18px
-                height: 18px
-
-            .kit-icon
-                width: 18px
-                height: 18px
-
-                svg
-                    width: 18px
-                    height: 18px
-
-            &:active
-                transform: scale(0.97)
-
-            &:disabled
-                opacity: 0.5
-                pointer-events: none
-
-        &--danger
-            height: 46px
-            background: transparent
-            border: 1px solid rgba($app-text-color-red, 0.2)
-            color: $app-text-color-red
-            font-size: 15px
-
-            &:active
-                transform: scale(0.97)
-
-        &--ghost
-            height: 46px
-            background: $app-background-secondary
-            border: 1px solid rgba(#fff, 0.04)
             color: $app-text-color
-            font-size: 15px
+
+        span
+            display: block
+            font-size: 11px
             font-weight: 500
+            color: $app-text-color-descr-primary
 
-            &:active
-                transform: scale(0.97)
-                background: #2e2e31
+        strong
+            display: block
+            font-size: 14px
+            font-weight: 700
+            color: $app-text-color
+            white-space: nowrap
+            overflow: hidden
+            text-overflow: ellipsis
 
-    &__badge
+.pdv-skel
+    display: flex
+    flex-direction: column
+    align-items: center
+    gap: 16px
+    padding-top: 16px
+
+    &__line
+        width: 140px
+        height: 40px
+        border-radius: 12px
+        background: rgba($app-text-color, 0.05)
+
+    &__gifts
         width: 100%
-        height: 50px
-        border-radius: 14px
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 8px
-        font-size: 16px
-        font-weight: 600
+        height: 88px
+        border-radius: 16px
+        background: rgba($app-text-color, 0.04)
 
-        .kit-icon
-            width: 18px
-            height: 18px
-
-            svg
-                width: 18px
-                height: 18px
-
-        &--success
-            background: rgba($app-background-green-secondary, 0.12)
-            color: $app-background-green-secondary
-
-        &--cancelled
-            background: rgba($app-text-color-red, 0.1)
-            color: $app-text-color-red
-
-// ── Animations ──
-@keyframes pd-shimmer
-    0%
-        opacity: 0.5
-    50%
-        opacity: 0.8
-    100%
-        opacity: 0.5
-
-@keyframes pd-pop
-    0%
-        opacity: 0
-        transform: scale(0.92)
-    100%
-        opacity: 1
-        transform: scale(1)
-
-@keyframes pd-fade
-    from
-        opacity: 0
-    to
-        opacity: 1
-
-@keyframes pd-slide-up
-    from
-        transform: translateY(100%)
-    to
-        transform: translateY(0)
+    &__card
+        width: 100%
+        height: 100px
+        border-radius: 18px
+        background: rgba($app-text-color, 0.05)

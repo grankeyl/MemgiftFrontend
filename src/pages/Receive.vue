@@ -1,6 +1,7 @@
 <template>
     <Button
         @loadSuccess="handleLoadSuccess"
+        @shareGift="shareGift"
         
         :Skeleton="isPageLoading"
         :SkeletonTime="configApp.skeletonTime"
@@ -17,7 +18,6 @@
                 v-if="NftType === 'purchased'"
 
                 @loadSuccess="handleLoadSuccess"
-
                 :Skeleton="isPageLoading"
                 :SkeletonTime="configApp.skeletonTime"
 
@@ -25,8 +25,8 @@
                 :NftKey="NftData?.Key"
                 :NftMedia="NftData?.Media"
                 :NftImage="NftData?.ImageMain"
+                :NftRarity="NftData?.Rarity"
                 :Text="$t('receive.purchasedText')"
-                :Descr="$t('receive.purchasedDescr')"
             />
 
             <Sended
@@ -41,8 +41,8 @@
                 :NftKey="NftData?.Key"
                 :NftMedia="NftData?.Media"
                 :NftImage="NftData?.ImageMain"
+                :NftRarity="NftData?.Rarity"
                 :Text="$t('receive.sendedText')"
-                :Descr="$t('receive.sendedDescr')"
             />
 
             <Received
@@ -57,8 +57,8 @@
                 :NftKey="NftData?.Key"
                 :NftMedia="NftData?.Media"
                 :NftImage="NftData?.ImageMain"
+                :NftRarity="NftData?.Rarity"
                 :Text="$t('receive.receivedText')"
-                :Descr="NftData?.Name + ' ' + $t('receive.receivedDescr')"
             />
 
             <Notfound
@@ -74,7 +74,6 @@
                 :NftMedia="NftData?.Media"
                 :NftImage="NftData?.ImageMain"
                 :Text="$t('receive.notfoundText')"
-                :Descr="$t('receive.notfoundDescr')"
             />
 
             <Selfed
@@ -90,7 +89,6 @@
                 :NftMedia="NftData?.Media"
                 :NftImage="NftData?.ImageMain"
                 :Text="$t('receive.selfedText')"
-                :Descr="$t('receive.selfedDescr')"
             />
 
         </div>
@@ -167,6 +165,12 @@ export default {
     },
 
     methods: {
+        shareGift() {
+            const key = String(this.NftUniqueKey || '').replace(/ /g, '');
+            const url = import.meta.env.VITE_APP_MINI_APP_LINK + `=cln_${key}`;
+            TelegramModule.useShare(url, this.$t('receive.purchasedText'));
+        },
+
         handleLoadSuccess() {
             this.handleLoads ++;
 
@@ -174,7 +178,10 @@ export default {
                 setTimeout(() => {
                     this.isPageLoading = false;
                     TelegramModule.useMediumHaptic();
-                    shootConfetti();
+                    // салют уместен только когда подарок реально получен
+                    if (['purchased', 'received'].includes(String(this.NftType))) {
+                        shootConfetti();
+                    }
                 }, this.configApp.skeletonTime);
             };
         },

@@ -1,78 +1,58 @@
 <template>
-    <div v-if="ModalActive" class="balance">
-      <div class="context">
-        <h4>{{ cutNumber(getBalance) }}</h4>
-        <img :src="TonImg" alt="ton" />
-      </div>
-      <div class="button">
-        <img :src="PlusImg" alt="plus" />
+  <Teleport to="body">
+    <div
+      class="wmod-overlay"
+      :class="{ 'is-open': ModalActive }"
+      @click="closeModal"
+    />
+
+    <div
+      class="wmod-dock"
+      :class="{ open: ModalActive && !isLoading, hide: !ModalActive || isLoading }"
+    >
+      <div class="wmod-sheet" @click.stop>
+        <div class="wmod-sheet__handle"></div>
+        <button type="button" class="wmod-close" @click="closeModal" aria-label="Close">
+          <div class="kit-icon" v-html="Icon.Close"></div>
+        </button>
+
+        <div class="wmod-head">
+          <h3>{{ $t('wallet.depositModal.title') }}</h3>
+        </div>
+
+        <div v-if="walletConnected" class="wmod-wallet">
+          <span class="wmod-wallet__addr">{{ obfuscateAddress(walletAddress) }}</span>
+        </div>
+        <button v-else type="button" class="wmod-wallet wmod-wallet--cta" @click="openTonWallet">
+          <span>{{ $t('wallet.connect') }}</span>
+        </button>
+
+        <div class="wmod-amount">
+          <span class="wmod-amount__val">{{ amountStr || '0' }}</span>
+          <span class="wmod-amount__unit">TON</span>
+        </div>
+
+        <div class="wmod-pad" role="group" aria-label="Keypad">
+          <button type="button" v-for="n in [1,2,3,4,5,6,7,8,9]" :key="'d'+n" @click="tap(n)">{{ n }}</button>
+          <button type="button" @click="tap('.')">.</button>
+          <button type="button" @click="tap(0)">0</button>
+          <button type="button" class="wmod-pad__back" @click="backspace" aria-label="Backspace">
+            <img :src="DeleteAmImg" alt="" />
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="wmod-submit"
+          :disabled="amountNum < 0.1 || submitting"
+          @click="deposit"
+        >
+          <span v-if="amountNum > 0">{{ $t('wallet.deposit') }} {{ cutNumber(amountNum) }} TON</span>
+          <span v-else>{{ $t('wallet.deposit') }}</span>
+        </button>
       </div>
     </div>
-
-  <div 
-    class="_direction _comp _item _depositModal"
-    :class="[Key]"
-  >
-      <div 
-        v-if="isLoading" 
-        class="_skeleton"
-        :class="{ hide: !ModalActive }"
-      >
-        <div @click="closeModal" class="close"></div>
-      </div>
-      <div 
-        v-if="!isLoading" 
-        class="_content"
-        :class="{ hide: !ModalActive }"
-      >
-        <div class="head">
-          <div class="centered">
-            <img :src="TonWhiteImg" alt="ton-logo" />
-            <h3>{{ $t('wallet.depositModal.title') }}</h3>
-          </div>
-          <div @click="closeModal" class="close">
-            <div class="kit-icon" v-html="Icon.Close"></div>
-          </div>
-        </div>
-        <div v-if="walletConnected" class="connected">
-          <img :src="WalletImg" alt="wallet" />
-          <p>{{ obfuscateAddress(walletAddress) }}</p>
-          <span @click="disconnectTonWallet">
-            <Icon class="kit-icon" v-html="Icon.Close"></Icon>
-          </span>
-        </div>
-        <div class="input-amount">
-          <input
-            type="text"
-            inputmode="none"
-            autocomplete="off"
-            placeholder="Your amount"
-            :value="amountStr + ' TON'"
-            readonly
-            @focus="$event.target.blur()" />
-          <img :src="TonImg" alt="ton" />
-        </div>
-        <div class="num-pad">
-          <button v-for="n in [1,2,3,4,5,6,7,8,9]" :key="n" @click="tap(n)">{{ n }}</button>
-          <button @click="tap('.')">.</button>
-          <button @click="tap(0)">0</button>
-          <button class="back" @click="backspace">
-            <img :src="DeleteAmImg" alt="delete" />
-          </button>
-        </div>
-        <div class="buttons">
-          <button v-if="amountNum > 0" @click="deposit">
-            <img :src="DepositImg" alt="deposit" />
-            <h4>{{ $t('wallet.deposit') }} {{ cutNumber(amountNum) }}</h4>
-            <img :src="TonWhiteImg" alt="ton" />
-          </button>
-          <button v-else disabled>
-            <img :src="DepositImg" alt="deposit" />
-            <h4>{{ $t('wallet.deposit') }}</h4>
-          </button>
-        </div>
-      </div>
-  </div>
+  </Teleport>
 </template>
 
 <script>
@@ -85,21 +65,11 @@ import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { cutNumber } from '../../utils/useTon';
 import { beginCell, toNano, Address } from '@ton/core';
 import { t } from 'i18next';
+import TelegramModule from '../../hooks/useTelegram';
 
 import * as MarketBalanceApi from '../../api/market/balance';
 
-import Image_Stars from '@/assets/images/stars.png';
-import Image_StarsWhite from '@/assets/images/stars-white.png';
-import Image_GiftBg from '@/assets/gifts/png/gift_bg.png';
-import Lottie from '../Lottie.vue';
-
-// Images
-import TonImg from '@/assets/images/market/ton.svg';
-import PlusImg from '@/assets/images/market/plus.svg';
-import TonWhiteImg from '@/assets/images/market/ton-white.svg';
-import WalletImg from '@/assets/images/market/wallet.svg';
 import DeleteAmImg from '@/assets/images/market/delete-am.svg';
-import DepositImg from '@/assets/images/market/deposit.svg';
 
 export default {
   props: {
@@ -107,51 +77,27 @@ export default {
     SkeletonTime: { type: Number, required: true },
     ModalActive: { type: Boolean, required: true },
   },
-  components: { Lottie },
 
   data() {
     return {
-      TonImg,
-      PlusImg,
-      TonWhiteImg,
-      WalletImg,
       DeleteAmImg,
-      DepositImg,
-
       storeCache: useCacheStore(),
-
-      // ВАЖНО: объявляем, иначе не реактивно
       isLoading: true,
-
-      isLoadingModalImage: true,
-      localSelected: '',
-      OwnerImage: true,
-      ActiveButton: false,
-
-      // Держим ввод СТРОКОЙ
       amountStr: '10',
-
-      // Состояние кошелька
+      submitting: false,
       walletConnected: false,
       walletAddress: '',
-
       Icon,
-      Image_Stars,
-      Image_StarsWhite,
-      Image_GiftBg,
       cutNumber,
       obfuscateAddress,
+      _walletTimer: null,
     };
   },
 
   computed: {
-    isSkeleton() { return this.Skeleton; },
     amountNum() {
-      const n = parseFloat(this.amountStr.replace(',', '.'));
+      const n = parseFloat(String(this.amountStr).replace(',', '.'));
       return Number.isFinite(n) ? n : 0;
-    },
-    getBalance() {
-      return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
     },
   },
 
@@ -169,77 +115,56 @@ export default {
   methods: {
     async loadResources() {
       try {
-        await Promise.all([document.fonts.ready, this.loadImages()]);
-        this.isLoading = false;
-        this.$emit('loadSuccess');
-      } catch (e) {
-        console.error('Ошибка при загрузке ресурсов:', e);
-      }
-    },
-    loadImages() {
-      const staticImages = [Image_Stars].map((src) => new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = src;
-        img.onload = resolve;
-        img.onerror = reject;
-      }));
-      return Promise.all(staticImages);
+        await document.fonts.ready;
+      } catch {}
+      this.isLoading = false;
+      this.$emit('loadSuccess');
     },
 
-    // ====== Клавиатура ======
+    closeModal() {
+      this.$emit('closeModal');
+    },
+
     tap(val) {
       const s = String(this.amountStr);
-
       if (val === '.') {
         if (!s) { this.amountStr = '0.'; return; }
         if (s.includes('.')) return;
         this.amountStr = s + '.';
         return;
       }
-
       let next = (s === '0' ? '' : s) + String(val);
-
       const [int = '', frac = ''] = next.split('.');
-      if (frac && frac.length > 9) return; // максимум 9 знаков после точки
-
-      if (!frac && int.length > 1 && int.startsWith('0')) {
-        next = String(Number(int));
-      }
+      if (frac && frac.length > 9) return;
+      if (!frac && int.length > 1 && int.startsWith('0')) next = String(Number(int));
       if (next.length > 20) return;
-
       this.amountStr = next;
     },
+
     backspace() {
       const s = String(this.amountStr ?? '');
       if (!s) return;
       this.amountStr = s.slice(0, -1) || '0';
     },
 
-    // ====== TON Wallet ======
     openTonWallet() {
       tonConnectUI.openModal();
-      TelegramModule?.useMediumHaptic?.();
+      try { TelegramModule.useMediumHaptic(); } catch {}
     },
+
     checkTonWallet() {
       this.walletConnected = !!tonConnectUI.connected;
       if (this.walletConnected && !this.walletAddress) this.getTonWalletAddress();
     },
+
     getTonWalletAddress() {
       if (!tonConnectUI.account) return;
-      const raw = tonConnectUI.account.address;
-      const friendly = toUserFriendlyAddress(raw);
-      this.walletAddress = friendly;
-      return friendly;
-    },
-    disconnectTonWallet() {
-      this.walletConnected = false;
-      tonConnectUI.disconnect();
-      this.$emit('closeModal');
+      this.walletAddress = toUserFriendlyAddress(tonConnectUI.account.address);
     },
 
-    // ====== Депозит ======
     async deposit() {
-      if (!this.amountNum || this.amountNum < 0.1) return;
+      if (!this.amountNum || this.amountNum < 0.1 || this.submitting) return;
+      this.submitting = true;
       const [i = '0', f = ''] = String(this.amountStr).split('.');
       const frac = (f + '000000000').slice(0, 9);
       const nano = (BigInt(i) * 1_000_000_000n) + BigInt(frac);
@@ -253,34 +178,34 @@ export default {
         await this.sendPayment(response.address, response.memo);
         this.$emit('deposit', parseFloat(this.amountStr));
         showToast(t('wallet.depositModal.orderSuccess'), 'success');
+        this.closeModal();
       } catch (e) {
         showToast(t('wallet.depositModal.orderFailed'), 'error');
         console.error(e);
+      } finally {
+        this.submitting = false;
       }
     },
 
     async sendPayment(receiverAddress, memo) {
       const body = beginCell()
         .storeUint(0, 32)
-        .storeStringTail(String(memo ?? ""))
+        .storeStringTail(String(memo ?? ''))
         .endCell();
 
-      const tx = {
+      await tonConnectUI.sendTransaction({
         validUntil: Math.floor(Date.now() / 1000) + 360,
-        messages: [
-          {
-            address: Address.parse(receiverAddress).toString(),
-            amount: toNano(this.amountNum).toString(),
-            payload: body.toBoc().toString('base64'),
-          },
-        ],
-      };
-      await tonConnectUI.sendTransaction(tx);
+        messages: [{
+          address: Address.parse(receiverAddress).toString(),
+          amount: toNano(this.amountNum).toString(),
+          payload: body.toBoc().toString('base64'),
+        }],
+      });
     },
   },
 };
 </script>
 
 <style lang="sass" scoped>
-@use "./DepositModal.sass"
+@use "./WalletModal.sass"
 </style>

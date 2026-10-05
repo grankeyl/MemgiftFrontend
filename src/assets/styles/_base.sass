@@ -4,48 +4,59 @@
 // ─── Loader transitions ───────────────────────────────────────────────────────
 
 .loader-fade-leave-active
-    transition: opacity 0.5s ease, transform 0.5s ease
+    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), filter 0.55s ease
 
 .loader-fade-leave-to
     opacity: 0
-    transform: translateX(-50%) scale(1.03)
+    transform: translateX(-50%) scale(1.015)
+    filter: blur(10px)
 
 // ─── Loader keyframes ─────────────────────────────────────────────────────────
-
-@keyframes load-spin
-    0%
-        transform: rotate(0deg)
-    100%
-        transform: rotate(360deg)
 
 @keyframes load-glow-drift
     0%, 100%
         transform: translate(0, 0) scale(1)
-        opacity: 0.35
+        opacity: 0.22
     50%
-        transform: translate(10px, -15px) scale(1.15)
-        opacity: 0.55
+        transform: translate(8px, -10px) scale(1.08)
+        opacity: 0.38
 
 @keyframes load-glow-drift-2
     0%, 100%
         transform: translate(0, 0) scale(1)
-        opacity: 0.3
+        opacity: 0.18
     50%
-        transform: translate(-12px, 10px) scale(1.1)
-        opacity: 0.5
+        transform: translate(-10px, 8px) scale(1.06)
+        opacity: 0.32
 
 @keyframes load-glow-drift-3
     0%, 100%
-        transform: translate(0, 0) scale(0.9)
-        opacity: 0.2
+        transform: translate(0, 0) scale(0.95)
+        opacity: 0.12
     50%
-        transform: translate(8px, 8px) scale(1.05)
-        opacity: 0.4
+        transform: translate(6px, 6px) scale(1.03)
+        opacity: 0.24
+
+@keyframes load-shell-in
+    0%
+        opacity: 0
+        transform: translateY(10px)
+    100%
+        opacity: 1
+        transform: translateY(0)
+
+@keyframes load-focus-in
+    0%
+        opacity: 0
+        transform: translate(-50%, calc(-50% + 14px)) scale(0.96)
+    100%
+        opacity: 1
+        transform: translate(-50%, -50%) scale(1)
 
 @keyframes load-logo-in
     0%
         opacity: 0
-        transform: translateY(12px) scale(0.9)
+        transform: translateY(8px) scale(0.94)
     100%
         opacity: 1
         transform: translateY(0) scale(1)
@@ -53,10 +64,66 @@
 @keyframes load-hint-in
     0%
         opacity: 0
+        transform: translateY(4px)
     100%
-        opacity: 0.4
+        opacity: 1
+        transform: translateY(0)
+
+@keyframes load-shimmer
+    0%
+        background-position: 200% 0
+    100%
+        background-position: -200% 0
+
+@keyframes load-progress-slide
+    0%
+        transform: translateX(-120%)
+    100%
+        transform: translateX(320%)
+
+@keyframes load-nav-in
+    0%
+        opacity: 0
+        transform: translateY(18px)
+    100%
+        opacity: 1
+        transform: translateY(0)
 
 // ─── Loader layout ───────────────────────────────────────────────────────────
+
+.bluring-t
+    position: fixed
+    top: 0
+    left: 50%
+    transform: translateX(-50%)
+    width: 100%
+    max-width: $app-max-preview-width
+    pointer-events: none
+    height: 23%
+    z-index: 0
+    background: linear-gradient(180deg, #171717 0%, #111111 100%)
+
+// Bottom fade: above page content, under menu (999) and modals (1000+)
+.bluring-b
+    position: fixed
+    bottom: 0
+    left: 50%
+    transform: translateX(-50%)
+    width: 100%
+    max-width: $app-max-preview-width
+    pointer-events: none
+    height: 120px
+    z-index: 10
+    // #0e0e0e темнее фона ($app-background = #111111) намеренно:
+    // градиент из фона в фон не виден вообще, а тут низ экрана слегка
+    // затемняется и подложка под кнопками читается
+    background: linear-gradient(
+        180deg,
+        rgba(14, 14, 14, 0) 0%,
+        rgba(14, 14, 14, 0.45) 40%,
+        rgba(14, 14, 14, 0.88) 78%,
+        #0e0e0e 100%
+    )
 
 ._pageLoad
     position: fixed
@@ -70,40 +137,214 @@
     background: $app-background
     overflow: hidden
 
+    .bluring-t,
+    .bluring-b
+        z-index: 1
+
     ._load-bg
         position: absolute
         inset: 0
         overflow: hidden
+        z-index: 0
+        pointer-events: none
 
         ._load-glow
             position: absolute
             border-radius: 50%
-            filter: blur(80px)
+            filter: blur(88px)
             will-change: transform, opacity
 
         ._load-glow--1
-            width: 220px
-            height: 220px
-            background: $app-big-button-background
-            top: 15%
-            left: -15%
-            animation: load-glow-drift 6s ease-in-out infinite
+            width: 260px
+            height: 260px
+            background: rgba($app-big-button-background, 0.55)
+            top: 8%
+            left: -22%
+            animation: load-glow-drift 9s ease-in-out infinite
 
         ._load-glow--2
-            width: 180px
-            height: 180px
-            background: $app-background-gold-secondary
-            bottom: 20%
-            right: -10%
-            animation: load-glow-drift-2 7s ease-in-out infinite
+            width: 200px
+            height: 200px
+            background: rgba($app-button-text-color, 0.22)
+            bottom: 18%
+            right: -18%
+            animation: load-glow-drift-2 11s ease-in-out infinite
 
         ._load-glow--3
-            width: 140px
-            height: 140px
-            background: $app-text-color-phiolete
-            top: 55%
-            left: 40%
-            animation: load-glow-drift-3 5s ease-in-out infinite
+            width: 160px
+            height: 160px
+            background: rgba($app-text-color-phiolete, 0.28)
+            top: 48%
+            left: 52%
+            animation: load-glow-drift-3 8s ease-in-out infinite
+
+    ._load-shimmer
+        background: linear-gradient(90deg, $app-background-secondary 0%, rgba(255, 255, 255, 0.07) 45%, $app-background-secondary 90%)
+        background-size: 220% 100%
+        animation: load-shimmer 1.85s ease-in-out infinite
+
+    ._load-shell
+        position: relative
+        z-index: 2
+        padding: calc($app-menu-height - 8px) $app-page-padding-left 0
+        display: flex
+        flex-direction: column
+        gap: 12px
+        opacity: 0.42
+        animation: load-shell-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both
+        pointer-events: none
+
+    ._load-header
+        display: flex
+        align-items: center
+        justify-content: space-between
+        margin-top: 10px
+        margin-bottom: 6px
+
+    ._load-header-logo
+        width: 92px
+        height: 23px
+        border-radius: 8px
+
+    ._load-header-chip
+        width: 72px
+        height: 32px
+        border-radius: 99em
+
+    ._load-slider
+        width: 100%
+        height: 108px
+        border-radius: 22px
+
+    ._load-dots
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 6px
+        margin-top: -2px
+
+        ._load-dot
+            width: 6px
+            height: 6px
+            border-radius: 99em
+            background: rgba(255, 255, 255, 0.12)
+
+            &--active
+                width: 22px
+                background: rgba(255, 255, 255, 0.2)
+
+    ._load-gifts
+        display: grid
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+        gap: 10px
+        margin-top: 6px
+
+        ._load-gift
+            aspect-ratio: 1 / 1
+            border-radius: 18px
+            animation-delay: calc(var(--load-i, 1) * 0.08s)
+
+    ._load-focus
+        position: absolute
+        z-index: 4
+        top: 50%
+        left: 50%
+        width: calc(100% - 32px)
+        max-width: 320px
+        transform: translate(-50%, -50%)
+        animation: load-focus-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both
+        pointer-events: none
+
+    ._load-glass
+        padding: 22px 26px 20px
+        border-radius: 24px
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: 16px
+        text-align: center
+        background-color: color-mix(in srgb, $app-background-secondary-2 58%, transparent)
+        backdrop-filter: blur(16px) saturate(140%)
+        -webkit-backdrop-filter: blur(16px) saturate(140%)
+        box-shadow: $app-glass-shadow
+        -webkit-box-shadow: $app-glass-shadow
+        border: 1px solid rgba(255, 255, 255, 0.06)
+
+        &:before
+            content: ''
+            position: absolute
+            inset: 0
+            border-radius: inherit
+            opacity: 0.35
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 42%)
+            pointer-events: none
+
+    ._load-glass
+        position: relative
+
+    ._load-logo
+        height: 26px
+        width: auto
+        display: block
+        animation: load-logo-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both
+
+    ._load-progress
+        width: 132px
+        height: 3px
+        border-radius: 99em
+        background: rgba(255, 255, 255, 0.1)
+        overflow: hidden
+        position: relative
+
+    ._load-progress-bar
+        position: absolute
+        inset: 0 auto 0 0
+        width: 42%
+        border-radius: inherit
+        background: linear-gradient(90deg, $app-big-button-background 0%, $app-button-blue-text-color 100%)
+        animation: load-progress-slide 1.35s cubic-bezier(0.45, 0, 0.55, 1) infinite
+
+    ._load-hint
+        font-size: 14px
+        font-weight: 500
+        line-height: 1.35
+        color: $app-text-color-descr-primary
+        opacity: 0
+        animation: load-hint-in 0.55s ease 0.45s forwards
+        text-wrap: pretty
+        max-width: 240px
+
+    ._load-nav
+        position: absolute
+        z-index: 3
+        left: 0
+        right: 0
+        bottom: max(12px, env(safe-area-inset-bottom, 0px))
+        padding: 0 14px
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px
+        opacity: 0.38
+        animation: load-nav-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both
+        pointer-events: none
+
+    ._load-nav-pill
+        height: 58px
+        border-radius: 99em
+        flex: 1 1 auto
+        max-width: 340px
+        background-color: color-mix(in srgb, $app-background-secondary-2 45%, transparent)
+        backdrop-filter: blur(10px)
+        -webkit-backdrop-filter: blur(10px)
+        box-shadow: $app-glass-shadow
+        -webkit-box-shadow: $app-glass-shadow
+
+        &--gems
+            flex: 0 0 58px
+            width: 58px
+            min-width: 58px
+            max-width: 58px
 
     ._load-center
         position: absolute
@@ -114,40 +355,8 @@
         flex-direction: column
         align-items: center
         gap: 24px
-        z-index: 2
-
-    ._load-logo
-        animation: load-logo-in 0.6s ease both
-
-        img
-            height: 30px
-            display: block
-
-    ._load-spinner
-        width: 32px
-        height: 32px
-        animation: load-logo-in 0.6s ease 0.15s both
-
-        svg
-            width: 100%
-            height: 100%
-            animation: load-spin 1s linear infinite
-
-            circle
-                fill: none
-                stroke: rgba($app-text-color, 0.15)
-                stroke-width: 2.5
-                stroke-linecap: round
-                stroke-dasharray: 80, 200
-                stroke-dashoffset: 0
-
-    ._load-hint
-        font-size: 13px
-        font-weight: 500
-        color: $app-text-color
-        opacity: 0
-        animation: load-hint-in 0.8s ease 0.5s forwards
-        letter-spacing: 0.02em
+        z-index: 4
+        padding: 0 24px
 
     &.notLoad
         visibility: hidden !important
@@ -182,6 +391,27 @@
                 color: rgba($app-text-color, 0.55)
                 line-height: 1.55
 
+@media (prefers-reduced-motion: reduce)
+    ._pageLoad
+        ._load-glow,
+        ._load-shimmer,
+        ._load-progress-bar,
+        ._load-shell,
+        ._load-focus,
+        ._load-nav,
+        ._load-logo,
+        ._load-hint
+            animation: none !important
+
+        ._load-hint
+            opacity: 1
+
+        ._load-shell,
+        ._load-focus,
+        ._load-nav
+            opacity: 1
+            transform: none
+
 ._showMenu
     padding-bottom: $app-menu-height
 
@@ -204,15 +434,26 @@
     overflow-x: hidden
     overflow-y: auto
     margin: auto
-    padding-top: $app-menu-height
+    padding-top: calc(var(--tg-top-offset, 0px) + 20px)
     padding-bottom: $app-menu-height
-    animation: page-in $app-transition-page
+
+    &._menu-page-enter
+        animation: menu-page-enter-neutral 0.52s cubic-bezier(0.22, 1, 0.36, 1) both
+
+        &._menu-page-enter--forward
+            animation-name: menu-page-enter-forward
+
+        &._menu-page-enter--back
+            animation-name: menu-page-enter-back
+
+        &._menu-page-enter--neutral
+            animation-name: menu-page-enter-neutral
 
     &::-webkit-scrollbar
         display: none
     
     &.desktop
-        padding-top: 0
+        padding-top: 20px
 
     ._view
         display: -webkit-box
@@ -297,108 +538,230 @@
                 opacity: 1
 
 .menu
-    max-width: $app-max-preview-width
-    width: 100%
-    height: $app-menu-height
     position: fixed
-    bottom: 0
     left: 50%
+    bottom: max(22px, env(safe-area-inset-bottom, 0px))
     transform: translateX(-50%)
-    z-index: 30
+    width: 100%
+    max-width: $app-max-preview-width
     display: flex
-    align-items: flex-end
+    align-items: center
     justify-content: center
-    padding: 0 16px 12px 16px
+    gap: 8px
+    padding: 0 14px
+    box-sizing: border-box
+    z-index: 999
     pointer-events: none
 
     .menu_pill
-        width: auto
-        height: 58px
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 2px
-        background: rgba(24, 24, 26, 0.88)
-        -webkit-backdrop-filter: blur(28px) saturate(1.8)
-        backdrop-filter: blur(28px) saturate(1.8)
-        border-radius: 50px
-        border: 1px solid rgba(255, 255, 255, 0.06)
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4)
-        padding: 4px 6px
+        position: relative
         pointer-events: auto
+        display: flex
+        align-items: stretch
+        justify-content: flex-start
+        flex: 1 1 auto
+        min-width: 0
+        max-width: 340px
+        height: 58px
+        gap: 2px
+        padding: 4px
+        border: none
+        border-radius: 99em
+        cursor: pointer
+        box-sizing: border-box
+        background-color: color-mix(in srgb, $app-background-secondary-2 50%, transparent)
+        backdrop-filter: blur(13px) saturate(140%)
+        -webkit-backdrop-filter: blur(13px) saturate(140%)
+        box-shadow: $app-glass-shadow
+        -webkit-box-shadow: $app-glass-shadow
+
+        // GetGems временно неактивен: гасим иконку и снимаем отклик,
+        // чтобы кнопка читалась как выключенная, а не как обычная
+        &.low
+            flex: 0 0 58px
+            width: 58px
+            min-width: 58px
+            max-width: 58px
+            height: 58px
+            padding: 0
+            justify-content: center
+            cursor: pointer
+
+            // гасим только иконку: если приглушать всю пилюлю через opacity,
+            // её фон становится полупрозрачным и кнопка сливается со страницей
+            .menu_tab_icon
+                opacity: .32
+
+            // кнопка живая: ведёт на коллекцию GetGems, иконка в полную силу
+            &.is-live
+                .menu_tab_icon
+                    opacity: .85
+
+                &:active
+                    transform: scale(0.95)
+
+            .menu_tab
+                flex: none
+                width: 100%
+                height: 100%
+                max-width: none
+
+                .menu_tab_icon
+                    width: 24px
+                    height: 24px
+                    opacity: 1
+
+                    svg
+                        width: 24px
+                        height: 24px
+
+        .menu_indicator
+            position: absolute
+            top: 4px
+            bottom: 4px
+            left: 0
+            z-index: 0
+            width: var(--menu-indicator-w, 0)
+            border-radius: 999px
+            pointer-events: none
+            background: #ffffff16
+            transform: translateX(var(--menu-indicator-x, 0))
+            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.2s ease
+            will-change: transform, width
+
+        &.menu_pill--has-active .menu_indicator
+            opacity: 1
+
+        &:not(.menu_pill--has-active) .menu_indicator
+            opacity: 0
+
+        &:before
+            content: ''
+            position: absolute
+            inset: 0
+            z-index: -1
+            border-radius: inherit
+            opacity: .33
+            background: linear-gradient(
+                180deg,
+                $app-background-secondary-2 0%,
+                #191919 100%
+            )
+            pointer-events: none
 
         .menu_tab
+            flex: 1 1 0
+            min-width: 0
+            max-width: none
+            height: 100%
             display: flex
-            flex-direction: column
             align-items: center
             justify-content: center
-            gap: 3px
-            padding: 5px 16px
-            border-radius: 50px
+            border-radius: 999px
             cursor: pointer
-            -webkit-user-select: none
-            -moz-user-select: none
-            user-select: none
-            transition: all 0.2s ease
-
-            &.disable
-                pointer-events: none
-                opacity: .15
+            position: relative
+            z-index: 1
+            transition: transform 0.2s ease
+            -webkit-tap-highlight-color: transparent
 
             .menu_tab_icon
-                width: 22px
-                height: 22px
+                width: 24px
+                height: 24px
                 display: flex
                 align-items: center
                 justify-content: center
-                opacity: 0.32
-                transition: opacity 0.2s ease
+                flex-shrink: 0
+                opacity: .22
+                transition: opacity 0.28s ease
 
-                & svg
+                svg
+                    width: 24px
+                    height: 24px
+                    display: block
+
+            &:active
+                transform: scale(0.96)
+
+            &:hover
+                .menu_tab_icon
+                    opacity: .7
+
+            &.active
+                .menu_tab_icon
+                    opacity: 1
+
+            &.disable
+                opacity: .2
+                pointer-events: none
+
+// Narrow phones — shrink pills/icons so nothing overflows
+@media screen and (max-width: 390px)
+    .menu
+        gap: 6px
+        padding: 0 10px
+        bottom: max(10px, env(safe-area-inset-bottom, 0px))
+
+        .menu_pill
+            height: 52px
+            max-width: none
+            padding: 3px
+
+            &.low
+                flex-basis: 52px
+                width: 52px
+                min-width: 52px
+                max-width: 52px
+                height: 52px
+
+                .menu_tab .menu_tab_icon
                     width: 22px
                     height: 22px
 
-            .menu_tab_label
-                font-size: 10px
-                font-weight: 600
-                letter-spacing: 0.01em
-                color: $app-text-color
-                opacity: 0.32
-                transition: opacity 0.2s ease
-                white-space: nowrap
-
-            &.active
-                background: rgba(255, 255, 255, 0.09)
-
-                .menu_tab_icon
-                    opacity: 1
-
-                .menu_tab_label
-                    opacity: 1
-
-
-@media screen and (max-width: 380px)
-    .menu
-        padding: 0 10px 8px 10px
-
-        .menu_pill
-            height: 50px
-            padding: 3px 5px
+                    svg
+                        width: 22px
+                        height: 22px
 
             .menu_tab
-                padding: 4px 12px
-                gap: 2px
+                max-width: none
 
                 .menu_tab_icon
-                    width: 19px
-                    height: 19px
+                    width: 22px
+                    height: 22px
 
-                    & svg
-                        width: 19px !important
-                        height: 19px !important
+                    svg
+                        width: 22px
+                        height: 22px
 
-                .menu_tab_label
-                    font-size: 9px !important
+@media screen and (max-width: 340px)
+    .menu
+        gap: 5px
+        padding: 0 8px
+
+        .menu_pill
+            height: 48px
+
+            &.low
+                flex-basis: 48px
+                width: 48px
+                min-width: 48px
+                max-width: 48px
+                height: 48px
+
+                .menu_tab .menu_tab_icon
+                    width: 20px
+                    height: 20px
+
+                    svg
+                        width: 20px
+                        height: 20px
+
+            .menu_tab .menu_tab_icon
+                width: 20px
+                height: 20px
+
+                svg
+                    width: 20px
+                    height: 20px
 
 
 .buy-button

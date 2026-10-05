@@ -4,14 +4,15 @@ import Cookies from "js-cookie";
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
 export const init = async (initData: string) => {
-  let initDataRaw = initData as any;
+  // порядок важен: сначала то, что пришло из Telegram, и только если
+  // ничего нет — тестовая строка из .env. раньше здесь безусловно бралась
+  // переменная окружения, а в проде она пустая, поэтому вход отдавал 400
+  let initDataRaw: string =
+    initData ||
+    (window as any)?.Telegram?.WebApp?.initData ||
+    import.meta.env.VITE_APP_INIT_DATA ||
+    '';
 
-  if (!initData) {
-    initDataRaw = window?.Telegram?.WebApp?.initData;
-  } else {
-    initDataRaw = initData;
-  }
- 
   try {
     const response = await axios.post(
       `${API_URL}/users/init`,

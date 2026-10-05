@@ -1,14 +1,22 @@
 <template>
   <div class="_direction _comp _item _user" :class="Key">
       <div v-if="isLoading" class="_skeleton">
-          <div class="_image"></div>
-          <div class="_name"></div>
-          <div class="_descr"></div>
+          <div class="_ctrl-skel">
+              <div class="_lang-skel _shine"></div>
+              <div class="_balances-skel">
+                  <div class="_balance-skel _shine"></div>
+                  <div class="_balance-skel _shine"></div>
+              </div>
+          </div>
+          <div class="_image _shine"></div>
+          <div class="_name _shine"></div>
+          <div class="_descr _shine"></div>
+          <div class="_wallet-skel _shine"></div>
       </div>
       <div v-else class="_content">
-          <!-- Floating controls -->
+          <!-- Floating controls: lang left · tickets + gram right (like tickets page) -->
           <div class="pu-ctrl">
-            <div class="pu-ctrl__lang" @click="openLanguageModal">
+            <button type="button" class="pu-ctrl__lang" @click="openLanguageModal">
               <span>{{ getLanguageFlag }}</span>
               <div class="pu-ctrl__dd" :class="{ open: LanguageModalActive }" @click.stop>
                 <div v-for="lang in LanguageList" :key="lang.id" class="pu-ctrl__dd-item" @click.stop="selectLanguage(lang.id)">
@@ -16,14 +24,18 @@
                   <p>{{ lang.title }}</p>
                 </div>
               </div>
-            </div>
-            <div class="pu-ctrl__tickets">
-              <img :src="Image_Ticket" alt="ticket" />
-              <span>{{ storeCache.UserData.user.Tickets || 0 }}</span>
-            </div>
-            <div class="pu-ctrl__bal" @click="openWallet">
-              <span>{{ cutNumber(getBalance.toString()) }}</span>
-              <img :src="TonImg" alt="ton" />
+            </button>
+
+            <!-- Same as tickets page .balances — no chips -->
+            <div class="pu-ctrl__balances">
+              <div class="pu-ctrl__balance">
+                <div class="kit-icon ticket" v-html="Icon.Ticket"></div>
+                <span>{{ storeCache.UserData.user.Tickets || 0 }}</span>
+              </div>
+              <button type="button" class="pu-ctrl__balance" @click="openWallet">
+                <div class="kit-icon" v-html="Icon.Gram"></div>
+                <span>{{ cutNumber(getBalance.toString()) }}</span>
+              </button>
             </div>
           </div>
 
@@ -46,8 +58,6 @@
 
           <!-- Sub-line: rank + gifts count + id copy -->
           <div class="pu-meta">
-            <span v-if="UserRank" class="pu-meta__rank">#{{ UserRank }}</span>
-            <span class="pu-meta__dot">·</span>
             <span class="pu-meta__gifts">{{ UserNftsCount }} {{ pluralizeGift($t('app.sendGiftText'), UserNftsCount, storeCache.TelegramData.user.language) }}</span>
             <span class="pu-meta__dot">·</span>
             <span class="pu-meta__id" @click="copyUserId()">{{ storeCache.UserData.user.Tld }}
@@ -55,38 +65,81 @@
             </span>
           </div>
 
-          <!-- Wallet -->
-          <div v-if="!walletConnected" class="pu-wallet" @click="openTonWallet()">
-            <img src="/profile/ton-lig.svg" alt="ton" />
+          <!-- Wallet — Gram CTA (market-style pill) -->
+          <button
+            v-if="!walletConnected"
+            type="button"
+            class="pu-wallet"
+            @click="openTonWallet()"
+          >
+            <div class="kit-icon" v-html="Icon.Gram"></div>
             <span>{{ $t('profile.profileConnect') }}</span>
-          </div>
-          <div v-else class="pu-wallet pu-wallet--on" @click="openDisconnectModal()">
-            <img src="/profile/ton-lig.svg" alt="ton" />
-            <span>{{ obfuscateAddress(walletAddress) }}</span>
-          </div>
+          </button>
+          <button
+            v-else
+            type="button"
+            class="pu-wallet pu-wallet--on"
+            @click="openDisconnectModal()"
+          >
+            <div class="kit-icon" v-html="Icon.Gram"></div>
+            <span>{{ walletAddressLabel }}</span>
+          </button>
       </div>
   </div>
 
-  <!-- Actions -->
+  <!-- Actions blocks -->
   <div class="_direction _comp _item _funcers">
-    <div v-if="!isLoading" class="prf-acts">
-      <div class="prf-acts__row" @click="openMulticheck">
-        <div class="prf-acts__ic" v-html="Icon.Friends"></div>
-        <span class="prf-acts__txt">{{ $t('profile.profileCreateMulticheck') }}</span>
-        <span class="prf-acts__new">{{ $t('app.newMark') }}</span>
-        <svg class="prf-acts__arr" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div v-if="isLoading" class="prf-acts prf-acts--skel">
+      <div class="prf-acts__item" v-for="i in 3" :key="i">
+        <div class="prf-acts__text">
+          <div class="_title-skel _shine"></div>
+        </div>
+        <div class="_go-skel _shine"></div>
       </div>
-      <div class="prf-acts__row" @click="openPrivateDeal">
-        <div class="prf-acts__ic" v-html="Icon.Shield"></div>
-        <span class="prf-acts__txt">{{ $t('profile.profileCreatePrivateDeal') }}</span>
-        <span class="prf-acts__new">{{ $t('app.newMark') }}</span>
-        <svg class="prf-acts__arr" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="prf-acts__row prf-acts__row--last" @click="openReferrals">
-        <div class="prf-acts__ic" v-html="Icon.Reward"></div>
-        <span class="prf-acts__txt">{{ $t('profile.profileReferralProgram') }}</span>
-        <svg class="prf-acts__arr" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+    </div>
+
+    <div v-else class="prf-acts">
+      <button type="button" class="prf-acts__item" @click="openWallet">
+        <div class="prf-acts__text">
+          <div class="prf-acts__line">
+            <span class="prf-acts__title">{{ $t('profile.profileWallet') }}</span>
+          </div>
+        </div>
+        <span class="prf-acts__go" aria-hidden="true">
+          <svg viewBox="0 0 8 14" fill="none">
+            <path d="M1 1.5L6.5 7 1 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+
+      <!-- мультичек временно отключён. вернуть — снять комментарий,
+           метод openMulticheck и роут /multicheck на месте
+      <button type="button" class="prf-acts__item" @click="openMulticheck">
+        <div class="prf-acts__text">
+          <div class="prf-acts__line">
+            <span class="prf-acts__title">{{ $t('profile.profileCreateMulticheck') }}</span>
+          </div>
+        </div>
+        <span class="prf-acts__go" aria-hidden="true">
+          <svg viewBox="0 0 8 14" fill="none">
+            <path d="M1 1.5L6.5 7 1 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+      -->
+
+      <button type="button" class="prf-acts__item" @click="openReferrals">
+        <div class="prf-acts__text">
+          <div class="prf-acts__line">
+            <span class="prf-acts__title">{{ $t('profile.profileReferralProgram') }}</span>
+          </div>
+        </div>
+        <span class="prf-acts__go" aria-hidden="true">
+          <svg viewBox="0 0 8 14" fill="none">
+            <path d="M1 1.5L6.5 7 1 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
     </div>
   </div>
 </template>
@@ -112,16 +165,38 @@ import TelegramModule from '../../hooks/useTelegram';
 import Lottie from '../Lottie.vue';
 
 import Image_Avatar from '@/assets/images/avatar.png';
-import Image_Ticket from '@/assets/images/ticket.svg';
 import i18next from 'i18next';
 
-import TonImg from '@/assets/images/market/ton.svg';
-import PlusImg from '@/assets/images/market/plus.svg';
 
 export default {
   setup() {
     const walletConnected = ref(false);
     const walletAddress = ref('');
+    let walletPoll = null;
+
+    const getTonWalletAddress = () => {
+      if (!tonConnectUI.account?.address) return '';
+      try {
+        const friendly = toUserFriendlyAddress(tonConnectUI.account.address);
+        if (friendly) walletAddress.value = friendly;
+        return friendly || '';
+      } catch {
+        return walletAddress.value || '';
+      }
+    };
+
+    const checkTonWallet = () => {
+      const connected = !!tonConnectUI.connected;
+      walletConnected.value = connected;
+      if (connected) {
+        // Account can arrive slightly after `connected` — keep refreshing until we have it
+        if (!walletAddress.value || tonConnectUI.account?.address) {
+          getTonWalletAddress();
+        }
+      } else if (walletAddress.value) {
+        walletAddress.value = '';
+      }
+    };
 
     const openTonWallet = () => {
       tonConnectUI.openModal();
@@ -131,37 +206,49 @@ export default {
           clearInterval(interval);
           walletConnected.value = true;
           const addr = getTonWalletAddress();
-          const response = await walletApi.create(addr);
-          if (response && response.WalletAddress) {
-            showToast('Wallet connected', 'success');
-          } else {
-            clearInterval(interval);
+          if (!addr) return;
+          try {
+            const response = await walletApi.create(addr);
+            if (response && response.WalletAddress) {
+              showToast('Wallet connected', 'success');
+            } else {
+              showToast('Wallet not connected', 'error');
+            }
+          } catch {
             showToast('Wallet not connected', 'error');
           }
         }
       }, 1000);
-    }
-
-    const checkTonWallet = () => { walletConnected.value = tonConnectUI.connected; }
-
-    const getTonWalletAddress = () => {
-      if (!tonConnectUI.account) return;
-      const raw = tonConnectUI.account.address;
-      const friendly = toUserFriendlyAddress(raw);
-      walletAddress.value = friendly;
-      return friendly;
-    }
+    };
 
     const disconnectTonWallet = () => {
       walletConnected.value = false;
+      walletAddress.value = '';
       tonConnectUI.disconnect();
-    }
+    };
 
-    getTonWalletAddress();
     checkTonWallet();
-    setInterval(checkTonWallet, 1000);
-    
-    return { tonConnectUI, openTonWallet, walletConnected, disconnectTonWallet, walletAddress };
+    walletPoll = setInterval(checkTonWallet, 800);
+
+    // Prefer status subscription when available (clears empty address while account hydrates)
+    let unsubscribeStatus = null;
+    try {
+      if (typeof tonConnectUI.onStatusChange === 'function') {
+        unsubscribeStatus = tonConnectUI.onStatusChange(() => {
+          checkTonWallet();
+        });
+      }
+    } catch { /* ignore */ }
+
+    return {
+      tonConnectUI,
+      openTonWallet,
+      walletConnected,
+      disconnectTonWallet,
+      walletAddress,
+      _walletPoll: walletPoll,
+      _unsubscribeStatus: unsubscribeStatus,
+    };
   },
 
   props: {
@@ -177,7 +264,6 @@ export default {
 
   data() {
     return {
-      TonImg, PlusImg, Image_Ticket,
       configApp: getConfig(),
       storeCache: useCacheStore(),
       isLoading: false,
@@ -201,6 +287,13 @@ export default {
     this.$watch(() => this.storeCache.TelegramData, () => this.getTickets());
   },
 
+  beforeUnmount() {
+    if (this._walletPoll) clearInterval(this._walletPoll);
+    if (typeof this._unsubscribeStatus === 'function') {
+      try { this._unsubscribeStatus(); } catch { /* ignore */ }
+    }
+  },
+
   computed: {
     getLanguageFlag() {
       if (!this.storeCache.UserData.user.Language) return '🌐';
@@ -208,6 +301,11 @@ export default {
     },
     getBalance() {
       return this.storeCache?.UserData?.user?.Balance?.balance_ton ?? 0;
+    },
+    walletAddressLabel() {
+      const label = obfuscateAddress(this.walletAddress);
+      // Avoid "..." for empty — show neutral placeholder until account hydrates
+      return label || 'TON';
     },
   },
   
@@ -229,6 +327,7 @@ export default {
     },
     openDisconnectModal() { this.$emit('openDisconnectModal'); },
     openReferrals() { this.$router.push({ name: 'referral' }); },
+    openRating() { this.$router.push({ name: 'rating' }); },
     openMulticheck() { this.$router.push('/multicheck'); },
     openPrivateDeal() { this.$router.push('/private-deal'); },
     copyUserId() { copyToClipboard(this.storeCache.UserData.user.Tld); showToast('Copied', 'success'); },

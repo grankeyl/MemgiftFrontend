@@ -1,52 +1,60 @@
 <template>
-    <div class="_direction _comp _item _activityRecents">
+    <div class="_direction _comp _item _activityRecents blockTasks">
         <div v-if="isLoading" class="_skeleton">
-          <div class="_items">
-            <div class="_item"></div>
-            <div class="_item"></div>
-            <div class="_item"></div>
+          <div class="_list-skel">
+            <div class="_row-skel" v-for="n in 3" :key="'act-sk-' + n">
+              <div class="_avatar-skel _load-shimmer"></div>
+              <div class="_info-skel">
+                <div class="_title-skel _load-shimmer"></div>
+                <div class="_reward-skel _load-shimmer"></div>
+              </div>
+              <div class="_action-skel _load-shimmer"></div>
+            </div>
           </div>
         </div>
         <div v-else class="_content">
-          <div class="_items">
-
-            <transition-group name="fade-history" tag="div" class="_items">
-              <div
-                v-for="(history, index) in HistoryList"
-                :key="history.CreatedAt || index"
-                class="_direction _comp _item _lastActivity _lefting"
-              >
-                <div class="_content" @click="openCollection(history.u_key)">
-                  <div
-                    class="_block"
-                    :class="history.gift_rarity || ''"
-                  >
-                    <div class="_image">
-                      <img :src="history.gift_image" />
-                    </div>
-                    <div class="_title">
-                      <h4 v-if="history.status === 'purchased'">
-                        {{ maxNameLength(cleanString(history.user_name)) }}
-                        {{ $t('home.buyed') }}
-                        <span>
-                          {{ history?.gift_name }}
-                        </span>
-                      </h4>
-                      <h4 v-if="history.status === 'transferred'">
-                        {{ maxNameLength(cleanString(history.from_user_name)) }}
-                        {{ $t('home.sended') }}
-                        <span>
-                          {{ history?.gift_name }}
-                        </span>
-                      </h4>
-                      <p>{{ unixToRelative(history.created_at) }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </transition-group>
-            
+          <div class="_section-head">
+            <h4>{{ $t('collection.recentsTitle') }}</h4>
           </div>
+
+          <transition-group name="fade-history" tag="div" class="_task-list">
+            <div
+              v-for="(history, index) in HistoryList"
+              :key="history.created_at || index"
+              class="_task-row _activity-row"
+              :class="history.gift_rarity || ''"
+              @click="openCollection(history.u_key)"
+            >
+              <div class="_task-avatar _activity-avatar" :class="history.gift_rarity || ''">
+                <img v-if="history.gift_image" :src="history.gift_image" :alt="history.gift_name" />
+                <div v-else class="kit-icon" v-html="Icon.Gift"></div>
+              </div>
+
+              <div class="_task-info">
+                <h4>
+                  <template v-if="history.status === 'purchased'">
+                    {{ maxNameLength(cleanString(history.user_name)) }}
+                    {{ $t('home.buyed') }}
+                    <span>{{ history?.gift_name }}</span>
+                  </template>
+                  <template v-else-if="history.status === 'transferred'">
+                    {{ maxNameLength(cleanString(history.from_user_name)) }}
+                    {{ $t('home.sended') }}
+                    <span>{{ history?.gift_name }}</span>
+                  </template>
+                </h4>
+                <p class="_activity-time">{{ unixToRelative(history.created_at) }}</p>
+              </div>
+
+              <div class="_task-action _activity-action">
+                <span class="_activity-chevron" aria-hidden="true">
+                  <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+                    <path d="M1 1.5 6.5 7 1 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </transition-group>
         </div>
     </div>
   </template>

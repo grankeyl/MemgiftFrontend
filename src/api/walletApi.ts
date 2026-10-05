@@ -31,3 +31,17 @@ export const disconnect = async () => {
     return false;
   }
 };
+// текущая привязка кошелька на бэке — источник истины
+// (сессия TonConnect в браузере может пережить отвязку)
+export const get = async () => {
+  try {
+    const tokenBearer = Cookies.get("token");
+    const response = await axios.get(
+      `${API_URL}/wallet/`,
+      { headers: { Authorization: `${tokenBearer}` } }
+    );
+    return response.data;
+  } catch (error) {
+    return false;
+  }
+};

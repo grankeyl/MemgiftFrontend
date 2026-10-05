@@ -2,8 +2,16 @@
   <div class="_direction _comp _item _tasksPinned" :class="Key">
       <div v-if="isLoading" class="_skeleton">
         <div class="_row">
-            <div class="_card-skel"></div>
-            <div class="_card-skel"></div>
+          <div class="_card-skel">
+            <div class="_icon-skel _load-shimmer"></div>
+            <div class="_title-skel _load-shimmer"></div>
+            <div class="_reward-skel _load-shimmer"></div>
+          </div>
+          <div class="_card-skel">
+            <div class="_icon-skel _load-shimmer"></div>
+            <div class="_title-skel _load-shimmer"></div>
+            <div class="_reward-skel _load-shimmer"></div>
+          </div>
         </div>
       </div>
       <div v-else class="_content">

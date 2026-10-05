@@ -3,7 +3,7 @@
 ._wrap._pageGift
     width: 100%
     background: $app-background
-    padding-top: calc($app-menu-height + 10px)
+    padding-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px) + 12px)
 
     &.desktop
         padding-top: 0px
@@ -34,3 +34,54 @@
                     font-weight: 500
                     color: $app-text-color-descr
     
+
+
+// ── страница подарка по ссылке: раскладка как у тела модалки ──
+.pg-body
+    width: 100%
+    display: flex
+    flex-direction: column
+    gap: 12px
+    padding-bottom: 24px
+
+    // в модалке карточка прижата к её краям, здесь — к полям страницы
+    .mgm-card,
+    .mgm-title,
+    .mgm-info,
+    .pgm-footer
+        width: 100%
+        margin-left: 0
+        margin-right: 0
+
+
+    // В модалке карточку обрезает сам шит, поэтому там скруглён лишь один
+    // угол, символы стоят боксом со смещением вверх, а модель сдвинута под
+    // ряд кнопок. На отдельной странице всего этого нет — выравниваем.
+    .mgm-card
+        height: auto
+        border-radius: 26px
+        overflow: hidden
+
+        .mgm-card__head
+            height: 280px
+            border-radius: 26px
+
+        // символы: бокс 70%×84% со смещением вверх и object-fit: cover
+        // резал узор по краям — растягиваем на карточку и вписываем целиком
+        .mgm-card__symbol
+            width: 100%
+            height: 100%
+            top: 50%
+            left: 50%
+
+            img
+                width: 86%
+                height: 86%
+                object-fit: contain
+
+        // модель стояла на top: 35% — она была поднята под ряд кнопок,
+        // которых здесь нет, поэтому висела выше центра
+        .mgm-card__model
+            top: 50%
+            width: 52%
+            height: 52%

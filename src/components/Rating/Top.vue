@@ -1,380 +1,90 @@
 <template>
-  <div :class="['_direction _comp _item _leaderboard', Key]">
+  <div class="_direction _comp _item _leaderboard">
+    <!-- ── skeleton ── -->
     <div v-if="isLoading" class="_skeleton">
-      <div class="sections">
-        <!-- <div class="section"></div> -->
-        <div class="section"></div>
-        <div class="section"></div>
+      <div class="rt-seg-skel"></div>
+      <div class="rt-hero-skel">
+        <div class="rt-hero-skel__u small"></div>
+        <div class="rt-hero-skel__u"></div>
+        <div class="rt-hero-skel__u small"></div>
       </div>
-
-      <div class="topFlexed">
-        <div class="top holders">
-          <div class="top-three">
-            <div class="top-user place-2">
-              <div class="avatar-wrapper">
-                <div class="avatar avatar_null">
-                  <h4>B</h4>
-                </div>
-                <div class="rank-badge">x</div>
-              </div>
-              <div class="name">No name</div>
-              <div class="gifts">
-                0
-                {{ pluralizeGift(
-                  $t('rating.gifts'),
-                  0,
-                  storeCache.TelegramData.user.language
-                ) }}
-              </div>
-            </div>
-            <div class="top-user place-1">
-              <div class="avatar-wrapper">
-                <div class="avatar avatar_null">
-                  <h4>A</h4>
-                </div>
-                <div class="rank-badge">x</div>
-              </div>
-              <div class="name">No name</div>
-              <div class="gifts">
-                0
-                {{ pluralizeGift(
-                  $t('rating.gifts'),
-                  0,
-                  storeCache.TelegramData.user.language
-                ) }}
-              </div>
-            </div>
-            <div class="top-user place-3">
-              <div class="avatar-wrapper">
-                <div class="avatar avatar_null">
-                  <h4>C</h4>
-                </div>
-                <div class="rank-badge">x</div>
-              </div>
-              <div class="name">No name</div>
-              <div class="gifts">
-                0
-                {{ pluralizeGift(
-                  $t('rating.gifts'),
-                  0,
-                  storeCache.TelegramData.user.language
-                ) }}
-              </div>
-            </div>
-          </div>
-
-          <div class="other-list">
-            <div
-              v-for="index in 5"
-              class="other-user"
-            >
-              <div class="rank">{{ index+3 }}</div>
-              <div class="info">
-                <div class="name">No Name</div>
-                <div class="gifts">
-                  0
-                  {{ pluralizeGift(
-                    $t('rating.gifts'),
-                    0,
-                    storeCache.TelegramData.user.language
-                  ) }}
-                </div>
-              </div>
-              <div class="small-avatar avatar_null">
-                <h4>{{ index+3 }}</h4>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="rt-list-skel">
+        <div v-for="i in 6" :key="'rs' + i" class="rt-list-skel__row"></div>
       </div>
     </div>
 
     <div v-else class="_content">
-      <div class="rt-tabs">
-        <div class="rt-tabs__item" :class="{ active: selectedSection === 'holders' }" @click="selectedSection = 'holders'">
-          {{ $t('rating.section1') }}
-        </div>
-        <div class="rt-tabs__item" :class="{ active: selectedSection === 'others' }" @click="selectedSection = 'others'">
-          {{ $t('rating.section2') }}
-        </div>
-        <div class="rt-tabs__bg" :class="{ right: selectedSection === 'others' }"></div>
+      <!-- сегмент-таб: тот же стеклянный слайдер, что в профиле -->
+      <div class="rt-seg" :class="{ 'is-right': selectedSection === 'others' }">
+        <div class="rt-seg__indicator"></div>
+        <button type="button" class="rt-seg__tab" :class="{ active: selectedSection === 'holders' }" @click="setSection('holders')">
+          <span>{{ $t('rating.section1') }}</span>
+        </button>
+        <button type="button" class="rt-seg__tab" :class="{ active: selectedSection === 'others' }" @click="setSection('others')">
+          <span>{{ $t('rating.section2') }}</span>
+        </button>
       </div>
 
-      <div v-if="selectedSection === 'contest'" class="topFlexed">
-        <div class="top contest">
-          <div class="top-three">
-            <div  
-              v-if="TopContestThree && TopContestThree.length > 0"
-              v-for="(leader, index) in TopContestThree"
-              @click="routeUser(leader.tld)"
-              :key="leader?.tld || index"
-              :class="`place-${leader?.rank ?? 'x'}`"
-              class="top-user"
-            >
-              <div class="avatar-wrapper">
-                <img 
-                  v-if="leader && leader?.photo"
-                  :src="leader?.photo || ''"
-                  alt="avatar"
-                  class="avatar"
-                />
-                <div v-else class="avatar avatar_null">
-                  <h4 v-if="leader?.name">{{ leader?.name[0] }}</h4>
-                  <h4 v-else>N</h4>
-                </div>
-                <div class="gift">
-                  <img v-if="leader?.rank && leader?.rank === 1" src="https://storage.googleapis.com/portals-market/gifts/astralshard/models/png/muffin.png" alt="ton" />
-                  <img v-if="leader?.rank && leader?.rank === 2" src="https://storage.googleapis.com/portals-market/gifts/toybear/models/png/bluedandy.png" alt="ton" />
-                  <img v-if="leader?.rank && leader?.rank === 3" src="https://storage.googleapis.com/portals-market/gifts/ionicdryer/models/png/cyberprism.png" alt="ton" />
-                </div>
-              </div>
-              <div class="name">{{ cleanString(leader?.name) || 'No Name' }}</div>
-              <div class="gifts">
-                <p>{{ cutNumberNano(leader?.sum_volume_nano) }}</p>
-                <img src="/profile/ton.svg" alt="">
-              </div>
+      <!-- контент активного таба -->
+      <div :key="selectedSection" class="rt-board">
+        <!-- ── подиум топ-3 ── -->
+        <div class="rt-hero">
+          <div
+            v-for="(u, i) in heroThree"
+            :key="heroKey(u) || i"
+            class="rt-hero__u"
+            :class="`is-${heroRank(u)}`"
+            :style="{ '--hi': i }"
+            @click="routeUser(heroKey(u))"
+          >
+            <div class="rt-hero__ava">
+              <img v-if="heroPhoto(u)" :src="heroPhoto(u)" alt="" />
+              <div v-else class="rt-hero__ava-null"><h4>{{ heroInitial(u) }}</h4></div>
+              <div class="rt-hero__rank">{{ heroRank(u) }}</div>
             </div>
-            <div v-else class="sk-block">
-            </div>
-          </div>
-
-          <div class="progress-contest">
-            <div class="progressed-texts">
-              <div class="title">
-                <h4>100%</h4>
-              </div>
-              <div class="title">
-                <h4><span>Contest cancelled</span></h4>
-              </div>
-            </div>
-            <div class="progress-contest-lined">
-              <div class="progress-contest-line" :style="{ width: 100 + '%' }"></div>
-            </div>
-          </div>
-
-          <!-- <div class="progress-contest">
-            <div class="progressed-texts">
-              <div class="title">
-                <h4>{{ topContest.progress_to_20000_ton_percent }}%</h4>
-              </div>
-              <div class="title">
-                <h4><span>{{ topContest.total_sum_volume_ton }}</span> / 20 000</h4>
-                <img src="/profile/ton.svg" alt="ton" />
-              </div>
-            </div>
-            <div class="progress-contest-lined">
-              <div class="progress-contest-line" :style="{ width: topContest.progress_to_20000_ton_percent + '%' }"></div>
-            </div>
-            <div class="info">
-              <p>{{ $t('rating.contestDescr') }}</p>
-            </div>
-          </div> -->
-
-          <div v-if="topContest.me" class="other-list my">
-            <div
-              class="other-user"
-            >
-              <div class="info">
-                <div v-if="topContest.me" class="name">
-                  <h4>{{ topContest.me.name }}</h4>
-                  <span>#{{ topContest.me.rank }}</span>
-                </div>
-                <div v-else class="name">
-                  <h4>{{ topContest.me.name }}</h4>
-                </div>
-                <div class="gifts" v-if="topContest.me">
-                  <p>My volume: {{ cutNumberNano(topContest.me.sum_volume_nano) }}</p>
-                  <img src="/profile/ton.svg" alt="">
-                </div>
-              </div>
-              <img 
-                v-if="topContest.me && topContest.me.photo"
-                :src="topContest.me.photo"
-                alt="avatar"
-                class="small-avatar"
-              />
-              <div v-else class="small-avatar avatar_null">
-                <h4>h</h4>
-              </div>
-            </div>
-          </div>
-
-          <div class="other-list">
-            <div
-              v-if="TopContestOther && TopContestOther.length > 0"
-              v-for="(leader, index) in TopContestOther"
-              @click="routeUser(leader.tld)"
-              :key="leader?.tld || index"
-              :class="`place-${leader?.rank ?? 'x'}`"
-              class="other-user"
-            >
-              <div v-if="leader?.rank && leader?.rank > 10" class="rank">{{ leader?.rank ?? 'x' }}</div>
-              <div v-if="leader?.rank && leader?.rank < 11" class="gift">
-                <img v-if="leader?.rank && leader?.rank === 4" src="https://storage.googleapis.com/portals-market/gifts/stellarrocket/models/png/spaceveggie.png" alt="ton" />
-                <img v-if="leader?.rank && leader?.rank >= 5 && leader?.rank <= 10" src="https://storage.googleapis.com/portals-market/gifts/freshsocks/models/png/gunkfight.png" alt="ton" />
-              </div>
-              <div class="info">
-                <div class="name" v-if="cleanString(leader.name) && cleanString(leader.name).trim()">{{ cleanString(leader.name) }}</div>
-                <div class="name" v-else>No Name</div>
-                <div class="gifts">
-                  <p>{{ cutNumberNano(leader?.sum_volume_nano) }}</p>
-                  <img src="/profile/ton.svg" alt="">
-                </div>
-              </div>
-              <img 
-                v-if="leader.photo"
-                :src="leader.photo || ''"
-                alt="avatar"
-                class="small-avatar"
-              />
-              <div v-else class="small-avatar avatar_null">
-                <h4>{{ leader.name[0] }}</h4>
-              </div>
-            </div>
-            <div v-else class="sk-block"></div>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="selectedSection !== 'contest'" class="topFlexed">
-        <div class="top holders" :class="{ hide: selectedSection === 'others' }">
-          <div class="top-three">
-            <div
-              v-for="(leader, index) in TopThree"
-              @click="routeUser(leader.user_id)"
-              :key="leader?.user_id || index"
-              :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="top-user rt-podium"
-              :style="{ animationDelay: (index === 1 ? '0.1s' : index === 0 ? '0.25s' : '0.35s') }"
-            >
-              <div class="avatar-wrapper">
-                <img 
-                  v-if="leader && leader?.user_avatar"
-                  :src="leader?.user_avatar || ''"
-                  alt="avatar"
-                  class="avatar"
-                />
-                <div v-else class="avatar avatar_null">
-                  <h4 v-if="leader?.user_full_name">{{ leader?.user_full_name[0] }}</h4>
-                  <h4 v-else>N</h4>
-                </div>
-                <div class="rank-badge">{{ leader?.rankNumber ?? 'x' }}</div>
-              </div>
-              <div class="name">{{ cleanString(leader?.user_full_name) || 'No Name' }}</div>
-              <div class="gifts">
-                {{ leader?.countsReceived }} 
-                {{ pluralizeGift(
-                  $t('rating.gifts'),
-                  leader?.countsReceived,
-                  storeCache.TelegramData.user.language
-                ) }}
-              </div>
-            </div>
-          </div>
-
-          <div class="other-list">
-            <div
-              v-for="(leader, index) in TopOther"
-              @click="routeUser(leader.user_id)"
-              :key="leader?.user_id || index"
-              :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="other-user rt-row"
-              :style="{ animationDelay: (index * 0.04) + 's' }"
-            >
-              <div class="rank">{{ leader?.rankNumber ?? 'x' }}</div>
-              <div class="info">
-                <div class="name" v-if="cleanString(leader.user_full_name) && cleanString(leader.user_full_name).trim()">{{ cleanString(leader.user_full_name) }}</div>
-                <div class="name" v-else>No Name</div>
-                <div class="gifts">
-                  {{ leader?.countsReceived }} 
-                  {{ pluralizeGift(
-                    $t('rating.gifts'),
-                    leader?.countsReceived,
-                    storeCache.TelegramData.user.language
-                  ) }}
-                </div>
-              </div>
-              <img 
-                v-if="leader.user_avatar"
-                :src="leader.user_avatar || ''"
-                alt="avatar"
-                class="small-avatar"
-              />
-              <div v-else class="small-avatar avatar_null">
-                <h4>{{ leader.user_full_name[0] }}</h4>
-              </div>
+            <div class="rt-hero__name">{{ heroName(u) }}</div>
+            <div class="rt-hero__count">
+              <div class="kit-icon" v-html="countIcon"></div>
+              <span>{{ heroCount(u) }}</span>
             </div>
           </div>
         </div>
 
-        <div class="top gifts" :class="{ hide: selectedSection === 'holders' }">
-          <div class="top-three">
-            <div
-              v-for="(leader, index) in TopRefsThree"
-              @click="routeUser(leader.tld)"
-              :key="leader?.tld || index"
-              :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="top-user rt-podium"
-              :style="{ animationDelay: (index === 1 ? '0.1s' : index === 0 ? '0.25s' : '0.35s') }"
-            >
-              <div class="avatar-wrapper">
-                <img 
-                  v-if="leader && leader?.photo"
-                  :src="leader?.photo || ''"
-                  alt="avatar"
-                  class="avatar"
-                />
-                <div v-else class="avatar avatar_null">
-                  <h4 v-if="leader?.name">{{ leader?.name[0] }}</h4>
-                  <h4 v-else>N</h4>
-                </div>
-                <div class="rank-badge">{{ leader?.rankNumber ?? 'x' }}</div>
-              </div>
-              <div class="name">{{ cleanString(leader?.name) || 'No Name' }}</div>
-              <div class="gifts">
-                {{ leader?.refCount }}
-                referrals
-              </div>
-            </div>
-          </div>
-
-          <div class="other-list">
-            <div
-              v-for="(leader, index) in TopRefsOther"
-              @click="routeUser(leader.tld)"
-              :key="leader?.tld || index"
-              :class="`place-${leader?.rankNumber ?? 'x'}`"
-              class="other-user rt-row"
-              :style="{ animationDelay: (index * 0.04) + 's' }"
-            >
-              <div class="rank">{{ leader?.rankNumber ?? 'x' }}</div>
-              <div class="info">
-                <div class="name" v-if="cleanString(leader.name) && cleanString(leader.name).trim()">{{ cleanString(leader.name) }}</div>
-                <div class="name" v-else>No Name</div>
-                <div class="gifts">
-                  {{ leader?.refCount }} 
-                  referrals
-                </div>
-              </div>
-              <img 
-                v-if="leader.photo"
-                :src="leader.photo || ''"
-                alt="avatar"
-                class="small-avatar"
-              />
-              <div v-else class="small-avatar avatar_null">
-                <h4>{{ leader.name[0] }}</h4>
-              </div>
+        <!-- ── список 4+ ── -->
+        <div class="rt-list">
+          <div
+            v-for="(u, index) in listRest"
+            :key="heroKey(u) || index"
+            class="rt-list__row"
+            :style="{ '--ri': Math.min(index, 14) }"
+            @click="routeUser(heroKey(u))"
+          >
+            <div class="rt-list__rank">{{ heroRank(u) }}</div>
+            <img v-if="heroPhoto(u)" class="rt-list__ava" :src="heroPhoto(u)" alt="" />
+            <div v-else class="rt-list__ava rt-list__ava--null"><h4>{{ heroInitial(u) }}</h4></div>
+            <div class="rt-list__name">{{ heroName(u) }}</div>
+            <div class="rt-list__count">
+              <div class="kit-icon" v-html="countIcon"></div>
+              <span>{{ heroCount(u) }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div
-        v-if="storeCache.RatingApp.length"
-        :ref="'lastItem'"
-        style="height: 1px"
-      ></div>
+      <!-- ── твоё место: компактная пилюля по центру над меню ── -->
+      <div v-if="me" class="rt-me">
+        <div class="rt-me__ava">
+          <img v-if="myPhoto" :src="myPhoto" alt="" />
+          <div v-else class="rt-me__ava-null"><h4>{{ myName ? myName[0] : 'U' }}</h4></div>
+        </div>
+        <div class="rt-me__name">{{ myName || 'You' }}</div>
+        <div class="rt-me__right">
+          <span class="rt-me__rank">#{{ myRank }}</span>
+          <div class="rt-me__dot"></div>
+          <div class="kit-icon" v-html="countIcon"></div>
+          <span class="rt-me__count">{{ myCount }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -384,7 +94,6 @@ import { Icon } from '../Icon';
 import { cleanString, pluralizeReferrals } from '../../utils/useApp';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
 import { pluralizeGift } from '../../utils/useGift';
-import { cutNumberNano } from '../../utils/useTon';
 
 import * as nftsApi from '../../api/nftApi';
 
@@ -406,171 +115,108 @@ export default {
 
       storeCache: useCacheStore(),
 
-      ratingAppOffset: 0,
-      ratingAppLimit: 20,
       isFetchingMore: false,
 
       selectedSection: 'holders',
-      topContest: [],
       topRefs: [],
-
-      topThree: [
-        { rank: 2, gifts: 9 },
-        { rank: 1, gifts: 10 },
-        { rank: 3, gifts: 8 },
-      ],
+      me: null,
 
       Icon,
-
       cleanString,
       pluralizeGift,
       pluralizeReferrals,
-      cutNumberNano,
     };
   },
 
   mounted() {
     this.loadResources();
-    this.ratingAppOffset = 0;
     this.storeCache.RatingApp = [];
-    this.fetchMoreIfNeeded();
+    this.fetchTop();
     this.getTopRefs();
-    this.getTopContest();
-    this.$watch(
-      () => this.storeCache.RatingApp,
-      () => {
-        this.$nextTick(() => this.observeLastItem());
-      },
-      { deep: true }
-    );
-  },
-
-  beforeUnmount() {
-    if (this._observer) {
-      this._observer.disconnect();
-    }
+    this.getMe();
   },
 
   computed: {
-    TopThree() {
-      const topThree = this.storeCache.RatingApp.slice(0, 3);
-      const center = topThree.find(user => user.rankNumber === 1);
-      const sides = topThree.filter(user => user.rankNumber !== 1);
-      return [sides[0], center, sides[1]];
+    isHolders() {
+      return this.selectedSection === 'holders';
     },
-    TopOther() {
-      return this.storeCache.RatingApp.slice(3).filter(user => user && user.rankNumber !== undefined);
+    // подиум: 2 — 1 — 3
+    heroThree() {
+      const src = this.isHolders ? this.storeCache.RatingApp : this.topRefs;
+      const top = src.slice(0, 3);
+      const first = top.find(u => u.rankNumber === 1);
+      const sides = top.filter(u => u.rankNumber !== 1);
+      return [sides[0], first, sides[1]].filter(Boolean);
     },
-    TopRefsThree() {
-      const topThree = this.topRefs.slice(0, 3);
-      const center = topThree.find(user => user.rankNumber === 1);
-      const sides = topThree.filter(user => user.rankNumber !== 1); 
-      return [sides[0], center, sides[1]];
+    listRest() {
+      const src = this.isHolders ? this.storeCache.RatingApp : this.topRefs;
+      return src.slice(3).filter(u => u && u.rankNumber !== undefined);
     },
-    TopRefsOther() {
-      return this.topRefs.slice(3).filter(user => user && user.rankNumber !== undefined);
+    myRank() {
+      if (!this.me) return 0;
+      return this.isHolders ? this.me.nft_rank : this.me.ref_rank;
     },
-    TopContestThree() {
-      if (!this.topContest.top) return [];
-      const topThree = this.topContest.top.slice(0, 3);
-      const center = topThree.find(user => user.rank === 1);
-      const sides = topThree.filter(user => user.rank !== 1); 
-      return [sides[0], center, sides[1]];
+    myCount() {
+      if (!this.me) return 0;
+      return this.isHolders ? this.me.nft_count : this.me.ref_count;
     },
-    TopContestOther() {
-      if (!this.topContest.top) return [];
-      return this.topContest.top.slice(3).filter(user => user && user.rank !== undefined);
+    myName() {
+      return cleanString(this.storeCache.TelegramData?.user?.firstName || '');
+    },
+    myPhoto() {
+      return this.storeCache.TelegramData?.user?.photoUrl || '';
+    },
+    countIcon() {
+      return this.isHolders ? Icon.Gift : Icon.Friends;
     },
   },
 
   methods: {
+    // оба источника (холдеры/рефералы) в одном шаблоне: поля разные,
+    // поэтому доступ через хелперы
+    heroKey(u) { return u?.user_id ?? u?.tld; },
+    heroPhoto(u) { return u?.user_avatar ?? u?.photo ?? ''; },
+    heroRank(u) { return u?.rankNumber ?? 'x'; },
+    heroCount(u) { return u?.countsReceived ?? u?.refCount ?? 0; },
+    heroName(u) {
+      const n = cleanString(u?.user_full_name ?? u?.name ?? '');
+      return n && n.trim() ? n : 'No Name';
+    },
+    heroInitial(u) {
+      const n = this.heroName(u);
+      return n && n !== 'No Name' ? n[0] : 'U';
+    },
+    countLabel(count) {
+      const lang = this.storeCache.TelegramData?.user?.language || 'en';
+      return this.isHolders
+        ? pluralizeGift(this.$t('rating.gifts'), count, lang)
+        : pluralizeReferrals(this.$t('rating.referrals'), count, lang);
+    },
+    setSection(s) {
+      if (this.selectedSection === s) return;
+      this.selectedSection = s;
+    },
+
     async loadResources() {
       try {
-        await Promise.all([this.loadFonts(), this.loadIcons()]);
-        this.observeLastItem();
+        await document.fonts.ready;
         this.isLoading = false;
-        this.$emit("loadSuccess");
+        this.$emit('loadSuccess');
       } catch (error) {
-        console.error("Ошибка при загрузке ресурсов:", error);
+        console.error('Ошибка при загрузке ресурсов:', error);
       }
     },
 
-    loadFonts() {
-      return document.fonts.ready;
-    },
-
-    loadIcons() {
-      return new Promise((resolve, reject) => {
-        const div = document.createElement("div");
-        div.innerHTML = this.Icon;
-
-        const icons = div.querySelectorAll("img, svg");
-        const promises = Array.from(icons).map((icon) => {
-          if (icon.tagName === "IMG") {
-            return new Promise((resolveImage, rejectImage) => {
-              const img = new Image();
-              img.src = icon.src;
-              img.onload = resolveImage;
-              img.onerror = rejectImage;
-            });
-          } else {
-            return Promise.resolve();
-          }
-        });
-
-        Promise.all(promises).then(resolve).catch(reject);
-      });
-    },
-
-    observeLastItem() {
-      this.$nextTick(() => {
-        const refs = this.$refs.lastItem;
-        const last = Array.isArray(refs) ? refs[refs.length - 1] : refs;
-        if (!last) return;
-
-        if (this._observer) {
-          this._observer.disconnect();
-        }
-
-        this._observer = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              this.fetchMoreIfNeeded();
-            }
-          },
-          { threshold: 1.0 }
-        );
-
-        this._observer.observe(last);
-      });
-    },
-
-    async fetchMoreIfNeeded() {
+    // весь топ-100 одним запросом: дозагрузка по скроллу дёргала список
+    async fetchTop() {
       if (this.isFetchingMore) return;
-      if (this.ratingAppOffset >= 100) return;
-
       this.isFetchingMore = true;
-
       try {
-        const more = await nftsApi.getRating(this.ratingAppOffset, this.ratingAppLimit);
-        if (more.items.length) {
-          const ids = new Set(this.storeCache.RatingApp.map(i => i.user_id));
-          const unique = more.items.filter(i => !ids.has(i.user_id));
-          console.log(unique);
-          this.storeCache.RatingApp.push(...unique);
-          this.ratingAppOffset += this.ratingAppLimit;
-        }
+        const top = await nftsApi.getRating(0, 100);
+        if (top && top.items) this.storeCache.RatingApp = top.items;
       } catch (err) {} finally {
         this.isFetchingMore = false;
       }
-    },
-
-    async getTopContest() {
-      try {
-        const res = await nftsApi.getTopContest();
-        if (!res) return;
-        this.topContest = res;
-      } catch (error) {}
     },
 
     async getTopRefs() {
@@ -581,13 +227,16 @@ export default {
       } catch (error) {}
     },
 
+    async getMe() {
+      try {
+        const res = await nftsApi.getRatingMe();
+        if (res && res.ok) this.me = res.me;
+      } catch (error) {}
+    },
+
     routeUser(userId) {
-      this.$router.push({
-        name: 'view',
-        params: {
-          id: userId
-        }
-      });
+      if (!userId) return;
+      this.$router.push({ name: 'view', params: { id: userId } });
     },
   },
 };

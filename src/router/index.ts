@@ -2,28 +2,28 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '../pages/Home.vue'
 
-const Collection = () => import('../pages/Collection.vue')
-const Activity = () => import('../pages/Activity.vue')
-const Profile = () => import('../pages/Profile.vue')
-const Deposit = () => import('../pages/Deposit.vue')
-const Receive = () => import('../pages/Receive.vue')
-const Rating = () => import('../pages/Rating.vue')
-const View = () => import('../pages/View.vue')
-const Gift = () => import('../pages/Gift.vue')
-const Market = () => import('../pages/Market/Market.vue')
-const MarketBasket = () => import('../pages/Market/Basket.vue')
-const Tickets = () => import('../pages/Tickets.vue')
-const Multicheck = () => import('../pages/Multicheck.vue')
-const Deal = () => import('../pages/Deal.vue')
-const PrivateDeal = () => import('../pages/PrivateDeal.vue')
-const PrivateDealView = () => import('../pages/PrivateDealView.vue')
-const ActivateMulticheck = () => import('../pages/Activate/Multicheck.vue')
-const Referral = () => import('../pages/Referral.vue')
-const Wallet = () => import('../pages/Wallet.vue')
-const Soda = () => import('../pages/Soda.vue')
-const Maintenance = () => import('../pages/Maintenance.vue')
-const Terms = () => import('../pages/Terms.vue')
-const Privacy = () => import('../pages/Privacy.vue')
+import Collection from '../pages/Collection.vue'
+import Activity from '../pages/Activity.vue'
+import Profile from '../pages/Profile.vue'
+import Deposit from '../pages/Deposit.vue'
+import Receive from '../pages/Receive.vue'
+import Rating from '../pages/Rating.vue'
+import View from '../pages/View.vue'
+import Gift from '../pages/Gift.vue'
+import Market from '../pages/Market/Market.vue'
+import MarketBasket from '../pages/Market/Basket.vue'
+import Tickets from '../pages/Tickets.vue'
+import Multicheck from '../pages/Multicheck.vue'
+import Deal from '../pages/Deal.vue'
+import PrivateDeal from '../pages/PrivateDeal.vue'
+import PrivateDealView from '../pages/PrivateDealView.vue'
+import ActivateMulticheck from '../pages/Activate/Multicheck.vue'
+import Referral from '../pages/Referral.vue'
+import Wallet from '../pages/Wallet.vue'
+import Soda from '../pages/Soda.vue'
+import Maintenance from '../pages/Maintenance.vue'
+import Terms from '../pages/Terms.vue'
+import Privacy from '../pages/Privacy.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,10 +42,15 @@ const router = createRouter({
     { path: '/activate-multicheck/:nft/:nftType', name: 'activate-multicheck', component: ActivateMulticheck },
     { path: '/rating', name: 'rating', component: Rating },
     { path: '/m', name: 'market', component: Market },
-    { path: '/m/basket', name: 'market-basket', component: MarketBasket },
+    // корзина временно отключена: страница и компоненты на месте,
+    // но заход по прямой ссылке уводит обратно на маркет
+    { path: '/m/basket', name: 'market-basket', component: MarketBasket, beforeEnter: () => ({ name: 'market' }) },
     { path: '/wallet', name: 'wallet', component: Wallet },
     { path: '/tickets', name: 'tickets', component: Tickets },
-    { path: '/multicheck', name: 'multicheck', component: Multicheck },
+    // создание мультичека временно отключено: страница есть, но заход
+    // по прямой ссылке уводит в профиль. активация чужих чеков
+    // (/activate-multicheck) продолжает работать
+    { path: '/multicheck', name: 'multicheck', component: Multicheck, beforeEnter: () => ({ name: 'profile' }) },
     { path: '/deal', name: 'deal', component: Deal },
     { path: '/private-deal', name: 'private-deal', component: PrivateDeal },
     { path: '/private-deal/:id', name: 'private-deal-view', component: PrivateDealView },

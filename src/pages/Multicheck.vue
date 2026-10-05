@@ -1,41 +1,28 @@
 <template>
-  <section class="_wrap _multicheck" :class="{ desktop: isDesktop() }">
+  <div class="_wrap mc-page" :class="{ desktop: isDesktop() }">
     <div class="_view">
+      <div class="display">
+        <div class="mc-top">
+          <h1>{{ $t('multicheck.title') }}</h1>
+          <p>{{ $t('multicheck.subtitle') }}</p>
+        </div>
 
-      <Title
-        class="_lefting"
-
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-
-        :Text="$t('multicheck.title')"
-        Key="_upcoming"
-
-        :ImageShow="false"
-      />
-
-      <Gifts
-        class="_lefting"
-        @dataGift="dataGift"
-
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-      />
-
-      <Button
-        @loadSuccess="handleLoadSuccess"
-
-        :Skeleton="isPageLoading"
-        :SkeletonTime="configApp.skeletonTime"
-        :CompDataGift="CompDataGift"
-      />
-          
+        <Gifts
+          @dataGift="dataGift"
+          @loadSuccess="handleLoadSuccess"
+          :Skeleton="isPageLoading"
+          :SkeletonTime="configApp.skeletonTime"
+        />
+      </div>
     </div>
-  </section>
+
+    <Button
+      @loadSuccess="handleLoadSuccess"
+      :Skeleton="isPageLoading"
+      :SkeletonTime="configApp.skeletonTime"
+      :CompDataGift="CompDataGift"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -43,12 +30,10 @@ import TelegramModule from '../hooks/useTelegram';
 
 import { useCacheStore } from '../stores/pinia/piniaStore';
 import { isDesktop } from '../utils/checkDevice';
-import { Icon } from '../components/Icon';
 import { getConfig } from '../config';
 
-import Title from '../components/Root/Title.vue';
-import Gifts from '../components/Multicheck/Gifts.vue'
-import Button from '../components/Multicheck/Button.vue'
+import Gifts from '../components/Multicheck/Gifts.vue';
+import Button from '../components/Multicheck/Button.vue';
 
 export default {
   props: {
@@ -59,7 +44,6 @@ export default {
   },
 
   components: {
-    Title,
     Gifts,
     Button,
   },
@@ -68,9 +52,8 @@ export default {
     return {
       configApp: getConfig(),
       storeCache: useCacheStore() as any,
-      
+
       handleLoads: 0,
-      propsSuccess: this.$props.success,
       isPageLoading: true,
 
       CompDataGift: {
@@ -78,32 +61,34 @@ export default {
         nftName: null,
         nftUniqueKey: null,
         nftCount: 0,
-        nftIds: []
+        nftIds: [] as any[],
+        tab: 'purchased',
+        giftsSummary: [] as any[],
+        selectedItems: [] as any[],
       },
 
-      Icon,
       isDesktop,
     };
   },
 
   mounted() {
-    TelegramModule.useBackButton(() => {
-      this.$router.push('/profile');
-    });
+    TelegramModule.useBackButton(() => this.goBack());
   },
 
   methods: {
-    handleLoadSuccess() {
-      this.handleLoads ++;
-
-      if (this.handleLoads >= 3) {
-        setTimeout(() => {
-          if (this.$props.success) {
-            this.isPageLoading = false;
-          }
-        }, this.configApp.skeletonTime);
-      };
+    goBack() {
+      this.$router.push({ name: 'profile' });
     },
+
+    handleLoadSuccess() {
+      this.handleLoads++;
+      if (this.handleLoads >= 2) {
+        setTimeout(() => {
+          this.isPageLoading = false;
+        }, this.configApp.skeletonTime);
+      }
+    },
+
     dataGift(data: any) {
       this.CompDataGift = data;
     },

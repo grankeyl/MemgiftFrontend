@@ -1,81 +1,116 @@
 <template>
-  <div class="_direction _comp _item _multicheckGifts" :class="Key">
-      <div v-if="isLoading" class="_skeleton">
-          <div class="mc-skel">
-            <div class="mc-skel__row" v-for="i in 3" :key="i"></div>
-          </div>
+  <div class="mc-body">
+    <div v-if="isLoading" class="mc-skel">
+      <div class="mc-skel__line"></div>
+      <div class="mc-skel__grid">
+        <div class="mc-skel__card" v-for="i in 6" :key="i"></div>
       </div>
-      
-      <div v-else class="_content">
-          <div class="mc-tabs">
-            <div class="mc-tabs__item" :class="{ active: activeTab === 'purchased' }" @click="switchTab('purchased')">
-              {{ $t('multicheck.tabPurchased') }}
-            </div>
-            <div class="mc-tabs__item" :class="{ active: activeTab === 'received' }" @click="switchTab('received')">
-              {{ $t('multicheck.tabReceived') }}
-              <span class="mc-tabs__badge">5★</span>
-            </div>
-            <div class="mc-tabs__bg" :class="{ right: activeTab === 'received' }"></div>
-          </div>
+    </div>
 
-          <div v-if="listLoading" class="mc-skel">
-            <div class="mc-skel__row" v-for="i in 3" :key="i"></div>
-          </div>
-
-          <div v-else-if="GiftsList && GiftsList.length > 0" class="mc-list">
-            <div 
-              v-for="(gift, idx) in GiftsList" 
-              :key="gift.nft_unique_key"
-              class="mc-row"
-              :class="{ picked: gift.checkCount > 0 }"
-              :style="{ animationDelay: idx * 40 + 'ms' }"
-            >
-              <div class="mc-row__img">
-                <img 
-                  v-if="getGiftData(gift.nft_unique_key)?.ImageMain"
-                  :src="getGiftData(gift.nft_unique_key).ImageMain"
-                  alt=""
-                />
-              </div>
-
-              <div class="mc-row__body">
-                <p class="mc-row__name">{{ getGiftData(gift.nft_unique_key)?.Name || gift.nft_unique_key }}</p>
-                <span class="mc-row__sub">×{{ gift.nft_counts }} {{ $t('multicheck.available').toLowerCase() }}</span>
-              </div>
-
-              <div class="mc-row__ctrls">
-                <button class="mc-row__btn" @click="removeCount(gift)" :class="{ off: gift.checkCount === 0 }">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-                </button>
-                <span class="mc-row__num" :class="{ accent: gift.checkCount > 0 }">{{ gift.checkCount }}</span>
-                <button class="mc-row__btn" @click="addCount(gift)" :class="{ off: gift.checkCount >= gift.nft_counts }">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div v-else class="mc-empty">
-            <p>{{ $t('multicheck.notfoundText') }}</p>
-          </div>
-
-          <div v-if="totalSelected > 0" class="mc-footer">
-            <div class="mc-footer__line">
-              <span>{{ $t('multicheck.giftsSelected') }}</span>
-              <span class="mc-footer__val">{{ totalSelected }}</span>
-            </div>
-            <div v-if="activeTab === 'received'" class="mc-footer__line mc-footer__line--accent">
-              <span>{{ $t('multicheck.costLabel') }}</span>
-              <span class="mc-footer__val">{{ totalSelected * 5 }} ★</span>
-            </div>
-          </div>
+    <template v-else>
+      <div class="mc-tabs">
+        <button
+          type="button"
+          class="mc-tabs__item"
+          :class="{ active: activeTab === 'purchased' }"
+          @click="switchTab('purchased')"
+        >
+          {{ $t('multicheck.tabPurchased') }}
+        </button>
+        <button
+          type="button"
+          class="mc-tabs__item"
+          :class="{ active: activeTab === 'received' }"
+          @click="switchTab('received')"
+        >
+          {{ $t('multicheck.tabReceived') }}
+        </button>
       </div>
+
+      <div class="mc-bar">
+        <span class="mc-bar__count">
+          {{ GiftsList.length }}
+          {{ $t('profile.profileFilters.gifts') }}
+          <template v-if="selectedIds.length">
+            · {{ selectedIds.length }} {{ $t('multicheck.selected') }}
+          </template>
+        </span>
+        <button
+          v-if="GiftsList.length > 0"
+          type="button"
+          class="mc-bar__action"
+          @click="toggleSelectAll"
+        >
+          {{ allSelected ? $t('multicheck.clearSel') : $t('multicheck.selectAll') }}
+        </button>
+      </div>
+
+      <div v-if="listLoading" class="mc-skel__grid">
+        <div class="mc-skel__card" v-for="i in 6" :key="i"></div>
+      </div>
+
+      <div v-else-if="GiftsList.length > 0" class="mc-grid">
+        <button
+          v-for="item in GiftsList"
+          :key="item.uuid"
+          type="button"
+          class="mc-gift"
+          :class="{
+            selected: isSelected(item.uuid),
+            'is-upgraded': !!item.upgraded,
+          }"
+          @click="toggleGift(item)"
+        >
+          <!-- Style on INNER so rarity/upgrade colors actually show -->
+          <div class="mc-gift__inner" :style="giftCardStyle(item)">
+            <div class="mc-gift__symbols">
+              <img
+                v-if="item.upgraded && item.upgrade?.symbol_image"
+                :src="item.upgrade.symbol_image"
+                alt=""
+              />
+              <img v-else src="/gift_bg.png" alt="" />
+            </div>
+
+            <div v-if="item.upgraded && item.upgrade?.seq != null" class="mc-gift__badge">
+              <span>#{{ item.upgrade.seq }}</span>
+            </div>
+
+            <div class="mc-gift__nft">
+              <img :src="giftImage(item)" alt="" />
+            </div>
+          </div>
+
+          <!-- Rarity ribbon outside clip (like profile) -->
+          <div v-if="!item.upgraded && giftRarity(item)" class="mc-gift__rarity">
+            <div class="mc-gift__rarity-img">
+              <img :src="checkRarityImage(giftRarity(item))" alt="" />
+            </div>
+            <div class="mc-gift__rarity-txt">
+              <span>{{ checkRarity(giftRarity(item)) }}</span>
+            </div>
+          </div>
+
+          <div class="mc-gift__pick" v-show="isSelected(item.uuid)" aria-hidden="true">
+            <svg viewBox="0 0 12 10" fill="none">
+              <path d="M1.2 5.1L4.5 8.3L10.8 1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </button>
+      </div>
+
+      <div v-else class="mc-empty">
+        <h4>{{ $t('multicheck.notfoundText') }}</h4>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
-import * as nftApi from '../../api/nftApi'
+import * as nftApi from '../../api/nftApi';
 import { useCacheStore } from '../../stores/pinia/piniaStore';
+import { checkRarity, checkRarityImage, getUpgradedModel } from '../../utils/useGift';
+import TelegramModule from '../../hooks/useTelegram';
 
 export default {
   props: {
@@ -89,111 +124,189 @@ export default {
       isLoading: this.$props.Skeleton,
       listLoading: false,
       activeTab: 'purchased',
-      GiftsList: null,
+      GiftsList: [],
+      selectedIds: [],
       MulticheckData: {
-        userId: null, nftName: null, nftUniqueKey: null,
-        nftCount: 0, nftIds: [], tab: 'purchased',
+        userId: null,
+        nftName: null,
+        nftUniqueKey: null,
+        nftCount: 0,
+        nftIds: [],
+        tab: 'purchased',
+        giftsSummary: [],
+        selectedItems: [],
       },
+      checkRarity,
+      checkRarityImage,
     };
   },
 
   computed: {
-    totalSelected() {
-      if (!this.GiftsList) return 0;
-      return this.GiftsList.reduce((sum, g) => sum + g.checkCount, 0);
-    },
-    allSelectedIds() {
-      if (!this.GiftsList) return [];
-      const ids = [];
-      this.GiftsList.forEach(g => {
-        if (g.checkCount > 0) {
-          ids.push(...g.nft_ids.slice(0, g.checkCount));
-        }
-      });
-      return ids;
-    },
-    firstSelectedKey() {
-      if (!this.GiftsList) return null;
-      const found = this.GiftsList.find(g => g.checkCount > 0);
-      return found ? found.nft_unique_key : null;
+    allSelected() {
+      return this.GiftsList.length > 0 && this.selectedIds.length === this.GiftsList.length;
     },
   },
 
   mounted() {
     this.loadResources();
     this.getGiftsList();
-    this.$watch(() => this.storeCache.TelegramData, () => { this.getGiftsList(); });
+    this.$watch(
+      () => this.storeCache.TelegramData,
+      () => this.getGiftsList()
+    );
   },
-  
+
   methods: {
     async loadResources() {
-      try { await document.fonts.ready; } catch {}
+      try {
+        await document.fonts.ready;
+      } catch {}
       this.isLoading = false;
-      this.$emit("loadSuccess");
+      this.$emit('loadSuccess');
     },
 
-    getGiftData(ukey) {
-      return this.storeCache?.NftsAppData?.[ukey] || null;
+    isSelected(uuid) {
+      return this.selectedIds.includes(uuid);
+    },
+
+    selectionIndex(uuid) {
+      const i = this.selectedIds.indexOf(uuid);
+      return i >= 0 ? i + 1 : '';
+    },
+
+    giftRarity(item) {
+      return (
+        item?.rarity ||
+        this.storeCache?.NftsAppData?.[item.gift_ukey]?.Rarity ||
+        ''
+      );
+    },
+
+    giftImage(item) {
+      if (item.upgraded && item.upgrade) {
+        if (item.gift_media === 'svg') return item.upgrade.nft_image;
+        const name = item.upgrade.nft_name?.name || item.upgrade.nft_name;
+        return getUpgradedModel(item.gift_ukey, name, 'svg') || item.upgrade.nft_image || '';
+      }
+      return item.gift_image || this.storeCache?.NftsAppData?.[item.gift_ukey]?.ImageMain || '';
+    },
+
+    boostColor(hex, amount = 0.28) {
+      try {
+        let h = String(hex || '').replace('#', '');
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        if (h.length !== 6) return hex || '#666';
+        let r = parseInt(h.slice(0, 2), 16);
+        let g = parseInt(h.slice(2, 4), 16);
+        let b = parseInt(h.slice(4, 6), 16);
+        r = Math.min(255, Math.round(r + (255 - r) * amount));
+        g = Math.min(255, Math.round(g + (255 - g) * amount));
+        b = Math.min(255, Math.round(b + (255 - b) * amount));
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+      } catch {
+        return hex || '#666';
+      }
+    },
+
+    // Same as profile Profile/Gifts.vue giftCardStyle
+    giftCardStyle(item) {
+      if (item.upgraded && item.upgrade) {
+        const c = item.upgrade.background_colors_center || item.upgrade.background?.colors_center || '#666';
+        const a = item.upgrade.background_colors_around || item.upgrade.background?.colors_around || '#1a1a1a';
+        const hot = this.boostColor(c, 0.28);
+        return {
+          background: `radial-gradient(circle at 50% 40%, ${hot} 0%, ${c} 45%, ${a} 100%)`,
+        };
+      }
+      const r = this.giftRarity(item);
+      const map = {
+        rare: 'linear-gradient(180deg, #282867 0%, #131328 100%)',
+        veryrare: 'linear-gradient(180deg, #1D6132 0%, #0B2211 100%)',
+        epic: 'linear-gradient(180deg, #632475 0%, #19101D 100%)',
+        legend: 'linear-gradient(180deg, #6F480E 0%, #1D1710 100%)',
+        legendary: 'linear-gradient(180deg, #6F480E 0%, #1D1710 100%)',
+        author: 'linear-gradient(180deg, #762121 0%, #221111 100%)',
+      };
+      return {
+        background: map[r] || '#252528',
+      };
     },
 
     switchTab(tab) {
       if (this.activeTab === tab) return;
       this.activeTab = tab;
-      this.MulticheckData = {
-        userId: null, nftName: null, nftUniqueKey: null,
-        nftCount: 0, nftIds: [], tab: tab,
-      };
-      this.$emit('dataGift', this.MulticheckData);
+      this.selectedIds = [];
+      this.emitData();
       this.getGiftsList();
+      TelegramModule.useSoftHaptic?.();
     },
 
     async getGiftsList() {
       if (!this.storeCache.TelegramData?.user?.id) return;
       this.listLoading = true;
-      const response = await nftApi.getPurchasedMulticheck(
-        String(this.storeCache.TelegramData.user.id), this.activeTab
-      );
-      if (!response || !Array.isArray(response)) {
+      try {
+        const result = await nftApi.getGifts(this.activeTab, '', '', '', '', '', 0, 100);
+        this.GiftsList = result && Array.isArray(result.items) ? result.items : [];
+      } catch {
         this.GiftsList = [];
-      } else {
-        this.GiftsList = response.map(g => ({ ...g, checkCount: 0 }));
+      } finally {
+        this.listLoading = false;
       }
-      this.listLoading = false;
     },
 
-    addCount(gift) {
-      if (gift.checkCount >= gift.nft_counts) return;
-      gift.checkCount++;
+    toggleGift(item) {
+      const idx = this.selectedIds.indexOf(item.uuid);
+      if (idx >= 0) this.selectedIds.splice(idx, 1);
+      else this.selectedIds.push(item.uuid);
+      TelegramModule.useSoftHaptic?.();
       this.emitData();
     },
 
-    removeCount(gift) {
-      if (gift.checkCount <= 0) return;
-      gift.checkCount--;
+    toggleSelectAll() {
+      if (this.allSelected) this.selectedIds = [];
+      else this.selectedIds = this.GiftsList.map((g) => g.uuid);
+      TelegramModule.useSoftHaptic?.();
       this.emitData();
     },
 
     emitData() {
-      const firstKey = this.firstSelectedKey;
-      const selectedNames = this.GiftsList
-        .filter(g => g.checkCount > 0)
-        .map(g => this.getGiftData(g.nft_unique_key)?.Name || g.nft_unique_key);
+      const selected = this.GiftsList.filter((g) => this.selectedIds.includes(g.uuid));
+      const ordered = this.selectedIds
+        .map((id) => selected.find((g) => g.uuid === id))
+        .filter(Boolean);
+      const first = ordered[0];
 
-      const giftsSummary = this.GiftsList
-        .filter(g => g.checkCount > 0)
-        .map(g => {
-          const d = this.getGiftData(g.nft_unique_key);
-          return { name: d?.Name || g.nft_unique_key, image: d?.ImageMain || '', count: g.checkCount };
-        });
+      const byKey = {};
+      ordered.forEach((g) => {
+        const key = g.gift_ukey;
+        if (!byKey[key]) {
+          const d = this.storeCache?.NftsAppData?.[key];
+          byKey[key] = {
+            name: d?.Name || key,
+            image: d?.ImageMain || g.gift_image || '',
+            count: 0,
+          };
+        }
+        byKey[key].count += 1;
+      });
+
+      const selectedItems = ordered.map((g) => ({
+        uuid: g.uuid,
+        image: this.giftImage(g),
+        name: this.storeCache?.NftsAppData?.[g.gift_ukey]?.Name || g.gift_ukey,
+      }));
 
       this.MulticheckData = {
-        userId: this.storeCache.TelegramData.user.id,
-        nftName: selectedNames.join(', '),
-        nftUniqueKey: firstKey || '',
-        nftCount: this.totalSelected,
-        nftIds: this.allSelectedIds,
+        userId: this.storeCache.TelegramData?.user?.id || null,
+        nftName: ordered
+          .map((g) => this.storeCache?.NftsAppData?.[g.gift_ukey]?.Name || g.gift_ukey)
+          .join(', '),
+        nftUniqueKey: first?.gift_ukey || '',
+        nftCount: ordered.length,
+        nftIds: [...this.selectedIds],
         tab: this.activeTab,
-        giftsSummary,
+        giftsSummary: Object.values(byKey),
+        selectedItems,
       };
       this.$emit('dataGift', this.MulticheckData);
     },

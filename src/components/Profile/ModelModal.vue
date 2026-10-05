@@ -77,6 +77,7 @@ export default {
   data() {
     return {
       storeCache: useCacheStore(),
+      isLoading: this.Skeleton,
       isLoadingModalImage: true,
       localSelectedModels: [],
 
